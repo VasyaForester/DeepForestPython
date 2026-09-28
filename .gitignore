@@ -1,0 +1,9 @@
+node_modules/
+dist/
+__pycache__/
+.pytest_cache/
+backend/data/
+*.db
+_brief_extract.txt
+_brief_core.txt
+_brief_program.txt

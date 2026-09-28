@@ -1,0 +1,202 @@
+id: python.basics.input
+slug: input
+section: basics
+title: Ввод данных и преобразование типов
+order: 3
+weight: 1
+prerequisites:
+  - python.basics.variables
+goal: Прочитать ввод, превратить его в число и собрать ответ в f-строке.
+tags: [input, int, float, f-string, преобразование]
+introduces:
+  - id: input
+    title: input()
+    summary: Читает одну строку ввода и всегда возвращает str.
+  - id: conversion
+    title: int() и float()
+    summary: Преобразуют строку с числом в int или float. int("3.5") вызывает ошибку.
+  - id: f-string
+    title: f-строка
+    summary: Строка с префиксом f. В фигурных скобках можно вставить значение переменной.
+theory:
+  - input() всегда возвращает строку. Если человек ввёл 42, программа получает "42", а не число 42.
+  - int("42") даёт целое 42. float("3.5") даёт 3.5. int("3.5") завершается ошибкой ValueError, потому что у целого нет дробной части в такой записи.
+  - "С числами можно считать. f-строка подставляет значение переменной в текст: f\"Итог: {total}\"."
+examples:
+  - title: Строка из input
+    code: |
+      raw = input()
+      print(type(raw))
+    stdin: "42\n"
+    explanation: Даже если ввели цифры, input возвращает str. type покажет class str.
+  - title: Число и f-строка
+    code: |
+      raw = input()
+      n = int(raw)
+      print(f"Двойное: {n * 2}")
+    stdin: "21\n"
+    explanation: int превращает текст в целое. Во f-строке выражение в скобках вычисляется.
+outcomes:
+  - читать строку через input()
+  - преобразовывать её в int или float
+  - считать значение выражения
+  - собирать ответ во f-строке
+resources:
+  - kind: docs
+    title: input()
+    url: https://docs.python.org/3/library/functions.html#input
+  - kind: docs
+    title: Formatted string literals
+    url: https://docs.python.org/3/tutorial/inputoutput.html#formatted-string-literals
+  - kind: youtube
+    title: CS50P — Lecture 0, functions and variables
+    url: https://www.youtube.com/watch?v=OvKCESUCWII
+    author: Harvard CS50
+tasks:
+  - id: python.basics.input.t1
+    type: choice
+    title: Тип результата input
+    difficulty: 1
+    context: neutral
+    prompt: Человек ввёл 15. Какой тип вернёт input()?
+    options:
+      - id: a
+        text: int
+      - id: b
+        text: float
+      - id: c
+        text: str
+    answer: c
+    hints:
+      - input не угадывает, число это или текст.
+      - Преобразование делают отдельно, через int или float.
+      - Результат input всегда строка.
+    solution: c
+    explanation: input возвращает str. Числом строка становится только после int() или float().
+  - id: python.basics.input.t2
+    type: code
+    title: Удвоить целое
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте одну строку, преобразуйте её в целое число и выведите это число, умноженное на 2.
+    starter_code: |
+      raw = input()
+    tests:
+      - stdin: "21\n"
+        expected_stdout: "42\n"
+      - stdin: "0\n"
+        expected_stdout: "0\n"
+    hints:
+      - input даёт строку, умножать её рано.
+      - Оберните строку в int.
+      - Выведите результат умножения.
+    solution: |
+      raw = input()
+      n = int(raw)
+      print(n * 2)
+    explanation: Сначала строка становится int, затем выполняется умножение.
+  - id: python.basics.input.t3
+    type: code
+    title: Дробное измерение
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте одно число с дробной частью и выведите его тип после преобразования через float, затем само число, увеличенное на 0.5.
+    starter_code: ""
+    tests:
+      - stdin: "1.5\n"
+        expected_stdout: "<class 'float'>\n2.0\n"
+    hints:
+      - Для дробной записи нужен float, не int.
+      - Сначала сохраните результат float в переменную.
+      - Первый print показывает type, второй — сумму.
+    solution: |
+      raw = input()
+      value = float(raw)
+      print(type(value))
+      print(value + 0.5)
+    explanation: float принимает строку с точкой и даёт число, к которому можно прибавлять.
+  - id: python.basics.input.t4
+    type: code
+    title: Сумма двух чисел
+    difficulty: 2
+    context: business
+    prompt: Прочитайте два целых числа с двух строк ввода. Выведите их сумму.
+    starter_code: ""
+    tests:
+      - stdin: "10\n20\n"
+        expected_stdout: "30\n"
+      - stdin: "3\n7\n"
+        expected_stdout: "10\n"
+    hints:
+      - Каждый input читает одну строку.
+      - Оба значения нужно преобразовать через int.
+      - Сложите уже числа, не строки.
+    solution: |
+      a = int(input())
+      b = int(input())
+      print(a + b)
+    explanation: Два вызова input получают две строки, int делает из них числа.
+  - id: python.basics.input.t5
+    type: code
+    title: Исправьте преобразование
+    difficulty: 3
+    context: development
+    prompt: На вход приходит дробное число, например 3.5. Программа должна вывести его удвоенным. Сейчас преобразование выбрано неверно и падает. Исправьте код.
+    starter_code: |
+      raw = input()
+      n = int(raw)
+      print(n * 2)
+    tests:
+      - stdin: "3.5\n"
+        expected_stdout: "7.0\n"
+    hints:
+      - int не принимает строку с десятичной точкой.
+      - Здесь нужно преобразование в float.
+      - Умножение на 2 оставьте.
+    solution: |
+      raw = input()
+      n = float(raw)
+      print(n * 2)
+    explanation: Строка 3.5 преобразуется через float. Умножение на 2 даёт 7.0.
+  - id: python.basics.input.t6
+    type: code
+    title: Приветствие
+    difficulty: 2
+    context: neutral
+    prompt: Прочитайте имя и выведите строку вида Hello, Mira. Имя подставьте из ввода во f-строку.
+    starter_code: ""
+    tests:
+      - stdin: "Mira\n"
+        expected_stdout: "Hello, Mira\n"
+      - stdin: "Leo\n"
+        expected_stdout: "Hello, Leo\n"
+    hints:
+      - Имя уже строка, int здесь не нужен.
+      - Перед кавычкой поставьте f.
+      - Между запятой и именем в образце есть пробел.
+    solution: |
+      name = input()
+      print(f"Hello, {name}")
+    explanation: f-строка подставляет значение name внутрь текста.
+  - id: python.basics.input.t7
+    type: code
+    title: Год и возраст
+    difficulty: 3
+    context: business
+    prompt: "Первая строка ввода — имя, вторая — год рождения (целое). Считайте возраст как 2026 минус год. Выведите f-строку вида Mira: 29."
+    starter_code: ""
+    tests:
+      - stdin: "Mira\n1997\n"
+        expected_stdout: "Mira: 29\n"
+      - stdin: "Leo\n2000\n"
+        expected_stdout: "Leo: 26\n"
+    hints:
+      - Первый input оставьте строкой.
+      - Второй преобразуйте в int перед вычитанием.
+      - Во f-строке можно написать выражение в фигурных скобках.
+    solution: |
+      name = input()
+      year = int(input())
+      age = 2026 - year
+      print(f"{name}: {age}")
+    explanation: Год становится числом, возраст считается вычитанием и подставляется в текст.

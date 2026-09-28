@@ -1,0 +1,34 @@
+id: python.diagnostic
+title: Диагностика
+summary: Короткий ориентир. Результат не влияет на оценку и ничего не пропускает сам.
+questions:
+  - id: d1
+    prompt: Что выведет print("ель")?
+    options: ["ель", "\"ель\"", "ошибку"]
+    answer: 0
+    suggests: python.basics.first-program
+  - id: d2
+    prompt: Какой тип у 10.5?
+    options: ["int", "float", "str"]
+    answer: 1
+    suggests: python.basics.variables
+  - id: d3
+    prompt: Чему равно x после x = 2 и x = x + 3?
+    options: ["2", "5", "23"]
+    answer: 1
+    suggests: python.basics.variables
+  - id: d4
+    prompt: Что возвращает input()?
+    options: ["всегда int", "всегда str", "тип, который угадал Python"]
+    answer: 1
+    suggests: python.basics.input
+  - id: d5
+    prompt: Какая запись получит целое число из строки raw?
+    options: ["int(raw)", "str(raw)", "raw + 0"]
+    answer: 0
+    suggests: python.basics.input
+  - id: d6
+    prompt: Что означает None?
+    options: ["ноль", "пустую строку", "отсутствие значения"]
+    answer: 2
+    suggests: python.basics.variables

@@ -1,0 +1,162 @@
+id: python.basics.first-program
+slug: first-program
+section: basics
+title: Ваш первый Python-код
+order: 1
+weight: 1
+prerequisites: []
+goal: Написать и запустить короткую программу, которая выводит текст.
+tags: [print, строка, программа, ошибка, python]
+introduces:
+  - id: print
+    title: print()
+    summary: Функция выводит значение на экран. Текст передают в кавычках.
+  - id: str
+    title: Строка (str)
+    summary: Текст в одинарных или двойных кавычках. Кавычки в вывод не попадают.
+  - id: comment
+    title: Комментарий
+    summary: Текст после # Python не выполняет. Он нужен человеку, который читает код.
+theory:
+  - Программа на Python — это последовательность команд. Интерпретатор читает их сверху вниз и выполняет.
+  - Команда print() показывает значение. Строка — это текст в кавычках. print("Лес") выводит Лес, без кавычек.
+  - Если кавычку не закрыть или забыть скобку, Python останавливается и показывает SyntaxError. Это сообщение говорит, где код записан неверно.
+  - Строка с # — комментарий. Python её пропускает.
+examples:
+  - title: Вывод строки
+    code: |
+      print("Deep Forest")
+    explanation: print вызывает вывод. Кавычки отмечают текст и на экран не попадают.
+  - title: Две команды
+    code: |
+      print("Первая строка")
+      print("Вторая строка")
+    explanation: Каждая команда print начинает новую строку вывода.
+outcomes:
+  - вызывать print()
+  - выводить строки и числа
+  - отличать текст программы от комментария
+  - читать сообщение о синтаксической ошибке
+resources:
+  - kind: docs
+    title: Python Tutorial — An Informal Introduction
+    url: https://docs.python.org/3/tutorial/introduction.html
+  - kind: youtube
+    title: CS50P — Lecture 0
+    url: https://www.youtube.com/watch?v=OvKCESUCWII
+    author: Harvard CS50
+tasks:
+  - id: python.basics.first-program.t1
+    type: choice
+    title: Что делает print
+    difficulty: 1
+    context: neutral
+    prompt: Что произойдёт при выполнении print("сосна")?
+    options:
+      - id: a
+        text: Python удалит слово сосна из программы
+      - id: b
+        text: На экран будет выведено сосна
+      - id: c
+        text: Программа попросит ввести слово
+    answer: b
+    hints:
+      - print показывает значение, а не спрашивает его.
+      - Кавычки задают текст, который нужно показать.
+      - Команда выводит слово без кавычек.
+    solution: b
+    explanation: print выводит переданное значение. Кавычки на экране не появляются.
+  - id: python.basics.first-program.t2
+    type: predict_output
+    title: Предскажите вывод
+    difficulty: 1
+    context: neutral
+    prompt: Что появится на экране?
+    code: |
+      print("След")
+    options:
+      - id: a
+        text: След
+      - id: b
+        text: "След"
+      - id: c
+        text: print
+    answer: a
+    hints:
+      - Смотрите на текст внутри кавычек.
+      - Кавычки сами не печатаются.
+      - Имя функции тоже не печатается.
+    solution: a
+    explanation: Выводится содержимое строки.
+  - id: python.basics.first-program.t3
+    type: code
+    title: Первая строка
+    difficulty: 1
+    context: neutral
+    prompt: Выведите ровно текст Deep Forest.
+    starter_code: |
+      print("")
+    tests:
+      - stdin: ""
+        expected_stdout: "Deep Forest\n"
+    hints:
+      - Используйте одну команду print.
+      - Текст должен совпасть полностью, включая пробел.
+      - Поместите Deep Forest между кавычками.
+    solution: |
+      print("Deep Forest")
+    explanation: Одна строка print выводит нужный текст и перевод строки.
+  - id: python.basics.first-program.t4
+    type: code
+    title: Две строки отчёта
+    difficulty: 2
+    context: development
+    prompt: Выведите две строки. Сначала OK, затем module ready.
+    starter_code: ""
+    tests:
+      - stdin: ""
+        expected_stdout: "OK\nmodule ready\n"
+    hints:
+      - Нужны два вызова print.
+      - Каждый print заканчивает строку сам.
+      - Вторая строка содержит пробел между словами.
+    solution: |
+      print("OK")
+      print("module ready")
+    explanation: Два вызова print дают две строки вывода.
+  - id: python.basics.first-program.t5
+    type: code
+    title: Почините кавычку
+    difficulty: 2
+    context: development
+    prompt: Программа должна вывести тропа, но кавычка не закрыта. Исправьте код.
+    starter_code: |
+      print("тропа)
+    tests:
+      - stdin: ""
+        expected_stdout: "тропа\n"
+    hints:
+      - SyntaxError здесь связан с кавычками.
+      - Строка должна начинаться и заканчиваться кавычкой одного вида.
+      - Закройте кавычку перед скобкой.
+    solution: |
+      print("тропа")
+    explanation: Строковый литерал обязан быть закрыт.
+  - id: python.basics.first-program.t6
+    type: code
+    title: Число и комментарий
+    difficulty: 2
+    context: analytics
+    prompt: Выведите число 2026. Следующей строкой кода добавьте комментарий год отчёта. Комментарий не должен попасть на экран.
+    starter_code: ""
+    tests:
+      - stdin: ""
+        expected_stdout: "2026\n"
+    hints:
+      - Число можно передать в print без кавычек.
+      - Комментарий начинается с #.
+      - На экран попадает только результат print.
+    solution: |
+      print(2026)
+      # год отчёта
+    explanation: print выводит число. Строка с # не выполняется.

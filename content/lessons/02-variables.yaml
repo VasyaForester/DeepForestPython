@@ -1,0 +1,205 @@
+id: python.basics.variables
+slug: variables
+section: basics
+title: Переменные и значения
+order: 2
+weight: 1
+prerequisites:
+  - python.basics.first-program
+goal: Сохранять значения в переменных и различать их типы.
+tags: [переменная, variable, int, float, str, bool, None, type]
+introduces:
+  - id: variable
+    title: Переменная
+    summary: Имя, связанное со значением. Знак = сохраняет значение справа в имя слева.
+  - id: int
+    title: int
+    summary: Целое число, например 37.
+  - id: float
+    title: float
+    summary: Число с дробной частью, например 10.5. Дробная часть пишется через точку.
+  - id: bool
+    title: bool
+    summary: Логическое значение True или False.
+  - id: none
+    title: None
+    summary: Особое значение «ничего нет». Оно не равно нулю и не равно пустой строке.
+  - id: type
+    title: type()
+    summary: Возвращает тип значения.
+theory:
+  - "Переменная хранит значение под именем. Запись age = 37 означает: имя age теперь связано с числом 37."
+  - У значения есть тип. 10 — int, 10.5 — float, "10" — str, True — bool. None означает отсутствие значения.
+  - Имя можно связать с новым значением. Старое при этом заменяется. type(value) показывает тип.
+examples:
+  - title: Имя и число
+    code: |
+      name = "Vasya"
+      age = 37
+      print(name)
+      print(age)
+    explanation: Сначала значения сохраняются, затем print выводит то, на что указывают имена.
+  - title: Новое значение
+    code: |
+      x = 2
+      x = x + 3
+      print(x)
+      print(type(10.5))
+    explanation: Вторая строка читает текущее x, прибавляет 3 и сохраняет результат. type показывает float.
+outcomes:
+  - создавать переменные
+  - хранить числа, строки и логические значения
+  - заменять значение переменной
+  - определять тип через type()
+resources:
+  - kind: docs
+    title: Built-in Types
+    url: https://docs.python.org/3/library/stdtypes.html
+  - kind: youtube
+    title: Python Tutorial — Variables
+    url: https://www.youtube.com/watch?v=YYXdXT2l-Gg
+    author: Corey Schafer
+tasks:
+  - id: python.basics.variables.t1
+    type: choice
+    title: Тип 10.5
+    difficulty: 1
+    context: neutral
+    prompt: Какой тип у значения 10.5?
+    options:
+      - id: a
+        text: int
+      - id: b
+        text: float
+      - id: c
+        text: str
+    answer: b
+    hints:
+      - Есть дробная часть.
+      - int — целое число.
+      - Числа с точкой относятся к float.
+    solution: b
+    explanation: 10.5 записывается с десятичной точкой, поэтому это float.
+  - id: python.basics.variables.t2
+    type: predict_output
+    title: Что произойдёт
+    difficulty: 2
+    context: neutral
+    prompt: Какое число будет выведено?
+    code: |
+      x = 2
+      x = x + 3
+      print(x)
+    options:
+      - id: a
+        text: "2"
+      - id: b
+        text: "5"
+      - id: c
+        text: "23"
+    answer: b
+    hints:
+      - Вторая строка не склеивает цифры.
+      - Сначала x равно 2.
+      - К текущему значению прибавляют 3.
+    solution: b
+    explanation: 2 + 3 сохраняется обратно в x, print выводит 5.
+  - id: python.basics.variables.t3
+    type: code
+    title: Имя и возраст
+    difficulty: 1
+    context: business
+    prompt: Создайте name со значением Mira и age со значением 29. Выведите сначала имя, затем возраст.
+    starter_code: ""
+    tests:
+      - stdin: ""
+        expected_stdout: "Mira\n29\n"
+    hints:
+      - Нужны две переменные и два print.
+      - Имя — строка в кавычках, возраст — число без кавычек.
+      - Порядок вывода совпадает с порядком print.
+    solution: |
+      name = "Mira"
+      age = 29
+      print(name)
+      print(age)
+    explanation: Переменные хранят значения, print выводит их по очереди.
+  - id: python.basics.variables.t4
+    type: code
+    title: Замена значения
+    difficulty: 2
+    context: analytics
+    prompt: В total сначала запишите 10, затем замените значение на 10 + 5. Выведите total один раз, уже после замены.
+    starter_code: |
+      total = 10
+    tests:
+      - stdin: ""
+        expected_stdout: "15\n"
+    hints:
+      - Повторное = заменяет значение.
+      - Прибавьте 5 к текущему total.
+      - print должен стоять после замены.
+    solution: |
+      total = 10
+      total = total + 5
+      print(total)
+    explanation: Второе присваивание заменяет 10 на 15.
+  - id: python.basics.variables.t5
+    type: code
+    title: Три типа
+    difficulty: 2
+    context: neutral
+    prompt: Выведите три строки с результатами type(4), type(4.0) и type("4"). Пишите вызовы в этом порядке.
+    starter_code: ""
+    tests:
+      - stdin: ""
+        expected_stdout: "<class 'int'>\n<class 'float'>\n<class 'str'>\n"
+    hints:
+      - type возвращает класс значения.
+      - Кавычки делают значение строкой, даже если внутри цифры.
+      - 4.0 — это float, хотя дробная часть равна нулю.
+    solution: |
+      print(type(4))
+      print(type(4.0))
+      print(type("4"))
+    explanation: Одинаковые на вид цифры могут иметь разные типы.
+  - id: python.basics.variables.t6
+    type: choice
+    title: Что такое None
+    difficulty: 1
+    context: neutral
+    prompt: Чему соответствует None?
+    options:
+      - id: a
+        text: Числу 0
+      - id: b
+        text: Пустой строке
+      - id: c
+        text: Отсутствию значения
+    answer: c
+    hints:
+      - None — отдельное значение, не число и не текст.
+      - Пустая строка записывается как "".
+      - None используют, когда значения ещё нет.
+    solution: c
+    explanation: None означает «значения нет», а не ноль и не пустой текст.
+  - id: python.basics.variables.t7
+    type: code
+    title: Флаг проверки
+    difficulty: 2
+    context: security
+    prompt: Создайте passed со значением True и score со значением None. Выведите сначала passed, затем score.
+    starter_code: ""
+    tests:
+      - stdin: ""
+        expected_stdout: "True\nNone\n"
+    hints:
+      - True и None пишутся с большой буквы и без кавычек.
+      - Это не строки "True" и "None".
+      - Два print дадут две строки.
+    solution: |
+      passed = True
+      score = None
+      print(passed)
+      print(score)
+    explanation: bool и None — самостоятельные значения, не текст.

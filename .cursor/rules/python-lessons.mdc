@@ -1,0 +1,7 @@
+---
+description: Правила добавления уроков Deep Forest Python
+globs: content/**/*.yaml
+alwaysApply: false
+---
+
+Новый урок — отдельный YAML в content/lessons. Не храните тексты уроков в React. У урока есть цель, 2–4 абзаца, примеры, 4–8 заданий, итог и источники. Пререквизиты ссылаются только на уже существующие id. После правки запустите scripts/validate_content.py и scripts/build_course_manifest.py. Python ученика не исполняется на сервере.

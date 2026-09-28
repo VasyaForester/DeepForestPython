@@ -1,0 +1,135 @@
+id: python
+title: Python
+tagline: От нуля до профессионального уровня
+summary: >
+  Бесплатная интерактивная программа: программирование, алгоритмы,
+  инженерные практики и анализ данных в одной последовательности.
+  Курс не делится на треки разработчика и аналитика.
+execution: browser
+sections:
+  - id: basics
+    slug: basics
+    order: 1
+    title: Старт и основы Python
+    status: published
+    summary: Программа, print, строки, переменные, типы и ввод данных.
+  - id: conditions
+    slug: conditions
+    order: 2
+    title: Условия и циклы
+    status: planned
+    summary: if, elif, else, while, for, range, break и continue.
+  - id: collections
+    slug: collections
+    order: 3
+    title: Строки и коллекции
+    status: planned
+    summary: Индексы, срезы, list, tuple, set, dict и comprehensions.
+  - id: functions
+    slug: functions
+    order: 4
+    title: Функции
+    status: planned
+    summary: def, параметры, return, область видимости, args и рекурсия.
+  - id: files
+    slug: files
+    order: 5
+    title: Файлы, данные и модули
+    status: planned
+    summary: Файлы, pathlib, CSV, JSON, модули и пакеты.
+  - id: cli
+    slug: cli
+    order: 6
+    title: Бонус. Командная строка
+    status: planned
+    summary: Терминал, навигация, файлы и запуск Python. Необязательный блок.
+  - id: errors
+    slug: errors
+    order: 7
+    title: Исключения, отладка и тестирование
+    status: planned
+    summary: Traceback, try/except, assert и pytest.
+  - id: oop
+    slug: oop
+    order: 8
+    title: ООП
+    status: planned
+    summary: Классы, наследование, свойства, dunder-методы и dataclasses.
+  - id: algorithms
+    slug: algorithms
+    order: 9
+    title: Алгоритмы и структуры данных
+    status: planned
+    summary: Сложность, поиск, сортировки, стек, очередь, деревья и графы.
+  - id: deeper
+    slug: deeper
+    order: 10
+    title: Python глубже
+    status: planned
+    summary: Итераторы, генераторы, замыкания, декораторы и match.
+  - id: tooling
+    slug: tooling
+    order: 11
+    title: Окружение, пакеты и Git
+    status: planned
+    summary: Интерпретатор, venv, pip, pyproject и базовый Git.
+  - id: github
+    slug: github
+    order: 12
+    title: Git и GitHub
+    status: planned
+    summary: Remote, pull request, конфликты и GitHub Actions.
+  - id: http
+    slug: http
+    order: 13
+    title: HTTP, Web и API
+    status: planned
+    summary: URL, методы, коды ответа, JSON и разбор API.
+  - id: sql
+    slug: sql
+    order: 14
+    title: SQL и базы данных
+    status: planned
+    summary: SELECT, JOIN, CTE, оконные функции, транзакции и SQLAlchemy.
+  - id: data
+    slug: data
+    order: 15
+    title: NumPy и Pandas
+    status: planned
+    summary: Массивы, векторизация, DataFrame, пропуски и очистка данных.
+  - id: stats
+    slug: stats
+    order: 16
+    title: Визуализация и статистика
+    status: planned
+    summary: Графики, распределения, корреляция и проверка гипотез.
+  - id: performance
+    slug: performance
+    order: 17
+    title: Производительность и параллельность
+    status: planned
+    summary: timeit, память, потоки, GIL, multiprocessing и asyncio.
+  - id: backend
+    slug: backend
+    order: 18
+    title: Backend и веб-разработка
+    status: planned
+    summary: Flask, REST, FastAPI, Pydantic и тестирование API.
+  - id: engineering
+    slug: engineering
+    order: 19
+    title: Инженерия и безопасность
+    status: planned
+    summary: Типизация, линтеры, логи, секреты, CI и Docker.
+  - id: vibe
+    slug: vibe
+    order: 20
+    title: Бонус. Vibe coding
+    status: planned
+    summary: Живой блок про работу с ИИ-помощником. Обновляется отдельно.
+  - id: capstone
+    slug: capstone
+    order: 21
+    title: Финальный проект
+    status: planned
+    summary: Постановка, архитектура, реализация, проверка и диплом.
