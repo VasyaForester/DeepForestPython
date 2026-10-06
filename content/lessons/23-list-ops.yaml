@@ -1,0 +1,208 @@
+id: python.collections.list-ops
+slug: list-ops
+section: collections
+title: Операции со списком
+order: 4
+weight: 1
+prerequisites:
+  - python.collections.lists
+goal: Добавлять, удалять и считать элементы списка.
+tags: [append, pop, sort, sum, min, max]
+introduces:
+  - id: list-append
+    title: append()
+    summary: Добавляет элемент в конец списка на месте. Метод ничего полезного не возвращает, он меняет сам список.
+  - id: list-pop
+    title: pop()
+    summary: Удаляет элемент и возвращает его. Без аргумента снимает последний, с индексом — элемент на этой позиции.
+  - id: list-sort
+    title: sort()
+    summary: Сортирует список на месте по возрастанию. Чтобы не портить исходный список, позже берут sorted.
+  - id: seq-agg
+    title: sum, min и max
+    summary: Считают сумму, наименьшее и наибольшее значение последовательности чисел.
+theory:
+  - "append добавляет элемент в конец и меняет список на месте. Это основной способ собирать данные в цикле: создают пустой список и дописывают прочитанные значения. extend добавляет сразу несколько элементов из другой последовательности."
+  - "pop снимает элемент и возвращает его. Без аргумента уходит последний, pop(0) снимает первый. remove удаляет первое вхождение значения, а не позицию. Если значения нет, Python сообщает об ошибке."
+  - "sort упорядочивает список на месте. reverse переворачивает его. Обе операции меняют исходный объект, поэтому перед сортировкой, которую нельзя терять, делают копию."
+  - "Для чисел удобны sum, min и max. Они не меняют список, а считают ответ по нему. Пустой список для min и max даёт ошибку, поэтому сначала проверяют, что элементы есть."
+examples:
+  - title: Сбор и сумма
+    code: |
+      values = []
+      values.append(3)
+      values.append(10)
+      values.append(7)
+      print(values)
+      print(sum(values))
+      print(min(values), max(values))
+    explanation: Три вызова append собрали список. Сумма и крайние значения считаются без ручного цикла.
+  - title: Снять и упорядочить
+    code: |
+      items = [4, 1, 8, 1]
+      last = items.pop()
+      print(last)
+      items.remove(1)
+      items.sort()
+      print(items)
+    explanation: pop вернул 8. remove убрал первое вхождение единицы. После sort список стал [1, 4].
+outcomes:
+  - собирать список через append
+  - удалять элемент pop или remove
+  - сортировать список на месте
+  - считать сумму и крайние значения
+resources:
+  - kind: docs
+    title: More on Lists
+    url: https://docs.python.org/3/tutorial/datastructures.html#more-on-lists
+  - kind: youtube
+    title: CS50P — Lecture 5, list methods
+    url: https://www.youtube.com/watch?v=0LrdjNb4lP8
+    author: Harvard CS50
+tasks:
+  - id: python.collections.list-ops.t1
+    type: choice
+    title: Что возвращает append
+    difficulty: 1
+    context: development
+    prompt: Что лежит в result после result = items.append(5)?
+    options:
+      - id: a
+        text: Обновлённый список
+      - id: b
+        text: Число 5
+      - id: c
+        text: None
+    answer: c
+    hints:
+      - append меняет список на месте.
+      - Метод не создаёт новый список как результат.
+      - В Python такие методы возвращают None.
+    solution: c
+    explanation: Типичная ошибка — писать items = items.append(5) и потерять список. Нужно вызывать append отдельно.
+  - id: python.collections.list-ops.t2
+    type: predict_output
+    title: После pop
+    difficulty: 2
+    context: neutral
+    prompt: Что выведет программа?
+    code: |
+      items = [3, 6, 9]
+      print(items.pop())
+      print(items)
+    options:
+      - id: a
+        text: "9 затем [3, 6]"
+      - id: b
+        text: "3 затем [6, 9]"
+      - id: c
+        text: "[3, 6, 9] затем 9"
+    answer: a
+    hints:
+      - pop без индекса снимает последний элемент.
+      - Сначала печатается возвращённое значение.
+      - Потом печатается уже укороченный список.
+    solution: a
+    explanation: Последним был 9, в списке остались 3 и 6.
+  - id: python.collections.list-ops.t3
+    type: predict_output
+    title: Сумма после добавления
+    difficulty: 1
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      values = [2, 5]
+      values.append(3)
+      print(sum(values))
+    options:
+      - id: a
+        text: "7"
+      - id: b
+        text: "10"
+      - id: c
+        text: "2"
+    answer: b
+    hints:
+      - append добавил 3 в конец.
+      - sum складывает все элементы.
+      - Складываются три числа, не два.
+    solution: b
+    explanation: После добавления список равен [2, 5, 3], сумма равна 10.
+  - id: python.collections.list-ops.t4
+    type: code
+    title: Собрать и сложить
+    difficulty: 2
+    context: analytics
+    prompt: Первая строка — число n, далее n целых чисел. Соберите их в список, выведите сумму и наибольшее значение в двух строках.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "4\n3\n10\n-1\n7\n"
+        expected_stdout: "19\n10\n"
+      - stdin: "1\n5\n"
+        expected_stdout: "5\n5\n"
+    hints:
+      - Создайте пустой список до цикла.
+      - Каждое число добавляйте append после int.
+      - sum и max считают ответ по готовому списку.
+    solution: |
+      n = int(input())
+      values = []
+      for _ in range(n):
+          values.append(int(input()))
+      print(sum(values))
+      print(max(values))
+    explanation: Цикл только собирает данные. Итоги считают функции по готовому списку.
+  - id: python.collections.list-ops.t5
+    type: code
+    title: Снять последний
+    difficulty: 2
+    context: development
+    prompt: Прочитайте три строки в список, снимите последний элемент через pop, выведите сначала снятое значение, затем оставшиеся элементы по одному.
+    starter_code: |
+      items = [input(), input(), input()]
+    tests:
+      - stdin: "а\nб\nв\n"
+        expected_stdout: "в\nа\nб\n"
+      - stdin: "1\n2\n3\n"
+        expected_stdout: "3\n1\n2\n"
+    hints:
+      - pop возвращает снятый элемент.
+      - Сохраните его в переменную, чтобы напечатать первым.
+      - Потом обойдите оставшийся список.
+    solution: |
+      items = [input(), input(), input()]
+      last = items.pop()
+      print(last)
+      for item in items:
+          print(item)
+    explanation: pop и меняет список, и отдаёт значение. Печать оставшихся элементов идёт уже по укороченному списку.
+  - id: python.collections.list-ops.t6
+    type: code
+    title: Упорядоченный журнал
+    difficulty: 3
+    context: business
+    prompt: Первая строка — число n, далее n целых чисел. Удалите из набора первое вхождение нуля, если нуль есть, отсортируйте список по возрастанию и выведите элементы по одному.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "5\n4\n0\n2\n0\n1\n"
+        expected_stdout: "0\n1\n2\n4\n"
+      - stdin: "3\n9\n3\n5\n"
+        expected_stdout: "3\n5\n9\n"
+    hints:
+      - Сначала соберите список.
+      - Проверьте 0 in values, затем вызовите remove.
+      - sort меняет список на месте, печатать нужно уже его.
+    solution: |
+      n = int(input())
+      values = []
+      for _ in range(n):
+          values.append(int(input()))
+      if 0 in values:
+          values.remove(0)
+      values.sort()
+      for value in values:
+          print(value)
+    explanation: remove убирает только первое вхождение, второй нуль остаётся. sort упорядочивает то, что осталось.
+

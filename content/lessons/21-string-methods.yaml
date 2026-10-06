@@ -1,0 +1,189 @@
+id: python.collections.string-methods
+slug: string-methods
+section: collections
+title: Методы строк
+order: 2
+weight: 1
+prerequisites:
+  - python.collections.strings
+goal: Приводить текст к нужному виду и разбирать его на части.
+tags: [метод, split, join, strip, replace, upper]
+introduces:
+  - id: method
+    title: Метод
+    summary: Действие, которое вызывают через точку у конкретного значения. Запись text.split() вызывает метод строки.
+  - id: str-strip
+    title: strip()
+    summary: Возвращает копию строки без пробелов и переводов строки по краям.
+  - id: str-split-join
+    title: split() и join()
+    summary: split режет строку на список кусков. join собирает список строк в одну через выбранный разделитель.
+  - id: str-replace
+    title: replace()
+    summary: Возвращает копию строки, где все вхождения фрагмента заменены на другой текст.
+theory:
+  - "Метод вызывают через точку у конкретного значения: text.upper() возвращает копию в верхнем регистре. Исходная строка не меняется, результат нужно сохранить или сразу напечатать."
+  - "strip убирает пробелы и переводы строки по краям. Это почти всегда стоит делать после input: пользователь мог вставить лишний пробел, а сравнение из-за него не сработает."
+  - "split режет строку на список кусков. Без аргумента режет по пробелам, с аргументом — по заданному разделителю. Обратная операция — join: разделитель ставится между элементами списка, поэтому \"-\".join([\"a\", \"b\"]) даёт a-b."
+  - "replace подставляет новый фрагмент вместо всех вхождений старого. startswith и endswith проверяют начало и конец. find возвращает индекс первого вхождения или -1, если фрагмента нет."
+examples:
+  - title: Очистка и регистр
+    code: |
+      raw = "  Сосна  "
+      name = raw.strip().lower()
+      print(name)
+      print(raw)
+    explanation: Методы возвращают новую строку. В name лежит «сосна», а raw по-прежнему с пробелами и заглавной буквой.
+  - title: Разрезать и собрать
+    code: |
+      line = "ель,сосна,пихта"
+      parts = line.split(",")
+      print(parts)
+      print(" / ".join(parts))
+      print(line.replace(",", ";"))
+    explanation: split даёт список из трёх имён. join собирает их через « / », replace меняет запятые на точки с запятой.
+outcomes:
+  - вызывать метод через точку
+  - очищать ввод strip и менять регистр
+  - резать строку split и собирать join
+  - заменять фрагмент и проверять начало или конец
+resources:
+  - kind: docs
+    title: String Methods
+    url: https://docs.python.org/3/library/stdtypes.html#string-methods
+  - kind: youtube
+    title: CS50P — Lecture 0, string methods
+    url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+    author: Harvard CS50
+tasks:
+  - id: python.collections.string-methods.t1
+    type: choice
+    title: Что делает метод
+    difficulty: 1
+    context: neutral
+    prompt: Что произойдёт со строкой name после вызова name.upper()?
+    options:
+      - id: a
+        text: Она сама станет заглавной
+      - id: b
+        text: Вернётся новая заглавная копия, исходная строка не изменится
+      - id: c
+        text: Python сообщит об ошибке, потому что строку нельзя менять
+    answer: b
+    hints:
+      - Строка неизменяема.
+      - Метод возвращает результат, а не правит объект на месте.
+      - Чтобы сохранить новое значение, его присваивают имени.
+    solution: b
+    explanation: upper возвращает новую строку. Без присваивания исходное имя по-прежнему указывает на старый текст.
+  - id: python.collections.string-methods.t2
+    type: predict_output
+    title: После очистки
+    difficulty: 1
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      raw = "  12  "
+      print(raw.strip())
+    options:
+      - id: a
+        text: '"12"'
+      - id: b
+        text: "12"
+      - id: c
+        text: "12 с пробелами"
+    answer: b
+    hints:
+      - strip убирает пробелы только по краям.
+      - print печатает содержимое без кавычек.
+      - Цифры в середине остаются.
+    solution: b
+    explanation: По краям пробелы сняты, на экран попадает 12.
+  - id: python.collections.string-methods.t3
+    type: predict_output
+    title: Сборка через дефис
+    difficulty: 2
+    context: development
+    prompt: Что выведет программа?
+    code: |
+      parts = ["dfp", "12", "log"]
+      print("-".join(parts))
+    options:
+      - id: a
+        text: dfp-12-log
+      - id: b
+        text: dfp12log
+      - id: c
+        text: '"-".join(parts)'
+    answer: a
+    hints:
+      - join вызывают у разделителя, а не у списка.
+      - Разделитель встаёт между элементами, не по краям.
+      - Элементов три, дефисов будет два.
+    solution: a
+    explanation: Дефис ставится между тремя кусками и получается dfp-12-log.
+  - id: python.collections.string-methods.t4
+    type: code
+    title: Нормализация имени
+    difficulty: 2
+    context: business
+    prompt: Прочитайте строку, уберите пробелы по краям, приведите к нижнему регистру и выведите результат.
+    starter_code: |
+      raw = input()
+    tests:
+      - stdin: "  Mira  \n"
+        expected_stdout: "mira\n"
+      - stdin: "СОСНА\n"
+        expected_stdout: "сосна\n"
+    hints:
+      - Методы можно вызывать цепочкой.
+      - Сначала уберите края, потом регистр.
+      - Результат нужно напечатать.
+    solution: |
+      raw = input()
+      print(raw.strip().lower())
+    explanation: strip и lower возвращают новые строки. Цепочка читается слева направо и даёт очищенное имя.
+  - id: python.collections.string-methods.t5
+    type: code
+    title: Первое поле записи
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте строку с полями через точку с запятой и выведите только первое поле без пробелов по краям.
+    starter_code: |
+      line = input()
+    tests:
+      - stdin: " ель ; 12 ; ок\n"
+        expected_stdout: "ель\n"
+      - stdin: "сосна;высота\n"
+        expected_stdout: "сосна\n"
+    hints:
+      - Разделитель здесь не пробел, его нужно передать в split.
+      - split возвращает список, первое поле лежит в [0].
+      - Поле тоже стоит очистить strip.
+    solution: |
+      line = input()
+      print(line.split(";")[0].strip())
+    explanation: split(";") режет по заданному знаку. Первый кусок очищается от пробелов и печатается.
+  - id: python.collections.string-methods.t6
+    type: code
+    title: Маскировка ключа
+    difficulty: 3
+    context: security
+    prompt: "Прочитайте строку. Замените все вхождения secret на *** и выведите результат. Если исходная строка начинается с debug, дополнительно выведите вторую строку скрыть."
+    starter_code: |
+      line = input()
+    tests:
+      - stdin: "token=secret-id\n"
+        expected_stdout: "token=***-id\n"
+      - stdin: "debug secret\n"
+        expected_stdout: "debug ***\nскрыть\n"
+    hints:
+      - Замену делает replace, она не меняет исходную строку сама.
+      - Начало проверяйте startswith по уже прочитанной строке.
+      - Во втором тесте после замены текст всё ещё начинается с debug, но привыкайте проверять исходную строку.
+    solution: |
+      line = input()
+      print(line.replace("secret", "***"))
+      if line.startswith("debug"):
+          print("скрыть")
+    explanation: replace собирает безопасную копию. Проверку начала делают по исходной строке, чтобы решение не зависело от того, затронула ли замена префикс.

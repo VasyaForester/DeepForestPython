@@ -23,12 +23,13 @@ def load_yaml(path: Path) -> dict:
 
 def main() -> None:
     course = load_yaml(CONTENT / "course.yaml")
+    section_order = {section["id"]: section["order"] for section in course["sections"]}
     lessons = []
     for path in sorted((CONTENT / "lessons").glob("*.yaml")):
         lesson = load_yaml(path)
         lesson["source"] = path.name
         lessons.append(lesson)
-    lessons.sort(key=lambda item: (item["section"], item["order"]))
+    lessons.sort(key=lambda item: (section_order[item["section"]], item["order"]))
     diagnostic = load_yaml(CONTENT / "diagnostic.yaml")
     references = []
     seen = set()

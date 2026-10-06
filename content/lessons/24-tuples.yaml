@@ -1,0 +1,194 @@
+id: python.collections.tuples
+slug: tuples
+section: collections
+title: Кортеж
+order: 5
+weight: 1
+prerequisites:
+  - python.collections.list-ops
+goal: Хранить неменяемую последовательность и понимать, когда она уместнее списка.
+tags: [tuple, кортеж, неизменяемость, запись]
+introduces:
+  - id: tuple
+    title: Кортеж
+    summary: Неизменяемая последовательность в круглых скобках. После создания элементы нельзя заменить, добавить или удалить.
+  - id: tuple-one
+    title: Кортеж из одного элемента
+    summary: Запись (5,) с запятой создаёт кортеж. Скобки (5) — это просто число в скобках.
+theory:
+  - "Кортеж похож на список, но его нельзя менять. Его записывают в круглых скобках: point = (3, 5). Индексы, срезы, len и in работают так же. Присваивание point[0] = 8 вызывает ошибку."
+  - "Скобки часто можно не писать: point = 3, 5 тоже кортеж. А вот один элемент требует запятую: (5,) — кортеж, (5) — просто число пять. Пустой кортеж записывают как ()."
+  - "Кортеж уместен, когда набор фиксирован и означает одну запись: координаты, имя и год, код ответа. Список — когда набор будет расти или элементы будут заменять. Превратить одно в другое можно через tuple(items) и list(pair)."
+  - "Кортеж можно сравнивать целиком. Сначала сравнивается нулевой элемент, при равенстве — следующий. Поэтому (1, 9) меньше (2, 0). Это позже поможет сортировать записи."
+examples:
+  - title: Чтение без изменения
+    code: |
+      point = (3, 5)
+      print(point[0], point[1])
+      print(len(point))
+      print(tuple([8, 1]))
+    explanation: Элементы читаются по индексу. list превратился в кортеж (8, 1), исходный список от этого не меняется.
+  - title: Запись из двух полей
+    code: |
+      row = "ель", 12
+      print(row)
+      print(row[0])
+      print((5,) == 5)
+    explanation: Запятая собрала кортеж без скобок. Одинокая пятёрка в скобках числу не равна.
+outcomes:
+  - создавать кортеж и читать поля по индексу
+  - отличать (5,) от (5)
+  - выбирать кортеж для фиксированной записи
+  - преобразовывать список в кортеж и обратно
+resources:
+  - kind: docs
+    title: Tuples and Sequences
+    url: https://docs.python.org/3/tutorial/datastructures.html#tuples-and-sequences
+  - kind: youtube
+    title: CS50P — Lecture 8, tuples
+    url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+    author: Harvard CS50
+tasks:
+  - id: python.collections.tuples.t1
+    type: choice
+    title: Можно ли менять кортеж
+    difficulty: 1
+    context: neutral
+    prompt: Что произойдёт при выполнении point[0] = 8, если point = (3, 5)?
+    options:
+      - id: a
+        text: Первый элемент станет 8
+      - id: b
+        text: Python сообщит об ошибке
+      - id: c
+        text: Создастся новый кортеж (8, 5)
+    answer: b
+    hints:
+      - Кортеж неизменяем.
+      - Присваивание по индексу есть у списка.
+      - Чтобы получить другие значения, собирают новый кортеж.
+    solution: b
+    explanation: Элемент кортежа заменить нельзя. Нужно создать новую пару, если значения изменились.
+  - id: python.collections.tuples.t2
+    type: predict_output
+    title: Один элемент
+    difficulty: 2
+    context: development
+    prompt: Что выведет программа?
+    code: |
+      a = (5)
+      b = (5,)
+      print(type(a) == type(b))
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: "tuple"
+    answer: b
+    hints:
+      - Скобки вокруг одного числа не делают кортеж.
+      - Нужна запятая.
+      - Тип a — int, тип b — tuple.
+    solution: b
+    explanation: (5) — это число, (5,) — кортеж из одного элемента. Типы различны.
+  - id: python.collections.tuples.t3
+    type: predict_output
+    title: Сравнение записей
+    difficulty: 2
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      print((1, 9) < (2, 0))
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: ошибку
+    answer: a
+    hints:
+      - Сравнивается сначала первый элемент.
+      - 1 меньше 2, дальше смотреть не нужно.
+      - 9 и 0 на результат не влияют.
+    solution: a
+    explanation: Кортежи сравниваются слева направо. Уже первая пара 1 и 2 решает, что левый меньше.
+  - id: python.collections.tuples.t4
+    type: code
+    title: Точка наблюдения
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте два целых числа x и y, соберите кортеж и выведите его, затем выведите только вторую координату.
+    starter_code: |
+      x = int(input())
+      y = int(input())
+    tests:
+      - stdin: "3\n5\n"
+        expected_stdout: "(3, 5)\n5\n"
+      - stdin: "0\n-2\n"
+        expected_stdout: "(0, -2)\n-2\n"
+    hints:
+      - Кортеж собирают в круглых скобках.
+      - Печать кортежа сама ставит скобки и запятую.
+      - Вторая координата лежит в [1].
+    solution: |
+      x = int(input())
+      y = int(input())
+      point = (x, y)
+      print(point)
+      print(point[1])
+    explanation: Два числа становятся одной записью. Поля по-прежнему читаются по индексу.
+  - id: python.collections.tuples.t5
+    type: code
+    title: Список в запись
+    difficulty: 2
+    context: development
+    prompt: Прочитайте три строки в список, превратите его в кортеж и выведите тип результата и сам кортеж в двух строках.
+    starter_code: |
+      items = [input(), input(), input()]
+    tests:
+      - stdin: "а\nб\nв\n"
+        expected_stdout: "<class 'tuple'>\n('а', 'б', 'в')\n"
+      - stdin: "1\n2\n3\n"
+        expected_stdout: "<class 'tuple'>\n('1', '2', '3')\n"
+    hints:
+      - Преобразование делает tuple(items).
+      - type печатают как обычно.
+      - Исходный список менять не нужно.
+    solution: |
+      items = [input(), input(), input()]
+      row = tuple(items)
+      print(type(row))
+      print(row)
+    explanation: tuple копирует элементы в неизменяемую последовательность. type показывает, что получился кортеж.
+  - id: python.collections.tuples.t6
+    type: code
+    title: Фиксированный код
+    difficulty: 3
+    context: security
+    prompt: "Прочитайте код и число попыток. Соберите кортеж (код, попытки) и выведите ok, если код равен gate и попыток не больше 3, иначе deny."
+    starter_code: |
+      code = input()
+      tries = int(input())
+    tests:
+      - stdin: "gate\n2\n"
+        expected_stdout: "ok\n"
+      - stdin: "gate\n4\n"
+        expected_stdout: "deny\n"
+      - stdin: "open\n1\n"
+        expected_stdout: "deny\n"
+    hints:
+      - Поля читайте из кортежа по индексу.
+      - Нужны оба условия сразу.
+      - Сравнивайте код со строкой gate.
+    solution: |
+      code = input()
+      tries = int(input())
+      record = (code, tries)
+      if record[0] == "gate" and record[1] <= 3:
+          print("ok")
+      else:
+          print("deny")
+    explanation: Кортеж держит пару значений вместе. Проверка смотрит оба поля, менять запись не требуется.

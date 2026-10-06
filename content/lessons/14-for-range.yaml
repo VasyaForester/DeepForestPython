@@ -1,0 +1,212 @@
+id: python.conditions.for-range
+slug: for-range
+section: conditions
+title: Цикл for и range
+order: 5
+weight: 1
+prerequisites:
+  - python.conditions.while
+goal: Повторять блок заданное число раз и перебирать числовые диапазоны.
+tags: [for, range, цикл, диапазон, шаг]
+introduces:
+  - id: for
+    title: for
+    summary: Повторяет блок для каждого значения из последовательности. Переменная цикла получает очередное значение автоматически.
+  - id: range
+    title: range()
+    summary: Задаёт последовательность целых чисел. range(5) даёт числа от 0 до 4, правая граница не включается.
+  - id: range-step
+    title: Шаг range
+    summary: Третий аргумент задаёт шаг. range(2, 9, 3) даёт 2, 5, 8. Отрицательный шаг идёт в обратную сторону.
+theory:
+  - "Когда число повторений известно заранее, вместо while берут for. Запись for i in range(3): повторяет блок три раза, а переменная i получает значения 0, 1 и 2. Счётчик увеличивать вручную не нужно."
+  - "range(stop) даёт числа от нуля до stop минус один. Правая граница не включается — это главное, что нужно запомнить. range(1, 5) даёт 1, 2, 3, 4. Чтобы дойти до n включительно, пишут range(1, n + 1)."
+  - "Третий аргумент задаёт шаг: range(2, 9, 3) даёт 2, 5 и 8. Отрицательный шаг идёт вниз: range(3, 0, -1) даёт 3, 2 и 1."
+  - "Переменная цикла живёт и после его окончания, в ней остаётся последнее значение. Если само значение не нужно, по соглашению пишут подчёркивание вместо имени."
+examples:
+  - title: Три повторения
+    code: |
+      for i in range(3):
+          print(i)
+      print("конец")
+    explanation: Переменная i принимает значения 0, 1 и 2. Число 3 в диапазон не входит.
+  - title: Диапазон с шагом
+    code: |
+      for value in range(2, 9, 3):
+          print(value)
+      for down in range(3, 0, -1):
+          print(down)
+    explanation: Первый цикл идёт с шагом 3, второй — вниз с шагом минус один и доходит до 1.
+outcomes:
+  - писать цикл for с range
+  - помнить, что правая граница не включается
+  - задавать начало и шаг диапазона
+  - выбирать между for и while
+resources:
+  - kind: docs
+    title: The range() function
+    url: https://docs.python.org/3/tutorial/controlflow.html#the-range-function
+  - kind: youtube
+    title: CS50P — Lecture 2, loops
+    url: https://www.youtube.com/watch?v=Kd_1Hesmdeo
+    author: Harvard CS50
+tasks:
+  - id: python.conditions.for-range.t1
+    type: choice
+    title: Что даёт range(4)
+    difficulty: 1
+    context: neutral
+    prompt: Какие значения перебирает for i in range(4)?
+    options:
+      - id: a
+        text: 0, 1, 2, 3
+      - id: b
+        text: 1, 2, 3, 4
+      - id: c
+        text: 0, 1, 2, 3, 4
+    answer: a
+    hints:
+      - Отсчёт начинается с нуля.
+      - Правая граница не включается.
+      - Всего получается ровно четыре значения.
+    solution: a
+    explanation: range(4) даёт четыре числа, начиная с нуля и не доходя до четырёх.
+  - id: python.conditions.for-range.t2
+    type: predict_output
+    title: Последнее значение
+    difficulty: 2
+    context: neutral
+    prompt: Какое число будет выведено последним?
+    code: |
+      for i in range(1, 5):
+          print(i)
+    options:
+      - id: a
+        text: "4"
+      - id: b
+        text: "5"
+      - id: c
+        text: "3"
+    answer: a
+    hints:
+      - Диапазон начинается с единицы.
+      - Правая граница не входит в диапазон.
+      - Последним оказывается число на единицу меньше границы.
+    solution: a
+    explanation: range(1, 5) даёт 1, 2, 3 и 4. Пятёрка в диапазон не попадает.
+  - id: python.conditions.for-range.t3
+    type: code
+    title: Числа до n
+    difficulty: 2
+    context: neutral
+    prompt: Прочитайте целое положительное число n и выведите все числа от 1 до n включительно, каждое на своей строке.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\n"
+        expected_stdout: "1\n2\n3\n"
+      - stdin: "1\n"
+        expected_stdout: "1\n"
+    hints:
+      - Диапазон начинается с единицы.
+      - Правая граница не включается.
+      - Чтобы дойти до n, нужна граница n + 1.
+    solution: |
+      n = int(input())
+      for i in range(1, n + 1):
+          print(i)
+    explanation: Запись n + 1 в правой границе — обычный приём, когда последнее значение должно войти в диапазон.
+  - id: python.conditions.for-range.t4
+    type: code
+    title: Сумма чётных
+    difficulty: 3
+    context: analytics
+    prompt: Прочитайте целое положительное число n и выведите сумму всех чётных чисел от 1 до n включительно.
+    starter_code: ""
+    tests:
+      - stdin: "10\n"
+        expected_stdout: "30\n"
+      - stdin: "1\n"
+        expected_stdout: "0\n"
+      - stdin: "7\n"
+        expected_stdout: "12\n"
+    hints:
+      - Переменную для суммы создайте до цикла.
+      - Чётность проверяется остатком от деления на 2.
+      - Подойдёт и шаг 2 в range, если начать с двойки.
+    solution: |
+      n = int(input())
+      total = 0
+      for value in range(2, n + 1, 2):
+          total = total + value
+      print(total)
+    explanation: Шаг 2 сразу даёт только чётные числа, поэтому условие внутри цикла не нужно.
+  - id: python.conditions.for-range.t5
+    type: code
+    title: Почините границу
+    difficulty: 2
+    context: development
+    prompt: Программа должна выводить числа от 1 до n включительно. Сейчас последнее число пропадает. Исправьте код.
+    starter_code: |
+      n = int(input())
+      for i in range(1, n):
+          print(i)
+    tests:
+      - stdin: "3\n"
+        expected_stdout: "1\n2\n3\n"
+      - stdin: "1\n"
+        expected_stdout: "1\n"
+    hints:
+      - Правая граница range не входит в диапазон.
+      - Сейчас цикл доходит только до n минус один.
+      - Увеличьте границу на единицу.
+    solution: |
+      n = int(input())
+      for i in range(1, n + 1):
+          print(i)
+    explanation: Ошибка на единицу — самая частая в циклах. Границу стоит проверять на самых маленьких входных данных.
+  - id: python.conditions.for-range.t6
+    type: code
+    title: Сумма введённых чисел
+    difficulty: 3
+    context: business
+    prompt: Первая строка ввода — количество чисел n. Дальше идут n строк, в каждой по целому числу. Выведите их сумму.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\n10\n20\n30\n"
+        expected_stdout: "60\n"
+      - stdin: "1\n5\n"
+        expected_stdout: "5\n"
+    hints:
+      - Количество известно заранее, поэтому подходит for.
+      - Само значение переменной цикла здесь не нужно.
+      - Каждый вызов input читает следующую строку.
+    solution: |
+      n = int(input())
+      total = 0
+      for _ in range(n):
+          total = total + int(input())
+      print(total)
+    explanation: Переменная цикла не используется, поэтому вместо имени стоит подчёркивание. Ввод читается внутри цикла.
+  - id: python.conditions.for-range.t7
+    type: code
+    title: Обратный отсчёт циклом for
+    difficulty: 3
+    context: neutral
+    prompt: Прочитайте целое положительное число n и выведите числа от n до 1 в обратном порядке, каждое на своей строке.
+    starter_code: ""
+    tests:
+      - stdin: "4\n"
+        expected_stdout: "4\n3\n2\n1\n"
+      - stdin: "1\n"
+        expected_stdout: "1\n"
+    hints:
+      - Диапазон может идти вниз, если шаг отрицательный.
+      - Начало диапазона — само число n.
+      - Чтобы дойти до единицы, правой границей берут ноль.
+    solution: |
+      n = int(input())
+      for i in range(n, 0, -1):
+          print(i)
+    explanation: При отрицательном шаге правая граница тоже не включается, поэтому ноль указывает, что последним будет 1.

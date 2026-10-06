@@ -1,0 +1,223 @@
+id: python.conditions.elif
+slug: elif
+section: conditions
+title: Несколько ветвей и elif
+order: 2
+weight: 1
+prerequisites:
+  - python.conditions.if-else
+goal: Выбирать одну ветку из нескольких и ставить проверки в правильном порядке.
+tags: [elif, условие, порядок проверок, ветвление]
+introduces:
+  - id: elif
+    title: elif
+    summary: Проверяется только если все условия выше оказались ложными. Веток elif может быть сколько угодно.
+  - id: branch-order
+    title: Порядок проверок
+    summary: Python берёт первую истинную ветку и остальные не проверяет. Поэтому порядок условий меняет результат.
+theory:
+  - "Когда вариантов больше двух, между if и else ставят elif. Это сокращение от else if. Веток elif может быть сколько угодно, а else в конце необязателен."
+  - "Python проверяет условия сверху вниз и останавливается на первом истинном. Остальные ветки он даже не смотрит, поэтому выполняется ровно одна из них."
+  - "Из этого следует главное правило: порядок проверок важен. Если сначала проверить score >= 60, то значение 95 попадёт в эту ветку и до проверки score >= 90 дело не дойдёт. Диапазоны проверяют от самого строгого к самому мягкому."
+  - "Если ни одно условие не истинно и ветки else нет, не выполняется ничего. Это нормально, но стоит спросить себя, не потерян ли случай, который важен."
+examples:
+  - title: Три ветки
+    code: |
+      score = 74
+      if score >= 90:
+          print("отлично")
+      elif score >= 60:
+          print("зачёт")
+      else:
+          print("незачёт")
+    explanation: Первое условие ложно, второе истинно. Ветка else пропускается.
+  - title: Порядок имеет значение
+    code: |
+      score = 95
+      if score >= 60:
+          print("зачёт")
+      elif score >= 90:
+          print("отлично")
+    explanation: Из-за неверного порядка 95 попадает в первую ветку, и вторая уже недостижима. Проверять надо сначала более строгое условие.
+outcomes:
+  - писать несколько ветвей через elif
+  - ставить проверки диапазонов в правильном порядке
+  - понимать, что выполняется только одна ветка
+  - замечать недостижимые условия
+resources:
+  - kind: docs
+    title: if Statements
+    url: https://docs.python.org/3/tutorial/controlflow.html#if-statements
+  - kind: youtube
+    title: CS50P — Lecture 1
+    url: https://www.youtube.com/watch?v=CJJQaqN4LCM
+    author: Harvard CS50
+tasks:
+  - id: python.conditions.elif.t1
+    type: choice
+    title: Когда проверяется elif
+    difficulty: 1
+    context: neutral
+    prompt: В какой момент Python проверяет условие ветки elif?
+    options:
+      - id: a
+        text: Всегда, независимо от предыдущих условий
+      - id: b
+        text: Только если все условия выше оказались ложными
+      - id: c
+        text: Только если условие в if было истинным
+    answer: b
+    hints:
+      - Ветки проверяются сверху вниз.
+      - Python останавливается на первой истинной ветке.
+      - До elif дело доходит, только если выше ничего не подошло.
+    solution: b
+    explanation: elif проверяется лишь тогда, когда все условия выше ложны. Поэтому выполняется ровно одна ветка.
+  - id: python.conditions.elif.t2
+    type: predict_output
+    title: Недостижимая ветка
+    difficulty: 2
+    context: development
+    prompt: Что выведет этот код?
+    code: |
+      value = 95
+      if value >= 60:
+          print("зачёт")
+      elif value >= 90:
+          print("отлично")
+    options:
+      - id: a
+        text: зачёт
+      - id: b
+        text: отлично
+      - id: c
+        text: зачёт и отлично
+    answer: a
+    hints:
+      - Проверьте первое условие для значения 95.
+      - Оно уже истинно.
+      - Вторая ветка в таком порядке недостижима для любых значений от 90.
+    solution: a
+    explanation: Первая истинная ветка завершает выбор. Условие ниже для больших значений никогда не сработает.
+  - id: python.conditions.elif.t3
+    type: code
+    title: Оценка по баллам
+    difficulty: 3
+    context: business
+    prompt: Прочитайте целое число баллов. Выведите отлично при 90 и выше, зачёт при 60 и выше, иначе незачёт.
+    starter_code: |
+      score = int(input())
+    tests:
+      - stdin: "95\n"
+        expected_stdout: "отлично\n"
+      - stdin: "74\n"
+        expected_stdout: "зачёт\n"
+      - stdin: "12\n"
+        expected_stdout: "незачёт\n"
+      - stdin: "60\n"
+        expected_stdout: "зачёт\n"
+    hints:
+      - Начните с самой высокой границы.
+      - Границы входят в диапазон, сравнение нестрогое.
+      - Последний случай закройте веткой else.
+    solution: |
+      score = int(input())
+      if score >= 90:
+          print("отлично")
+      elif score >= 60:
+          print("зачёт")
+      else:
+          print("незачёт")
+    explanation: Проверка идёт от строгого условия к мягкому, поэтому каждое значение попадает в свою ветку.
+  - id: python.conditions.elif.t4
+    type: code
+    title: Знак числа
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте целое число и выведите слово положительное, отрицательное или ноль.
+    starter_code: ""
+    tests:
+      - stdin: "7\n"
+        expected_stdout: "положительное\n"
+      - stdin: "-3\n"
+        expected_stdout: "отрицательное\n"
+      - stdin: "0\n"
+        expected_stdout: "ноль\n"
+    hints:
+      - Случаев ровно три.
+      - Два из них проверяются сравнением с нулём.
+      - Третий случай остаётся для else.
+    solution: |
+      number = int(input())
+      if number > 0:
+          print("положительное")
+      elif number < 0:
+          print("отрицательное")
+      else:
+          print("ноль")
+    explanation: Две проверки покрывают оба знака, а ноль остаётся единственным случаем для else.
+  - id: python.conditions.elif.t5
+    type: code
+    title: Почините порядок проверок
+    difficulty: 3
+    context: development
+    prompt: Программа должна выводить высокий при значении от 100, средний от 50 и низкий в остальных случаях. Сейчас порядок проверок неверный. Исправьте код.
+    starter_code: |
+      value = int(input())
+      if value >= 50:
+          print("средний")
+      elif value >= 100:
+          print("высокий")
+      else:
+          print("низкий")
+    tests:
+      - stdin: "140\n"
+        expected_stdout: "высокий\n"
+      - stdin: "70\n"
+        expected_stdout: "средний\n"
+      - stdin: "10\n"
+        expected_stdout: "низкий\n"
+    hints:
+      - Значение 140 сейчас попадает не в свою ветку.
+      - Сначала надо проверять более строгое условие.
+      - Поменяйте первые две ветки местами.
+    solution: |
+      value = int(input())
+      if value >= 100:
+          print("высокий")
+      elif value >= 50:
+          print("средний")
+      else:
+          print("низкий")
+    explanation: Границы диапазонов проверяют сверху вниз, от большей к меньшей, иначе широкое условие перехватывает значения узкого.
+  - id: python.conditions.elif.t6
+    type: code
+    title: Код ответа сервера
+    difficulty: 3
+    context: security
+    prompt: Прочитайте целый код ответа. Выведите успех при кодах от 200 до 299, ошибка клиента при кодах от 400 до 499, ошибка сервера при кодах от 500 до 599, иначе другое.
+    starter_code: ""
+    tests:
+      - stdin: "204\n"
+        expected_stdout: "успех\n"
+      - stdin: "404\n"
+        expected_stdout: "ошибка клиента\n"
+      - stdin: "503\n"
+        expected_stdout: "ошибка сервера\n"
+      - stdin: "301\n"
+        expected_stdout: "другое\n"
+    hints:
+      - Каждый диапазон удобно записать цепочкой сравнений.
+      - Диапазоны не пересекаются, поэтому порядок здесь свободный.
+      - Последний случай закройте веткой else.
+    solution: |
+      code = int(input())
+      if 200 <= code <= 299:
+          print("успех")
+      elif 400 <= code <= 499:
+          print("ошибка клиента")
+      elif 500 <= code <= 599:
+          print("ошибка сервера")
+      else:
+          print("другое")
+    explanation: Когда диапазоны заданы обеими границами, они не перехватывают чужие значения, и порядок ветвей становится неважен.

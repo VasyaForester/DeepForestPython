@@ -1,0 +1,234 @@
+id: python.conditions.accumulate
+slug: accumulate
+section: conditions
+title: Накопление результата
+order: 7
+weight: 1
+prerequisites:
+  - python.conditions.break-continue
+goal: Считать сумму, количество и максимум за один проход цикла.
+tags: [накопление, сумма, счётчик, максимум, среднее]
+introduces:
+  - id: accumulator
+    title: Накопитель
+    summary: Переменная, в которой собирается результат всех итераций. Создаётся до цикла.
+  - id: counter-condition
+    title: Счётчик по условию
+    summary: Переменная, которая увеличивается только на подходящих итерациях.
+  - id: running-max
+    title: Текущий максимум
+    summary: Переменная, в которой хранится наибольшее значение из уже просмотренных.
+theory:
+  - "Цикл обычно не просто печатает значения, а собирает результат. Для этого нужна переменная-накопитель, созданная до цикла. Для суммы её начинают с нуля, для произведения — с единицы."
+  - "Важно, где именно создаётся накопитель. Если написать total = 0 внутри цикла, значение будет обнуляться на каждой итерации, и в ответе останется только последнее слагаемое. Это частая и незаметная ошибка."
+  - "Счётчик по условию работает так же: переменная увеличивается на единицу только тогда, когда значение подошло. Так считают количество положительных значений или число ошибок в данных."
+  - "Максимум ищут сравнением: текущее значение сравнивают с накопленным и при необходимости заменяют. Начальным значением берут первое прочитанное число, а не ноль, иначе отрицательные данные дадут неверный ответ."
+examples:
+  - title: Сумма и количество
+    code: |
+      total = 0
+      count = 0
+      for value in range(1, 6):
+          total = total + value
+          if value % 2 == 1:
+              count = count + 1
+      print(total)
+      print(count)
+    explanation: Накопитель total собирает сумму всех значений, счётчик count растёт только на нечётных.
+  - title: Максимум из введённых
+    code: |
+      n = 3
+      best = -100
+      for step in range(n):
+          value = step * 7 - 10
+          if value > best:
+              best = value
+      print(best)
+    explanation: На каждой итерации новое значение сравнивается с лучшим и заменяет его, если оказалось больше.
+outcomes:
+  - создавать накопитель до цикла
+  - считать сумму и среднее
+  - считать количество значений по условию
+  - находить максимум за один проход
+resources:
+  - kind: docs
+    title: for Statements
+    url: https://docs.python.org/3/tutorial/controlflow.html#for-statements
+  - kind: youtube
+    title: CS50P — Lecture 2
+    url: https://www.youtube.com/watch?v=Kd_1Hesmdeo
+    author: Harvard CS50
+tasks:
+  - id: python.conditions.accumulate.t1
+    type: choice
+    title: Где создавать накопитель
+    difficulty: 2
+    context: development
+    prompt: Где должна появиться переменная для суммы?
+    options:
+      - id: a
+        text: До цикла, один раз
+      - id: b
+        text: Внутри цикла, на каждой итерации
+      - id: c
+        text: После цикла, перед выводом
+    answer: a
+    hints:
+      - Сумма должна сохраняться между итерациями.
+      - Создание внутри цикла обнуляло бы её каждый раз.
+      - После цикла накапливать уже нечего.
+    solution: a
+    explanation: Накопитель создают до цикла, иначе каждая итерация начинала бы счёт заново.
+  - id: python.conditions.accumulate.t2
+    type: predict_output
+    title: Обнуление внутри цикла
+    difficulty: 3
+    context: development
+    prompt: Что выведет этот код?
+    code: |
+      for value in range(1, 4):
+          total = 0
+          total = total + value
+      print(total)
+    options:
+      - id: a
+        text: "3"
+      - id: b
+        text: "6"
+      - id: c
+        text: "0"
+    answer: a
+    hints:
+      - Присваивание нуля выполняется на каждой итерации.
+      - К нулю прибавляется только текущее значение.
+      - Последнее значение диапазона равно 3.
+    solution: a
+    explanation: Накопитель обнуляется каждый раз, поэтому в нём остаётся лишь последнее слагаемое.
+  - id: python.conditions.accumulate.t3
+    type: code
+    title: Среднее значение
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — количество измерений n, далее n строк с целыми числами. Выведите среднее значение с двумя знаками после точки.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\n10\n20\n30\n"
+        expected_stdout: "20.00\n"
+      - stdin: "2\n1\n2\n"
+        expected_stdout: "1.50\n"
+    hints:
+      - Сумму накапливайте в цикле.
+      - Количество уже известно из первой строки.
+      - Среднее выводите f-строкой с форматом .2f.
+    solution: |
+      n = int(input())
+      total = 0
+      for _ in range(n):
+          total = total + int(input())
+      print(f"{total / n:.2f}")
+    explanation: Сумма копится в цикле, а деление и форматирование выполняются один раз после него.
+  - id: python.conditions.accumulate.t4
+    type: code
+    title: Сколько выше порога
+    difficulty: 3
+    context: business
+    prompt: Первая строка — количество чисел n, вторая — порог, далее n строк с целыми числами. Выведите, сколько чисел строго больше порога.
+    starter_code: ""
+    tests:
+      - stdin: "4\n10\n5\n15\n10\n20\n"
+        expected_stdout: "2\n"
+      - stdin: "2\n100\n1\n2\n"
+        expected_stdout: "0\n"
+    hints:
+      - Счётчик начинается с нуля.
+      - Сравнение строгое, равные порогу не считаются.
+      - Увеличивайте счётчик только внутри условия.
+    solution: |
+      n = int(input())
+      limit = int(input())
+      count = 0
+      for _ in range(n):
+          if int(input()) > limit:
+              count = count + 1
+      print(count)
+    explanation: Счётчик растёт только на подходящих итерациях, поэтому в конце он равен числу таких значений.
+  - id: python.conditions.accumulate.t5
+    type: code
+    title: Максимум из измерений
+    difficulty: 4
+    context: analytics
+    prompt: Первая строка — количество измерений n, далее n строк с целыми числами, среди них могут быть отрицательные. Выведите наибольшее значение.
+    starter_code: ""
+    tests:
+      - stdin: "4\n3\n17\n9\n2\n"
+        expected_stdout: "17\n"
+      - stdin: "3\n-5\n-20\n-7\n"
+        expected_stdout: "-5\n"
+      - stdin: "1\n42\n"
+        expected_stdout: "42\n"
+    hints:
+      - Первое значение прочитайте до цикла и примите за максимум.
+      - Остальных значений останется n минус один.
+      - Заменяйте максимум, когда новое значение больше.
+    solution: |
+      n = int(input())
+      best = int(input())
+      for _ in range(n - 1):
+          value = int(input())
+          if value > best:
+              best = value
+      print(best)
+    explanation: Начальным максимумом берут первое значение, поэтому отрицательные данные обрабатываются правильно.
+  - id: python.conditions.accumulate.t6
+    type: code
+    title: Почините накопитель
+    difficulty: 3
+    context: development
+    prompt: Программа должна выводить сумму n введённых чисел. Сейчас она печатает только последнее. Исправьте код.
+    starter_code: |
+      n = int(input())
+      for _ in range(n):
+          total = 0
+          total = total + int(input())
+      print(total)
+    tests:
+      - stdin: "3\n10\n20\n30\n"
+        expected_stdout: "60\n"
+      - stdin: "1\n7\n"
+        expected_stdout: "7\n"
+    hints:
+      - Строка с обнулением выполняется на каждой итерации.
+      - Накопитель должен создаваться один раз.
+      - Перенесите создание переменной выше цикла.
+    solution: |
+      n = int(input())
+      total = 0
+      for _ in range(n):
+          total = total + int(input())
+      print(total)
+    explanation: Одна строка, перенесённая за пределы цикла, превращает последнее значение в настоящую сумму.
+  - id: python.conditions.accumulate.t7
+    type: code
+    title: Доля успешных проверок
+    difficulty: 4
+    context: security
+    prompt: Первая строка — количество проверок n, далее n строк, в каждой 1 для успеха или 0 для отказа. Выведите долю успешных проверок в процентах с одним знаком после точки.
+    starter_code: ""
+    tests:
+      - stdin: "4\n1\n0\n1\n1\n"
+        expected_stdout: "75.0%\n"
+      - stdin: "2\n0\n0\n"
+        expected_stdout: "0.0%\n"
+    hints:
+      - Считайте только единицы.
+      - Долю считают делением на общее число проверок.
+      - Процент выводите f-строкой с форматом .1f и знаком процента.
+    solution: |
+      n = int(input())
+      passed = 0
+      for _ in range(n):
+          if int(input()) == 1:
+              passed = passed + 1
+      print(f"{passed / n * 100:.1f}%")
+    explanation: Счётчик успешных проверок и общее количество дают долю, а формат приводит её к читаемому виду.

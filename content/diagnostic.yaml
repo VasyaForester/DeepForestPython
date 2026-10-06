@@ -62,3 +62,33 @@ questions:
     options: ["7", "7.00", "{7:.2f}"]
     answer: 1
     suggests: python.basics.fstrings
+  - id: d13
+    prompt: Чем заканчивается строка с if?
+    options: ["двоеточием", "точкой с запятой", "ничем"]
+    answer: 0
+    suggests: python.conditions.if-else
+  - id: d14
+    prompt: Какие значения даёт range(3)?
+    options: ["1, 2, 3", "0, 1, 2", "0, 1, 2, 3"]
+    answer: 1
+    suggests: python.conditions.for-range
+  - id: d15
+    prompt: Какой индекс у первого символа строки?
+    options: ["1", "0", "-1"]
+    answer: 1
+    suggests: python.collections.strings
+  - id: d16
+    prompt: Чем список отличается от строки?
+    options: ["у списка есть len", "элемент списка можно заменить", "список нельзя перебирать"]
+    answer: 1
+    suggests: python.collections.lists
+  - id: d17
+    prompt: Что проверяет in для словаря?
+    options: ["ключи", "значения", "пары целиком"]
+    answer: 0
+    suggests: python.collections.dicts
+  - id: d18
+    prompt: Чем sorted(values) отличается от values.sort()?
+    options: ["ничем", "sorted возвращает новый список", "sorted меняет values на месте"]
+    answer: 1
+    suggests: python.collections.sort-key

@@ -1,0 +1,207 @@
+id: python.collections.unpacking
+slug: unpacking
+section: collections
+title: Распаковка
+order: 10
+weight: 1
+prerequisites:
+  - python.collections.nested
+goal: Раскладывать пары по именам и обходить несколько последовательностей вместе.
+tags: [распаковка, enumerate, zip, swap]
+introduces:
+  - id: unpacking
+    title: Распаковка
+    summary: Запись a, b = pair раскладывает последовательность по именам. Число имён должно совпасть с числом элементов, если нет звёздочки.
+  - id: star-unpack
+    title: Звёздочка в распаковке
+    summary: Имя со * собирает оставшиеся элементы в список. Запись first, *rest = items отделяет голову от хвоста.
+  - id: enumerate
+    title: enumerate()
+    summary: Отдаёт пары (индекс, элемент). Цикл for i, value in enumerate(items) даёт и номер, и значение.
+  - id: zip
+    title: zip()
+    summary: Склеивает несколько последовательностей попозиционно. Цикл останавливается на самой короткой.
+theory:
+  - "Распаковка раскладывает последовательность по именам: tree, height = (\"ель\", 12). Это тот же кортеж, только поля сразу получили понятные имена. Если число имён не совпадает с длиной, Python сообщает об ошибке."
+  - "Обмен значений пишут a, b = b, a. Справа сначала собирается кортеж из текущих значений, затем он раскладывается. Временная переменная не нужна."
+  - "Имя со звёздочкой забирает остаток в список: first, *rest = [3, 5, 8, 2] даёт first равным 3 и rest равным [5, 8, 2]. Так отделяют голову записи от хвоста."
+  - "enumerate при переборе даёт индекс вместе с элементом. Нумерация начинается с нуля, второй аргумент start задаёт другое начало. zip идёт по нескольким спискам сразу: for name, score in zip(names, scores). Короткий список задаёт длину общего прохода."
+examples:
+  - title: Пара и обмен
+    code: |
+      tree, height = "ель", 12
+      print(tree)
+      print(height)
+      height, tree = tree, height
+      print(tree)
+      print(height)
+    explanation: Сначала имена получили строку и число. После обмена в tree лежит 12, в height — «ель».
+  - title: enumerate и zip
+    code: |
+      trees = ["ель", "сосна"]
+      heights = [12, 18]
+      for i, name in enumerate(trees):
+          print(i, name)
+      for name, height in zip(trees, heights):
+          print(f"{name}: {height}")
+    explanation: enumerate нумерует с нуля. zip печатает пары из двух списков одинаковой длины.
+outcomes:
+  - раскладывать кортеж и список по именам
+  - обменивать значения без временной переменной
+  - отделять голову последовательности звёздочкой
+  - обходить индексы через enumerate и пары через zip
+resources:
+  - kind: docs
+    title: Tuples and unpacking
+    url: https://docs.python.org/3/tutorial/datastructures.html#tuples-and-sequences
+  - kind: docs
+    title: enumerate()
+    url: https://docs.python.org/3/library/functions.html#enumerate
+  - kind: youtube
+    title: CS50P — Lecture 5, unpacking
+    url: https://www.youtube.com/watch?v=0LrdjNb4lP8
+    author: Harvard CS50
+tasks:
+  - id: python.collections.unpacking.t1
+    type: choice
+    title: Сколько имён
+    difficulty: 1
+    context: development
+    prompt: Что произойдёт при a, b = [1, 2, 3]?
+    options:
+      - id: a
+        text: a станет 1, b станет [2, 3]
+      - id: b
+        text: Python сообщит об ошибке
+      - id: c
+        text: a станет [1, 2], b станет 3
+    answer: b
+    hints:
+      - Без звёздочки число имён должно совпасть с длиной.
+      - Три значения нельзя разложить на два имени.
+      - Остаток собирает только имя со *.
+    solution: b
+    explanation: Для хвоста нужна звёздочка. Иначе длины не совпадают, и это ошибка, а не догадка Python.
+  - id: python.collections.unpacking.t2
+    type: predict_output
+    title: Обмен
+    difficulty: 1
+    context: neutral
+    prompt: Что выведет программа?
+    code: |
+      a = 1
+      b = 8
+      a, b = b, a
+      print(a)
+    options:
+      - id: a
+        text: "1"
+      - id: b
+        text: "8"
+      - id: c
+        text: "1 8"
+    answer: b
+    hints:
+      - Справа сначала собирается пара текущих значений.
+      - Затем пара раскладывается в a и b.
+      - Печатается только a.
+    solution: b
+    explanation: После обмена в a лежит прежнее значение b, то есть 8.
+  - id: python.collections.unpacking.t3
+    type: predict_output
+    title: Звёздочка
+    difficulty: 2
+    context: development
+    prompt: Что выведет программа?
+    code: |
+      first, *rest = [3, 5, 8]
+      print(first)
+      print(rest)
+    options:
+      - id: a
+        text: "3 затем [5, 8]"
+      - id: b
+        text: "[3] затем [5, 8]"
+      - id: c
+        text: "3 затем 5"
+    answer: a
+    hints:
+      - first получает один элемент, не список.
+      - rest всегда список, даже из двух значений.
+      - 8 входит в rest.
+    solution: a
+    explanation: Голова отделяется как одиночное значение, хвост собирается в список.
+  - id: python.collections.unpacking.t4
+    type: code
+    title: Поля записи
+    difficulty: 2
+    context: analytics
+    prompt: "Прочитайте имя и целое число в двух строках, распакуйте их в pair как кортеж, затем из pair снова разложите в tree и height и выведите строку имя: высота."
+    starter_code: |
+      raw_name = input()
+      raw_height = int(input())
+    tests:
+      - stdin: "ель\n12\n"
+        expected_stdout: "ель: 12\n"
+      - stdin: "сосна\n18\n"
+        expected_stdout: "сосна: 18\n"
+    hints:
+      - Кортеж собирают в круглых скобках.
+      - Распаковка tree, height = pair даёт имена полям.
+      - Формат соберите f-строкой.
+    solution: |
+      raw_name = input()
+      raw_height = int(input())
+      pair = (raw_name, raw_height)
+      tree, height = pair
+      print(f"{tree}: {height}")
+    explanation: Сборка и распаковка — обратные операции. В учебной задаче они рядом, в обычном коде сразу пишут понятные имена.
+  - id: python.collections.unpacking.t5
+    type: code
+    title: Нумерованный список
+    difficulty: 2
+    context: development
+    prompt: Первая строка — число n, далее n строк. Выведите их в формате номер. текст, нумерация с единицы.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\nель\nсосна\nпихта\n"
+        expected_stdout: "1. ель\n2. сосна\n3. пихта\n"
+      - stdin: "1\nлес\n"
+        expected_stdout: "1. лес\n"
+    hints:
+      - Соберите строки в список.
+      - enumerate даёт индекс с нуля, к нему нужно прибавить 1 либо передать start=1.
+      - Распакуйте пару в i и text.
+    solution: |
+      n = int(input())
+      items = []
+      for _ in range(n):
+          items.append(input())
+      for i, text in enumerate(items, start=1):
+          print(f"{i}. {text}")
+    explanation: Второй аргумент enumerate задаёт начало нумерации. Распаковка сразу даёт номер и текст.
+  - id: python.collections.unpacking.t6
+    type: code
+    title: Два столбца
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — число n, далее n пар строк «имя число». Выведите только те имена, у которых число строго больше 10, по одному в строке, в исходном порядке.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\nель 12\nсосна 8\nпихта 18\n"
+        expected_stdout: "ель\nпихта\n"
+      - stdin: "1\nдуб 10\n"
+        expected_stdout: ""
+    hints:
+      - Строку пары разрежьте split.
+      - Два куска удобно сразу распаковать в имя и число.
+      - Число нужно преобразовать через int.
+    solution: |
+      n = int(input())
+      for _ in range(n):
+          name, raw = input().split()
+          if int(raw) > 10:
+              print(name)
+    explanation: split даёт два текстовых куска, распаковка раскладывает их по именам. Сравнение идёт уже после int.

@@ -1,0 +1,204 @@
+id: python.collections.dicts
+slug: dicts
+section: collections
+title: Словарь
+order: 7
+weight: 1
+prerequisites:
+  - python.collections.sets
+goal: Хранить пары «ключ — значение» и читать их по ключу.
+tags: [dict, словарь, ключ, get]
+introduces:
+  - id: dict
+    title: Словарь
+    summary: Набор пар ключ-значение в фигурных скобках. Значение достают по ключу, а не по позиции.
+  - id: dict-get
+    title: get()
+    summary: Возвращает значение по ключу или запасной вариант, если ключа нет. Без запаса возвращает None и не вызывает ошибку.
+  - id: keyerror
+    title: KeyError
+    summary: Ошибка чтения несуществующего ключа через квадратные скобки. Перед чтением ключ проверяют через in или берут get.
+theory:
+  - "Словарь хранит соответствие: stock = {\"ель\": 4, \"сосна\": 2}. Значение читают по ключу stock[\"ель\"], а не по номеру. Ключ должен быть неизменяемым: строка, число или кортеж подходят, список — нет."
+  - "Присваивание stock[\"пихта\"] = 1 добавляет пару или заменяет значение, если ключ уже был. Ключи уникальны. Проверка \"ель\" in stock смотрит ключи, не значения."
+  - "Чтение несуществующего ключа через скобки вызывает KeyError. Метод get возвращает значение или запас: stock.get(\"дуб\", 0) даёт 0, если дуба нет. Это удобно для счётчиков."
+  - "Пустой словарь записывают {} или dict(). Длина len(stock) — это число пар."
+examples:
+  - title: Чтение и запись
+    code: |
+      stock = {"ель": 4, "сосна": 2}
+      print(stock["ель"])
+      stock["пихта"] = 1
+      stock["ель"] = 5
+      print("дуб" in stock)
+      print(len(stock))
+    explanation: Ключ «пихта» добавился, значение «ель» заменилось на 5. Ключа «дуб» нет, пар стало три.
+  - title: Безопасное чтение
+    code: |
+      stock = {"ель": 4}
+      print(stock.get("ель", 0))
+      print(stock.get("дуб", 0))
+    explanation: Для существующего ключа get возвращает 4. Для отсутствующего — запасной нуль, без ошибки.
+outcomes:
+  - создавать словарь и читать значение по ключу
+  - добавлять и заменять пару присваиванием
+  - проверять ключ через in
+  - читать отсутствующий ключ через get
+resources:
+  - kind: docs
+    title: Dictionaries
+    url: https://docs.python.org/3/tutorial/datastructures.html#dictionaries
+  - kind: youtube
+    title: CS50P — Lecture 6, dictionaries
+    url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+    author: Harvard CS50
+tasks:
+  - id: python.collections.dicts.t1
+    type: choice
+    title: Что проверяет in
+    difficulty: 1
+    context: neutral
+    prompt: Что проверяет выражение "ель" in stock для словаря?
+    options:
+      - id: a
+        text: Есть ли такое значение
+      - id: b
+        text: Есть ли такой ключ
+      - id: c
+        text: Есть ли такая пара целиком
+    answer: b
+    hints:
+      - in для словаря смотрит не на содержимое значений.
+      - Чтобы искать значение, позже обходят values.
+      - Ключ — то, чем достают данные.
+    solution: b
+    explanation: Оператор in для словаря проверяет ключи. Наличие значения 4 не делает истинным выражение 4 in stock.
+  - id: python.collections.dicts.t2
+    type: predict_output
+    title: Замена по ключу
+    difficulty: 1
+    context: business
+    prompt: Что выведет программа?
+    code: |
+      price = {"ель": 10, "сосна": 12}
+      price["ель"] = 11
+      print(price["ель"])
+    options:
+      - id: a
+        text: "10"
+      - id: b
+        text: "11"
+      - id: c
+        text: "12"
+    answer: b
+    hints:
+      - Присваивание по существующему ключу заменяет значение.
+      - Новая пара не создаётся.
+      - Читается ключ «ель».
+    solution: b
+    explanation: Значение по ключу «ель» стало 11.
+  - id: python.collections.dicts.t3
+    type: predict_output
+    title: Запас get
+    difficulty: 2
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      stock = {"ель": 4}
+      print(stock.get("дуб", 0))
+    options:
+      - id: a
+        text: "4"
+      - id: b
+        text: "0"
+      - id: c
+        text: "None"
+    answer: b
+    hints:
+      - Ключа «дуб» нет.
+      - Второй аргумент get — запасной ответ.
+      - Ошибки здесь нет.
+    solution: b
+    explanation: get не вызывает KeyError и возвращает указанный запас 0.
+  - id: python.collections.dicts.t4
+    type: code
+    title: Цена товара
+    difficulty: 2
+    context: business
+    prompt: "Дан словарь {\"ель\": 10, \"сосна\": 12}. Прочитайте название и выведите цену. Если названия нет, выведите нет."
+    starter_code: |
+      price = {"ель": 10, "сосна": 12}
+      name = input()
+    tests:
+      - stdin: "ель\n"
+        expected_stdout: "10\n"
+      - stdin: "дуб\n"
+        expected_stdout: "нет\n"
+    hints:
+      - Сначала проверьте ключ через in.
+      - Если ключ есть, читайте значение скобками или get.
+      - Иначе напечатайте слово нет.
+    solution: |
+      price = {"ель": 10, "сосна": 12}
+      name = input()
+      if name in price:
+          print(price[name])
+      else:
+          print("нет")
+    explanation: in защищает от KeyError. Для известного дерева печатается число, для неизвестного — сообщение.
+  - id: python.collections.dicts.t5
+    type: code
+    title: Учёт остатка
+    difficulty: 2
+    context: business
+    prompt: "Дан склад {\"ель\": 4, \"сосна\": 2}. Прочитайте название и целое число. Прибавьте число к остатку этого ключа, если ключа не было — создайте его с этим числом. Выведите новый остаток."
+    starter_code: |
+      stock = {"ель": 4, "сосна": 2}
+      name = input()
+      delta = int(input())
+    tests:
+      - stdin: "ель\n3\n"
+        expected_stdout: "7\n"
+      - stdin: "пихта\n5\n"
+        expected_stdout: "5\n"
+    hints:
+      - Текущий остаток удобно взять get с запасом 0.
+      - Затем запишите сумму обратно по ключу.
+      - Напечатайте значение после записи.
+    solution: |
+      stock = {"ель": 4, "сосна": 2}
+      name = input()
+      delta = int(input())
+      stock[name] = stock.get(name, 0) + delta
+      print(stock[name])
+    explanation: get даёт старый остаток или нуль для нового ключа. Присваивание создаёт пару или обновляет её.
+  - id: python.collections.dicts.t6
+    type: code
+    title: Код роли
+    difficulty: 3
+    context: security
+    prompt: "Дан словарь ролей {\"mira\": \"admin\", \"lev\": \"user\"}. Прочитайте имя. Если роли нет, выведите guest. Если роль admin, выведите full, иначе limited."
+    starter_code: |
+      roles = {"mira": "admin", "lev": "user"}
+      name = input()
+    tests:
+      - stdin: "mira\n"
+        expected_stdout: "full\n"
+      - stdin: "lev\n"
+        expected_stdout: "limited\n"
+      - stdin: "yan\n"
+        expected_stdout: "guest\n"
+    hints:
+      - Сначала разберите случай отсутствующего ключа.
+      - Затем сравните значение с admin.
+      - get с запасом guest тоже подойдёт, но тогда guest нужно отличить от настоящей роли.
+    solution: |
+      roles = {"mira": "admin", "lev": "user"}
+      name = input()
+      if name not in roles:
+          print("guest")
+      elif roles[name] == "admin":
+          print("full")
+      else:
+          print("limited")
+    explanation: Сначала отделяют неизвестное имя. Для известного смотрят значение роли и выбирают уровень доступа.

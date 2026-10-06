@@ -1,0 +1,203 @@
+id: python.conditions.break-continue
+slug: break-continue
+section: conditions
+title: break и continue
+order: 6
+weight: 1
+prerequisites:
+  - python.conditions.for-range
+goal: Прерывать цикл досрочно и пропускать отдельные итерации.
+tags: [break, continue, цикл, выход, пропуск]
+introduces:
+  - id: break
+    title: break
+    summary: Немедленно завершает цикл. Остальные итерации не выполняются.
+  - id: continue
+    title: continue
+    summary: Пропускает оставшуюся часть итерации и переходит к следующей.
+theory:
+  - "Иногда ответ находится раньше, чем цикл дошёл до конца. Команда break немедленно завершает цикл: оставшиеся итерации не выполняются, и управление переходит на строку после цикла."
+  - "Команда continue не выходит из цикла, а пропускает остаток текущей итерации и начинает следующую. Её используют, чтобы не вкладывать большой блок в условие."
+  - "Обе команды относятся к ближайшему окружающему циклу. Их почти всегда пишут внутри условия: break без условия завершил бы цикл на первой же итерации."
+  - "В цикле while с continue легко получить бесконечный цикл: если счётчик увеличивается после continue, до него дело не дойдёт. В таком случае счётчик меняют до пропуска."
+examples:
+  - title: Выход по найденному значению
+    code: |
+      for i in range(2, 10):
+          if 36 % i == 0:
+              print(f"первый делитель: {i}")
+              break
+      print("поиск закончен")
+    explanation: Как только делитель найден, break прерывает цикл, и остальные числа не проверяются.
+  - title: Пропуск итерации
+    code: |
+      for i in range(1, 6):
+          if i % 2 == 0:
+              continue
+          print(i)
+    explanation: Чётные значения пропускаются, вывод получают только нечётные.
+outcomes:
+  - прерывать цикл по условию через break
+  - пропускать итерацию через continue
+  - отличать выход из цикла от пропуска шага
+  - избегать бесконечного цикла при continue
+resources:
+  - kind: docs
+    title: break and continue Statements
+    url: https://docs.python.org/3/tutorial/controlflow.html#break-and-continue-statements
+  - kind: youtube
+    title: CS50P — Lecture 2
+    url: https://www.youtube.com/watch?v=Kd_1Hesmdeo
+    author: Harvard CS50
+tasks:
+  - id: python.conditions.break-continue.t1
+    type: choice
+    title: Чем отличается continue
+    difficulty: 2
+    context: neutral
+    prompt: Что делает команда continue?
+    options:
+      - id: a
+        text: Завершает цикл целиком
+      - id: b
+        text: Пропускает остаток итерации и переходит к следующей
+      - id: c
+        text: Повторяет текущую итерацию заново
+    answer: b
+    hints:
+      - Цикл при этом не заканчивается.
+      - Пропускается только то, что ниже в блоке.
+      - Следующая итерация начинается как обычно.
+    solution: b
+    explanation: continue переходит к следующей итерации, а завершает цикл только break.
+  - id: python.conditions.break-continue.t2
+    type: predict_output
+    title: Сколько чисел выведется
+    difficulty: 2
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      for i in range(1, 6):
+          if i == 3:
+              break
+          print(i)
+    options:
+      - id: a
+        text: 1 и 2
+      - id: b
+        text: 1, 2, 4, 5
+      - id: c
+        text: 1, 2, 3
+    answer: a
+    hints:
+      - break выполняется до вызова print.
+      - Цикл заканчивается на значении 3.
+      - Значения 4 и 5 цикл уже не увидит.
+    solution: a
+    explanation: На третьей итерации цикл прерывается до вывода, поэтому печатаются только 1 и 2.
+  - id: python.conditions.break-continue.t3
+    type: code
+    title: Первый делитель
+    difficulty: 3
+    context: analytics
+    prompt: Прочитайте целое число больше единицы. Выведите его наименьший делитель, больший единицы.
+    starter_code: |
+      number = int(input())
+    tests:
+      - stdin: "36\n"
+        expected_stdout: "2\n"
+      - stdin: "15\n"
+        expected_stdout: "3\n"
+      - stdin: "13\n"
+        expected_stdout: "13\n"
+    hints:
+      - Перебирайте возможные делители от 2 до самого числа.
+      - Делимость проверяется остатком.
+      - Найденный делитель выводят и сразу прерывают цикл.
+    solution: |
+      number = int(input())
+      for i in range(2, number + 1):
+          if number % i == 0:
+              print(i)
+              break
+    explanation: Для простого числа первым делителем оказывается само число, поэтому правая граница диапазона включает его.
+  - id: python.conditions.break-continue.t4
+    type: code
+    title: Сумма без отрицательных
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — количество чисел n, далее n строк с целыми числами. Выведите сумму только неотрицательных значений, отрицательные пропустите.
+    starter_code: ""
+    tests:
+      - stdin: "4\n10\n-5\n20\n-1\n"
+        expected_stdout: "30\n"
+      - stdin: "2\n-3\n-4\n"
+        expected_stdout: "0\n"
+    hints:
+      - Прочитанное значение сохраните в переменную.
+      - Отрицательные пропускайте через continue.
+      - Сумму выводите после цикла.
+    solution: |
+      n = int(input())
+      total = 0
+      for _ in range(n):
+          value = int(input())
+          if value < 0:
+              continue
+          total = total + value
+      print(total)
+    explanation: "continue избавляет от вложенного блока: основная логика остаётся на верхнем уровне цикла."
+  - id: python.conditions.break-continue.t5
+    type: code
+    title: Остановка по нулю
+    difficulty: 3
+    context: business
+    prompt: Первая строка — количество чисел n, далее n строк с целыми числами. Складывайте числа, но остановитесь, как только встретится ноль. Выведите накопленную сумму.
+    starter_code: ""
+    tests:
+      - stdin: "5\n4\n6\n0\n100\n200\n"
+        expected_stdout: "10\n"
+      - stdin: "3\n1\n2\n3\n"
+        expected_stdout: "6\n"
+    hints:
+      - Ноль служит признаком конца данных.
+      - Проверьте значение до того, как прибавите его к сумме.
+      - Выход из цикла даёт break.
+    solution: |
+      n = int(input())
+      total = 0
+      for _ in range(n):
+          value = int(input())
+          if value == 0:
+              break
+          total = total + value
+      print(total)
+    explanation: После break цикл не читает оставшиеся строки, и в сумму попадает только то, что было до нуля.
+  - id: python.conditions.break-continue.t6
+    type: code
+    title: Почините пропуск в while
+    difficulty: 4
+    context: development
+    prompt: Программа должна выводить нечётные числа от 1 до 5. Сейчас счётчик увеличивается после continue, из-за чего цикл зависает. Исправьте код.
+    starter_code: |
+      i = 0
+      while i < 5:
+          if i % 2 == 0:
+              continue
+          print(i)
+          i = i + 1
+    tests:
+      - stdin: ""
+        expected_stdout: "1\n3\n5\n"
+    hints:
+      - При чётном i continue уходит на новую итерацию, не изменив счётчик.
+      - Счётчик нужно увеличивать до проверки.
+      - После переноса увеличения вверх значения пойдут от 1 до 5.
+    solution: |
+      i = 0
+      while i < 5:
+          i = i + 1
+          if i % 2 == 0:
+              continue
+          print(i)
+    explanation: Счётчик меняется до continue, поэтому цикл движется и доходит до пяти. В while с continue изменение счётчика всегда ставят до пропуска.

@@ -1,0 +1,205 @@
+id: python.collections.dict-loop
+slug: dict-loop
+section: collections
+title: Перебор словаря
+order: 8
+weight: 1
+prerequisites:
+  - python.collections.dicts
+goal: Обходить ключи и значения и собирать частоты.
+tags: [items, values, keys, счётчик, частота]
+introduces:
+  - id: dict-keys
+    title: keys()
+    summary: "Даёт ключи словаря. Цикл for key in data: обходит ключи и без этого метода."
+  - id: dict-values
+    title: values()
+    summary: Даёт значения словаря без ключей. Удобно, когда нужна сумма или поиск по содержимому.
+  - id: dict-items
+    title: items()
+    summary: "Даёт пары (ключ, значение). Пока пару читают по индексу: pair[0] — ключ, pair[1] — значение."
+  - id: counting-dict
+    title: Словарь-счётчик
+    summary: Шаблон counts[key] = counts.get(key, 0) + 1 считает, сколько раз встречалось каждое значение.
+theory:
+  - "Цикл for key in stock обходит ключи. Значение в том же шаге берут как stock[key]. Если нужны только значения, пишут for value in stock.values()."
+  - "Метод items возвращает пары. Каждая пара — кортеж из ключа и значения. Пока распаковки нет, поля читают pair[0] и pair[1]. Так можно сразу печатать и ключ, и связанное с ним число."
+  - "Словарь часто служит счётчиком: для каждого очередного слова увеличивают значение по этому ключу. Запас 0 в get позволяет не проверять, встречалось ли слово раньше."
+  - "Порядок ключей в современном Python совпадает с порядком вставки. На это можно опираться в учебных задачах, но смысл словаря всё равно в доступе по ключу, а не в номере."
+examples:
+  - title: Ключ и значение
+    code: |
+      stock = {"ель": 4, "сосна": 2}
+      for pair in stock.items():
+          print(pair[0], pair[1])
+      print(sum(stock.values()))
+    explanation: items даёт пары, values — числа для суммы. Имена деревьев в сумму не входят.
+  - title: Частоты слов
+    code: |
+      words = ["ель", "сосна", "ель"]
+      counts = {}
+      for word in words:
+          counts[word] = counts.get(word, 0) + 1
+      print(counts["ель"])
+      print(counts["сосна"])
+    explanation: Первая «ель» создаёт счёт 1, вторая увеличивает его до 2. «сосна» встречается один раз.
+outcomes:
+  - обходить ключи и значения словаря
+  - читать пары из items
+  - считать частоты через get
+  - суммировать значения словаря
+resources:
+  - kind: docs
+    title: Looping Techniques
+    url: https://docs.python.org/3/tutorial/datastructures.html#looping-techniques
+  - kind: youtube
+    title: CS50P — Lecture 6, dictionary loops
+    url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+    author: Harvard CS50
+tasks:
+  - id: python.collections.dict-loop.t1
+    type: choice
+    title: Что обходит цикл
+    difficulty: 1
+    context: neutral
+    prompt: Что перебирает цикл for x in stock, если stock — словарь?
+    options:
+      - id: a
+        text: Значения
+      - id: b
+        text: Ключи
+      - id: c
+        text: Пары (ключ, значение)
+    answer: b
+    hints:
+      - Пары даёт items.
+      - Значения даёт values.
+      - Сам словарь в цикле ведёт себя как набор ключей.
+    solution: b
+    explanation: Без метода словарь отдаёт ключи. Это нужно помнить, иначе легко напечатать имена вместо чисел.
+  - id: python.collections.dict-loop.t2
+    type: predict_output
+    title: Сумма значений
+    difficulty: 1
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      stock = {"ель": 4, "сосна": 2, "пихта": 1}
+      print(sum(stock.values()))
+    options:
+      - id: a
+        text: "3"
+      - id: b
+        text: "7"
+      - id: c
+        text: "4"
+    answer: b
+    hints:
+      - values даёт 4, 2 и 1.
+      - sum складывает числа.
+      - Ключи в сумму не входят.
+    solution: b
+    explanation: Складываются остатки, не количество ключей. 4 + 2 + 1 = 7.
+  - id: python.collections.dict-loop.t3
+    type: predict_output
+    title: После двух одинаковых
+    difficulty: 2
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      counts = {}
+      for word in ["ель", "ель"]:
+          counts[word] = counts.get(word, 0) + 1
+      print(counts["ель"])
+    options:
+      - id: a
+        text: "1"
+      - id: b
+        text: "2"
+      - id: c
+        text: "0"
+    answer: b
+    hints:
+      - Первое вхождение ставит 1.
+      - Второе читает 1 и прибавляет ещё 1.
+      - Ключ один, значение растёт.
+    solution: b
+    explanation: Счётчик увеличился дважды для одного и того же ключа.
+  - id: python.collections.dict-loop.t4
+    type: code
+    title: Печать склада
+    difficulty: 2
+    context: business
+    prompt: "Дан словарь {\"ель\": 4, \"сосна\": 2}. Выведите пары в формате имя: число, по одной на строку, в порядке ключей словаря."
+    starter_code: |
+      stock = {"ель": 4, "сосна": 2}
+    tests:
+      - stdin: ""
+        expected_stdout: "ель: 4\nсосна: 2\n"
+    hints:
+      - Обходите items.
+      - Ключ и значение лежат в pair[0] и pair[1].
+      - Соберите строку через f-строку.
+    solution: |
+      stock = {"ель": 4, "сосна": 2}
+      for pair in stock.items():
+          print(f"{pair[0]}: {pair[1]}")
+    explanation: items даёт пары в порядке вставки. f-строка собирает нужный формат без ручных пробелов вокруг числа.
+  - id: python.collections.dict-loop.t5
+    type: code
+    title: Частоты строк
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — число n, далее n строк. Выведите количество уникальных строк, затем для каждой встреченной строки строку вида слово число в порядке первого появления.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "4\nель\nсосна\nель\nпихта\n"
+        expected_stdout: "3\nель 2\nсосна 1\nпихта 1\n"
+      - stdin: "2\nа\nа\n"
+        expected_stdout: "1\nа 2\n"
+    hints:
+      - Счётчик строится через get.
+      - Порядок ключей совпадёт с первым появлением, если пары добавлялись по мере чтения.
+      - Сначала напечатайте len словаря.
+    solution: |
+      n = int(input())
+      counts = {}
+      for _ in range(n):
+          word = input()
+          counts[word] = counts.get(word, 0) + 1
+      print(len(counts))
+      for pair in counts.items():
+          print(f"{pair[0]} {pair[1]}")
+    explanation: Словарь помнит и частоту, и порядок первого появления. Длина равна числу уникальных строк.
+  - id: python.collections.dict-loop.t6
+    type: code
+    title: Кто чаще
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — число n, далее n строк. Выведите слово с наибольшей частотой. Если таких несколько, выведите то, которое встретилось раньше.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "5\nель\nсосна\nель\nпихта\nсосна\n"
+        expected_stdout: "ель\n"
+      - stdin: "3\nа\nб\nа\n"
+        expected_stdout: "а\n"
+    hints:
+      - Сначала посчитайте частоты.
+      - Запомните лучшее слово и его счёт.
+      - Обновляйте лучшее только если новый счёт строго больше.
+    solution: |
+      n = int(input())
+      counts = {}
+      for _ in range(n):
+          word = input()
+          counts[word] = counts.get(word, 0) + 1
+      best = ""
+      best_count = -1
+      for pair in counts.items():
+          if pair[1] > best_count:
+              best = pair[0]
+              best_count = pair[1]
+      print(best)
+    explanation: Строгое сравнение сохраняет первое слово при равенстве частот. «ель» и «сосна» встречаются по два раза, побеждает «ель».

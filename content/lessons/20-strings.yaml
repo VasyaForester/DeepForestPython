@@ -1,0 +1,191 @@
+id: python.collections.strings
+slug: strings
+section: collections
+title: Строки, индексы и срезы
+order: 1
+weight: 1
+prerequisites:
+  - python.conditions.review
+goal: Доставать символы и фрагменты строки по индексу и срезу.
+tags: [строка, индекс, срез, len, in]
+introduces:
+  - id: index
+    title: Индекс
+    summary: Номер позиции в последовательности. Первый символ имеет индекс 0, последний можно взять как s[-1].
+  - id: slice
+    title: Срез
+    summary: Фрагмент последовательности. Запись s[1:4] берёт символы с индекса 1 до 4, правая граница не входит.
+  - id: len
+    title: len()
+    summary: Возвращает длину последовательности. Для строки это число символов.
+  - id: in-membership
+    title: Оператор in
+    summary: Проверяет вхождение. Выражение "ель" in text истинно, если подстрока встречается в тексте.
+theory:
+  - "Строка — это последовательность символов. К символу обращаются по индексу в квадратных скобках: text[0] даёт первый символ, text[-1] — последний. Отрицательный индекс считает с конца, поэтому не нужно заранее знать длину."
+  - "Срез берёт сразу несколько символов. Запись text[1:4] читается так же, как range: левая граница входит, правая нет. text[:3] берёт начало, text[2:] — хвост. Шаг тоже работает: text[::2] оставляет каждый второй символ."
+  - "Длину даёт len(text). Оператор in проверяет, есть ли подстрока внутри текста. Это уже знакомое логическое значение, его можно печатать и ставить в условие."
+  - "Строка неизменяема: присвоить text[0] = \"Е\" нельзя. Нужно собрать новую строку из кусков. Старая при этом не меняется."
+examples:
+  - title: Индекс и срез
+    code: |
+      tree = "сосна"
+      print(tree[0])
+      print(tree[-1])
+      print(tree[1:4])
+      print(len(tree))
+    explanation: Первый символ — «с», последний — «а». Срез [1:4] даёт «осн», длина равна пяти.
+  - title: Вхождение и шаг
+    code: |
+      note = "лес и поле"
+      print("лес" in note)
+      print("река" in note)
+      print(note[::2])
+    explanation: Подстрока «лес» находится, «река» нет. Срез с шагом 2 берёт каждый второй символ, включая пробелы.
+outcomes:
+  - брать символ по индексу, в том числе с конца
+  - вырезать фрагмент срезом
+  - узнавать длину строки
+  - проверять вхождение подстроки
+resources:
+  - kind: docs
+    title: Strings
+    url: https://docs.python.org/3/tutorial/introduction.html#strings
+  - kind: youtube
+    title: CS50P — Lecture 0, strings
+    url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+    author: Harvard CS50
+tasks:
+  - id: python.collections.strings.t1
+    type: choice
+    title: Первый индекс
+    difficulty: 1
+    context: neutral
+    prompt: Какой индекс у первого символа строки?
+    options:
+      - id: a
+        text: "1"
+      - id: b
+        text: "0"
+      - id: c
+        text: "-1"
+    answer: b
+    hints:
+      - В Python отсчёт начинается не с единицы.
+      - Последний символ можно взять отрицательным индексом.
+      - range тоже начинается с нуля.
+    solution: b
+    explanation: Первый элемент любой последовательности имеет индекс 0.
+  - id: python.collections.strings.t2
+    type: predict_output
+    title: Срез без правой границы
+    difficulty: 1
+    context: neutral
+    prompt: Что выведет программа?
+    code: |
+      word = "ельник"
+      print(word[2:5])
+    options:
+      - id: a
+        text: льн
+      - id: b
+        text: ьни
+      - id: c
+        text: льник
+    answer: b
+    hints:
+      - Индексы: 0-е, 1-л, 2-ь, 3-н, 4-и, 5-к.
+      - Правая граница в срез не входит.
+      - Нужны символы с индексами 2, 3 и 4.
+    solution: b
+    explanation: Срез [2:5] берёт символы «ь», «н» и «и».
+  - id: python.collections.strings.t3
+    type: predict_output
+    title: Есть ли подстрока
+    difficulty: 1
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      line = "температура 12"
+      print("темп" in line)
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: "темп"
+    answer: a
+    hints:
+      - in ищет фрагмент внутри строки.
+      - Регистр должен совпасть.
+      - Подстрока стоит в начале, это не мешает.
+    solution: a
+    explanation: «темп» встречается в начале строки, поэтому выражение истинно.
+  - id: python.collections.strings.t4
+    type: code
+    title: Первый и последний
+    difficulty: 2
+    context: development
+    prompt: "Прочитайте строку и выведите два символа в разных строках: первый и последний."
+    starter_code: |
+      text = input()
+    tests:
+      - stdin: "сосна\n"
+        expected_stdout: "с\nа\n"
+      - stdin: "код\n"
+        expected_stdout: "к\nд\n"
+    hints:
+      - Первый символ лежит в [0].
+      - Последний удобно брать как [-1].
+      - Печатайте два раза, по одному символу.
+    solution: |
+      text = input()
+      print(text[0])
+      print(text[-1])
+    explanation: Индекс 0 даёт начало, индекс -1 — конец, длину считать не обязательно.
+  - id: python.collections.strings.t5
+    type: code
+    title: Середина без краёв
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте строку и выведите её без первого и последнего символа.
+    starter_code: |
+      text = input()
+    tests:
+      - stdin: "ельник\n"
+        expected_stdout: "льни\n"
+      - stdin: "ab\n"
+        expected_stdout: "\n"
+    hints:
+      - Нужен срез, а не цикл.
+      - Левая граница 1 отрезает первый символ.
+      - Правая граница -1 отрезает последний и сама в срез не входит.
+    solution: |
+      text = input()
+      print(text[1:-1])
+    explanation: Срез [1:-1] берёт всё между первым и последним символами. Для строки из двух символов получается пустая.
+  - id: python.collections.strings.t6
+    type: code
+    title: Код доступа
+    difficulty: 2
+    context: security
+    prompt: "Прочитайте строку. Если в ней есть фрагмент ok, выведите доступ, иначе отказ."
+    starter_code: |
+      token = input()
+    tests:
+      - stdin: "user-ok-12\n"
+        expected_stdout: "доступ\n"
+      - stdin: "user-no-12\n"
+        expected_stdout: "отказ\n"
+    hints:
+      - Проверку делает оператор in.
+      - Результат in можно ставить прямо в if.
+      - Две ветки: if и else.
+    solution: |
+      token = input()
+      if "ok" in token:
+          print("доступ")
+      else:
+          print("отказ")
+    explanation: in даёт логическое значение, его достаточно как условия. Регистр и положение фрагмента должны совпасть в точности.

@@ -1,0 +1,228 @@
+id: python.conditions.while
+slug: while
+section: conditions
+title: Цикл while
+order: 4
+weight: 1
+prerequisites:
+  - python.conditions.nested
+goal: Повторять блок кода, пока условие остаётся истинным, и доводить цикл до конца.
+tags: [while, цикл, счётчик, бесконечный цикл, повторение]
+introduces:
+  - id: while
+    title: while
+    summary: Повторяет блок, пока условие истинно. Условие проверяется перед каждым повторением.
+  - id: counter
+    title: Счётчик цикла
+    summary: Переменная, которая меняется на каждом шаге и в итоге делает условие ложным.
+  - id: infinite-loop
+    title: Бесконечный цикл
+    summary: Цикл, условие которого никогда не становится ложным. Программа не завершается.
+theory:
+  - "Цикл while повторяет блок, пока условие истинно. Условие проверяется перед каждым повторением: если оно ложно сразу, блок не выполнится ни разу."
+  - "Один проход цикла называют итерацией. Чтобы цикл закончился, внутри блока должно меняться что-то, от чего зависит условие. Обычно это счётчик: n = n - 1 или step = step + 1."
+  - "Если условие не меняется, получается бесконечный цикл. В браузере такая программа упирается в ограничение по времени и прерывается, но в обычном Python она будет работать, пока её не остановят. Это самая частая ошибка новичка в циклах."
+  - "После цикла выполнение продолжается со строки без отступа. Переменные, созданные внутри цикла, доступны и после него: в них остаются последние значения."
+examples:
+  - title: Обратный отсчёт
+    code: |
+      n = 3
+      while n > 0:
+          print(n)
+          n = n - 1
+      print("пуск")
+    explanation: Условие проверяется перед каждой итерацией. Когда n становится нулём, цикл заканчивается и выполняется последняя строка.
+  - title: Ни одной итерации
+    code: |
+      left = 0
+      while left > 0:
+          print("шаг")
+      print(f"итераций не было, left = {left}")
+    explanation: Условие ложно с самого начала, поэтому блок не выполняется ни разу.
+outcomes:
+  - писать цикл while с условием
+  - менять счётчик внутри цикла
+  - предсказывать число итераций
+  - находить причину бесконечного цикла
+resources:
+  - kind: docs
+    title: while Statements
+    url: https://docs.python.org/3/reference/compound_stmts.html#the-while-statement
+  - kind: youtube
+    title: CS50P — Lecture 2, loops
+    url: https://www.youtube.com/watch?v=Kd_1Hesmdeo
+    author: Harvard CS50
+tasks:
+  - id: python.conditions.while.t1
+    type: choice
+    title: Когда проверяется условие
+    difficulty: 1
+    context: neutral
+    prompt: В какой момент цикл while проверяет своё условие?
+    options:
+      - id: a
+        text: Перед каждой итерацией
+      - id: b
+        text: Только один раз, перед первой итерацией
+      - id: c
+        text: После каждой итерации, поэтому блок всегда выполняется хотя бы раз
+    answer: a
+    hints:
+      - Проверка стоит в начале цикла.
+      - Если условие ложно сразу, блок не выполнится ни разу.
+      - Перед каждым новым проходом условие проверяется снова.
+    solution: a
+    explanation: Условие вычисляется перед каждой итерацией, поэтому цикл может не выполниться ни разу.
+  - id: python.conditions.while.t2
+    type: predict_output
+    title: Сколько итераций
+    difficulty: 2
+    context: neutral
+    prompt: Сколько строк выведет этот код?
+    code: |
+      n = 4
+      while n > 1:
+          print(n)
+          n = n - 1
+    options:
+      - id: a
+        text: "3"
+      - id: b
+        text: "4"
+      - id: c
+        text: Цикл не закончится
+    answer: a
+    hints:
+      - Выпишите значения n по шагам.
+      - Значения 4, 3 и 2 проходят условие.
+      - При n равном 1 условие становится ложным.
+    solution: a
+    explanation: Выводятся 4, 3 и 2 — три итерации. Единица условие не проходит.
+  - id: python.conditions.while.t3
+    type: code
+    title: Обратный отсчёт
+    difficulty: 2
+    context: neutral
+    prompt: Прочитайте целое положительное число. Выведите числа от него до 1, каждое на своей строке, а затем слово пуск.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\n"
+        expected_stdout: "3\n2\n1\nпуск\n"
+      - stdin: "1\n"
+        expected_stdout: "1\nпуск\n"
+    hints:
+      - Условие продолжает цикл, пока число больше нуля.
+      - Внутри цикла уменьшайте счётчик на единицу.
+      - Слово пуск выводится после цикла, без отступа.
+    solution: |
+      n = int(input())
+      while n > 0:
+          print(n)
+          n = n - 1
+      print("пуск")
+    explanation: Счётчик уменьшается на каждой итерации и в итоге делает условие ложным.
+  - id: python.conditions.while.t4
+    type: code
+    title: Сумма до числа
+    difficulty: 3
+    context: analytics
+    prompt: Прочитайте целое положительное число n и выведите сумму всех целых чисел от 1 до n включительно.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "5\n"
+        expected_stdout: "15\n"
+      - stdin: "1\n"
+        expected_stdout: "1\n"
+      - stdin: "100\n"
+        expected_stdout: "5050\n"
+    hints:
+      - Заведите переменную для суммы до цикла и начните с нуля.
+      - Счётчик идёт от 1 до n включительно.
+      - Выводить сумму нужно после цикла.
+    solution: |
+      n = int(input())
+      total = 0
+      current = 1
+      while current <= n:
+          total = total + current
+          current = current + 1
+      print(total)
+    explanation: Переменная total накапливает результат, счётчик current доходит до n включительно за счёт нестрогого сравнения.
+  - id: python.conditions.while.t5
+    type: code
+    title: Почините бесконечный цикл
+    difficulty: 3
+    context: development
+    prompt: Программа должна выводить числа от 1 до 3. Сейчас счётчик не меняется, и цикл никогда не заканчивается. Исправьте код.
+    starter_code: |
+      i = 1
+      while i <= 3:
+          print(i)
+    tests:
+      - stdin: ""
+        expected_stdout: "1\n2\n3\n"
+    hints:
+      - Условие зависит от переменной i.
+      - Внутри цикла её значение не меняется.
+      - Добавьте увеличение счётчика на единицу.
+    solution: |
+      i = 1
+      while i <= 3:
+          print(i)
+          i = i + 1
+    explanation: Пока счётчик не меняется, условие остаётся истинным навсегда. Увеличение внутри блока завершает цикл.
+  - id: python.conditions.while.t6
+    type: code
+    title: Удвоение до порога
+    difficulty: 3
+    context: business
+    prompt: Начните с числа 1 и удваивайте его, пока оно меньше введённого порога. Выведите, сколько удвоений потребовалось.
+    starter_code: ""
+    tests:
+      - stdin: "10\n"
+        expected_stdout: "4\n"
+      - stdin: "1\n"
+        expected_stdout: "0\n"
+      - stdin: "1000\n"
+        expected_stdout: "10\n"
+    hints:
+      - Нужны две переменные: текущее значение и число шагов.
+      - Условие сравнивает текущее значение с порогом.
+      - Если значение уже не меньше порога, шагов будет ноль.
+    solution: |
+      limit = int(input())
+      value = 1
+      steps = 0
+      while value < limit:
+          value = value * 2
+          steps = steps + 1
+      print(steps)
+    explanation: Счётчик шагов растёт вместе со значением. При пороге 1 условие ложно сразу, и ответ равен нулю.
+  - id: python.conditions.while.t7
+    type: code
+    title: Число цифр
+    difficulty: 4
+    context: analytics
+    prompt: Прочитайте целое положительное число и выведите количество цифр в нём. Используйте цикл и целочисленное деление на 10.
+    starter_code: ""
+    tests:
+      - stdin: "7\n"
+        expected_stdout: "1\n"
+      - stdin: "2026\n"
+        expected_stdout: "4\n"
+      - stdin: "100000\n"
+        expected_stdout: "6\n"
+    hints:
+      - Деление на 10 убирает последнюю цифру.
+      - Повторяйте, пока число не станет нулём.
+      - Считайте итерации в отдельной переменной.
+    solution: |
+      number = int(input())
+      digits = 0
+      while number > 0:
+          number = number // 10
+          digits = digits + 1
+      print(digits)
+    explanation: Каждая итерация отбрасывает одну цифру, поэтому число итераций равно количеству цифр.

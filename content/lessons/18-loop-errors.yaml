@@ -1,0 +1,214 @@
+id: python.conditions.loop-errors
+slug: loop-errors
+section: conditions
+title: Типичные ошибки циклов
+order: 9
+weight: 1
+prerequisites:
+  - python.conditions.nested-loops
+goal: Находить и исправлять ошибки в чужом цикле, а не писать его с нуля.
+tags: [ошибки, отладка, цикл, границы, отступ]
+introduces:
+  - id: off-by-one
+    title: Ошибка на единицу
+    summary: Цикл теряет первое или последнее значение из-за неверной границы диапазона.
+  - id: loop-variable
+    title: Переменная цикла в for
+    summary: "Присваивание внутри тела не влияет на следующую итерацию: на новом шаге for снова берёт очередное значение."
+theory:
+  - "Ошибки в циклах редко выглядят как падение программы. Чаще цикл работает, но даёт неверный ответ, поэтому их ищут не по сообщению об ошибке, а проверкой на маленьких данных."
+  - "Четыре частые причины: счётчик не меняется и цикл не заканчивается; граница диапазона сдвинута на единицу; строка оказалась не на том уровне отступа; чтение данных стоит вне цикла и одно значение обрабатывается много раз."
+  - "В цикле for переменную цикла менять бессмысленно: на следующем шаге for снова возьмёт очередное значение из диапазона. Чтобы пропустить шаг, используют continue, а не присваивание."
+  - "Команда break выходит только из ближайшего цикла. Чтобы прервать внешний цикл из внутреннего, результат запоминают во флаге и проверяют его сразу после внутреннего цикла."
+examples:
+  - title: Потерянное последнее значение
+    code: |
+      n = 3
+      for i in range(1, n):
+          print(i)
+      print("последнее значение не вывелось")
+    explanation: Правая граница не включается, поэтому цикл дошёл только до 2. Правильная запись — range(1, n + 1).
+  - title: Переменная цикла и присваивание
+    code: |
+      for i in range(3):
+          i = i * 10
+          print(i)
+      print("шагов всё равно было три")
+    explanation: Присваивание меняет только текущее значение. Число итераций задаёт range, и изменить его изнутри нельзя.
+outcomes:
+  - находить причину бесконечного цикла
+  - проверять границы диапазона на малых данных
+  - замечать строку на неверном уровне отступа
+  - прерывать внешний цикл через флаг
+resources:
+  - kind: docs
+    title: break and continue Statements
+    url: https://docs.python.org/3/tutorial/controlflow.html#break-and-continue-statements
+  - kind: youtube
+    title: CS50P — Lecture 2
+    url: https://www.youtube.com/watch?v=Kd_1Hesmdeo
+    author: Harvard CS50
+tasks:
+  - id: python.conditions.loop-errors.t1
+    type: choice
+    title: Почему цикл не заканчивается
+    difficulty: 2
+    context: development
+    prompt: Цикл while работает бесконечно. Что стоит проверить первым?
+    options:
+      - id: a
+        text: Меняется ли внутри цикла переменная из условия
+      - id: b
+        text: Достаточно ли велик отступ в блоке
+      - id: c
+        text: Стоит ли двоеточие после условия
+    answer: a
+    hints:
+      - Без двоеточия программа вообще не запустилась бы.
+      - Отступ влияет на принадлежность строк, а не на завершение.
+      - Условие станет ложным только если что-то в нём изменится.
+    solution: a
+    explanation: Цикл заканчивается, когда условие становится ложным. Если входящая в него переменная не меняется, цикл бесконечен.
+  - id: python.conditions.loop-errors.t2
+    type: code
+    title: Чтение вне цикла
+    difficulty: 3
+    context: development
+    prompt: Программа должна прочитать n чисел и вывести их сумму. Сейчас она читает одно число и складывает его само с собой. Исправьте код.
+    starter_code: |
+      n = int(input())
+      value = int(input())
+      total = 0
+      for _ in range(n):
+          total = total + value
+      print(total)
+    tests:
+      - stdin: "3\n10\n20\n30\n"
+        expected_stdout: "60\n"
+      - stdin: "1\n7\n"
+        expected_stdout: "7\n"
+    hints:
+      - Сейчас input вызывается один раз, до цикла.
+      - Новое значение нужно читать на каждой итерации.
+      - Перенесите чтение внутрь цикла.
+    solution: |
+      n = int(input())
+      total = 0
+      for _ in range(n):
+          total = total + int(input())
+      print(total)
+    explanation: Чтение внутри цикла даёт новое значение на каждом шаге. Вне цикла одно и то же число складывалось бы n раз.
+  - id: python.conditions.loop-errors.t3
+    type: code
+    title: Потерянная граница
+    difficulty: 2
+    context: development
+    prompt: Программа должна вывести все числа от 1 до n включительно. Сейчас последнее число пропадает. Исправьте условие цикла.
+    starter_code: |
+      n = int(input())
+      i = 1
+      while i < n:
+          print(i)
+          i = i + 1
+    tests:
+      - stdin: "3\n"
+        expected_stdout: "1\n2\n3\n"
+      - stdin: "1\n"
+        expected_stdout: "1\n"
+    hints:
+      - При n равном 1 цикл не выполняется ни разу.
+      - Значение n должно проходить условие.
+      - Сделайте сравнение нестрогим.
+    solution: |
+      n = int(input())
+      i = 1
+      while i <= n:
+          print(i)
+          i = i + 1
+    explanation: Нестрогое сравнение включает само n. Границы всегда стоит проверять на самом маленьком допустимом вводе.
+  - id: python.conditions.loop-errors.t4
+    type: code
+    title: Вывод на каждом шаге
+    difficulty: 3
+    context: analytics
+    prompt: Программа должна вывести только итоговую сумму n чисел. Сейчас она печатает промежуточный результат на каждом шаге. Исправьте код.
+    starter_code: |
+      n = int(input())
+      total = 0
+      for _ in range(n):
+          total = total + int(input())
+          print(total)
+    tests:
+      - stdin: "3\n10\n20\n30\n"
+        expected_stdout: "60\n"
+      - stdin: "2\n1\n2\n"
+        expected_stdout: "3\n"
+    hints:
+      - Вывод сейчас стоит внутри блока цикла.
+      - Итог известен только после последней итерации.
+      - Уберите отступ у строки с print.
+    solution: |
+      n = int(input())
+      total = 0
+      for _ in range(n):
+          total = total + int(input())
+      print(total)
+    explanation: Один уровень отступа отличает промежуточный отчёт от итогового. После цикла в накопителе лежит полная сумма.
+  - id: python.conditions.loop-errors.t5
+    type: code
+    title: Пропуск значения
+    difficulty: 3
+    context: development
+    prompt: Программа должна вывести числа от 0 до 4, кроме двойки. Автор попытался пропустить её присваиванием переменной цикла, и вывод получился неверным. Исправьте код.
+    starter_code: |
+      for i in range(5):
+          if i == 2:
+              i = 4
+          print(i)
+    tests:
+      - stdin: ""
+        expected_stdout: "0\n1\n3\n4\n"
+    hints:
+      - Присваивание не влияет на следующую итерацию.
+      - Нужно пропустить вывод, а не менять значение.
+      - Для пропуска итерации есть continue.
+    solution: |
+      for i in range(5):
+          if i == 2:
+              continue
+          print(i)
+    explanation: continue пропускает остаток итерации, поэтому двойка не выводится, а остальные значения остаются на месте.
+  - id: python.conditions.loop-errors.t6
+    type: code
+    title: break только из внутреннего цикла
+    difficulty: 4
+    context: development
+    prompt: Программа должна найти первую пару чисел от 1 до n с произведением больше 10, вывести её в виде двух чисел через пробел и остановиться. Сейчас она выводит несколько пар. Исправьте код.
+    starter_code: |
+      n = int(input())
+      for i in range(1, n + 1):
+          for j in range(1, n + 1):
+              if i * j > 10:
+                  print(f"{i} {j}")
+                  break
+    tests:
+      - stdin: "4\n"
+        expected_stdout: "3 4\n"
+      - stdin: "6\n"
+        expected_stdout: "2 6\n"
+    hints:
+      - break завершает только ближайший цикл.
+      - Запомните факт находки в логической переменной.
+      - После внутреннего цикла проверьте флаг и выйдите из внешнего.
+    solution: |
+      n = int(input())
+      found = False
+      for i in range(1, n + 1):
+          for j in range(1, n + 1):
+              if i * j > 10:
+                  print(f"{i} {j}")
+                  found = True
+                  break
+          if found:
+              break
+    explanation: Флаг переносит результат внутреннего цикла на уровень внешнего, и второй break завершает перебор целиком.

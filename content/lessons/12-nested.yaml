@@ -1,0 +1,223 @@
+id: python.conditions.nested
+slug: nested
+section: conditions
+title: Вложенные условия
+order: 3
+weight: 1
+prerequisites:
+  - python.conditions.elif
+goal: Вкладывать условия друг в друга и упрощать вложенность, где это возможно.
+tags: [вложенность, if, and, отступ, читаемость]
+introduces:
+  - id: nested-if
+    title: Вложенное условие
+    summary: Условие внутри блока другого условия. Проверяется только тогда, когда внешнее условие истинно.
+theory:
+  - "Внутри блока if можно написать ещё одно условие. Такое условие называют вложенным: оно проверяется только тогда, когда истинно внешнее. Каждый новый уровень добавляет четыре пробела отступа."
+  - "Вложенность нужна, когда у внешней и внутренней проверки разные ответы при неуспехе. Если внутреннее условие просто уточняет внешнее, а ветки else нет, то два условия обычно объединяют через and."
+  - "Глубокая вложенность плохо читается. Два уровня ещё терпимо, три — уже повод подумать: часто помогает объединение через and или отдельная проверка с ранним сообщением об ошибке."
+  - "Отступ однозначно показывает, к какому условию относится строка. Ошибка в одном отступе меняет смысл программы, а не ломает её, поэтому такие ошибки особенно неприятны."
+examples:
+  - title: Два уровня
+    code: |
+      logged_in = True
+      role = "admin"
+      if logged_in:
+          if role == "admin":
+              print("панель администратора")
+          else:
+              print("обычная страница")
+      else:
+          print("войдите в систему")
+    explanation: Роль проверяется только у вошедшего пользователя. У каждой проверки свой ответ при неуспехе, поэтому вложенность здесь оправдана.
+  - title: То же короче
+    code: |
+      logged_in = True
+      role = "admin"
+      if logged_in and role == "admin":
+          print("панель администратора")
+    explanation: Когда нужен только успешный случай, два условия объединяются через and и вложенность не нужна.
+outcomes:
+  - писать условие внутри условия
+  - следить за уровнями отступа
+  - заменять вложенность на and, где это уместно
+  - выбирать между вложенностью и плоской проверкой
+resources:
+  - kind: docs
+    title: Compound statements
+    url: https://docs.python.org/3/reference/compound_stmts.html#the-if-statement
+  - kind: youtube
+    title: CS50P — Lecture 1
+    url: https://www.youtube.com/watch?v=CJJQaqN4LCM
+    author: Harvard CS50
+tasks:
+  - id: python.conditions.nested.t1
+    type: choice
+    title: Когда проверяется вложенное условие
+    difficulty: 1
+    context: neutral
+    prompt: При каком условии выполняется проверка, вложенная в блок if?
+    options:
+      - id: a
+        text: Всегда, вложенность на это не влияет
+      - id: b
+        text: Только когда внешнее условие истинно
+      - id: c
+        text: Только когда внешнее условие ложно
+    answer: b
+    hints:
+      - Вложенная строка входит в блок внешнего условия.
+      - Блок выполняется при истинном условии.
+      - Если внешнее условие ложно, блок пропускается целиком.
+    solution: b
+    explanation: Вложенное условие — часть блока, поэтому до него дело доходит только при истинном внешнем условии.
+  - id: python.conditions.nested.t2
+    type: predict_output
+    title: Внешняя проверка не прошла
+    difficulty: 2
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      active = False
+      amount = 500
+      if active:
+          if amount > 100:
+              print("крупная операция")
+          else:
+              print("обычная операция")
+      else:
+          print("счёт заблокирован")
+    options:
+      - id: a
+        text: счёт заблокирован
+      - id: b
+        text: крупная операция
+      - id: c
+        text: обычная операция
+    answer: a
+    hints:
+      - Начните с внешнего условия.
+      - Значение active ложно.
+      - Внутренние проверки в этом случае не выполняются.
+    solution: a
+    explanation: Внешнее условие ложно, поэтому выполняется только внешний else, а сумма вообще не проверяется.
+  - id: python.conditions.nested.t3
+    type: code
+    title: Доступ по роли
+    difficulty: 3
+    context: security
+    prompt: Первая строка ввода — слово yes или no, вошёл ли пользователь. Вторая — роль. Выведите войдите в систему, если первая строка не равна yes. Иначе выведите панель администратора для роли admin и обычная страница для любой другой роли.
+    starter_code: |
+      logged_in = input()
+      role = input()
+    tests:
+      - stdin: "yes\nadmin\n"
+        expected_stdout: "панель администратора\n"
+      - stdin: "yes\nuser\n"
+        expected_stdout: "обычная страница\n"
+      - stdin: "no\nadmin\n"
+        expected_stdout: "войдите в систему\n"
+    hints:
+      - Сначала проверьте, что первая строка равна yes.
+      - Роль проверяйте внутри этого блока.
+      - У внешнего и внутреннего условия свои ветки else.
+    solution: |
+      logged_in = input()
+      role = input()
+      if logged_in == "yes":
+          if role == "admin":
+              print("панель администратора")
+          else:
+              print("обычная страница")
+      else:
+          print("войдите в систему")
+    explanation: "Вложенность оправдана: неуспех внешней и внутренней проверки даёт разные ответы."
+  - id: python.conditions.nested.t4
+    type: code
+    title: Уберите вложенность
+    difficulty: 3
+    context: development
+    prompt: Программа выводит доступ разрешён только при возрасте от 18 и непустом имени. Перепишите её без вложенности, объединив условия через and. Поведение менять нельзя.
+    starter_code: |
+      name = input()
+      age = int(input())
+      if age >= 18:
+          if name:
+              print("доступ разрешён")
+    tests:
+      - stdin: "Mira\n20\n"
+        expected_stdout: "доступ разрешён\n"
+      - stdin: "\n20\n"
+        expected_stdout: ""
+      - stdin: "Mira\n15\n"
+        expected_stdout: ""
+    hints:
+      - Ветки else здесь нет ни у одной проверки.
+      - Значит, нужен только случай, когда истинны оба условия.
+      - Соедините условия оператором and.
+    solution: |
+      name = input()
+      age = int(input())
+      if age >= 18 and name:
+          print("доступ разрешён")
+    explanation: Без ветвей else вложенность эквивалентна одному условию с and и читается лучше.
+  - id: python.conditions.nested.t5
+    type: code
+    title: Стоимость доставки
+    difficulty: 4
+    context: business
+    prompt: Первая строка — сумма заказа дробным числом, вторая — слово city или region. Для города доставка бесплатна при сумме от 1000, иначе стоит 200. Для региона бесплатна при сумме от 3000, иначе стоит 500. Выведите стоимость доставки целым числом.
+    starter_code: ""
+    tests:
+      - stdin: "1200.0\ncity\n"
+        expected_stdout: "0\n"
+      - stdin: "900.0\ncity\n"
+        expected_stdout: "200\n"
+      - stdin: "3500.0\nregion\n"
+        expected_stdout: "0\n"
+      - stdin: "1200.0\nregion\n"
+        expected_stdout: "500\n"
+    hints:
+      - Внешняя проверка выбирает зону доставки.
+      - Внутри каждой зоны своя граница бесплатной доставки.
+      - Бесплатная доставка выводится как 0.
+    solution: |
+      total = float(input())
+      zone = input()
+      if zone == "city":
+          if total >= 1000:
+              print(0)
+          else:
+              print(200)
+      else:
+          if total >= 3000:
+              print(0)
+          else:
+              print(500)
+    explanation: У каждой зоны свои границы, поэтому внутренние условия остаются вложенными и не сводятся к одному and.
+  - id: python.conditions.nested.t6
+    type: code
+    title: Почините уровень отступа
+    difficulty: 3
+    context: development
+    prompt: Программа должна сообщать итог только для вошедшего пользователя. Сейчас строка с итогом выводится всегда, потому что стоит на внешнем уровне. Исправьте отступ.
+    starter_code: |
+      logged_in = input()
+      if logged_in == "yes":
+          print("добро пожаловать")
+      print("итог показан")
+    tests:
+      - stdin: "yes\n"
+        expected_stdout: "добро пожаловать\nитог показан\n"
+      - stdin: "no\n"
+        expected_stdout: ""
+    hints:
+      - Сейчас последняя строка не входит в блок условия.
+      - Обе строки должны выполняться вместе.
+      - Сдвиньте последний print внутрь блока.
+    solution: |
+      logged_in = input()
+      if logged_in == "yes":
+          print("добро пожаловать")
+          print("итог показан")
+    explanation: Отступ определяет принадлежность строки блоку. Одинаковый отступ делает обе строки частью одной ветки.

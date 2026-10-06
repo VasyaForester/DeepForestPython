@@ -1,0 +1,225 @@
+id: python.conditions.if-else
+slug: if-else
+section: conditions
+title: Условие if и else
+order: 1
+weight: 1
+prerequisites:
+  - python.basics.review
+goal: Выполнять разный код в зависимости от условия.
+tags: [if, else, условие, ветвление, отступ]
+introduces:
+  - id: if
+    title: if
+    summary: Выполняет блок кода, когда условие истинно. После условия ставится двоеточие.
+  - id: else
+    title: else
+    summary: Задаёт вторую ветку. Она выполняется, когда условие ложно.
+  - id: indent
+    title: Отступ и блок
+    summary: Строки с одинаковым отступом образуют блок. В Python принят отступ в четыре пробела, и он является частью синтаксиса.
+theory:
+  - "До этого урока программа выполняла все строки подряд. Условие позволяет выбрать: после слова if пишут логическое выражение и двоеточие, а на следующей строке с отступом — код, который выполнится, только если выражение истинно."
+  - "Отступ в Python не украшение, а часть синтаксиса. Все строки с одинаковым отступом образуют один блок и выполняются вместе. Принято делать отступ в четыре пробела."
+  - "Слово else задаёт вторую ветку и выполняется, когда условие ложно. Двоеточие нужно и после него. Из двух ветвей всегда работает ровно одна."
+  - "Условие — это уже знакомое сравнение или логическое выражение. В условии работает и обычная истинность значения: if name проверяет, что строка непустая."
+examples:
+  - title: Две ветки
+    code: |
+      age = 20
+      if age >= 18:
+          print("Доступ открыт")
+      else:
+          print("Доступ закрыт")
+    explanation: Условие истинно, поэтому выполняется первая ветка. Вторая пропускается целиком.
+  - title: Истинность в условии
+    code: |
+      name = ""
+      if name:
+          print(f"Привет, {name}")
+      print("Готово")
+    explanation: Пустая строка ложна, поэтому блок внутри if не выполняется. Последняя строка стоит без отступа и выполняется всегда.
+outcomes:
+  - писать условие с if
+  - добавлять ветку else
+  - соблюдать отступ внутри блока
+  - использовать истинность значения как условие
+resources:
+  - kind: docs
+    title: if Statements
+    url: https://docs.python.org/3/tutorial/controlflow.html#if-statements
+  - kind: youtube
+    title: CS50P — Lecture 1, conditionals
+    url: https://www.youtube.com/watch?v=CJJQaqN4LCM
+    author: Harvard CS50
+tasks:
+  - id: python.conditions.if-else.t1
+    type: choice
+    title: Что стоит после условия
+    difficulty: 1
+    context: neutral
+    prompt: Чем заканчивается строка с условием if?
+    options:
+      - id: a
+        text: Точкой с запятой
+      - id: b
+        text: Двоеточием
+      - id: c
+        text: Ничем, достаточно отступа на следующей строке
+    answer: b
+    hints:
+      - Знак подсказывает, что дальше будет блок.
+      - В Python строки не заканчиваются точкой с запятой.
+      - Без этого знака Python сообщит о синтаксической ошибке.
+    solution: b
+    explanation: После условия ставится двоеточие, а код блока пишется с отступом на следующих строках.
+  - id: python.conditions.if-else.t2
+    type: predict_output
+    title: Какая ветка выполнится
+    difficulty: 1
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      x = 5
+      if x > 10:
+          print("много")
+      else:
+          print("мало")
+    options:
+      - id: a
+        text: мало
+      - id: b
+        text: много
+      - id: c
+        text: много и мало
+    answer: a
+    hints:
+      - Проверьте условие для значения 5.
+      - Пятёрка не больше десяти.
+      - Выполняется ровно одна ветка.
+    solution: a
+    explanation: Условие ложно, поэтому работает ветка else. Обе ветки одновременно выполниться не могут.
+  - id: python.conditions.if-else.t3
+    type: code
+    title: Чётное или нечётное
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте целое число. Выведите слово чётное, если число делится на 2 без остатка, иначе слово нечётное.
+    starter_code: |
+      number = int(input())
+    tests:
+      - stdin: "8\n"
+        expected_stdout: "чётное\n"
+      - stdin: "7\n"
+        expected_stdout: "нечётное\n"
+      - stdin: "0\n"
+        expected_stdout: "чётное\n"
+    hints:
+      - Делимость проверяют остатком от деления.
+      - Условие записывается как number % 2 == 0.
+      - Второй случай закройте веткой else.
+    solution: |
+      number = int(input())
+      if number % 2 == 0:
+          print("чётное")
+      else:
+          print("нечётное")
+    explanation: Остаток 0 означает делимость нацело. Ноль тоже чётный, и условие это учитывает.
+  - id: python.conditions.if-else.t4
+    type: code
+    title: Кто больше
+    difficulty: 2
+    context: business
+    prompt: Прочитайте два целых числа с двух строк. Выведите большее из них. Если числа равны, выведите любое из них.
+    starter_code: ""
+    tests:
+      - stdin: "4\n9\n"
+        expected_stdout: "9\n"
+      - stdin: "12\n3\n"
+        expected_stdout: "12\n"
+      - stdin: "5\n5\n"
+        expected_stdout: "5\n"
+    hints:
+      - Сравните первое число со вторым.
+      - В каждой ветке выводится своё число.
+      - При равенстве подходит любая ветка.
+    solution: |
+      a = int(input())
+      b = int(input())
+      if a > b:
+          print(a)
+      else:
+          print(b)
+    explanation: При равных числах условие ложно, работает else, и выводится второе число — оно же равно первому.
+  - id: python.conditions.if-else.t5
+    type: code
+    title: Почините отступ
+    difficulty: 2
+    context: development
+    prompt: Программа должна сообщать о превышении только при температуре выше 30. Сейчас сообщение выводится всегда. Исправьте код.
+    starter_code: |
+      temperature = int(input())
+      if temperature > 30:
+      print("жарко")
+    tests:
+      - stdin: "35\n"
+        expected_stdout: "жарко\n"
+      - stdin: "20\n"
+        expected_stdout: ""
+    hints:
+      - После двоеточия Python ждёт блок с отступом.
+      - Строка без отступа в блок не входит.
+      - Сдвиньте вызов print на четыре пробела.
+    solution: |
+      temperature = int(input())
+      if temperature > 30:
+          print("жарко")
+    explanation: Отступ определяет, что относится к условию. Без него Python сообщает об ошибке отступа, а строка без отступа выполнялась бы всегда.
+  - id: python.conditions.if-else.t6
+    type: code
+    title: Имя не указано
+    difficulty: 3
+    context: security
+    prompt: Прочитайте строку с именем. Если строка непустая, выведите приветствие вида Привет, Mira. Если пустая, выведите текст имя не указано.
+    starter_code: ""
+    tests:
+      - stdin: "Mira\n"
+        expected_stdout: "Привет, Mira\n"
+      - stdin: "\n"
+        expected_stdout: "имя не указано\n"
+    hints:
+      - Пустая строка ложна, её можно поставить условием прямо.
+      - Приветствие собирается f-строкой.
+      - Второй случай закройте веткой else.
+    solution: |
+      name = input()
+      if name:
+          print(f"Привет, {name}")
+      else:
+          print("имя не указано")
+    explanation: Истинность строки отвечает на вопрос о заполненности поля, и условие читается коротко.
+  - id: python.conditions.if-else.t7
+    type: code
+    title: Скидка от суммы
+    difficulty: 3
+    context: business
+    prompt: Прочитайте сумму заказа дробным числом. Если сумма не меньше 1000, выведите её со скидкой 10 процентов, иначе без изменений. В обоих случаях выведите число с двумя знаками после точки.
+    starter_code: ""
+    tests:
+      - stdin: "1500.0\n"
+        expected_stdout: "1350.00\n"
+      - stdin: "999.0\n"
+        expected_stdout: "999.00\n"
+      - stdin: "1000.0\n"
+        expected_stdout: "900.00\n"
+    hints:
+      - Граница входит в условие, поэтому сравнение нестрогое.
+      - После скидки остаётся 90 процентов суммы.
+      - Формат .2f нужен в обеих ветках.
+    solution: |
+      total = float(input())
+      if total >= 1000:
+          print(f"{total * 0.9:.2f}")
+      else:
+          print(f"{total:.2f}")
+    explanation: Ровно 1000 попадает под скидку, потому что сравнение нестрогое. Формат вывода одинаков в обеих ветках.

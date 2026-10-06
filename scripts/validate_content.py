@@ -1,9 +1,10 @@
 """Проверяет уроки и прогоняет решения задач системным Python.
 
 Ученик выполняет код в Pyodide, не в этом интерпретаторе. Пока вызовы
-ограничены общим набором: print, input, int, float, str, bool, type.
-Новый вызов или импорт валидатор не пропускает, пока его не проверят
-тем же рантаймом, что и в браузере.
+ограничены общим набором builtins и методами объектов.
+Новый builtin или импорт валидатор не пропускает, пока его не проверят
+тем же рантаймом, что и в браузере. Методы вроде str.split и list.append
+разрешены: это операции над уже полученным значением.
 """
 
 from __future__ import annotations
@@ -21,7 +22,30 @@ CONTENT = ROOT / "content"
 REQUIRED_LESSON = ["id", "slug", "section", "title", "order", "weight", "prerequisites", "goal", "theory", "examples", "outcomes", "resources", "tasks"]
 REQUIRED_TASK = ["id", "type", "title", "difficulty", "prompt", "hints", "solution", "explanation"]
 STUDENT_RUNTIME = "Pyodide 0.27.7"
-SHARED_CALLS = {"print", "input", "int", "float", "str", "bool", "type", "round", "abs"}
+SHARED_CALLS = {
+    "print",
+    "input",
+    "int",
+    "float",
+    "str",
+    "bool",
+    "type",
+    "round",
+    "abs",
+    "range",
+    "len",
+    "list",
+    "tuple",
+    "set",
+    "dict",
+    "sorted",
+    "min",
+    "max",
+    "sum",
+    "enumerate",
+    "zip",
+    "reversed",
+}
 
 
 def shared_with_student_runtime(code: str, label: str, errors: list[str]) -> None:
@@ -36,6 +60,8 @@ def shared_with_student_runtime(code: str, label: str, errors: list[str]) -> Non
         elif isinstance(node, ast.Call):
             func = node.func
             if isinstance(func, ast.Name) and func.id in SHARED_CALLS:
+                continue
+            if isinstance(func, ast.Attribute):
                 continue
             name = func.id if isinstance(func, ast.Name) else "вызов"
             errors.append(f"{label}: {name} вне общего набора с {STUDENT_RUNTIME}")
@@ -66,6 +92,11 @@ def main() -> int:
     section_ids = {item["id"] for item in course["sections"]}
     lessons = [load(path) for path in sorted((CONTENT / "lessons").glob("*.yaml"))]
     ids = {lesson["id"] for lesson in lessons}
+    if len(ids) != len(lessons):
+        errors.append("duplicate lesson id")
+    slugs = [lesson.get("slug") for lesson in lessons]
+    if len(set(slugs)) != len(slugs):
+        errors.append("duplicate lesson slug")
     for lesson in lessons:
         for key in REQUIRED_LESSON:
             if key not in lesson:

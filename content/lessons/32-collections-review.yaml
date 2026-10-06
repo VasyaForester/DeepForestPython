@@ -1,0 +1,173 @@
+id: python.collections.review
+slug: collections-review
+section: collections
+title: Итог раздела. Выбор коллекции
+order: 13
+weight: 2
+prerequisites:
+  - python.collections.comprehensions
+goal: Выбрать подходящую структуру и собрать небольшую программу из строк, списков и словарей.
+tags: [итог, список, словарь, множество, выбор]
+theory:
+  - "Новых конструкций в этом уроке нет. Нужно выбрать структуру под задачу: список, если важен порядок и повторы, кортеж, если запись фиксирована, множество, если важен факт «есть или нет», словарь, если значение достают по ключу."
+  - "Строка годится для текста и срезов, но не для набора, который будут дополнять. Если из строки нужны поля, её режут split и дальше работают со списком. Частоты и остатки удобно держать в словаре."
+  - "Перед циклом стоит решить, что является накопителем. Один проход может сразу заполнить список, множество и словарь. После цикла данные сортируют, фильтруют генератором и собирают отчёт."
+examples:
+  - title: Частоты и отбор
+    code: |
+      words = ["ель", "сосна", "ель", "пихта"]
+      counts = {}
+      for word in words:
+          counts[word] = counts.get(word, 0) + 1
+      rare = [word for word in counts if counts[word] == 1]
+      print(len(counts))
+      print(" ".join(sorted(rare)))
+    explanation: Словарь посчитал частоты, генератор оставил слова с частотой 1, sorted задал устойчивый вывод.
+  - title: Записи по порогу
+    code: |
+      rows = [("ель", 12), ("сосна", 8), ("пихта", 18)]
+      chosen = [name for name, height in rows if height > 10]
+      print(chosen)
+    explanation: Распаковка в генераторе сразу достаёт имя. В результат попали ель и пихта.
+outcomes:
+  - выбирать список, кортеж, множество или словарь
+  - собирать частоты и фильтровать ключи
+  - сочетать split, словарь и сортировку в одной программе
+  - оставлять обычный цикл там, где генератора мало
+resources:
+  - kind: docs
+    title: Data Structures
+    url: https://docs.python.org/3/tutorial/datastructures.html
+  - kind: youtube
+    title: CS50P — Lecture 5
+    url: https://www.youtube.com/watch?v=0LrdjNb4lP8
+    author: Harvard CS50
+tasks:
+  - id: python.collections.review.t1
+    type: choice
+    title: Какая структура
+    difficulty: 2
+    context: development
+    prompt: Нужно быстро отвечать, встречался ли идентификатор, повторы не важны. Что взять?
+    options:
+      - id: a
+        text: Список
+      - id: b
+        text: Множество
+      - id: c
+        text: Строку
+    answer: b
+    hints:
+      - Главное — факт вхождения.
+      - Список хранит порядок и повторы, здесь они не нужны.
+      - Строка ищет подстроку, а не целое значение как элемент набора.
+    solution: b
+    explanation: Множество отвечает на вопрос «есть ли элемент» и само отбрасывает повторы.
+  - id: python.collections.review.t2
+    type: choice
+    title: Почему не список
+    difficulty: 2
+    context: analytics
+    prompt: Для каждой даты нужно хранить температуру. Почему удобнее словарь, а не два параллельных списка?
+    options:
+      - id: a
+        text: Словарь занимает меньше памяти в любом случае
+      - id: b
+        text: Значение достают по ключу, не ища позицию даты
+      - id: c
+        text: Список нельзя перебирать циклом
+    answer: b
+    hints:
+      - Параллельные списки легко разъехаться по индексам.
+      - Ключ сам является адресом значения.
+      - Списки как раз перебирать можно, дело не в этом.
+    solution: b
+    explanation: Словарь связывает дату и измерение напрямую. Искать номер даты в отдельном списке не нужно.
+  - id: python.collections.review.t3
+    type: code
+    title: Уникальный поток
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — число n, далее n строк. Выведите количество уникальных строк и сами уникальные строки в порядке первого появления, по одной в строке.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "5\nель\nсосна\nель\nпихта\nсосна\n"
+        expected_stdout: "3\nель\nсосна\nпихта\n"
+      - stdin: "1\nлес\n"
+        expected_stdout: "1\nлес\n"
+    hints:
+      - Порядок первого появления хранит список.
+      - Уникальность проверяет множество.
+      - Добавляйте в список, только если строки ещё не было во множестве.
+    solution: |
+      n = int(input())
+      order = []
+      seen = set()
+      for _ in range(n):
+          word = input()
+          if word not in seen:
+              seen.add(word)
+              order.append(word)
+      print(len(order))
+      for word in order:
+          print(word)
+    explanation: Множество отвечает, встречалась ли строка. Список помнит порядок. Вместе они делают то, чего одна структура не умеет.
+  - id: python.collections.review.t4
+    type: code
+    title: Остатки склада
+    difficulty: 3
+    context: business
+    prompt: "Первая строка — число n, далее n строк «товар число». Число может быть отрицательным, это списание. Выведите товары с положительным остатком в алфавитном порядке в формате товар: остаток."
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "4\nель 3\nсосна 2\nель -1\nпихта 0\n"
+        expected_stdout: "ель: 2\nсосна: 2\n"
+      - stdin: "1\nдуб -3\n"
+        expected_stdout: ""
+    hints:
+      - Остатки копите в словаре через get.
+      - После цикла отберите ключи с положительным значением.
+      - Для устойчивого вывода ключи отсортируйте.
+    solution: |
+      n = int(input())
+      stock = {}
+      for _ in range(n):
+          name, raw = input().split()
+          stock[name] = stock.get(name, 0) + int(raw)
+      names = [name for name in stock if stock[name] > 0]
+      for name in sorted(names):
+          print(f"{name}: {stock[name]}")
+    explanation: Словарь схлопывает несколько операций по одному товару. Нулевой и отрицательный остаток в отчёт не входят.
+  - id: python.collections.review.t5
+    type: code
+    title: Журнал выше среднего
+    difficulty: 4
+    context: analytics
+    prompt: Первая строка — число n, далее n строк «имя высота». Посчитайте среднюю высоту и выведите имена тех, у кого высота строго выше средней, в исходном порядке, по одному в строке.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\nель 10\nсосна 20\nпихта 12\n"
+        expected_stdout: "сосна\n"
+      - stdin: "2\nа 4\nб 6\n"
+        expected_stdout: "б\n"
+    hints:
+      - Сначала сохраните все пары в список кортежей.
+      - Среднее = сумма высот / n.
+      - Второй проход сравнивает каждую высоту со средним.
+    solution: |
+      n = int(input())
+      rows = []
+      total = 0
+      for _ in range(n):
+          name, raw = input().split()
+          height = int(raw)
+          rows.append((name, height))
+          total = total + height
+      mean = total / n
+      for name, height in rows:
+          if height > mean:
+              print(name)
+    explanation: Один проход собирает записи и сумму, второй отбирает тех, кто выше среднего. Для 10, 20 и 12 среднее равно 14, в отчёт попадает только сосна.

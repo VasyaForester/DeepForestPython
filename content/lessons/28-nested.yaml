@@ -1,0 +1,207 @@
+id: python.collections.nested
+slug: nested-structures
+section: collections
+title: Вложенные структуры
+order: 9
+weight: 1
+prerequisites:
+  - python.collections.dict-loop
+goal: Читать и обновлять данные во вложенных списках и словарях.
+tags: [вложенность, таблица, запись, список словарей]
+introduces:
+  - id: nested-list
+    title: Список списков
+    summary: Таблица, где rows[i] — строка, а rows[i][j] — ячейка. Первый индекс выбирает ряд, второй — столбец.
+  - id: list-of-dicts
+    title: Список словарей
+    summary: "Набор записей. У каждой записи свои поля по имени: rows[0][\"name\"]."
+  - id: dict-of-lists
+    title: Словарь списков
+    summary: Набор серий по ключу. Значение ключа — целый список, к элементу обращаются groups[name][0].
+theory:
+  - "Структуры вкладываются друг в друга. Список списков выглядит как таблица: rows[1][0] сначала выбирает вторую строку, потом её первый элемент. Скобки читаются слева направо."
+  - "Список словарей удобен для записей с именованными полями. rows[0][\"tree\"] читается как «возьми первую запись и поле tree». Так хранят журнал наблюдений, заказы, строки отчёта."
+  - "Словарь списков подходит, когда значения сами являются сериями: temps[\"утро\"] может быть списком измерений. Новый замер добавляют temps[\"утро\"].append(12)."
+  - "Вложенность не отменяет уже знакомые циклы. Внешний цикл идёт по строкам или записям, внутренний — по полям или ячейкам. Менять нужно тот объект, который достали, иначе правка потеряется."
+examples:
+  - title: Таблица
+    code: |
+      rows = [
+          [1, 2, 3],
+          [4, 5, 6],
+      ]
+      print(rows[1][0])
+      rows[1][0] = 9
+      print(rows[1])
+    explanation: Сначала выбрана вторая строка, затем её первый элемент. Присваивание меняет ячейку на месте.
+  - title: Журнал записей
+    code: |
+      rows = [
+          {"tree": "ель", "h": 12},
+          {"tree": "сосна", "h": 18},
+      ]
+      print(rows[0]["tree"])
+      rows[1]["h"] = 19
+      print(rows[1]["h"])
+    explanation: Поле достаётся по имени, а не по номеру столбца. Высота второй записи обновлена.
+outcomes:
+  - читать ячейку таблицы rows[i][j]
+  - доставать поле записи rows[i]["name"]
+  - добавлять значение во вложенный список
+  - обходить вложенную структуру двумя циклами
+resources:
+  - kind: docs
+    title: Nested Data Structures
+    url: https://docs.python.org/3/tutorial/datastructures.html
+  - kind: youtube
+    title: CS50P — Lecture 6, nested dicts
+    url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+    author: Harvard CS50
+tasks:
+  - id: python.collections.nested.t1
+    type: choice
+    title: Порядок индексов
+    difficulty: 1
+    context: analytics
+    prompt: Что выбирает запись table[2][0] в списке списков?
+    options:
+      - id: a
+        text: Первую строку и её третий элемент
+      - id: b
+        text: Третью строку и её первый элемент
+      - id: c
+        text: Первый столбец целиком
+    answer: b
+    hints:
+      - Индексы считаются с нуля.
+      - Скобки читаются слева направо.
+      - Первый индекс выбирает строку.
+    solution: b
+    explanation: "[2] — третья строка, [0] — её первый элемент."
+  - id: python.collections.nested.t2
+    type: predict_output
+    title: Поле записи
+    difficulty: 1
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      rows = [{"tree": "ель", "h": 12}, {"tree": "сосна", "h": 18}]
+      print(rows[1]["tree"])
+    options:
+      - id: a
+        text: ель
+      - id: b
+        text: сосна
+      - id: c
+        text: "18"
+    answer: b
+    hints:
+      - Индекс 1 — вторая запись.
+      - Ключ tree, не h.
+      - Значение этого поля — имя дерева.
+    solution: b
+    explanation: Вторая запись описывает сосну.
+  - id: python.collections.nested.t3
+    type: predict_output
+    title: Добавление в серию
+    difficulty: 2
+    context: development
+    prompt: Что выведет программа?
+    code: |
+      temps = {"утро": [5, 6]}
+      temps["утро"].append(7)
+      print(len(temps["утро"]))
+    options:
+      - id: a
+        text: "2"
+      - id: b
+        text: "3"
+      - id: c
+        text: "1"
+    answer: b
+    hints:
+      - append меняет список внутри словаря.
+      - Было два измерения, добавили третье.
+      - len смотрит список, не словарь.
+    solution: b
+    explanation: Вложенный список вырос до трёх элементов. Словарь по-прежнему содержит один ключ.
+  - id: python.collections.nested.t4
+    type: code
+    title: Ячейка таблицы
+    difficulty: 2
+    context: analytics
+    prompt: "Дана таблица [[3, 8], [4, 1], [2, 9]]. Прочитайте номер строки i и номер столбца j (от нуля) и выведите значение ячейки."
+    starter_code: |
+      table = [[3, 8], [4, 1], [2, 9]]
+      i = int(input())
+      j = int(input())
+    tests:
+      - stdin: "1\n0\n"
+        expected_stdout: "4\n"
+      - stdin: "2\n1\n"
+        expected_stdout: "9\n"
+    hints:
+      - Сначала строка, потом столбец.
+      - Индексы уже с нуля, вычитать ничего не нужно.
+      - table[i][j] достаточно.
+    solution: |
+      table = [[3, 8], [4, 1], [2, 9]]
+      i = int(input())
+      j = int(input())
+      print(table[i][j])
+    explanation: Два индекса выбирают ячейку. Для 1 и 0 это вторая строка и первый столбец — 4.
+  - id: python.collections.nested.t5
+    type: code
+    title: Высоты деревьев
+    difficulty: 2
+    context: analytics
+    prompt: "Дан журнал [{\"tree\": \"ель\", \"h\": 12}, {\"tree\": \"сосна\", \"h\": 18}, {\"tree\": \"ель\", \"h\": 9}]. Прочитайте имя дерева и выведите наибольшую высоту среди его записей. Если такого дерева нет, выведите 0."
+    starter_code: |
+      rows = [{"tree": "ель", "h": 12}, {"tree": "сосна", "h": 18}, {"tree": "ель", "h": 9}]
+      name = input()
+    tests:
+      - stdin: "ель\n"
+        expected_stdout: "12\n"
+      - stdin: "дуб\n"
+        expected_stdout: "0\n"
+    hints:
+      - Обходите записи внешним циклом.
+      - Сравнивайте поле tree с прочитанным именем.
+      - Начальный максимум 0 одновременно покрывает случай «не найдено».
+    solution: |
+      rows = [{"tree": "ель", "h": 12}, {"tree": "сосна", "h": 18}, {"tree": "ель", "h": 9}]
+      name = input()
+      best = 0
+      for row in rows:
+          if row["tree"] == name and row["h"] > best:
+              best = row["h"]
+      print(best)
+    explanation: Подходят только записи с нужным именем. Для ели высоты 12 и 9, ответ 12. Для дуба цикл ничего не обновляет.
+  - id: python.collections.nested.t6
+    type: code
+    title: Добавить замер
+    difficulty: 3
+    context: development
+    prompt: "Дан словарь {\"утро\": [5, 6], \"день\": [12]}. Прочитайте ключ серии и целое число. Если ключ есть, допишите число в его список. Если ключа нет, создайте список из этого числа. Выведите длину выбранной серии."
+    starter_code: |
+      temps = {"утро": [5, 6], "день": [12]}
+      key = input()
+      value = int(input())
+    tests:
+      - stdin: "утро\n7\n"
+        expected_stdout: "3\n"
+      - stdin: "вечер\n4\n"
+        expected_stdout: "1\n"
+    hints:
+      - Проверьте ключ через in.
+      - Для нового ключа значением должен быть список, не число.
+      - append работает, только если по ключу уже лежит список.
+    solution: |
+      temps = {"утро": [5, 6], "день": [12]}
+      key = input()
+      value = int(input())
+      if key not in temps:
+          temps[key] = []
+      temps[key].append(value)
+      print(len(temps[key]))
+    explanation: Новый ключ сначала получает пустой список, затем append работает одинаково в обоих случаях.

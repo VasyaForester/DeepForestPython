@@ -1,0 +1,204 @@
+id: python.collections.sort-key
+slug: sort-key
+section: collections
+title: Сортировка по ключу
+order: 11
+weight: 1
+prerequisites:
+  - python.collections.unpacking
+goal: Упорядочивать последовательности, не портя исходные данные, и задавать правило сравнения.
+tags: [sorted, sort, key, reverse]
+introduces:
+  - id: sorted
+    title: sorted()
+    summary: Возвращает новый упорядоченный список и не меняет исходную последовательность. Удобно, когда старый порядок ещё нужен.
+  - id: sort-reverse
+    title: reverse=True
+    summary: Аргумент sorted и sort, который включает порядок по убыванию.
+  - id: sort-key
+    title: key=
+    summary: Функция, которая из элемента достаёт значение для сравнения. Пока берут готовую, например len.
+theory:
+  - "sort меняет список на месте и возвращает None. sorted возвращает новый список и работает не только со списком, но и со строкой, множеством, кортежем. Исходный объект после sorted остаётся прежним."
+  - "Аргумент reverse=True включает убывание. Его можно передать и в sort, и в sorted. Без него порядок возрастающий: сначала меньшие числа, раньше по алфавиту строки."
+  - "Кортежи сравниваются слева направо. Поэтому sorted([(2, \"б\"), (1, \"я\"), (1, \"а\")]) сначала смотрит число, при равенстве — строку. Так сортируют записи, не умея ещё писать свои функции."
+  - "Аргумент key получает функцию, которую Python вызывает для каждого элемента. key=len сортирует строки по длине, key=str сравнивает числа как текст. Свои функции для key появятся в следующем разделе, пока достаточно готовых."
+examples:
+  - title: Новый список и убывание
+    code: |
+      values = [3, 1, 2]
+      print(sorted(values))
+      print(values)
+      print(sorted(values, reverse=True))
+    explanation: sorted не испортил values. Третий вызов печатает [3, 2, 1].
+  - title: Длина и пары
+    code: |
+      words = ["ель", "сосна", "лес"]
+      print(sorted(words, key=len))
+      rows = [(2, "б"), (1, "я"), (1, "а")]
+      print(sorted(rows))
+    explanation: По длине сначала «ель» и «лес» из трёх букв, затем «сосна». Пары встали по первому числу, при равенстве по строке.
+outcomes:
+  - выбирать между sort и sorted
+  - включать обратный порядок
+  - опираться на сравнение кортежей слева направо
+  - сортировать по длине через key=len
+resources:
+  - kind: docs
+    title: Sorting HOW TO
+    url: https://docs.python.org/3/howto/sorting.html
+  - kind: docs
+    title: sorted()
+    url: https://docs.python.org/3/library/functions.html#sorted
+  - kind: youtube
+    title: CS50P — Lecture 7, sorted
+    url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+    author: Harvard CS50
+tasks:
+  - id: python.collections.sort-key.t1
+    type: choice
+    title: Что делает sorted
+    difficulty: 1
+    context: development
+    prompt: Чем sorted(values) отличается от values.sort()?
+    options:
+      - id: a
+        text: Ничем, это два имени одной операции
+      - id: b
+        text: sorted возвращает новый список и не меняет values
+      - id: c
+        text: sorted меняет values, а sort возвращает копию
+    answer: b
+    hints:
+      - sort работает на месте.
+      - После sorted исходный список можно печатать как раньше.
+      - sort возвращает None.
+    solution: b
+    explanation: Если старый порядок ещё нужен, берут sorted. Если список можно переписать, достаточно sort.
+  - id: python.collections.sort-key.t2
+    type: predict_output
+    title: По длине
+    difficulty: 2
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      print(sorted(["сс", "а", "ббб"], key=len))
+    options:
+      - id: a
+        text: "['а', 'сс', 'ббб']"
+      - id: b
+        text: "['ббб', 'сс', 'а']"
+      - id: c
+        text: "['а', 'ббб', 'сс']"
+    answer: a
+    hints:
+      - key=len сравнивает длины, не алфавит.
+      - Сначала длина 1, затем 2, затем 3.
+      - При разных длинах текст внутри не важен.
+    solution: a
+    explanation: «а» короче всех, «сс» средней длины, «ббб» длиннее.
+  - id: python.collections.sort-key.t3
+    type: predict_output
+    title: Пары слева направо
+    difficulty: 2
+    context: analytics
+    prompt: Что будет первым элементом после sorted([(2, 9), (1, 8), (1, 3)])?
+    options:
+      - id: a
+        text: "(2, 9)"
+      - id: b
+        text: "(1, 3)"
+      - id: c
+        text: "(1, 8)"
+    answer: b
+    hints:
+      - Сначала сравнивается нулевое поле.
+      - Среди пар с 1 меньший второй элемент идёт раньше.
+      - 3 меньше 8.
+    solution: b
+    explanation: Обе пары с 1 меньше пары с 2. Между ними побеждает (1, 3).
+  - id: python.collections.sort-key.t4
+    type: code
+    title: Возрастание и убывание
+    difficulty: 2
+    context: analytics
+    prompt: Первая строка — число n, далее n целых чисел. Выведите их по возрастанию в одной строке через пробел, затем по убыванию в следующей строке. Исходный порядок в памяти сохранять не обязательно, но удобнее собрать список один раз.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "4\n3\n1\n2\n1\n"
+        expected_stdout: "1 1 2 3\n3 2 1 1\n"
+      - stdin: "1\n8\n"
+        expected_stdout: "8\n8\n"
+    hints:
+      - Соберите числа в список.
+      - Два вызова sorted с разным reverse.
+      - Строку из чисел собирает " ".join, но элементы join должны быть строками.
+    solution: |
+      n = int(input())
+      values = []
+      for _ in range(n):
+          values.append(int(input()))
+      up = sorted(values)
+      down = sorted(values, reverse=True)
+      up_text = []
+      for item in up:
+          up_text.append(str(item))
+      down_text = []
+      for item in down:
+          down_text.append(str(item))
+      print(" ".join(up_text))
+      print(" ".join(down_text))
+    explanation: sorted дважды строит новые списки. join требует строки, поэтому каждое число сначала кладут в список текстов.
+  - id: python.collections.sort-key.t5
+    type: code
+    title: Слова по длине
+    difficulty: 2
+    context: analytics
+    prompt: Первая строка — число n, далее n слов. Выведите слова по возрастанию длины, каждое с новой строки. При равной длине сохраните порядок сортировки Python, его даёт sorted с key=len.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "4\nель\nсосна\nлес\nпихта\n"
+        expected_stdout: "ель\nлес\nсосна\nпихта\n"
+      - stdin: "2\nааа\nб\n"
+        expected_stdout: "б\nааа\n"
+    hints:
+      - Соберите слова в список.
+      - Передайте key=len в sorted.
+      - Печатайте по одному слову из результата.
+    solution: |
+      n = int(input())
+      words = []
+      for _ in range(n):
+          words.append(input())
+      for word in sorted(words, key=len):
+          print(word)
+    explanation: key=len сравнивает длины. «ель» и «лес» одинаковой длины и идут в том порядке, в котором их оставила устойчивая сортировка.
+  - id: python.collections.sort-key.t6
+    type: code
+    title: Журнал по высоте
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — число n, далее n строк «имя высота». Выведите имена по возрастанию высоты, при равной высоте — по алфавиту имени, каждое имя с новой строки.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\nсосна 12\nель 12\nпихта 9\n"
+        expected_stdout: "пихта\nель\nсосна\n"
+      - stdin: "2\nб 5\nа 5\n"
+        expected_stdout: "а\nб\n"
+    hints:
+      - Соберите список кортежей (высота, имя).
+      - Сравнение кортежей само поставит сначала меньшую высоту, затем имя.
+      - После сортировки печатайте только имя.
+    solution: |
+      n = int(input())
+      rows = []
+      for _ in range(n):
+          name, raw = input().split()
+          rows.append((int(raw), name))
+      for height, name in sorted(rows):
+          print(name)
+    explanation: Кортеж (высота, имя) задаёт нужный порядок без собственной функции. Распаковка в цикле сразу отделяет имя для печати.
+

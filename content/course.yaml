@@ -18,14 +18,14 @@ sections:
     slug: conditions
     order: 2
     title: Условия и циклы
-    status: planned
+    status: published
     planned_lessons: 10
     summary: if, elif, else, вложенность, while, for, range, break, continue и накопление результата.
   - id: collections
     slug: collections
     order: 3
     title: Строки и коллекции
-    status: planned
+    status: published
     planned_lessons: 13
     summary: Строки и срезы, list, tuple, set, dict, вложенные структуры, распаковка и comprehensions.
   - id: functions

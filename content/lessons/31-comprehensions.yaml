@@ -1,0 +1,191 @@
+id: python.collections.comprehensions
+slug: comprehensions
+section: collections
+title: Генераторы списков и словарей
+order: 12
+weight: 1
+prerequisites:
+  - python.collections.sort-key
+goal: Собирать список, множество или словарь одним выражением.
+tags: [comprehension, генератор списка, фильтр]
+introduces:
+  - id: list-comp
+    title: Генератор списка
+    summary: Выражение [x * 2 for x in values] собирает новый список. Это компактная запись цикла, который только строит последовательность.
+  - id: comp-if
+    title: Фильтр в генераторе
+    summary: Часть if оставляет элементы, для которых условие истинно. Запись [x for x in values if x > 0] отбрасывает неположительные.
+  - id: set-dict-comp
+    title: Генераторы множества и словаря
+    summary: "Фигурные скобки с выражением без двоеточия собирают множество. С двоеточием — словарь {ключ: значение for ...}."
+theory:
+  - "Если цикл только собирает новый список, его записывают одним выражением: doubled = [x * 2 for x in values]. Сначала пишут, что кладут в результат, затем for и источник. Это не новый вид цикла, а сжатая запись уже знакомого обхода."
+  - "Фильтр добавляют справа: [x for x in values if x > 0]. Условие проверяется для каждого элемента. Если нужно и преобразовать, и отфильтровать, преобразование остаётся слева, условие — после if."
+  - "Множество собирают фигурными скобками: {word.lower() for word in words}. Повторы исчезнут сами. Словарь требует двоеточия: {word: len(word) for word in words}."
+  - "Генератор уместен, когда строится одна коллекция. Если в цикле несколько накопителей, флаги или ранняя остановка, оставляют обычный for. Вложенные генераторы в этом уроке не нужны."
+examples:
+  - title: Преобразование и фильтр
+    code: |
+      values = [3, -1, 4, 0, 2]
+      print([x * 10 for x in values])
+      print([x for x in values if x > 0])
+    explanation: Первый список масштабирует все числа. Второй оставляет только положительные.
+  - title: Множество и словарь
+    code: |
+      words = ["Ель", "ель", "Сосна"]
+      print({word.lower() for word in words})
+      print({word: len(word) for word in ["ель", "сосна"]})
+    explanation: Множество схлопнуло две «ель» разного регистра в одно значение. Словарь связал слово с его длиной.
+outcomes:
+  - собирать список генератором
+  - фильтровать элементы частью if
+  - строить множество и словарь тем же приёмом
+  - оставлять обычный цикл, когда генератора мало
+resources:
+  - kind: docs
+    title: List Comprehensions
+    url: https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions
+  - kind: youtube
+    title: CS50P — Lecture 4, comprehensions
+    url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+    author: Harvard CS50
+tasks:
+  - id: python.collections.comprehensions.t1
+    type: choice
+    title: Когда хватит генератора
+    difficulty: 1
+    context: development
+    prompt: В каком случае генератор списка уместнее обычного цикла?
+    options:
+      - id: a
+        text: Когда из одной последовательности собирают другую
+      - id: b
+        text: Когда нужны два накопителя и флаг
+      - id: c
+        text: Когда цикл должен остановиться на break
+    answer: a
+    hints:
+      - Генератор всегда доходит до конца источника.
+      - Несколько накопителей в одно выражение не кладут.
+      - Он заменяет цикл, который только строит коллекцию.
+    solution: a
+    explanation: break, несколько счётчиков и сложные ветки остаются в обычном for.
+  - id: python.collections.comprehensions.t2
+    type: predict_output
+    title: Масштаб
+    difficulty: 1
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      print([x + 1 for x in [1, 2, 3]])
+    options:
+      - id: a
+        text: "[1, 2, 3]"
+      - id: b
+        text: "[2, 3, 4]"
+      - id: c
+        text: "6"
+    answer: b
+    hints:
+      - Для каждого элемента считается x + 1.
+      - Результат — список, не сумма.
+      - Порядок сохраняется.
+    solution: b
+    explanation: Каждый элемент увеличился на один, длина осталась три.
+  - id: python.collections.comprehensions.t3
+    type: predict_output
+    title: Фильтр
+    difficulty: 2
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      print([x for x in [3, -1, 4, 0] if x > 0])
+    options:
+      - id: a
+        text: "[3, 4]"
+      - id: b
+        text: "[3, -1, 4]"
+      - id: c
+        text: "[True, False, True, False]"
+    answer: a
+    hints:
+      - if оставляет элементы, не превращает их в True или False.
+      - Нуль не больше нуля.
+      - Отрицательное число отбрасывается.
+    solution: a
+    explanation: Остались только 3 и 4. Условие фильтрует, а не заменяет значения.
+  - id: python.collections.comprehensions.t4
+    type: code
+    title: Квадраты
+    difficulty: 2
+    context: analytics
+    prompt: Первая строка — число n, далее n целых чисел. Выведите список квадратов этих чисел в одну строку таким же видом, как print списка.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\n2\n-3\n4\n"
+        expected_stdout: "[4, 9, 16]\n"
+      - stdin: "1\n5\n"
+        expected_stdout: "[25]\n"
+    hints:
+      - Сначала соберите исходные числа.
+      - Генератор возведёт каждый элемент в степень 2.
+      - print списка сам ставит скобки и запятые.
+    solution: |
+      n = int(input())
+      values = []
+      for _ in range(n):
+          values.append(int(input()))
+      print([item ** 2 for item in values])
+    explanation: Чтение всё ещё обычным циклом, потому что input вызывается n раз. Преобразование уже удобно записать генератором.
+  - id: python.collections.comprehensions.t5
+    type: code
+    title: Только длинные
+    difficulty: 2
+    context: analytics
+    prompt: Первая строка — число n, далее n слов. Выведите через пробел слова длиннее трёх символов в исходном порядке. Если таких нет, выведите пустую строку.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "4\nель\nсосна\nлес\nпихта\n"
+        expected_stdout: "сосна пихта\n"
+      - stdin: "2\nель\nлес\n"
+        expected_stdout: "\n"
+    hints:
+      - Фильтр if len(word) > 3.
+      - Соберите список, затем join через пробел.
+      - join от пустого списка даёт пустую строку.
+    solution: |
+      n = int(input())
+      words = []
+      for _ in range(n):
+          words.append(input())
+      selected = [word for word in words if len(word) > 3]
+      print(" ".join(selected))
+    explanation: Генератор оставляет «сосна» и «пихта». join собирает их в одну строку.
+  - id: python.collections.comprehensions.t6
+    type: code
+    title: Словарь длин
+    difficulty: 3
+    context: development
+    prompt: Первая строка — число n, далее n слов. Постройте словарь «слово → длина» и выведите значения для прочитанных слов в исходном порядке, каждое с новой строки. Повторяющееся слово печатается столько раз, сколько встретилось.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\nель\nсосна\nель\n"
+        expected_stdout: "3\n5\n3\n"
+      - stdin: "1\nпихта\n"
+        expected_stdout: "5\n"
+    hints:
+      - Словарь собирают генератором с двоеточием.
+      - Порядок печати берётся из исходного списка, не из ключей.
+      - Длину повтора достаточно взять из словаря повторно.
+    solution: |
+      n = int(input())
+      words = []
+      for _ in range(n):
+          words.append(input())
+      lengths = {word: len(word) for word in words}
+      for word in words:
+          print(lengths[word])
+    explanation: Генератор словаря запоминает длину каждого уникального слова. Печать идёт по исходному списку, поэтому «ель» появляется дважды.

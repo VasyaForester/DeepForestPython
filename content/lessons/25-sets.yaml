@@ -1,0 +1,204 @@
+id: python.collections.sets
+slug: sets
+section: collections
+title: Множество
+order: 6
+weight: 1
+prerequisites:
+  - python.collections.tuples
+goal: Хранить уникальные значения и проверять вхождение.
+tags: [set, множество, уникальность, пересечение]
+introduces:
+  - id: set
+    title: Множество
+    summary: Набор уникальных элементов без порядка. Его записывают в фигурных скобках или получают через set(items).
+  - id: set-ops
+    title: Операции над множествами
+    summary: add добавляет элемент, discard удаляет его, если он есть. Операторы |, & и - дают объединение, пересечение и разность.
+theory:
+  - "Множество хранит каждый элемент один раз и не помнит порядок. Запись {\"ель\", \"сосна\", \"ель\"} содержит две строки. Пустое множество пишут set(), потому что {} — это пустой словарь."
+  - "Главная проверка — in. Для множества она означает «есть ли такой элемент», а не «есть ли подстрока». add добавляет значение, discard удаляет его и молчит, если элемента не было. remove в этом случае вызывает ошибку."
+  - "По множеству можно пройти циклом, но индекс не сработает: порядка нет. Чтобы убрать повторы из списка, пишут set(items), а если порядок исходного списка важен, его восстанавливают отдельно."
+  - "Операции как в математике: | объединяет, & оставляет общее, - вычитает. Они возвращают новое множество и не портят исходные."
+examples:
+  - title: Уникальные имена
+    code: |
+      seen = {"ель", "сосна", "ель"}
+      print(len(seen))
+      seen.add("пихта")
+      print("сосна" in seen)
+      print(seen)
+    explanation: Повтор «ель» не увеличил длину. add дописал «пихта». Порядок при печати может отличаться, важны состав и размер.
+  - title: Пересечение списков
+    code: |
+      left = set([1, 2, 3, 2])
+      right = set([3, 4])
+      print(left & right)
+      print(left | right)
+      print(left - right)
+    explanation: В пересечении только 3. Объединение собрало 1, 2, 3 и 4. Разность оставила то, чего нет справа.
+outcomes:
+  - создавать множество и добавлять элемент
+  - проверять вхождение через in
+  - убирать повторы из списка
+  - считать пересечение, объединение и разность
+resources:
+  - kind: docs
+    title: Sets
+    url: https://docs.python.org/3/tutorial/datastructures.html#sets
+  - kind: youtube
+    title: CS50P — Lecture 5, sets
+    url: https://www.youtube.com/watch?v=0LrdjNb4lP8
+    author: Harvard CS50
+tasks:
+  - id: python.collections.sets.t1
+    type: choice
+    title: Пустые скобки
+    difficulty: 1
+    context: development
+    prompt: Как создать пустое множество?
+    options:
+      - id: a
+        text: "{}"
+      - id: b
+        text: set()
+      - id: c
+        text: "[]"
+    answer: b
+    hints:
+      - Фигурные скобки без элементов заняты другой структурой.
+      - "[] — это пустой список."
+      - Нужен вызов конструктора.
+    solution: b
+    explanation: "{} создаёт пустой словарь. Пустое множество получают вызовом set()."
+  - id: python.collections.sets.t2
+    type: predict_output
+    title: Повторы
+    difficulty: 1
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      tags = {"лог", "лес", "лог"}
+      print(len(tags))
+    options:
+      - id: a
+        text: "3"
+      - id: b
+        text: "2"
+      - id: c
+        text: "1"
+    answer: b
+    hints:
+      - Одинаковые элементы хранятся один раз.
+      - «лог» написан дважды, «лес» один.
+      - len считает уникальные значения.
+    solution: b
+    explanation: В множестве остаются «лог» и «лес», длина равна 2.
+  - id: python.collections.sets.t3
+    type: predict_output
+    title: Общее
+    difficulty: 2
+    context: analytics
+    prompt: Что выведет программа?
+    code: |
+      a = {1, 2, 3}
+      b = {3, 4}
+      print(3 in (a & b))
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: "{3}"
+    answer: a
+    hints:
+      - Оператор & оставляет элементы, которые есть в обоих множествах.
+      - Общее число только 3.
+      - in проверяет вхождение, а не печатает само множество.
+    solution: a
+    explanation: Пересечение содержит только 3, поэтому проверка in истинна. Порядок элементов множества для этой проверки не важен.
+  - id: python.collections.sets.t4
+    type: code
+    title: Уникальные слова
+    difficulty: 2
+    context: analytics
+    prompt: Первая строка — число n, далее n строк. Выведите количество уникальных строк.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "4\nель\nсосна\nель\nпихта\n"
+        expected_stdout: "3\n"
+      - stdin: "2\nа\nа\n"
+        expected_stdout: "1\n"
+    hints:
+      - Собирайте значения во множество.
+      - add или set из списка уберут повторы.
+      - Нужна длина множества, не исходного n.
+    solution: |
+      n = int(input())
+      seen = set()
+      for _ in range(n):
+          seen.add(input())
+      print(len(seen))
+    explanation: Каждая новая строка попадает во множество один раз. Длина и есть число уникальных значений.
+  - id: python.collections.sets.t5
+    type: code
+    title: Есть ли гость
+    difficulty: 2
+    context: business
+    prompt: Первая строка — число n, далее n имён в пригласительном списке, затем ещё одна строка с именем гостя. Выведите yes, если гость есть в списке, иначе no.
+    starter_code: |
+      n = int(input())
+    tests:
+      - stdin: "3\nМира\nЛев\nОк\nЛев\n"
+        expected_stdout: "yes\n"
+      - stdin: "2\nМира\nЛев\nЯн\n"
+        expected_stdout: "no\n"
+    hints:
+      - Имена положите во множество.
+      - Гостя читайте после цикла.
+      - Проверку делает in.
+    solution: |
+      n = int(input())
+      invited = set()
+      for _ in range(n):
+          invited.add(input())
+      guest = input()
+      if guest in invited:
+          print("yes")
+      else:
+          print("no")
+    explanation: Множество удобно, когда важен факт «есть или нет», а не порядок и не число повторов.
+  - id: python.collections.sets.t6
+    type: code
+    title: Только слева
+    difficulty: 3
+    context: analytics
+    prompt: "Прочитайте две строки с числами через пробел. Выведите по возрастанию числа, которые есть в первой строке и отсутствуют во второй, каждое с новой строки."
+    starter_code: |
+      left = input()
+      right = input()
+    tests:
+      - stdin: "1 2 3 2\n3 4\n"
+        expected_stdout: "1\n2\n"
+      - stdin: "5 5\n1 2\n"
+        expected_stdout: "5\n"
+    hints:
+      - split разрежет строку на куски, затем каждый кусок сделайте int.
+      - Разность множеств даёт «только слева».
+      - Превратите разность в список и вызовите sort, чтобы напечатать по возрастанию.
+    solution: |
+      left = input()
+      right = input()
+      a = set()
+      for part in left.split():
+          a.add(int(part))
+      b = set()
+      for part in right.split():
+          b.add(int(part))
+      diff = list(a - b)
+      diff.sort()
+      for value in diff:
+          print(value)
+    explanation: Сначала строки превращаются в множества чисел, затем разность оставляет уникальные значения первой строки. sort на списке задаёт порядок вывода.
