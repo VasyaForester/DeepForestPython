@@ -1,0 +1,180 @@
+id: python.basics.review
+slug: review
+section: basics
+title: Итог раздела. Мини-отчёт
+order: 9
+weight: 2
+prerequisites:
+  - python.basics.fstrings
+goal: Собрать ввод, вычисления, проверку и вывод в одну небольшую программу.
+tags: [итог, отчёт, практика, ввод, форматирование]
+theory:
+  - "Почти любая маленькая программа состоит из четырёх шагов: прочитать данные, преобразовать их в нужный тип, посчитать результат и показать его. Новых понятий в этом уроке нет, есть только сборка того, что уже знакомо."
+  - "Имена переменных стоит выбирать по смыслу: price и count читаются лучше, чем a и b. Промежуточный результат удобно сохранять в отдельное имя, тогда f-строка в конце остаётся короткой."
+  - "Программу полезно мысленно проверить на граничных данных: ноль, пустая строка, ровно равные значения. Почти все ошибки новичка живут именно там, а не в середине диапазона."
+examples:
+  - title: Сумма заказа с проверкой
+    code: |
+      price = float(input())
+      count = int(input())
+      total = price * count
+      print(f"Позиций: {count}")
+      print(f"Сумма: {total:.2f}")
+      print(total > 1000)
+    stdin: "199.9\n7\n"
+    explanation: Программа читает два значения, считает сумму, показывает её с двумя знаками и отвечает на вопрос о превышении порога.
+  - title: Минуты в часы
+    code: |
+      minutes = int(input())
+      print(f"{minutes // 60} ч {minutes % 60} мин")
+      print(minutes % 60 == 0)
+    stdin: "120\n"
+    explanation: Целочисленное деление и остаток дают часы и минуты, сравнение остатка с нулём показывает, что часы вышли ровными.
+outcomes:
+  - разбивать задачу на ввод, вычисление и вывод
+  - выбирать подходящее преобразование типа
+  - собирать результат во f-строке
+  - проверять условие и выводить его результат
+resources:
+  - kind: docs
+    title: The Python Tutorial — An Informal Introduction
+    url: https://docs.python.org/3/tutorial/introduction.html
+  - kind: youtube
+    title: CS50P — Lecture 1
+    url: https://www.youtube.com/watch?v=CJJQaqN4LCM
+    author: Harvard CS50
+tasks:
+  - id: python.basics.review.t1
+    type: code
+    title: Средний чек
+    difficulty: 2
+    context: business
+    prompt: Первая строка — выручка с дробной частью, вторая — число заказов. Выведите средний чек с двумя знаками после точки.
+    starter_code: ""
+    tests:
+      - stdin: "1500.0\n4\n"
+        expected_stdout: "375.00\n"
+      - stdin: "999.5\n3\n"
+        expected_stdout: "333.17\n"
+    hints:
+      - Выручку читайте через float, количество через int.
+      - Средний чек — выручка, делённая на число заказов.
+      - Два знака задаёт формат .2f.
+    solution: |
+      revenue = float(input())
+      orders = int(input())
+      print(f"{revenue / orders:.2f}")
+    explanation: Деление даёт дробный результат, формат приводит его к привычному денежному виду.
+  - id: python.basics.review.t2
+    type: code
+    title: Отгрузка со склада
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — количество деталей, вторая — вместимость одной коробки. Выведите две строки вида Коробок и Остаток с полными коробками и числом деталей, которые в них не поместились.
+    starter_code: ""
+    tests:
+      - stdin: "10\n3\n"
+        expected_stdout: "Коробок: 3\nОстаток: 1\n"
+      - stdin: "9\n3\n"
+        expected_stdout: "Коробок: 3\nОстаток: 0\n"
+    hints:
+      - Полные коробки даёт целочисленное деление.
+      - Остаток даёт знак процента.
+      - Каждая строка выводится отдельным print.
+    solution: |
+      items = int(input())
+      per_box = int(input())
+      print(f"Коробок: {items // per_box}")
+      print(f"Остаток: {items % per_box}")
+    explanation: "Пара // и % отвечает сразу на оба вопроса: сколько целых частей получилось и что осталось."
+  - id: python.basics.review.t3
+    type: code
+    title: Где дешевле
+    difficulty: 3
+    context: business
+    prompt: Первая строка — цена в первом магазине, вторая — во втором. Обе дробные. Выведите результат проверки «в первом магазине строго дешевле».
+    starter_code: ""
+    tests:
+      - stdin: "120.0\n150.0\n"
+        expected_stdout: "True\n"
+      - stdin: "150.0\n150.0\n"
+        expected_stdout: "False\n"
+    hints:
+      - Обе строки преобразуйте через float.
+      - Сравнение строгое, равенство не подходит.
+      - Результат сравнения можно передать прямо в print.
+    solution: |
+      first = float(input())
+      second = float(input())
+      print(first < second)
+    explanation: Строгое сравнение даёт False при равных ценах, как и требует формулировка.
+  - id: python.basics.review.t4
+    type: code
+    title: Цена со скидкой
+    difficulty: 3
+    context: business
+    prompt: Первая строка — цена с дробной частью, вторая — размер скидки в процентах, целое число. Выведите итоговую цену с двумя знаками после точки.
+    starter_code: |
+      price = float(input())
+      discount = int(input())
+    tests:
+      - stdin: "1000.0\n15\n"
+        expected_stdout: "850.00\n"
+      - stdin: "199.9\n10\n"
+        expected_stdout: "179.91\n"
+    hints:
+      - После скидки остаётся 100 минус процент скидки.
+      - Долю от цены считают умножением и делением на 100.
+      - Формат .2f оставит два знака.
+    solution: |
+      price = float(input())
+      discount = int(input())
+      print(f"{price * (100 - discount) / 100:.2f}")
+    explanation: "Скобки важны: сначала считается остаток процентов, затем доля от цены."
+  - id: python.basics.review.t5
+    type: code
+    title: Анкета заполнена верно
+    difficulty: 3
+    context: security
+    prompt: Первая строка — имя, вторая — возраст целым числом. Выведите результат проверки «имя не пустое и возраст больше нуля и меньше 120».
+    starter_code: ""
+    tests:
+      - stdin: "Mira\n29\n"
+        expected_stdout: "True\n"
+      - stdin: "\n29\n"
+        expected_stdout: "False\n"
+      - stdin: "Leo\n0\n"
+        expected_stdout: "False\n"
+    hints:
+      - Пустая строка ложна, её можно проверить через bool.
+      - Возраст проверяется цепочкой строгих сравнений.
+      - Соедините обе проверки оператором and.
+    solution: |
+      name = input()
+      age = int(input())
+      print(bool(name) and 0 < age < 120)
+    explanation: "Проверка формы — это обычное логическое выражение: заполненность плюс допустимый диапазон."
+  - id: python.basics.review.t6
+    type: code
+    title: Отчёт по плану
+    difficulty: 4
+    context: analytics
+    prompt: Три строки ввода — имя сотрудника, план и факт, оба целые. Выведите три строки, одну за другой, по образцу из тестов, а последней строкой — результат проверки «план выполнен».
+    starter_code: ""
+    tests:
+      - stdin: "Mira\n10\n8\n"
+        expected_stdout: "Mira: 8 из 10\nВыполнение: 80.0%\nFalse\n"
+      - stdin: "Leo\n4\n5\n"
+        expected_stdout: "Leo: 5 из 4\nВыполнение: 125.0%\nTrue\n"
+    hints:
+      - Первая строка собирается из имени, факта и плана.
+      - Процент выполнения — факт, делённый на план, умноженный на 100.
+      - План выполнен, когда факт не меньше плана.
+    solution: |
+      name = input()
+      plan = int(input())
+      fact = int(input())
+      print(f"{name}: {fact} из {plan}")
+      print(f"Выполнение: {fact / plan * 100:.1f}%")
+      print(fact >= plan)
+    explanation: "Один отчёт собирается из трёх разных действий: подстановки текста, вычисления с форматом и логической проверки."

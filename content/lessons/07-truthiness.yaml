@@ -1,0 +1,198 @@
+id: python.basics.truthiness
+slug: truthiness
+section: basics
+title: Истинность значений и None
+order: 7
+weight: 1
+prerequisites:
+  - python.basics.logic
+goal: Определять, какие значения Python считает ложными, и правильно проверять None.
+tags: [bool, None, истинность, пустая строка, is]
+introduces:
+  - id: truthiness
+    title: Истинность значения
+    summary: Любое значение можно превратить в True или False. Пустая строка, 0, 0.0 и None дают False.
+  - id: bool-call
+    title: bool()
+    summary: Возвращает логическое значение, которым Python считает переданный объект.
+  - id: is-none
+    title: is None
+    summary: Правильная проверка на отсутствие значения. Сравнение с None делают через is, а не через ==.
+theory:
+  - "У каждого значения есть логический смысл. bool(value) показывает, каким Python его считает. Ложными считаются пустая строка, число 0, число 0.0 и None. Всё остальное истинно."
+  - "Поэтому строка \"нет\" истинна: важна не её надпись, а то, что строка непустая. По той же причине истинна строка \"False\". Проверка bool(answer) отвечает на вопрос «значение непустое», а не «значение верное»."
+  - "None означает, что значения нет. Это не ноль и не пустая строка: None == 0 даёт False. Логически None ложен, то есть bool(None) даёт False."
+  - "Проверять None принято оператором is: value is None. Такая запись сравнивает не содержимое, а само значение, и читается однозначно."
+examples:
+  - title: Что считается ложным
+    code: |
+      print(bool(""))
+      print(bool("нет"))
+      print(bool(0))
+      print(bool(0.0))
+    explanation: Пустая строка и нули ложны. Непустая строка истинна независимо от текста.
+  - title: Значения нет
+    code: |
+      value = None
+      print(value is None)
+      print(value == 0)
+      print(bool(value))
+    explanation: None отличается от нуля, но в логическом смысле тоже ложен.
+outcomes:
+  - называть ложные значения
+  - преобразовывать значение в bool
+  - отличать None от нуля и пустой строки
+  - проверять отсутствие значения через is None
+resources:
+  - kind: docs
+    title: Truth Value Testing
+    url: https://docs.python.org/3/library/stdtypes.html#truth-value-testing
+  - kind: docs
+    title: None
+    url: https://docs.python.org/3/library/constants.html#None
+tasks:
+  - id: python.basics.truthiness.t1
+    type: choice
+    title: Строка со словом False
+    difficulty: 2
+    context: neutral
+    prompt: Что вернёт bool("False")?
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: None
+    answer: a
+    hints:
+      - Внутри кавычек находится текст, а не логическое значение.
+      - Ложной считается только пустая строка.
+      - В этой строке пять символов.
+    solution: a
+    explanation: Строка непустая, поэтому она истинна. Её содержимое роли не играет.
+  - id: python.basics.truthiness.t2
+    type: predict_output
+    title: Ноль с точкой
+    difficulty: 1
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      print(bool(0.0))
+    options:
+      - id: a
+        text: "False"
+      - id: b
+        text: "True"
+      - id: c
+        text: "0.0"
+    answer: a
+    hints:
+      - Это число, равное нулю.
+      - Тип float ничего не меняет.
+      - Нулевые числа ложны.
+    solution: a
+    explanation: Любой ноль ложен, независимо от того, int это или float.
+  - id: python.basics.truthiness.t3
+    type: choice
+    title: Проверка на отсутствие значения
+    difficulty: 2
+    context: development
+    prompt: Как принято проверять, что в result нет значения?
+    options:
+      - id: a
+        text: result == None
+      - id: b
+        text: result is None
+      - id: c
+        text: result = None
+    answer: b
+    hints:
+      - Один знак равно присваивает значение.
+      - Для None есть отдельный оператор.
+      - Он записывается словом is.
+    solution: b
+    explanation: Проверка на None делается через is. Присваивание и сравнение по значению здесь не подходят.
+  - id: python.basics.truthiness.t4
+    type: code
+    title: Ввод не пустой
+    difficulty: 2
+    context: security
+    prompt: Прочитайте одну строку ввода и выведите результат проверки «строка не пустая».
+    starter_code: |
+      answer = input()
+    tests:
+      - stdin: "лес\n"
+        expected_stdout: "True\n"
+      - stdin: "\n"
+        expected_stdout: "False\n"
+    hints:
+      - input возвращает строку, даже если ничего не ввели.
+      - Пустая строка ложна.
+      - Передайте строку в bool.
+    solution: |
+      answer = input()
+      print(bool(answer))
+    explanation: bool отвечает ровно на вопрос о пустоте строки, а не о её содержании.
+  - id: python.basics.truthiness.t5
+    type: code
+    title: Результата ещё нет
+    difficulty: 2
+    context: analytics
+    prompt: Создайте переменную result со значением None. Выведите сначала результат проверки result is None, затем bool(result).
+    starter_code: ""
+    tests:
+      - stdin: ""
+        expected_stdout: "True\nFalse\n"
+    hints:
+      - None пишется с большой буквы и без кавычек.
+      - Первая проверка отвечает «значения нет».
+      - Вторая показывает логический смысл значения.
+    solution: |
+      result = None
+      print(result is None)
+      print(bool(result))
+    explanation: Отсутствие значения подтверждается через is, а в логическом выражении None ведёт себя как False.
+  - id: python.basics.truthiness.t6
+    type: code
+    title: None не равен нулю
+    difficulty: 3
+    context: development
+    prompt: "Создайте score со значением None. Выведите три строки: результат score is None, результат score == 0 и результат сравнения score с пустой строкой."
+    starter_code: ""
+    tests:
+      - stdin: ""
+        expected_stdout: "True\nFalse\nFalse\n"
+    hints:
+      - Первое сравнение истинно.
+      - None — отдельное значение, а не число.
+      - Пустая строка тоже не равна None.
+    solution: |
+      score = None
+      print(score is None)
+      print(score == 0)
+      print(score == "")
+    explanation: В логических выражениях None, 0 и пустая строка ложны одинаково, но друг другу они не равны.
+  - id: python.basics.truthiness.t7
+    type: code
+    title: Заполнены оба поля
+    difficulty: 3
+    context: business
+    prompt: Прочитайте две строки — имя и город. Выведите результат проверки «обе строки непустые».
+    starter_code: ""
+    tests:
+      - stdin: "Mira\nПермь\n"
+        expected_stdout: "True\n"
+      - stdin: "Mira\n\n"
+        expected_stdout: "False\n"
+      - stdin: "\n\n"
+        expected_stdout: "False\n"
+    hints:
+      - Каждую строку можно превратить в bool.
+      - Соедините проверки через and.
+      - Пустая строка делает всё условие ложным.
+    solution: |
+      name = input()
+      city = input()
+      print(bool(name) and bool(city))
+    explanation: "Так проверяют заполненность формы: интересует наличие текста, а не его значение."

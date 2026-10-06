@@ -12,7 +12,8 @@
         "order": 1,
         "title": "Старт и основы Python",
         "status": "published",
-        "summary": "Программа, print, строки, переменные, типы и ввод данных."
+        "planned_lessons": 9,
+        "summary": "Программа, print, переменные, типы, ввод, арифметика, сравнения, логика и f-строки."
       },
       {
         "id": "conditions",
@@ -20,7 +21,8 @@
         "order": 2,
         "title": "Условия и циклы",
         "status": "planned",
-        "summary": "if, elif, else, while, for, range, break и continue."
+        "planned_lessons": 10,
+        "summary": "if, elif, else, вложенность, while, for, range, break, continue и накопление результата."
       },
       {
         "id": "collections",
@@ -28,31 +30,35 @@
         "order": 3,
         "title": "Строки и коллекции",
         "status": "planned",
-        "summary": "Индексы, срезы, list, tuple, set, dict и comprehensions."
+        "planned_lessons": 13,
+        "summary": "Строки и срезы, list, tuple, set, dict, вложенные структуры, распаковка и comprehensions."
       },
       {
         "id": "functions",
         "slug": "functions",
         "order": 4,
-        "title": "Функции",
+        "title": "Функции и области видимости",
         "status": "planned",
-        "summary": "def, параметры, return, область видимости, args и рекурсия."
+        "planned_lessons": 11,
+        "summary": "def, параметры, return, значения по умолчанию, args и kwargs, области видимости, первые аннотации типов."
+      },
+      {
+        "id": "algorithms",
+        "slug": "algorithms",
+        "order": 5,
+        "title": "Алгоритмы и структуры данных",
+        "status": "planned",
+        "planned_lessons": 15,
+        "summary": "Big O, хеш-таблицы, стек, очередь, поиск, сортировки, рекурсия, деревья, BFS, DFS, графы, жадные алгоритмы и введение в динамическое программирование."
       },
       {
         "id": "files",
         "slug": "files",
-        "order": 5,
-        "title": "Файлы, данные и модули",
-        "status": "planned",
-        "summary": "Файлы, pathlib, CSV, JSON, модули и пакеты."
-      },
-      {
-        "id": "cli",
-        "slug": "cli",
         "order": 6,
-        "title": "Бонус. Командная строка",
+        "title": "Файлы, сериализация и модули",
         "status": "planned",
-        "summary": "Терминал, навигация, файлы и запуск Python. Необязательный блок."
+        "planned_lessons": 11,
+        "summary": "with, pathlib, кодировки, CSV, JSON, datetime, re, collections, secrets и собственный пакет."
       },
       {
         "id": "errors",
@@ -60,119 +66,134 @@
         "order": 7,
         "title": "Исключения, отладка и тестирование",
         "status": "planned",
-        "summary": "Traceback, try/except, assert и pytest."
+        "planned_lessons": 11,
+        "summary": "Traceback, try/except/finally, свои исключения, logging, отладчик, pytest, fixtures, параметризация, моки и coverage."
       },
       {
         "id": "oop",
         "slug": "oop",
         "order": 8,
-        "title": "ООП",
+        "title": "Объектно-ориентированное программирование",
         "status": "planned",
-        "summary": "Классы, наследование, свойства, dunder-методы и dataclasses."
+        "planned_lessons": 10,
+        "summary": "Классы, состояние, методы, композиция, наследование, свойства, dunder-методы и dataclasses."
       },
       {
-        "id": "algorithms",
-        "slug": "algorithms",
+        "id": "advanced",
+        "slug": "advanced",
         "order": 9,
-        "title": "Алгоритмы и структуры данных",
+        "title": "Продвинутый Python",
         "status": "planned",
-        "summary": "Сложность, поиск, сортировки, стек, очередь, деревья и графы."
+        "planned_lessons": 11,
+        "summary": "Итераторы, генераторы, замыкания, декораторы, контекстные менеджеры, functools, itertools, дескрипторы и match."
       },
       {
-        "id": "deeper",
-        "slug": "deeper",
+        "id": "cli",
+        "slug": "cli",
         "order": 10,
-        "title": "Python глубже",
+        "title": "Командная строка, окружение и пакеты",
         "status": "planned",
-        "summary": "Итераторы, генераторы, замыкания, декораторы и match."
-      },
-      {
-        "id": "tooling",
-        "slug": "tooling",
-        "order": 11,
-        "title": "Окружение, пакеты и Git",
-        "status": "planned",
-        "summary": "Интерпретатор, venv, pip, pyproject и базовый Git."
+        "planned_lessons": 9,
+        "summary": "Терминал, пути, запуск Python, python -m, версии, venv, pip, pyproject.toml, зависимости и переменные окружения."
       },
       {
         "id": "github",
         "slug": "github",
-        "order": 12,
+        "order": 11,
         "title": "Git и GitHub",
         "status": "planned",
-        "summary": "Remote, pull request, конфликты и GitHub Actions."
+        "planned_lessons": 9,
+        "summary": "init, commit, ветки, merge, rebase, remote, pull request, конфликты, code review и Actions."
       },
       {
         "id": "http",
         "slug": "http",
-        "order": 13,
-        "title": "HTTP, Web и API",
+        "order": 12,
+        "title": "HTTP, веб и API",
         "status": "planned",
-        "summary": "URL, методы, коды ответа, JSON и разбор API."
+        "planned_lessons": 11,
+        "summary": "URL и параметры, заголовки, коды ответа, httpx, таймауты, повторы, пагинация, лимиты, авторизация, OpenAPI и вебхуки."
       },
       {
         "id": "sql",
         "slug": "sql",
-        "order": 14,
+        "order": 13,
         "title": "SQL и базы данных",
         "status": "planned",
-        "summary": "SELECT, JOIN, CTE, оконные функции, транзакции и SQLAlchemy."
+        "planned_lessons": 15,
+        "summary": "SELECT, GROUP BY, JOIN, подзапросы, CTE, оконные функции, индексы, ключи, транзакции, EXPLAIN, SQLAlchemy и миграции Alembic."
       },
       {
         "id": "data",
         "slug": "data",
-        "order": 15,
-        "title": "NumPy и Pandas",
+        "order": 14,
+        "title": "Jupyter, NumPy и Pandas",
         "status": "planned",
-        "summary": "Массивы, векторизация, DataFrame, пропуски и очистка данных."
+        "planned_lessons": 17,
+        "summary": "Ноутбук и воспроизводимость, массивы и векторизация, DataFrame, loc и iloc, пропуски, groupby, merge, pivot, даты и экспорт."
+      },
+      {
+        "id": "viz",
+        "slug": "viz",
+        "order": 15,
+        "title": "Визуализация данных",
+        "status": "planned",
+        "planned_lessons": 9,
+        "summary": "matplotlib, seaborn, выбор типа графика, подписи, несколько графиков, распределения и временные ряды."
       },
       {
         "id": "stats",
         "slug": "stats",
         "order": 16,
-        "title": "Визуализация и статистика",
+        "title": "Статистика для анализа данных",
         "status": "planned",
-        "summary": "Графики, распределения, корреляция и проверка гипотез."
+        "planned_lessons": 13,
+        "summary": "Описательная статистика, выборки, распределения, доверительные интервалы, корреляция, проверка гипотез, A/B-тесты и простая регрессия."
       },
       {
         "id": "performance",
         "slug": "performance",
         "order": 17,
-        "title": "Производительность и параллельность",
+        "title": "Производительность и конкурентное выполнение",
         "status": "planned",
-        "summary": "timeit, память, потоки, GIL, multiprocessing и asyncio."
+        "planned_lessons": 11,
+        "summary": "Измерение, профилирование, память, задачи I/O и CPU, threading, GIL, multiprocessing, futures, async, await и asyncio."
       },
       {
         "id": "backend",
         "slug": "backend",
         "order": 18,
-        "title": "Backend и веб-разработка",
+        "title": "Backend на FastAPI",
         "status": "planned",
-        "summary": "Flask, REST, FastAPI, Pydantic и тестирование API."
+        "planned_lessons": 13,
+        "summary": "Маршруты, Pydantic, валидация, зависимости, база данных, аутентификация, ошибки, middleware, OpenAPI и тесты. Flask — один обзорный урок."
       },
       {
         "id": "engineering",
         "slug": "engineering",
         "order": 19,
-        "title": "Инженерия и безопасность",
+        "title": "Инженерные практики и безопасность",
         "status": "planned",
-        "summary": "Типизация, линтеры, логи, секреты, CI и Docker."
+        "planned_lessons": 13,
+        "summary": "Структура проекта, конфигурация, типизация и mypy, линтеры, pre-commit, логи, секреты, Docker, CI, мониторинг и безопасная разработка."
       },
       {
         "id": "vibe",
         "slug": "vibe",
         "order": 20,
-        "title": "Бонус. Vibe coding",
+        "title": "Бонус. Разработка с ИИ-помощником",
         "status": "planned",
-        "summary": "Живой блок про работу с ИИ-помощником. Обновляется отдельно."
+        "planned_lessons": 5,
+        "summary": "Постановка задачи, контекст, генерация, проверка, тесты, отладка, рефакторинг, безопасность и code review."
       },
       {
         "id": "capstone",
         "slug": "capstone",
         "order": 21,
-        "title": "Финальный проект",
+        "title": "Финальный проект и диплом",
         "status": "planned",
-        "summary": "Постановка, архитектура, реализация, проверка и диплом."
+        "planned_lessons": 10,
+        "summary": "Постановка, архитектура, реализация, тесты, развёртывание, защита и диплом."
       }
     ]
   },
@@ -211,10 +232,10 @@
         }
       ],
       "theory": [
-        "Программа на Python — это последовательность команд. Интерпретатор читает их сверху вниз и выполняет.",
-        "Команда print() показывает значение. Строка — это текст в кавычках. print(\"Лес\") выводит Лес, без кавычек.",
-        "Если кавычку не закрыть или забыть скобку, Python останавливается и показывает SyntaxError. Это сообщение говорит, где код записан неверно.",
-        "Строка с"
+        "Программа на Python — это последовательность вызовов и других инструкций. Интерпретатор читает их сверху вниз и выполняет.",
+        "Функция print() показывает значение. Строка — это текст в кавычках. print(\"Лес\") выводит Лес, без кавычек.",
+        "Если кавычку не закрыть или забыть скобку, Python останавливается и показывает SyntaxError. Python указывает место, где обнаружил синтаксическую ошибку. Иногда исправлять нужно предыдущую строку.",
+        "Текст после"
       ],
       "examples": [
         {
@@ -223,9 +244,9 @@
           "explanation": "print вызывает вывод. Кавычки отмечают текст и на экран не попадают."
         },
         {
-          "title": "Две команды",
+          "title": "Два вызова",
           "code": "print(\"Первая строка\")\nprint(\"Вторая строка\")\n",
-          "explanation": "Каждая команда print начинает новую строку вывода."
+          "explanation": "Каждый вызов print() начинает новую строку вывода."
         }
       ],
       "outcomes": [
@@ -273,7 +294,7 @@
           "hints": [
             "print показывает значение, а не спрашивает его.",
             "Кавычки задают текст, который нужно показать.",
-            "Команда выводит слово без кавычек."
+            "Функция print() выводит слово без кавычек."
           ],
           "solution": "b",
           "explanation": "print выводит переданное значение. Кавычки на экране не появляются."
@@ -293,7 +314,7 @@
             },
             {
               "id": "b",
-              "text": "След"
+              "text": "\"След\""
             },
             {
               "id": "c",
@@ -324,7 +345,7 @@
             }
           ],
           "hints": [
-            "Используйте одну команду print.",
+            "Используйте один вызов print().",
             "Текст должен совпасть полностью, включая пробел.",
             "Поместите Deep Forest между кавычками."
           ],
@@ -337,12 +358,12 @@
           "title": "Две строки отчёта",
           "difficulty": 2,
           "context": "development",
-          "prompt": "Выведите две строки. Сначала OK, затем module ready.",
+          "prompt": "Выведите две строки. Сначала Готово, затем модуль готов.",
           "starter_code": "",
           "tests": [
             {
               "stdin": "",
-              "expected_stdout": "OK\nmodule ready\n"
+              "expected_stdout": "Готово\nмодуль готов\n"
             }
           ],
           "hints": [
@@ -350,7 +371,7 @@
             "Каждый print заканчивает строку сам.",
             "Вторая строка содержит пробел между словами."
           ],
-          "solution": "print(\"OK\")\nprint(\"module ready\")\n",
+          "solution": "print(\"Готово\")\nprint(\"модуль готов\")\n",
           "explanation": "Два вызова print дают две строки вывода."
         },
         {
@@ -395,7 +416,7 @@
             "На экран попадает только результат print."
           ],
           "solution": "print(2026)\n# год отчёта\n",
-          "explanation": "print выводит число. Строка с"
+          "explanation": "print выводит число. Текст после"
         }
       ],
       "source": "01-first-program.yaml"
@@ -410,7 +431,7 @@
       "prerequisites": [
         "python.basics.first-program"
       ],
-      "goal": "Сохранять значения в переменных и различать их типы.",
+      "goal": "Связывать имена со значениями и различать их типы.",
       "tags": [
         "переменная",
         "variable",
@@ -425,7 +446,7 @@
         {
           "id": "variable",
           "title": "Переменная",
-          "summary": "Имя, связанное со значением. Знак = сохраняет значение справа в имя слева."
+          "summary": "Имя, связанное со значением. Присваивание age = 37 связывает имя age со значением 37."
         },
         {
           "id": "int",
@@ -435,7 +456,7 @@
         {
           "id": "float",
           "title": "float",
-          "summary": "Число с дробной частью, например 10.5. Дробная часть пишется через точку."
+          "summary": "Число с плавающей точкой, например 10.5 или 4.0. Точка в записи делает число float, даже если дробная часть равна нулю."
         },
         {
           "id": "bool",
@@ -454,26 +475,26 @@
         }
       ],
       "theory": [
-        "Переменная хранит значение под именем. Запись age = 37 означает: имя age теперь связано с числом 37.",
-        "У значения есть тип. 10 — int, 10.5 — float, \"10\" — str, True — bool. None означает отсутствие значения.",
-        "Имя можно связать с новым значением. Старое при этом заменяется. type(value) показывает тип."
+        "Присваивание age = 37 связывает имя age со значением 37. При новом присваивании имя начинает обозначать новое значение.",
+        "У значения есть тип. 10 — int, 10.5 и 4.0 — float, \"10\" — str, True — bool. float — число с плавающей точкой. None означает отсутствие значения.",
+        "type(value) показывает тип значения, с которым сейчас связано имя."
       ],
       "examples": [
         {
           "title": "Имя и число",
           "code": "name = \"Vasya\"\nage = 37\nprint(name)\nprint(age)\n",
-          "explanation": "Сначала значения сохраняются, затем print выводит то, на что указывают имена."
+          "explanation": "Сначала имена связываются со значениями, затем print выводит эти значения."
         },
         {
           "title": "Новое значение",
           "code": "x = 2\nx = x + 3\nprint(x)\nprint(type(10.5))\n",
-          "explanation": "Вторая строка читает текущее x, прибавляет 3 и сохраняет результат. type показывает float."
+          "explanation": "Вторая строка читает текущее значение x, прибавляет 3 и связывает имя x с результатом. type показывает float."
         }
       ],
       "outcomes": [
         "создавать переменные",
-        "хранить числа, строки и логические значения",
-        "заменять значение переменной",
+        "связывать имена с числами, строками и логическими значениями",
+        "связывать имя с новым значением",
         "определять тип через type()"
       ],
       "resources": [
@@ -513,7 +534,7 @@
           ],
           "answer": "b",
           "hints": [
-            "Есть дробная часть.",
+            "Это число с плавающей точкой.",
             "int — целое число.",
             "Числа с точкой относятся к float."
           ],
@@ -549,7 +570,7 @@
             "К текущему значению прибавляют 3."
           ],
           "solution": "b",
-          "explanation": "2 + 3 сохраняется обратно в x, print выводит 5."
+          "explanation": "Имя x связывается с результатом 2 + 3, print выводит 5."
         },
         {
           "id": "python.basics.variables.t3",
@@ -588,12 +609,12 @@
             }
           ],
           "hints": [
-            "Повторное = заменяет значение.",
+            "Новое присваивание связывает имя с новым значением.",
             "Прибавьте 5 к текущему total.",
             "print должен стоять после замены."
           ],
           "solution": "total = 10\ntotal = total + 5\nprint(total)\n",
-          "explanation": "Второе присваивание заменяет 10 на 15."
+          "explanation": "Второе присваивание связывает total со значением 15."
         },
         {
           "id": "python.basics.variables.t5",
@@ -699,7 +720,7 @@
         {
           "id": "conversion",
           "title": "int() и float()",
-          "summary": "Преобразуют строку с числом в int или float. int(\"3.5\") вызывает ошибку."
+          "summary": "Преобразуют строку с числом в int или float. int(\"3.5\") вызывает ValueError, а int(3.5) даёт 3."
         },
         {
           "id": "f-string",
@@ -709,7 +730,7 @@
       ],
       "theory": [
         "input() всегда возвращает строку. Если человек ввёл 42, программа получает \"42\", а не число 42.",
-        "int(\"42\") даёт целое 42. float(\"3.5\") даёт 3.5. int(\"3.5\") завершается ошибкой ValueError, потому что у целого нет дробной части в такой записи.",
+        "int(\"42\") даёт целое 42. float(\"3.5\") даёт 3.5. int(\"3.5\") вызывает ValueError, потому что строка содержит десятичную точку и не является записью целого числа. При этом int(3.5) допустим и даёт 3.",
         "С числами можно считать. f-строка подставляет значение переменной в текст: f\"Итог: {total}\"."
       ],
       "examples": [
@@ -883,16 +904,16 @@
           "title": "Приветствие",
           "difficulty": 2,
           "context": "neutral",
-          "prompt": "Прочитайте имя и выведите строку вида Hello, Mira. Имя подставьте из ввода во f-строку.",
+          "prompt": "Прочитайте имя и выведите строку вида Привет, Mira. Имя подставьте из ввода во f-строку.",
           "starter_code": "",
           "tests": [
             {
               "stdin": "Mira\n",
-              "expected_stdout": "Hello, Mira\n"
+              "expected_stdout": "Привет, Mira\n"
             },
             {
               "stdin": "Leo\n",
-              "expected_stdout": "Hello, Leo\n"
+              "expected_stdout": "Привет, Leo\n"
             }
           ],
           "hints": [
@@ -900,16 +921,16 @@
             "Перед кавычкой поставьте f.",
             "Между запятой и именем в образце есть пробел."
           ],
-          "solution": "name = input()\nprint(f\"Hello, {name}\")\n",
+          "solution": "name = input()\nprint(f\"Привет, {name}\")\n",
           "explanation": "f-строка подставляет значение name внутрь текста."
         },
         {
           "id": "python.basics.input.t7",
           "type": "code",
-          "title": "Год и возраст",
+          "title": "Возраст на конец года",
           "difficulty": 3,
           "context": "business",
-          "prompt": "Первая строка ввода — имя, вторая — год рождения (целое). Считайте возраст как 2026 минус год. Выведите f-строку вида Mira: 29.",
+          "prompt": "Первая строка ввода — имя, вторая — год рождения (целое). Посчитайте возраст на конец 2026 года: 2026 минус год рождения. Это разница лет, а не точный возраст на конкретную дату. Выведите f-строку вида Mira: 29.",
           "starter_code": "",
           "tests": [
             {
@@ -927,10 +948,1686 @@
             "Во f-строке можно написать выражение в фигурных скобках."
           ],
           "solution": "name = input()\nyear = int(input())\nage = 2026 - year\nprint(f\"{name}: {age}\")\n",
-          "explanation": "Год становится числом, возраст считается вычитанием и подставляется в текст."
+          "explanation": "Год становится числом. Разница 2026 и года рождения — возраст на конец года, его подставляют в текст."
         }
       ],
       "source": "03-input.yaml"
+    },
+    {
+      "id": "python.basics.arithmetic",
+      "slug": "arithmetic",
+      "section": "basics",
+      "title": "Арифметические выражения",
+      "order": 4,
+      "weight": 1,
+      "prerequisites": [
+        "python.basics.input"
+      ],
+      "goal": "Считать выражения с делением, остатком и степенью и округлять результат.",
+      "tags": [
+        "арифметика",
+        "деление",
+        "остаток",
+        "степень",
+        "round",
+        "float"
+      ],
+      "introduces": [
+        {
+          "id": "division",
+          "title": "Деление /",
+          "summary": "Обычное деление. Результат всегда float, даже если делится нацело. 10 / 5 даёт 2.0."
+        },
+        {
+          "id": "floordiv",
+          "title": "Целочисленное деление //",
+          "summary": "Отбрасывает дробную часть. 17 // 5 даёт 3."
+        },
+        {
+          "id": "modulo",
+          "title": "Остаток %",
+          "summary": "Остаток от деления. 17 % 5 даёт 2. Остаток 0 означает, что число делится нацело."
+        },
+        {
+          "id": "power",
+          "title": "Степень **",
+          "summary": "Возведение в степень. 2 ** 10 даёт 1024."
+        },
+        {
+          "id": "round",
+          "title": "round()",
+          "summary": "Округляет число. Второй аргумент задаёт количество знаков после точки."
+        },
+        {
+          "id": "abs",
+          "title": "abs()",
+          "summary": "Возвращает значение без знака. abs(-5) даёт 5."
+        }
+      ],
+      "theory": [
+        "Python считает выражения обычными знаками: + сложение, - вычитание, * умножение, / деление. Деление / всегда возвращает float, даже когда делится нацело: 10 / 5 даёт 2.0.",
+        "Два знака деления // отбрасывают дробную часть, а % даёт остаток. 17 // 5 равно 3, 17 % 5 равно 2. Остаток отвечает на вопрос «сколько осталось после целых частей».",
+        "Две звёздочки ** возводят в степень: 2 ** 10 равно 1024. Порядок действий обычный: сначала степень, затем умножение и деление, затем сложение и вычитание. Скобки меняют порядок.",
+        "Числа float хранятся приближённо, поэтому 0.1 + 0.2 даёт 0.30000000000000004. Это не ошибка Python, а свойство дробных чисел в памяти. round(value, 2) округляет до двух знаков, abs(value) убирает знак."
+      ],
+      "examples": [
+        {
+          "title": "Три деления",
+          "code": "print(17 / 5)\nprint(17 // 5)\nprint(17 % 5)\n",
+          "explanation": "Обычное деление даёт 3.4, целочисленное — 3, остаток — 2."
+        },
+        {
+          "title": "Степень и округление",
+          "code": "print(2 ** 10)\nprint(0.1 + 0.2)\nprint(round(0.1 + 0.2, 2))\n",
+          "explanation": "Сумма дробных чисел выглядит неожиданно, пока её не округлить."
+        }
+      ],
+      "outcomes": [
+        "считать выражения с четырьмя действиями",
+        "различать /, // и %",
+        "возводить в степень",
+        "округлять результат через round()"
+      ],
+      "resources": [
+        {
+          "kind": "docs",
+          "title": "Numeric Types — int, float, complex",
+          "url": "https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex"
+        },
+        {
+          "kind": "docs",
+          "title": "Floating Point Arithmetic",
+          "url": "https://docs.python.org/3/tutorial/floatingpoint.html"
+        },
+        {
+          "kind": "youtube",
+          "title": "CS50P — Lecture 1",
+          "url": "https://www.youtube.com/watch?v=CJJQaqN4LCM",
+          "author": "Harvard CS50"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "python.basics.arithmetic.t1",
+          "type": "choice",
+          "title": "Результат деления",
+          "difficulty": 1,
+          "context": "neutral",
+          "prompt": "Что выведет print(10 / 5)?",
+          "options": [
+            {
+              "id": "a",
+              "text": "2"
+            },
+            {
+              "id": "b",
+              "text": "2.0"
+            },
+            {
+              "id": "c",
+              "text": "5"
+            }
+          ],
+          "answer": "b",
+          "hints": [
+            "Знак / всегда даёт дробное число.",
+            "Целое получилось бы при //.",
+            "Тип результата здесь float."
+          ],
+          "solution": "b",
+          "explanation": "Деление / возвращает float, поэтому на экране 2.0, а не 2."
+        },
+        {
+          "id": "python.basics.arithmetic.t2",
+          "type": "predict_output",
+          "title": "Остаток",
+          "difficulty": 1,
+          "context": "neutral",
+          "prompt": "Какое число будет выведено?",
+          "code": "x = 9\nprint(x % 4)\n",
+          "options": [
+            {
+              "id": "a",
+              "text": "1"
+            },
+            {
+              "id": "b",
+              "text": "2"
+            },
+            {
+              "id": "c",
+              "text": "2.25"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "В девятке помещаются две четвёрки.",
+            "После них остаётся остаток.",
+            "Знак % даёт именно остаток, а не частное."
+          ],
+          "solution": "a",
+          "explanation": "9 = 4 * 2 + 1, поэтому остаток равен 1."
+        },
+        {
+          "id": "python.basics.arithmetic.t3",
+          "type": "predict_output",
+          "title": "Порядок действий",
+          "difficulty": 2,
+          "context": "neutral",
+          "prompt": "Что выведет этот код?",
+          "code": "print(2 + 3 * 4)\n",
+          "options": [
+            {
+              "id": "a",
+              "text": "14"
+            },
+            {
+              "id": "b",
+              "text": "20"
+            },
+            {
+              "id": "c",
+              "text": "24"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "Умножение выполняется раньше сложения.",
+            "Скобок здесь нет.",
+            "Сначала считается 3 * 4."
+          ],
+          "solution": "a",
+          "explanation": "Сначала 3 * 4, затем прибавляется 2. Чтобы получить 20, нужны скобки."
+        },
+        {
+          "id": "python.basics.arithmetic.t4",
+          "type": "code",
+          "title": "Стоимость заказа",
+          "difficulty": 2,
+          "context": "business",
+          "prompt": "Первая строка ввода — цена за штуку (целое число), вторая — количество. Выведите стоимость заказа.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "250\n4\n",
+              "expected_stdout": "1000\n"
+            },
+            {
+              "stdin": "99\n3\n",
+              "expected_stdout": "297\n"
+            }
+          ],
+          "hints": [
+            "Обе строки нужно преобразовать в int.",
+            "Стоимость — произведение цены и количества.",
+            "Выводится одно число."
+          ],
+          "solution": "price = int(input())\ncount = int(input())\nprint(price * count)\n",
+          "explanation": "Числа умножаются уже после преобразования, поэтому результат остаётся целым."
+        },
+        {
+          "id": "python.basics.arithmetic.t5",
+          "type": "code",
+          "title": "Часы и минуты",
+          "difficulty": 3,
+          "context": "analytics",
+          "prompt": "На вход приходит число минут. Выведите на первой строке целое число часов, на второй — оставшиеся минуты.",
+          "starter_code": "minutes = int(input())\n",
+          "tests": [
+            {
+              "stdin": "135\n",
+              "expected_stdout": "2\n15\n"
+            },
+            {
+              "stdin": "59\n",
+              "expected_stdout": "0\n59\n"
+            }
+          ],
+          "hints": [
+            "В часе 60 минут.",
+            "Целое число часов даёт //.",
+            "Остаток минут даёт %."
+          ],
+          "solution": "minutes = int(input())\nprint(minutes // 60)\nprint(minutes % 60)\n",
+          "explanation": "Целочисленное деление даёт полные часы, остаток — минуты сверх них."
+        },
+        {
+          "id": "python.basics.arithmetic.t6",
+          "type": "code",
+          "title": "Среднее за три дня",
+          "difficulty": 3,
+          "context": "analytics",
+          "prompt": "Прочитайте три целых числа с трёх строк и выведите их среднее, округлённое до двух знаков после точки.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "1\n2\n4\n",
+              "expected_stdout": "2.33\n"
+            },
+            {
+              "stdin": "2\n2\n2\n",
+              "expected_stdout": "2.0\n"
+            }
+          ],
+          "hints": [
+            "Среднее — сумма, делённая на количество.",
+            "Деление / уже даёт float.",
+            "round с двумя знаками округляет результат."
+          ],
+          "solution": "a = int(input())\nb = int(input())\nc = int(input())\nprint(round((a + b + c) / 3, 2))\n",
+          "explanation": "round убирает лишние знаки. Ровное среднее печатается как 2.0, потому что деление дало float."
+        },
+        {
+          "id": "python.basics.arithmetic.t7",
+          "type": "code",
+          "title": "Почините подсчёт коробок",
+          "difficulty": 3,
+          "context": "development",
+          "prompt": "В коробку помещается 3 детали. Программа должна вывести, сколько коробок заполнено целиком. Сейчас она печатает дробное число. Исправьте код.",
+          "starter_code": "items = int(input())\nprint(items / 3)\n",
+          "tests": [
+            {
+              "stdin": "10\n",
+              "expected_stdout": "3\n"
+            },
+            {
+              "stdin": "9\n",
+              "expected_stdout": "3\n"
+            }
+          ],
+          "hints": [
+            "Коробок не бывает дробное число.",
+            "Нужна целая часть деления.",
+            "Замените / на //."
+          ],
+          "solution": "items = int(input())\nprint(items // 3)\n",
+          "explanation": "Целочисленное деление отбрасывает неполную коробку и сразу даёт int."
+        },
+        {
+          "id": "python.basics.arithmetic.t8",
+          "type": "code",
+          "title": "Отклонение от нормы",
+          "difficulty": 3,
+          "context": "security",
+          "prompt": "Первая строка — измеренное значение, вторая — норма. Оба числа дробные. Выведите размер отклонения без знака, округлённый до одного знака после точки.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "18.4\n20.0\n",
+              "expected_stdout": "1.6\n"
+            },
+            {
+              "stdin": "21.5\n20.0\n",
+              "expected_stdout": "1.5\n"
+            }
+          ],
+          "hints": [
+            "Преобразуйте обе строки через float.",
+            "Разность может получиться отрицательной.",
+            "abs убирает знак, round оставляет один знак."
+          ],
+          "solution": "value = float(input())\nnorm = float(input())\nprint(round(abs(value - norm), 1))\n",
+          "explanation": "abs делает отклонение положительным независимо от того, выше измерение нормы или ниже."
+        }
+      ],
+      "source": "04-arithmetic.yaml"
+    },
+    {
+      "id": "python.basics.comparison",
+      "slug": "comparison",
+      "section": "basics",
+      "title": "Сравнения и логические значения",
+      "order": 5,
+      "weight": 1,
+      "prerequisites": [
+        "python.basics.arithmetic"
+      ],
+      "goal": "Получать значения True и False из сравнений и читать их как ответ программы.",
+      "tags": [
+        "сравнение",
+        "bool",
+        true,
+        false,
+        "равенство",
+        "оператор"
+      ],
+      "introduces": [
+        {
+          "id": "comparison",
+          "title": "Операторы сравнения",
+          "summary": "Знаки <, >, <=, >=, ==, != сравнивают два значения и возвращают True или False."
+        },
+        {
+          "id": "equality",
+          "title": "Равенство ==",
+          "summary": "Два знака равно сравнивают значения. Один знак равно присваивает значение имени."
+        },
+        {
+          "id": "chained",
+          "title": "Цепочка сравнений",
+          "summary": "Запись 0 <= n <= 100 проверяет оба условия сразу."
+        }
+      ],
+      "theory": [
+        "Сравнение — это выражение, у которого есть результат: True или False. Тип такого результата bool. print(5 > 3) выводит True, и это настоящее значение, а не текст.",
+        "Равенство проверяют двумя знаками ==, неравенство — знаком !=. Один знак = присваивает значение имени и сравнением не является. Это разные операции, и путать их нельзя.",
+        "Сравнивать можно и строки. Проверка равенства строк чувствительна к регистру, поэтому \"Да\" == \"да\" даёт False.",
+        "Сравнения можно сцеплять. Запись 0 <= n <= 100 означает, что n не меньше нуля и не больше ста. Так короче и понятнее, чем два отдельных сравнения."
+      ],
+      "examples": [
+        {
+          "title": "Сравнение чисел",
+          "code": "print(5 > 3)\nprint(5 == 3)\nprint(type(5 > 3))\n",
+          "explanation": "Первое сравнение истинно, второе ложно. Тип результата — bool."
+        },
+        {
+          "title": "Цепочка и строки",
+          "code": "x = 7\nprint(0 <= x <= 10)\nprint(\"Да\" == \"да\")\n",
+          "explanation": "Цепочка проверяет обе границы. Строки с разным регистром не равны."
+        }
+      ],
+      "outcomes": [
+        "сравнивать числа и строки",
+        "отличать == от =",
+        "читать результат сравнения как bool",
+        "проверять попадание в диапазон цепочкой"
+      ],
+      "resources": [
+        {
+          "kind": "docs",
+          "title": "Comparisons",
+          "url": "https://docs.python.org/3/library/stdtypes.html#comparisons"
+        },
+        {
+          "kind": "youtube",
+          "title": "CS50P — Lecture 1, conditionals",
+          "url": "https://www.youtube.com/watch?v=CJJQaqN4LCM",
+          "author": "Harvard CS50"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "python.basics.comparison.t1",
+          "type": "choice",
+          "title": "Нестрогое сравнение",
+          "difficulty": 1,
+          "context": "neutral",
+          "prompt": "Каким будет результат 4 >= 4?",
+          "options": [
+            {
+              "id": "a",
+              "text": "True"
+            },
+            {
+              "id": "b",
+              "text": "False"
+            },
+            {
+              "id": "c",
+              "text": "Ошибка, числа равны"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "Знак >= читается как «больше или равно».",
+            "Равенство здесь тоже подходит.",
+            "Результатом сравнения всегда будет True или False."
+          ],
+          "solution": "a",
+          "explanation": "Нестрогое сравнение истинно и при равенстве значений."
+        },
+        {
+          "id": "python.basics.comparison.t2",
+          "type": "predict_output",
+          "title": "Регистр важен",
+          "difficulty": 2,
+          "context": "neutral",
+          "prompt": "Что выведет этот код?",
+          "code": "print(\"дуб\" == \"Дуб\")\n",
+          "options": [
+            {
+              "id": "a",
+              "text": "True"
+            },
+            {
+              "id": "b",
+              "text": "False"
+            },
+            {
+              "id": "c",
+              "text": "дуб"
+            }
+          ],
+          "answer": "b",
+          "hints": [
+            "Сравниваются строки целиком.",
+            "Заглавная и строчная буквы — разные символы.",
+            "Текст на экран здесь не попадает, выводится результат сравнения."
+          ],
+          "solution": "b",
+          "explanation": "Строки различаются первой буквой, поэтому равенство ложно."
+        },
+        {
+          "id": "python.basics.comparison.t3",
+          "type": "choice",
+          "title": "Присваивание или сравнение",
+          "difficulty": 2,
+          "context": "development",
+          "prompt": "Какая запись проверяет, что в total лежит число 10?",
+          "options": [
+            {
+              "id": "a",
+              "text": "total = 10"
+            },
+            {
+              "id": "b",
+              "text": "total == 10"
+            },
+            {
+              "id": "c",
+              "text": "total != 10"
+            }
+          ],
+          "answer": "b",
+          "hints": [
+            "Один знак равно меняет значение имени.",
+            "Проверка ничего не меняет.",
+            "Неравенство отвечает на обратный вопрос."
+          ],
+          "solution": "b",
+          "explanation": "Сравнение записывается двумя знаками равно. Один знак присвоил бы total значение 10."
+        },
+        {
+          "id": "python.basics.comparison.t4",
+          "type": "code",
+          "title": "Совершеннолетие",
+          "difficulty": 2,
+          "context": "business",
+          "prompt": "Прочитайте возраст целым числом и выведите результат проверки «возраст не меньше 18».",
+          "starter_code": "age = int(input())\n",
+          "tests": [
+            {
+              "stdin": "20\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "17\n",
+              "expected_stdout": "False\n"
+            },
+            {
+              "stdin": "18\n",
+              "expected_stdout": "True\n"
+            }
+          ],
+          "hints": [
+            "Нужно нестрогое сравнение.",
+            "Результат сравнения можно сразу передать в print.",
+            "Ровно 18 тоже подходит."
+          ],
+          "solution": "age = int(input())\nprint(age >= 18)\n",
+          "explanation": "Сравнение возвращает bool, и print выводит его как True или False."
+        },
+        {
+          "id": "python.basics.comparison.t5",
+          "type": "code",
+          "title": "Два измерения",
+          "difficulty": 2,
+          "context": "analytics",
+          "prompt": "Прочитайте два целых числа с двух строк и выведите результат проверки «числа различаются».",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "5\n7\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "5\n5\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Нужен знак неравенства.",
+            "Оба значения преобразуйте через int.",
+            "Выводится одно логическое значение."
+          ],
+          "solution": "a = int(input())\nb = int(input())\nprint(a != b)\n",
+          "explanation": "Знак != даёт True, когда значения не совпадают."
+        },
+        {
+          "id": "python.basics.comparison.t6",
+          "type": "code",
+          "title": "Диапазон значений",
+          "difficulty": 3,
+          "context": "security",
+          "prompt": "Прочитайте целое число и выведите результат проверки «число лежит в диапазоне от 0 до 100 включительно». Используйте одну цепочку сравнений.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "42\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "100\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "140\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Границы входят в диапазон.",
+            "Подойдут два нестрогих сравнения в одной записи.",
+            "Запись выглядит как 0 <= value <= 100."
+          ],
+          "solution": "value = int(input())\nprint(0 <= value <= 100)\n",
+          "explanation": "Цепочка проверяет нижнюю и верхнюю границу в одном выражении."
+        },
+        {
+          "id": "python.basics.comparison.t7",
+          "type": "code",
+          "title": "Почините проверку",
+          "difficulty": 3,
+          "context": "development",
+          "prompt": "Программа должна проверить, что остаток от деления числа на 2 равен нулю, и вывести True или False. Сейчас в проверке стоит присваивание. Исправьте код.",
+          "starter_code": "number = int(input())\nprint(number % 2 = 0)\n",
+          "tests": [
+            {
+              "stdin": "8\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "7\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Один знак равно внутри print вызывает SyntaxError.",
+            "Здесь нужна проверка, а не присваивание.",
+            "Поставьте два знака равно."
+          ],
+          "solution": "number = int(input())\nprint(number % 2 == 0)\n",
+          "explanation": "Остаток сравнивают с нулём оператором ==. Так проверяют чётность числа."
+        }
+      ],
+      "source": "05-comparison.yaml"
+    },
+    {
+      "id": "python.basics.logic",
+      "slug": "logic",
+      "section": "basics",
+      "title": "Логические операторы",
+      "order": 6,
+      "weight": 1,
+      "prerequisites": [
+        "python.basics.comparison"
+      ],
+      "goal": "Объединять несколько проверок в одно условие через and, or и not.",
+      "tags": [
+        "and",
+        "or",
+        "not",
+        "логика",
+        "bool",
+        "условие"
+      ],
+      "introduces": [
+        {
+          "id": "and",
+          "title": "and",
+          "summary": "Истинно, когда истинны обе части. Иначе ложно."
+        },
+        {
+          "id": "or",
+          "title": "or",
+          "summary": "Истинно, когда истинна хотя бы одна часть."
+        },
+        {
+          "id": "not",
+          "title": "not",
+          "summary": "Меняет логическое значение на противоположное."
+        }
+      ],
+      "theory": [
+        "Одного сравнения часто мало. Оператор and даёт True, только когда истинны обе части. Оператор or даёт True, когда истинна хотя бы одна. Оператор not меняет значение на противоположное.",
+        "Порядок такой: сначала сравнения, затем not, затем and, затем or. Поэтому age >= 18 and has_pass читается как «возраст не меньше 18 и пропуск есть». Скобки делают порядок явным, и в длинных условиях их лучше ставить.",
+        "Python вычисляет условие слева направо и останавливается, как только ответ известен. Если первая часть and ложна, вторую он уже не считает.",
+        "Частая ошибка — записать «число больше 10 и меньше 20» как 10 < value and < 20. Вторая часть должна быть полным сравнением: 10 < value and value < 20. Короче и понятнее записать это цепочкой 10 < value < 20."
+      ],
+      "examples": [
+        {
+          "title": "Два условия",
+          "code": "age = 20\nhas_pass = True\nprint(age >= 18 and has_pass)\nprint(age < 18 or has_pass)\nprint(not has_pass)\n",
+          "explanation": "Первое условие истинно целиком. Во втором хватило правой части. not превращает True в False."
+        },
+        {
+          "title": "Порядок операторов",
+          "code": "print(True and False or True)\nprint(not (3 > 2))\n",
+          "explanation": "and выполняется раньше or, поэтому сначала получается False, затем False or True даёт True. Скобки во второй строке меняют порядок."
+        }
+      ],
+      "outcomes": [
+        "объединять проверки через and и or",
+        "отрицать условие через not",
+        "учитывать порядок логических операторов",
+        "записывать двойное неравенство правильно"
+      ],
+      "resources": [
+        {
+          "kind": "docs",
+          "title": "Boolean Operations",
+          "url": "https://docs.python.org/3/library/stdtypes.html#boolean-operations-and-or-not"
+        },
+        {
+          "kind": "youtube",
+          "title": "CS50P — Lecture 1, logical operators",
+          "url": "https://www.youtube.com/watch?v=CJJQaqN4LCM",
+          "author": "Harvard CS50"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "python.basics.logic.t1",
+          "type": "choice",
+          "title": "Когда and истинно",
+          "difficulty": 1,
+          "context": "neutral",
+          "prompt": "При каком условии выражение A and B даёт True?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Когда истинна хотя бы одна часть"
+            },
+            {
+              "id": "b",
+              "text": "Когда истинны обе части"
+            },
+            {
+              "id": "c",
+              "text": "Когда обе части ложны"
+            }
+          ],
+          "answer": "b",
+          "hints": [
+            "Оператор and читается как «и».",
+            "Хотя бы одна часть — это or.",
+            "Обе части должны быть истинными одновременно."
+          ],
+          "solution": "b",
+          "explanation": "and требует истинности обеих частей, иначе результат False."
+        },
+        {
+          "id": "python.basics.logic.t2",
+          "type": "predict_output",
+          "title": "Порядок and и or",
+          "difficulty": 2,
+          "context": "neutral",
+          "prompt": "Что выведет этот код?",
+          "code": "print(False and False or True)\n",
+          "options": [
+            {
+              "id": "a",
+              "text": "True"
+            },
+            {
+              "id": "b",
+              "text": "False"
+            },
+            {
+              "id": "c",
+              "text": "Ошибку"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "Сначала выполняется and.",
+            "False and False даёт False.",
+            "Остаётся False or True."
+          ],
+          "solution": "a",
+          "explanation": "and считается раньше or, поэтому выражение сводится к False or True и даёт True."
+        },
+        {
+          "id": "python.basics.logic.t3",
+          "type": "predict_output",
+          "title": "Отрицание",
+          "difficulty": 2,
+          "context": "neutral",
+          "prompt": "Что выведет этот код?",
+          "code": "ready = False\nprint(not ready)\n",
+          "options": [
+            {
+              "id": "a",
+              "text": "True"
+            },
+            {
+              "id": "b",
+              "text": "False"
+            },
+            {
+              "id": "c",
+              "text": "not False"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "not меняет значение на противоположное.",
+            "Исходное значение ложно.",
+            "На экран попадает логическое значение, а не текст выражения."
+          ],
+          "solution": "a",
+          "explanation": "not False даёт True."
+        },
+        {
+          "id": "python.basics.logic.t4",
+          "type": "code",
+          "title": "Оба числа положительные",
+          "difficulty": 2,
+          "context": "analytics",
+          "prompt": "Прочитайте два целых числа с двух строк и выведите результат проверки «оба числа больше нуля».",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "4\n9\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "4\n-1\n",
+              "expected_stdout": "False\n"
+            },
+            {
+              "stdin": "0\n5\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Нужны два полных сравнения.",
+            "Соедините их оператором and.",
+            "Ноль не больше нуля."
+          ],
+          "solution": "a = int(input())\nb = int(input())\nprint(a > 0 and b > 0)\n",
+          "explanation": "Условие истинно, только когда оба сравнения дали True."
+        },
+        {
+          "id": "python.basics.logic.t5",
+          "type": "code",
+          "title": "Доступ в систему",
+          "difficulty": 3,
+          "context": "security",
+          "prompt": "Первая строка ввода — возраст, вторая — число попыток входа. Выведите результат проверки «возраст не меньше 18 и попыток меньше 3».",
+          "starter_code": "age = int(input())\nattempts = int(input())\n",
+          "tests": [
+            {
+              "stdin": "30\n1\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "30\n3\n",
+              "expected_stdout": "False\n"
+            },
+            {
+              "stdin": "16\n0\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Возраст проверяется нестрого, попытки — строго.",
+            "Ровно три попытки доступа уже не дают.",
+            "Соедините проверки через and."
+          ],
+          "solution": "age = int(input())\nattempts = int(input())\nprint(age >= 18 and attempts < 3)\n",
+          "explanation": "Отказ достаточно получить по одной причине, поэтому обе проверки обязаны быть истинными."
+        },
+        {
+          "id": "python.basics.logic.t6",
+          "type": "code",
+          "title": "Выходной день",
+          "difficulty": 3,
+          "context": "business",
+          "prompt": "Прочитайте номер дня недели от 1 до 7 и выведите результат проверки «это суббота или воскресенье».",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "6\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "7\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "3\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Подходит любой из двух номеров.",
+            "Для «или» используется or.",
+            "Каждое сравнение пишется полностью."
+          ],
+          "solution": "day = int(input())\nprint(day == 6 or day == 7)\n",
+          "explanation": "or даёт True, если выполнено хотя бы одно из сравнений."
+        },
+        {
+          "id": "python.basics.logic.t7",
+          "type": "code",
+          "title": "Почините условие",
+          "difficulty": 3,
+          "context": "development",
+          "prompt": "Программа должна проверить, что число строго больше 10 и строго меньше 20. Сейчас второе сравнение записано неполно, и код падает. Исправьте его.",
+          "starter_code": "value = int(input())\nprint(10 < value and < 20)\n",
+          "tests": [
+            {
+              "stdin": "15\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "20\n",
+              "expected_stdout": "False\n"
+            },
+            {
+              "stdin": "3\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "У второго сравнения нет левой части.",
+            "Имя переменной нужно повторить.",
+            "Подойдёт и цепочка 10 < value < 20."
+          ],
+          "solution": "value = int(input())\nprint(10 < value < 20)\n",
+          "explanation": "Каждое сравнение должно быть полным. Цепочка записывает то же условие короче."
+        },
+        {
+          "id": "python.basics.logic.t8",
+          "type": "code",
+          "title": "Вне диапазона",
+          "difficulty": 3,
+          "context": "security",
+          "prompt": "Прочитайте целое число и выведите результат проверки «значение НЕ попадает в диапазон от 0 до 100 включительно». Используйте not и цепочку сравнений.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "140\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "42\n",
+              "expected_stdout": "False\n"
+            },
+            {
+              "stdin": "0\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Сначала запишите проверку попадания в диапазон.",
+            "Заключите её в скобки.",
+            "Поставьте перед скобками not."
+          ],
+          "solution": "value = int(input())\nprint(not (0 <= value <= 100))\n",
+          "explanation": "Скобки заставляют not отрицать всю цепочку, а не только первое сравнение."
+        }
+      ],
+      "source": "06-logic.yaml"
+    },
+    {
+      "id": "python.basics.truthiness",
+      "slug": "truthiness",
+      "section": "basics",
+      "title": "Истинность значений и None",
+      "order": 7,
+      "weight": 1,
+      "prerequisites": [
+        "python.basics.logic"
+      ],
+      "goal": "Определять, какие значения Python считает ложными, и правильно проверять None.",
+      "tags": [
+        "bool",
+        "None",
+        "истинность",
+        "пустая строка",
+        "is"
+      ],
+      "introduces": [
+        {
+          "id": "truthiness",
+          "title": "Истинность значения",
+          "summary": "Любое значение можно превратить в True или False. Пустая строка, 0, 0.0 и None дают False."
+        },
+        {
+          "id": "bool-call",
+          "title": "bool()",
+          "summary": "Возвращает логическое значение, которым Python считает переданный объект."
+        },
+        {
+          "id": "is-none",
+          "title": "is None",
+          "summary": "Правильная проверка на отсутствие значения. Сравнение с None делают через is, а не через ==."
+        }
+      ],
+      "theory": [
+        "У каждого значения есть логический смысл. bool(value) показывает, каким Python его считает. Ложными считаются пустая строка, число 0, число 0.0 и None. Всё остальное истинно.",
+        "Поэтому строка \"нет\" истинна: важна не её надпись, а то, что строка непустая. По той же причине истинна строка \"False\". Проверка bool(answer) отвечает на вопрос «значение непустое», а не «значение верное».",
+        "None означает, что значения нет. Это не ноль и не пустая строка: None == 0 даёт False. Логически None ложен, то есть bool(None) даёт False.",
+        "Проверять None принято оператором is: value is None. Такая запись сравнивает не содержимое, а само значение, и читается однозначно."
+      ],
+      "examples": [
+        {
+          "title": "Что считается ложным",
+          "code": "print(bool(\"\"))\nprint(bool(\"нет\"))\nprint(bool(0))\nprint(bool(0.0))\n",
+          "explanation": "Пустая строка и нули ложны. Непустая строка истинна независимо от текста."
+        },
+        {
+          "title": "Значения нет",
+          "code": "value = None\nprint(value is None)\nprint(value == 0)\nprint(bool(value))\n",
+          "explanation": "None отличается от нуля, но в логическом смысле тоже ложен."
+        }
+      ],
+      "outcomes": [
+        "называть ложные значения",
+        "преобразовывать значение в bool",
+        "отличать None от нуля и пустой строки",
+        "проверять отсутствие значения через is None"
+      ],
+      "resources": [
+        {
+          "kind": "docs",
+          "title": "Truth Value Testing",
+          "url": "https://docs.python.org/3/library/stdtypes.html#truth-value-testing"
+        },
+        {
+          "kind": "docs",
+          "title": "None",
+          "url": "https://docs.python.org/3/library/constants.html#None"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "python.basics.truthiness.t1",
+          "type": "choice",
+          "title": "Строка со словом False",
+          "difficulty": 2,
+          "context": "neutral",
+          "prompt": "Что вернёт bool(\"False\")?",
+          "options": [
+            {
+              "id": "a",
+              "text": "True"
+            },
+            {
+              "id": "b",
+              "text": "False"
+            },
+            {
+              "id": "c",
+              "text": "None"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "Внутри кавычек находится текст, а не логическое значение.",
+            "Ложной считается только пустая строка.",
+            "В этой строке пять символов."
+          ],
+          "solution": "a",
+          "explanation": "Строка непустая, поэтому она истинна. Её содержимое роли не играет."
+        },
+        {
+          "id": "python.basics.truthiness.t2",
+          "type": "predict_output",
+          "title": "Ноль с точкой",
+          "difficulty": 1,
+          "context": "neutral",
+          "prompt": "Что выведет этот код?",
+          "code": "print(bool(0.0))\n",
+          "options": [
+            {
+              "id": "a",
+              "text": "False"
+            },
+            {
+              "id": "b",
+              "text": "True"
+            },
+            {
+              "id": "c",
+              "text": "0.0"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "Это число, равное нулю.",
+            "Тип float ничего не меняет.",
+            "Нулевые числа ложны."
+          ],
+          "solution": "a",
+          "explanation": "Любой ноль ложен, независимо от того, int это или float."
+        },
+        {
+          "id": "python.basics.truthiness.t3",
+          "type": "choice",
+          "title": "Проверка на отсутствие значения",
+          "difficulty": 2,
+          "context": "development",
+          "prompt": "Как принято проверять, что в result нет значения?",
+          "options": [
+            {
+              "id": "a",
+              "text": "result == None"
+            },
+            {
+              "id": "b",
+              "text": "result is None"
+            },
+            {
+              "id": "c",
+              "text": "result = None"
+            }
+          ],
+          "answer": "b",
+          "hints": [
+            "Один знак равно присваивает значение.",
+            "Для None есть отдельный оператор.",
+            "Он записывается словом is."
+          ],
+          "solution": "b",
+          "explanation": "Проверка на None делается через is. Присваивание и сравнение по значению здесь не подходят."
+        },
+        {
+          "id": "python.basics.truthiness.t4",
+          "type": "code",
+          "title": "Ввод не пустой",
+          "difficulty": 2,
+          "context": "security",
+          "prompt": "Прочитайте одну строку ввода и выведите результат проверки «строка не пустая».",
+          "starter_code": "answer = input()\n",
+          "tests": [
+            {
+              "stdin": "лес\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "input возвращает строку, даже если ничего не ввели.",
+            "Пустая строка ложна.",
+            "Передайте строку в bool."
+          ],
+          "solution": "answer = input()\nprint(bool(answer))\n",
+          "explanation": "bool отвечает ровно на вопрос о пустоте строки, а не о её содержании."
+        },
+        {
+          "id": "python.basics.truthiness.t5",
+          "type": "code",
+          "title": "Результата ещё нет",
+          "difficulty": 2,
+          "context": "analytics",
+          "prompt": "Создайте переменную result со значением None. Выведите сначала результат проверки result is None, затем bool(result).",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "",
+              "expected_stdout": "True\nFalse\n"
+            }
+          ],
+          "hints": [
+            "None пишется с большой буквы и без кавычек.",
+            "Первая проверка отвечает «значения нет».",
+            "Вторая показывает логический смысл значения."
+          ],
+          "solution": "result = None\nprint(result is None)\nprint(bool(result))\n",
+          "explanation": "Отсутствие значения подтверждается через is, а в логическом выражении None ведёт себя как False."
+        },
+        {
+          "id": "python.basics.truthiness.t6",
+          "type": "code",
+          "title": "None не равен нулю",
+          "difficulty": 3,
+          "context": "development",
+          "prompt": "Создайте score со значением None. Выведите три строки: результат score is None, результат score == 0 и результат сравнения score с пустой строкой.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "",
+              "expected_stdout": "True\nFalse\nFalse\n"
+            }
+          ],
+          "hints": [
+            "Первое сравнение истинно.",
+            "None — отдельное значение, а не число.",
+            "Пустая строка тоже не равна None."
+          ],
+          "solution": "score = None\nprint(score is None)\nprint(score == 0)\nprint(score == \"\")\n",
+          "explanation": "В логических выражениях None, 0 и пустая строка ложны одинаково, но друг другу они не равны."
+        },
+        {
+          "id": "python.basics.truthiness.t7",
+          "type": "code",
+          "title": "Заполнены оба поля",
+          "difficulty": 3,
+          "context": "business",
+          "prompt": "Прочитайте две строки — имя и город. Выведите результат проверки «обе строки непустые».",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "Mira\nПермь\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "Mira\n\n",
+              "expected_stdout": "False\n"
+            },
+            {
+              "stdin": "\n\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Каждую строку можно превратить в bool.",
+            "Соедините проверки через and.",
+            "Пустая строка делает всё условие ложным."
+          ],
+          "solution": "name = input()\ncity = input()\nprint(bool(name) and bool(city))\n",
+          "explanation": "Так проверяют заполненность формы: интересует наличие текста, а не его значение."
+        }
+      ],
+      "source": "07-truthiness.yaml"
+    },
+    {
+      "id": "python.basics.fstrings",
+      "slug": "fstrings",
+      "section": "basics",
+      "title": "f-строки и форматирование",
+      "order": 8,
+      "weight": 1,
+      "prerequisites": [
+        "python.basics.truthiness"
+      ],
+      "goal": "Собирать аккуратный текст с числами и задавать точность вывода.",
+      "tags": [
+        "f-string",
+        "форматирование",
+        "округление",
+        "вывод",
+        "отчёт"
+      ],
+      "introduces": [
+        {
+          "id": "fstring-expression",
+          "title": "Выражение в f-строке",
+          "summary": "В фигурные скобки можно поставить не только имя, но и выражение. Оно вычисляется при сборке строки."
+        },
+        {
+          "id": "format-spec",
+          "title": "Спецификатор :.2f",
+          "summary": "Двоеточие внутри скобок задаёт формат. Запись .2f показывает ровно два знака после точки."
+        },
+        {
+          "id": "percent-format",
+          "title": "Формат процентов",
+          "summary": "Спецификатор .1% умножает долю на 100 и добавляет знак процента."
+        }
+      ],
+      "theory": [
+        "Буква f перед кавычкой включает подстановку. В фигурных скобках стоит имя или целое выражение, которое вычисляется в момент сборки строки. Поэтому f\"Итого: {price * count}\" считает произведение и подставляет результат.",
+        "После двоеточия внутри скобок пишут формат. Запись .2f показывает ровно два знака после точки, даже если число целое: f\"{7:.2f}\" даёт 7.00. Это удобно для денег и измерений.",
+        "Форматирование не меняет само число, оно влияет только на текст. В переменной по-прежнему лежит исходное значение со всеми знаками.",
+        "Спецификатор .1% умножает долю на сто и дописывает знак процента. А чтобы напечатать саму фигурную скобку, её удваивают."
+      ],
+      "examples": [
+        {
+          "title": "Цена и сумма",
+          "code": "price = 1234.5\ncount = 3\nprint(f\"Цена: {price:.2f}\")\nprint(f\"Итого: {price * count:.2f}\")\nprint(f\"{{скобки}}\")\n",
+          "explanation": "Второй вызов считает выражение прямо в строке. Двойные скобки выводят одну обычную."
+        },
+        {
+          "title": "Доля в процентах",
+          "code": "name = \"Mira\"\nshare = 0.8756\nprint(f\"{name}: {share:.1%}\")\n",
+          "explanation": "Доля 0.8756 превращается в 87.6 процента с одним знаком после точки."
+        }
+      ],
+      "outcomes": [
+        "подставлять выражения в f-строку",
+        "задавать количество знаков после точки",
+        "выводить проценты",
+        "собирать строку отчёта из нескольких значений"
+      ],
+      "resources": [
+        {
+          "kind": "docs",
+          "title": "Formatted string literals",
+          "url": "https://docs.python.org/3/reference/lexical_analysis.html#f-strings"
+        },
+        {
+          "kind": "docs",
+          "title": "Format Specification Mini-Language",
+          "url": "https://docs.python.org/3/library/string.html#format-specification-mini-language"
+        },
+        {
+          "kind": "youtube",
+          "title": "Python f-strings",
+          "url": "https://www.youtube.com/watch?v=nghuHvKLhJA",
+          "author": "Corey Schafer"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "python.basics.fstrings.t1",
+          "type": "choice",
+          "title": "Выражение внутри скобок",
+          "difficulty": 1,
+          "context": "neutral",
+          "prompt": "Что выведет print(f\"{2 + 2}\")?",
+          "options": [
+            {
+              "id": "a",
+              "text": "4"
+            },
+            {
+              "id": "b",
+              "text": "2 + 2"
+            },
+            {
+              "id": "c",
+              "text": "{2 + 2}"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "Выражение в скобках вычисляется.",
+            "Текст самого выражения на экран не попадает.",
+            "Буква f включает подстановку."
+          ],
+          "solution": "a",
+          "explanation": "В f-строке содержимое фигурных скобок считается и подставляется результатом."
+        },
+        {
+          "id": "python.basics.fstrings.t2",
+          "type": "predict_output",
+          "title": "Один знак после точки",
+          "difficulty": 2,
+          "context": "neutral",
+          "prompt": "Что выведет этот код?",
+          "code": "print(f\"{7 / 2:.1f}\")\n",
+          "options": [
+            {
+              "id": "a",
+              "text": "3.5"
+            },
+            {
+              "id": "b",
+              "text": "3"
+            },
+            {
+              "id": "c",
+              "text": "4"
+            }
+          ],
+          "answer": "a",
+          "hints": [
+            "Сначала выполняется деление.",
+            "Деление / даёт 3.5.",
+            "Формат оставляет один знак после точки."
+          ],
+          "solution": "a",
+          "explanation": "Число 3.5 уже имеет один знак после точки, поэтому формат ничего не меняет."
+        },
+        {
+          "id": "python.basics.fstrings.t3",
+          "type": "code",
+          "title": "Карточка участника",
+          "difficulty": 2,
+          "context": "business",
+          "prompt": "Первая строка ввода — имя, вторая — город. Выведите одну строку вида Mira из Перми.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "Mira\nПерми\n",
+              "expected_stdout": "Mira из Перми\n"
+            },
+            {
+              "stdin": "Leo\nКазани\n",
+              "expected_stdout": "Leo из Казани\n"
+            }
+          ],
+          "hints": [
+            "Обе строки остаются строками, преобразование не нужно.",
+            "Поставьте f перед кавычкой.",
+            "Между словами в образце есть пробелы."
+          ],
+          "solution": "name = input()\ncity = input()\nprint(f\"{name} из {city}\")\n",
+          "explanation": "Две подстановки собирают одну строку без склейки через плюс."
+        },
+        {
+          "id": "python.basics.fstrings.t4",
+          "type": "code",
+          "title": "Сумма заказа",
+          "difficulty": 3,
+          "context": "business",
+          "prompt": "Первая строка — цена с дробной частью, вторая — количество штук. Выведите строку вида Итого, с суммой и ровно двумя знаками после точки.",
+          "starter_code": "price = float(input())\ncount = int(input())\n",
+          "tests": [
+            {
+              "stdin": "199.9\n7\n",
+              "expected_stdout": "Итого: 1399.30\n"
+            },
+            {
+              "stdin": "10.0\n2\n",
+              "expected_stdout": "Итого: 20.00\n"
+            }
+          ],
+          "hints": [
+            "Произведение можно посчитать прямо в фигурных скобках.",
+            "Формат .2f оставит два знака.",
+            "После слова Итого стоит двоеточие и пробел."
+          ],
+          "solution": "price = float(input())\ncount = int(input())\nprint(f\"Итого: {price * count:.2f}\")\n",
+          "explanation": "Формат показывает ровно два знака, хотя в самом произведении их может быть больше."
+        },
+        {
+          "id": "python.basics.fstrings.t5",
+          "type": "code",
+          "title": "Забытая буква f",
+          "difficulty": 2,
+          "context": "development",
+          "prompt": "Программа должна поприветствовать по имени, но печатает фигурные скобки. Исправьте код.",
+          "starter_code": "name = input()\nprint(\"Привет, {name}\")\n",
+          "tests": [
+            {
+              "stdin": "Mira\n",
+              "expected_stdout": "Привет, Mira\n"
+            },
+            {
+              "stdin": "Leo\n",
+              "expected_stdout": "Привет, Leo\n"
+            }
+          ],
+          "hints": [
+            "Без префикса строка остаётся обычным текстом.",
+            "Подстановку включает одна буква.",
+            "Поставьте f перед открывающей кавычкой."
+          ],
+          "solution": "name = input()\nprint(f\"Привет, {name}\")\n",
+          "explanation": "Фигурные скобки работают только в f-строке. В обычной строке они печатаются как есть."
+        },
+        {
+          "id": "python.basics.fstrings.t6",
+          "type": "code",
+          "title": "Доля выполненного",
+          "difficulty": 3,
+          "context": "analytics",
+          "prompt": "Первая строка — число выполненных задач, вторая — общее число задач. Выведите долю в процентах с одним знаком после точки и знаком процента, например 37.5%.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "3\n8\n",
+              "expected_stdout": "37.5%\n"
+            },
+            {
+              "stdin": "1\n3\n",
+              "expected_stdout": "33.3%\n"
+            }
+          ],
+          "hints": [
+            "Доля — это деление выполненного на общее.",
+            "Умножение на 100 можно написать прямо в скобках.",
+            "Знак процента допустимо поставить в тексте строки."
+          ],
+          "solution": "done = int(input())\ntotal = int(input())\nprint(f\"{done / total * 100:.1f}%\")\n",
+          "explanation": "Деление даёт долю, умножение переводит её в проценты, формат оставляет один знак."
+        },
+        {
+          "id": "python.basics.fstrings.t7",
+          "type": "code",
+          "title": "Строка отчёта",
+          "difficulty": 4,
+          "context": "analytics",
+          "prompt": "Первая строка — название метрики, вторая — измеренное значение, третья — норма. Оба числа дробные. Выведите строку вида Температура, со значением и отклонением от нормы, каждое с одним знаком после точки.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "Температура\n18.4\n20.0\n",
+              "expected_stdout": "Температура: 18.4, отклонение 1.6\n"
+            },
+            {
+              "stdin": "Влажность\n55.25\n50.0\n",
+              "expected_stdout": "Влажность: 55.2, отклонение 5.2\n"
+            }
+          ],
+          "hints": [
+            "Отклонение считают как разность без знака.",
+            "abs уберёт минус, формат .1f округлит.",
+            "Запятая и слово отклонение входят в текст строки."
+          ],
+          "solution": "metric = input()\nvalue = float(input())\nnorm = float(input())\nprint(f\"{metric}: {value:.1f}, отклонение {abs(value - norm):.1f}\")\n",
+          "explanation": "Одна f-строка собирает текст, число и вычисленное отклонение с нужной точностью."
+        }
+      ],
+      "source": "08-fstrings.yaml"
+    },
+    {
+      "id": "python.basics.review",
+      "slug": "review",
+      "section": "basics",
+      "title": "Итог раздела. Мини-отчёт",
+      "order": 9,
+      "weight": 2,
+      "prerequisites": [
+        "python.basics.fstrings"
+      ],
+      "goal": "Собрать ввод, вычисления, проверку и вывод в одну небольшую программу.",
+      "tags": [
+        "итог",
+        "отчёт",
+        "практика",
+        "ввод",
+        "форматирование"
+      ],
+      "theory": [
+        "Почти любая маленькая программа состоит из четырёх шагов: прочитать данные, преобразовать их в нужный тип, посчитать результат и показать его. Новых понятий в этом уроке нет, есть только сборка того, что уже знакомо.",
+        "Имена переменных стоит выбирать по смыслу: price и count читаются лучше, чем a и b. Промежуточный результат удобно сохранять в отдельное имя, тогда f-строка в конце остаётся короткой.",
+        "Программу полезно мысленно проверить на граничных данных: ноль, пустая строка, ровно равные значения. Почти все ошибки новичка живут именно там, а не в середине диапазона."
+      ],
+      "examples": [
+        {
+          "title": "Сумма заказа с проверкой",
+          "code": "price = float(input())\ncount = int(input())\ntotal = price * count\nprint(f\"Позиций: {count}\")\nprint(f\"Сумма: {total:.2f}\")\nprint(total > 1000)\n",
+          "stdin": "199.9\n7\n",
+          "explanation": "Программа читает два значения, считает сумму, показывает её с двумя знаками и отвечает на вопрос о превышении порога."
+        },
+        {
+          "title": "Минуты в часы",
+          "code": "minutes = int(input())\nprint(f\"{minutes // 60} ч {minutes % 60} мин\")\nprint(minutes % 60 == 0)\n",
+          "stdin": "120\n",
+          "explanation": "Целочисленное деление и остаток дают часы и минуты, сравнение остатка с нулём показывает, что часы вышли ровными."
+        }
+      ],
+      "outcomes": [
+        "разбивать задачу на ввод, вычисление и вывод",
+        "выбирать подходящее преобразование типа",
+        "собирать результат во f-строке",
+        "проверять условие и выводить его результат"
+      ],
+      "resources": [
+        {
+          "kind": "docs",
+          "title": "The Python Tutorial — An Informal Introduction",
+          "url": "https://docs.python.org/3/tutorial/introduction.html"
+        },
+        {
+          "kind": "youtube",
+          "title": "CS50P — Lecture 1",
+          "url": "https://www.youtube.com/watch?v=CJJQaqN4LCM",
+          "author": "Harvard CS50"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "python.basics.review.t1",
+          "type": "code",
+          "title": "Средний чек",
+          "difficulty": 2,
+          "context": "business",
+          "prompt": "Первая строка — выручка с дробной частью, вторая — число заказов. Выведите средний чек с двумя знаками после точки.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "1500.0\n4\n",
+              "expected_stdout": "375.00\n"
+            },
+            {
+              "stdin": "999.5\n3\n",
+              "expected_stdout": "333.17\n"
+            }
+          ],
+          "hints": [
+            "Выручку читайте через float, количество через int.",
+            "Средний чек — выручка, делённая на число заказов.",
+            "Два знака задаёт формат .2f."
+          ],
+          "solution": "revenue = float(input())\norders = int(input())\nprint(f\"{revenue / orders:.2f}\")\n",
+          "explanation": "Деление даёт дробный результат, формат приводит его к привычному денежному виду."
+        },
+        {
+          "id": "python.basics.review.t2",
+          "type": "code",
+          "title": "Отгрузка со склада",
+          "difficulty": 3,
+          "context": "analytics",
+          "prompt": "Первая строка — количество деталей, вторая — вместимость одной коробки. Выведите две строки вида Коробок и Остаток с полными коробками и числом деталей, которые в них не поместились.",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "10\n3\n",
+              "expected_stdout": "Коробок: 3\nОстаток: 1\n"
+            },
+            {
+              "stdin": "9\n3\n",
+              "expected_stdout": "Коробок: 3\nОстаток: 0\n"
+            }
+          ],
+          "hints": [
+            "Полные коробки даёт целочисленное деление.",
+            "Остаток даёт знак процента.",
+            "Каждая строка выводится отдельным print."
+          ],
+          "solution": "items = int(input())\nper_box = int(input())\nprint(f\"Коробок: {items // per_box}\")\nprint(f\"Остаток: {items % per_box}\")\n",
+          "explanation": "Пара // и % отвечает сразу на оба вопроса: сколько целых частей получилось и что осталось."
+        },
+        {
+          "id": "python.basics.review.t3",
+          "type": "code",
+          "title": "Где дешевле",
+          "difficulty": 3,
+          "context": "business",
+          "prompt": "Первая строка — цена в первом магазине, вторая — во втором. Обе дробные. Выведите результат проверки «в первом магазине строго дешевле».",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "120.0\n150.0\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "150.0\n150.0\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Обе строки преобразуйте через float.",
+            "Сравнение строгое, равенство не подходит.",
+            "Результат сравнения можно передать прямо в print."
+          ],
+          "solution": "first = float(input())\nsecond = float(input())\nprint(first < second)\n",
+          "explanation": "Строгое сравнение даёт False при равных ценах, как и требует формулировка."
+        },
+        {
+          "id": "python.basics.review.t4",
+          "type": "code",
+          "title": "Цена со скидкой",
+          "difficulty": 3,
+          "context": "business",
+          "prompt": "Первая строка — цена с дробной частью, вторая — размер скидки в процентах, целое число. Выведите итоговую цену с двумя знаками после точки.",
+          "starter_code": "price = float(input())\ndiscount = int(input())\n",
+          "tests": [
+            {
+              "stdin": "1000.0\n15\n",
+              "expected_stdout": "850.00\n"
+            },
+            {
+              "stdin": "199.9\n10\n",
+              "expected_stdout": "179.91\n"
+            }
+          ],
+          "hints": [
+            "После скидки остаётся 100 минус процент скидки.",
+            "Долю от цены считают умножением и делением на 100.",
+            "Формат .2f оставит два знака."
+          ],
+          "solution": "price = float(input())\ndiscount = int(input())\nprint(f\"{price * (100 - discount) / 100:.2f}\")\n",
+          "explanation": "Скобки важны: сначала считается остаток процентов, затем доля от цены."
+        },
+        {
+          "id": "python.basics.review.t5",
+          "type": "code",
+          "title": "Анкета заполнена верно",
+          "difficulty": 3,
+          "context": "security",
+          "prompt": "Первая строка — имя, вторая — возраст целым числом. Выведите результат проверки «имя не пустое и возраст больше нуля и меньше 120».",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "Mira\n29\n",
+              "expected_stdout": "True\n"
+            },
+            {
+              "stdin": "\n29\n",
+              "expected_stdout": "False\n"
+            },
+            {
+              "stdin": "Leo\n0\n",
+              "expected_stdout": "False\n"
+            }
+          ],
+          "hints": [
+            "Пустая строка ложна, её можно проверить через bool.",
+            "Возраст проверяется цепочкой строгих сравнений.",
+            "Соедините обе проверки оператором and."
+          ],
+          "solution": "name = input()\nage = int(input())\nprint(bool(name) and 0 < age < 120)\n",
+          "explanation": "Проверка формы — это обычное логическое выражение: заполненность плюс допустимый диапазон."
+        },
+        {
+          "id": "python.basics.review.t6",
+          "type": "code",
+          "title": "Отчёт по плану",
+          "difficulty": 4,
+          "context": "analytics",
+          "prompt": "Три строки ввода — имя сотрудника, план и факт, оба целые. Выведите три строки, одну за другой, по образцу из тестов, а последней строкой — результат проверки «план выполнен».",
+          "starter_code": "",
+          "tests": [
+            {
+              "stdin": "Mira\n10\n8\n",
+              "expected_stdout": "Mira: 8 из 10\nВыполнение: 80.0%\nFalse\n"
+            },
+            {
+              "stdin": "Leo\n4\n5\n",
+              "expected_stdout": "Leo: 5 из 4\nВыполнение: 125.0%\nTrue\n"
+            }
+          ],
+          "hints": [
+            "Первая строка собирается из имени, факта и плана.",
+            "Процент выполнения — факт, делённый на план, умноженный на 100.",
+            "План выполнен, когда факт не меньше плана."
+          ],
+          "solution": "name = input()\nplan = int(input())\nfact = int(input())\nprint(f\"{name}: {fact} из {plan}\")\nprint(f\"Выполнение: {fact / plan * 100:.1f}%\")\nprint(fact >= plan)\n",
+          "explanation": "Один отчёт собирается из трёх разных действий: подстановки текста, вычисления с форматом и логической проверки."
+        }
+      ],
+      "source": "09-review.yaml"
     }
   ],
   "diagnostic": {
@@ -1003,6 +2700,72 @@
         ],
         "answer": 2,
         "suggests": "python.basics.variables"
+      },
+      {
+        "id": "d7",
+        "prompt": "Что выведет print(10 / 5)?",
+        "options": [
+          "2",
+          "2.0",
+          "5"
+        ],
+        "answer": 1,
+        "suggests": "python.basics.arithmetic"
+      },
+      {
+        "id": "d8",
+        "prompt": "Чему равно 17 % 5?",
+        "options": [
+          "3",
+          "2",
+          "3.4"
+        ],
+        "answer": 1,
+        "suggests": "python.basics.arithmetic"
+      },
+      {
+        "id": "d9",
+        "prompt": "Какая запись проверяет равенство, а не присваивает значение?",
+        "options": [
+          "total = 10",
+          "total == 10",
+          "total := 10"
+        ],
+        "answer": 1,
+        "suggests": "python.basics.comparison"
+      },
+      {
+        "id": "d10",
+        "prompt": "Когда выражение A and B даёт True?",
+        "options": [
+          "когда истинна хотя бы одна часть",
+          "когда истинны обе части",
+          "когда обе части ложны"
+        ],
+        "answer": 1,
+        "suggests": "python.basics.logic"
+      },
+      {
+        "id": "d11",
+        "prompt": "Что вернёт bool(\"False\")?",
+        "options": [
+          "True",
+          "False",
+          "None"
+        ],
+        "answer": 0,
+        "suggests": "python.basics.truthiness"
+      },
+      {
+        "id": "d12",
+        "prompt": "Что выведет print(f\"{7:.2f}\")?",
+        "options": [
+          "7",
+          "7.00",
+          "{7:.2f}"
+        ],
+        "answer": 1,
+        "suggests": "python.basics.fstrings"
       }
     ]
   },
@@ -1034,7 +2797,7 @@
     {
       "id": "variable",
       "title": "Переменная",
-      "summary": "Имя, связанное со значением. Знак = сохраняет значение справа в имя слева.",
+      "summary": "Имя, связанное со значением. Присваивание age = 37 связывает имя age со значением 37.",
       "lesson_id": "python.basics.variables",
       "lesson_slug": "variables",
       "lesson_title": "Переменные и значения"
@@ -1050,7 +2813,7 @@
     {
       "id": "float",
       "title": "float",
-      "summary": "Число с дробной частью, например 10.5. Дробная часть пишется через точку.",
+      "summary": "Число с плавающей точкой, например 10.5 или 4.0. Точка в записи делает число float, даже если дробная часть равна нулю.",
       "lesson_id": "python.basics.variables",
       "lesson_slug": "variables",
       "lesson_title": "Переменные и значения"
@@ -1090,7 +2853,7 @@
     {
       "id": "conversion",
       "title": "int() и float()",
-      "summary": "Преобразуют строку с числом в int или float. int(\"3.5\") вызывает ошибку.",
+      "summary": "Преобразуют строку с числом в int или float. int(\"3.5\") вызывает ValueError, а int(3.5) даёт 3.",
       "lesson_id": "python.basics.input",
       "lesson_slug": "input",
       "lesson_title": "Ввод данных и преобразование типов"
@@ -1102,6 +2865,150 @@
       "lesson_id": "python.basics.input",
       "lesson_slug": "input",
       "lesson_title": "Ввод данных и преобразование типов"
+    },
+    {
+      "id": "division",
+      "title": "Деление /",
+      "summary": "Обычное деление. Результат всегда float, даже если делится нацело. 10 / 5 даёт 2.0.",
+      "lesson_id": "python.basics.arithmetic",
+      "lesson_slug": "arithmetic",
+      "lesson_title": "Арифметические выражения"
+    },
+    {
+      "id": "floordiv",
+      "title": "Целочисленное деление //",
+      "summary": "Отбрасывает дробную часть. 17 // 5 даёт 3.",
+      "lesson_id": "python.basics.arithmetic",
+      "lesson_slug": "arithmetic",
+      "lesson_title": "Арифметические выражения"
+    },
+    {
+      "id": "modulo",
+      "title": "Остаток %",
+      "summary": "Остаток от деления. 17 % 5 даёт 2. Остаток 0 означает, что число делится нацело.",
+      "lesson_id": "python.basics.arithmetic",
+      "lesson_slug": "arithmetic",
+      "lesson_title": "Арифметические выражения"
+    },
+    {
+      "id": "power",
+      "title": "Степень **",
+      "summary": "Возведение в степень. 2 ** 10 даёт 1024.",
+      "lesson_id": "python.basics.arithmetic",
+      "lesson_slug": "arithmetic",
+      "lesson_title": "Арифметические выражения"
+    },
+    {
+      "id": "round",
+      "title": "round()",
+      "summary": "Округляет число. Второй аргумент задаёт количество знаков после точки.",
+      "lesson_id": "python.basics.arithmetic",
+      "lesson_slug": "arithmetic",
+      "lesson_title": "Арифметические выражения"
+    },
+    {
+      "id": "abs",
+      "title": "abs()",
+      "summary": "Возвращает значение без знака. abs(-5) даёт 5.",
+      "lesson_id": "python.basics.arithmetic",
+      "lesson_slug": "arithmetic",
+      "lesson_title": "Арифметические выражения"
+    },
+    {
+      "id": "comparison",
+      "title": "Операторы сравнения",
+      "summary": "Знаки <, >, <=, >=, ==, != сравнивают два значения и возвращают True или False.",
+      "lesson_id": "python.basics.comparison",
+      "lesson_slug": "comparison",
+      "lesson_title": "Сравнения и логические значения"
+    },
+    {
+      "id": "equality",
+      "title": "Равенство ==",
+      "summary": "Два знака равно сравнивают значения. Один знак равно присваивает значение имени.",
+      "lesson_id": "python.basics.comparison",
+      "lesson_slug": "comparison",
+      "lesson_title": "Сравнения и логические значения"
+    },
+    {
+      "id": "chained",
+      "title": "Цепочка сравнений",
+      "summary": "Запись 0 <= n <= 100 проверяет оба условия сразу.",
+      "lesson_id": "python.basics.comparison",
+      "lesson_slug": "comparison",
+      "lesson_title": "Сравнения и логические значения"
+    },
+    {
+      "id": "and",
+      "title": "and",
+      "summary": "Истинно, когда истинны обе части. Иначе ложно.",
+      "lesson_id": "python.basics.logic",
+      "lesson_slug": "logic",
+      "lesson_title": "Логические операторы"
+    },
+    {
+      "id": "or",
+      "title": "or",
+      "summary": "Истинно, когда истинна хотя бы одна часть.",
+      "lesson_id": "python.basics.logic",
+      "lesson_slug": "logic",
+      "lesson_title": "Логические операторы"
+    },
+    {
+      "id": "not",
+      "title": "not",
+      "summary": "Меняет логическое значение на противоположное.",
+      "lesson_id": "python.basics.logic",
+      "lesson_slug": "logic",
+      "lesson_title": "Логические операторы"
+    },
+    {
+      "id": "truthiness",
+      "title": "Истинность значения",
+      "summary": "Любое значение можно превратить в True или False. Пустая строка, 0, 0.0 и None дают False.",
+      "lesson_id": "python.basics.truthiness",
+      "lesson_slug": "truthiness",
+      "lesson_title": "Истинность значений и None"
+    },
+    {
+      "id": "bool-call",
+      "title": "bool()",
+      "summary": "Возвращает логическое значение, которым Python считает переданный объект.",
+      "lesson_id": "python.basics.truthiness",
+      "lesson_slug": "truthiness",
+      "lesson_title": "Истинность значений и None"
+    },
+    {
+      "id": "is-none",
+      "title": "is None",
+      "summary": "Правильная проверка на отсутствие значения. Сравнение с None делают через is, а не через ==.",
+      "lesson_id": "python.basics.truthiness",
+      "lesson_slug": "truthiness",
+      "lesson_title": "Истинность значений и None"
+    },
+    {
+      "id": "fstring-expression",
+      "title": "Выражение в f-строке",
+      "summary": "В фигурные скобки можно поставить не только имя, но и выражение. Оно вычисляется при сборке строки.",
+      "lesson_id": "python.basics.fstrings",
+      "lesson_slug": "fstrings",
+      "lesson_title": "f-строки и форматирование"
+    },
+    {
+      "id": "format-spec",
+      "title": "Спецификатор :.2f",
+      "summary": "Двоеточие внутри скобок задаёт формат. Запись .2f показывает ровно два знака после точки.",
+      "lesson_id": "python.basics.fstrings",
+      "lesson_slug": "fstrings",
+      "lesson_title": "f-строки и форматирование"
+    },
+    {
+      "id": "percent-format",
+      "title": "Формат процентов",
+      "summary": "Спецификатор .1% умножает долю на 100 и добавляет знак процента.",
+      "lesson_id": "python.basics.fstrings",
+      "lesson_slug": "fstrings",
+      "lesson_title": "f-строки и форматирование"
     }
   ],
   "search": [
@@ -1117,7 +3024,7 @@
         "ошибка",
         "python"
       ],
-      "snippet": "Программа на Python — это последовательность команд. Интерпретатор читает их сверху вниз и выполняет. Команда print() показывает значение. Строка — это текст в кавычках. print(\"Лес\") выводит Лес, без кавычек. Если кавычк"
+      "snippet": "Программа на Python — это последовательность вызовов и других инструкций. Интерпретатор читает их сверху вниз и выполняет. Функция print() показывает значение. Строка — это текст в кавычках. print(\"Лес\") выводит Лес, без"
     },
     {
       "lesson_id": "python.basics.variables",
@@ -1134,7 +3041,7 @@
         "None",
         "type"
       ],
-      "snippet": "Переменная хранит значение под именем. Запись age = 37 означает: имя age теперь связано с числом 37. У значения есть тип. 10 — int, 10.5 — float, \"10\" — str, True — bool. None означает отсутствие значения. Имя можно связ"
+      "snippet": "Присваивание age = 37 связывает имя age со значением 37. При новом присваивании имя начинает обозначать новое значение. У значения есть тип. 10 — int, 10.5 и 4.0 — float, \"10\" — str, True — bool. float — число с плавающе"
     },
     {
       "lesson_id": "python.basics.input",
@@ -1148,7 +3055,94 @@
         "f-string",
         "преобразование"
       ],
-      "snippet": "input() всегда возвращает строку. Если человек ввёл 42, программа получает \"42\", а не число 42. int(\"42\") даёт целое 42. float(\"3.5\") даёт 3.5. int(\"3.5\") завершается ошибкой ValueError, потому что у целого нет дробной ч"
+      "snippet": "input() всегда возвращает строку. Если человек ввёл 42, программа получает \"42\", а не число 42. int(\"42\") даёт целое 42. float(\"3.5\") даёт 3.5. int(\"3.5\") вызывает ValueError, потому что строка содержит десятичную точку "
+    },
+    {
+      "lesson_id": "python.basics.arithmetic",
+      "slug": "arithmetic",
+      "title": "Арифметические выражения",
+      "section": "basics",
+      "tags": [
+        "арифметика",
+        "деление",
+        "остаток",
+        "степень",
+        "round",
+        "float"
+      ],
+      "snippet": "Python считает выражения обычными знаками: + сложение, - вычитание, * умножение, / деление. Деление / всегда возвращает float, даже когда делится нацело: 10 / 5 даёт 2.0. Два знака деления // отбрасывают дробную часть, а"
+    },
+    {
+      "lesson_id": "python.basics.comparison",
+      "slug": "comparison",
+      "title": "Сравнения и логические значения",
+      "section": "basics",
+      "tags": [
+        "сравнение",
+        "bool",
+        true,
+        false,
+        "равенство",
+        "оператор"
+      ],
+      "snippet": "Сравнение — это выражение, у которого есть результат: True или False. Тип такого результата bool. print(5 > 3) выводит True, и это настоящее значение, а не текст. Равенство проверяют двумя знаками ==, неравенство — знако"
+    },
+    {
+      "lesson_id": "python.basics.logic",
+      "slug": "logic",
+      "title": "Логические операторы",
+      "section": "basics",
+      "tags": [
+        "and",
+        "or",
+        "not",
+        "логика",
+        "bool",
+        "условие"
+      ],
+      "snippet": "Одного сравнения часто мало. Оператор and даёт True, только когда истинны обе части. Оператор or даёт True, когда истинна хотя бы одна. Оператор not меняет значение на противоположное. Порядок такой: сначала сравнения, з"
+    },
+    {
+      "lesson_id": "python.basics.truthiness",
+      "slug": "truthiness",
+      "title": "Истинность значений и None",
+      "section": "basics",
+      "tags": [
+        "bool",
+        "None",
+        "истинность",
+        "пустая строка",
+        "is"
+      ],
+      "snippet": "У каждого значения есть логический смысл. bool(value) показывает, каким Python его считает. Ложными считаются пустая строка, число 0, число 0.0 и None. Всё остальное истинно. Поэтому строка \"нет\" истинна: важна не её над"
+    },
+    {
+      "lesson_id": "python.basics.fstrings",
+      "slug": "fstrings",
+      "title": "f-строки и форматирование",
+      "section": "basics",
+      "tags": [
+        "f-string",
+        "форматирование",
+        "округление",
+        "вывод",
+        "отчёт"
+      ],
+      "snippet": "Буква f перед кавычкой включает подстановку. В фигурных скобках стоит имя или целое выражение, которое вычисляется в момент сборки строки. Поэтому f\"Итого: {price * count}\" считает произведение и подставляет результат. П"
+    },
+    {
+      "lesson_id": "python.basics.review",
+      "slug": "review",
+      "title": "Итог раздела. Мини-отчёт",
+      "section": "basics",
+      "tags": [
+        "итог",
+        "отчёт",
+        "практика",
+        "ввод",
+        "форматирование"
+      ],
+      "snippet": "Почти любая маленькая программа состоит из четырёх шагов: прочитать данные, преобразовать их в нужный тип, посчитать результат и показать его. Новых понятий в этом уроке нет, есть только сборка того, что уже знакомо. Име"
     }
   ]
 }

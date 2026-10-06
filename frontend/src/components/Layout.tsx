@@ -41,7 +41,7 @@ export function Layout() {
             <Crest />
             <span className="brand-name">
               <strong>Deep Forest Academy</strong>
-              <span>Python (beta)</span>
+              <span>Python (бета)</span>
             </span>
           </a>
         ) : (
@@ -49,7 +49,7 @@ export function Layout() {
             <Crest />
             <span className="brand-name">
               <strong>Deep Forest Academy</strong>
-              <span>Python (beta)</span>
+              <span>Python (бета)</span>
             </span>
           </Link>
         )}
@@ -61,7 +61,7 @@ export function Layout() {
               Программы
             </NavLink>
           )}
-          <NavLink to="/programs/python">Python (beta)</NavLink>
+          <NavLink to="/programs/python">Python (бета)</NavLink>
           <NavLink to="/programs/python/search">Поиск</NavLink>
           <NavLink to="/programs/python/reference">Справочник</NavLink>
           <NavLink to="/programs/python/diagnostic">Диагностика</NavLink>

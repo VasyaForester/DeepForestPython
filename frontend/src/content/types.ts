@@ -39,6 +39,7 @@ export type Section = {
   order: number;
   title: string;
   status: "published" | "planned";
+  planned_lessons: number;
   summary: string;
 };
 

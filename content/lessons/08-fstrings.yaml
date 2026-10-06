@@ -1,0 +1,208 @@
+id: python.basics.fstrings
+slug: fstrings
+section: basics
+title: f-строки и форматирование
+order: 8
+weight: 1
+prerequisites:
+  - python.basics.truthiness
+goal: Собирать аккуратный текст с числами и задавать точность вывода.
+tags: [f-string, форматирование, округление, вывод, отчёт]
+introduces:
+  - id: fstring-expression
+    title: Выражение в f-строке
+    summary: В фигурные скобки можно поставить не только имя, но и выражение. Оно вычисляется при сборке строки.
+  - id: format-spec
+    title: Спецификатор :.2f
+    summary: Двоеточие внутри скобок задаёт формат. Запись .2f показывает ровно два знака после точки.
+  - id: percent-format
+    title: Формат процентов
+    summary: Спецификатор .1% умножает долю на 100 и добавляет знак процента.
+theory:
+  - "Буква f перед кавычкой включает подстановку. В фигурных скобках стоит имя или целое выражение, которое вычисляется в момент сборки строки. Поэтому f\"Итого: {price * count}\" считает произведение и подставляет результат."
+  - "После двоеточия внутри скобок пишут формат. Запись .2f показывает ровно два знака после точки, даже если число целое: f\"{7:.2f}\" даёт 7.00. Это удобно для денег и измерений."
+  - "Форматирование не меняет само число, оно влияет только на текст. В переменной по-прежнему лежит исходное значение со всеми знаками."
+  - "Спецификатор .1% умножает долю на сто и дописывает знак процента. А чтобы напечатать саму фигурную скобку, её удваивают."
+examples:
+  - title: Цена и сумма
+    code: |
+      price = 1234.5
+      count = 3
+      print(f"Цена: {price:.2f}")
+      print(f"Итого: {price * count:.2f}")
+      print(f"{{скобки}}")
+    explanation: Второй вызов считает выражение прямо в строке. Двойные скобки выводят одну обычную.
+  - title: Доля в процентах
+    code: |
+      name = "Mira"
+      share = 0.8756
+      print(f"{name}: {share:.1%}")
+    explanation: Доля 0.8756 превращается в 87.6 процента с одним знаком после точки.
+outcomes:
+  - подставлять выражения в f-строку
+  - задавать количество знаков после точки
+  - выводить проценты
+  - собирать строку отчёта из нескольких значений
+resources:
+  - kind: docs
+    title: Formatted string literals
+    url: https://docs.python.org/3/reference/lexical_analysis.html#f-strings
+  - kind: docs
+    title: Format Specification Mini-Language
+    url: https://docs.python.org/3/library/string.html#format-specification-mini-language
+  - kind: youtube
+    title: Python f-strings
+    url: https://www.youtube.com/watch?v=nghuHvKLhJA
+    author: Corey Schafer
+tasks:
+  - id: python.basics.fstrings.t1
+    type: choice
+    title: Выражение внутри скобок
+    difficulty: 1
+    context: neutral
+    prompt: Что выведет print(f"{2 + 2}")?
+    options:
+      - id: a
+        text: "4"
+      - id: b
+        text: 2 + 2
+      - id: c
+        text: "{2 + 2}"
+    answer: a
+    hints:
+      - Выражение в скобках вычисляется.
+      - Текст самого выражения на экран не попадает.
+      - Буква f включает подстановку.
+    solution: a
+    explanation: В f-строке содержимое фигурных скобок считается и подставляется результатом.
+  - id: python.basics.fstrings.t2
+    type: predict_output
+    title: Один знак после точки
+    difficulty: 2
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      print(f"{7 / 2:.1f}")
+    options:
+      - id: a
+        text: "3.5"
+      - id: b
+        text: "3"
+      - id: c
+        text: "4"
+    answer: a
+    hints:
+      - Сначала выполняется деление.
+      - Деление / даёт 3.5.
+      - Формат оставляет один знак после точки.
+    solution: a
+    explanation: Число 3.5 уже имеет один знак после точки, поэтому формат ничего не меняет.
+  - id: python.basics.fstrings.t3
+    type: code
+    title: Карточка участника
+    difficulty: 2
+    context: business
+    prompt: Первая строка ввода — имя, вторая — город. Выведите одну строку вида Mira из Перми.
+    starter_code: ""
+    tests:
+      - stdin: "Mira\nПерми\n"
+        expected_stdout: "Mira из Перми\n"
+      - stdin: "Leo\nКазани\n"
+        expected_stdout: "Leo из Казани\n"
+    hints:
+      - Обе строки остаются строками, преобразование не нужно.
+      - Поставьте f перед кавычкой.
+      - Между словами в образце есть пробелы.
+    solution: |
+      name = input()
+      city = input()
+      print(f"{name} из {city}")
+    explanation: Две подстановки собирают одну строку без склейки через плюс.
+  - id: python.basics.fstrings.t4
+    type: code
+    title: Сумма заказа
+    difficulty: 3
+    context: business
+    prompt: Первая строка — цена с дробной частью, вторая — количество штук. Выведите строку вида Итого, с суммой и ровно двумя знаками после точки.
+    starter_code: |
+      price = float(input())
+      count = int(input())
+    tests:
+      - stdin: "199.9\n7\n"
+        expected_stdout: "Итого: 1399.30\n"
+      - stdin: "10.0\n2\n"
+        expected_stdout: "Итого: 20.00\n"
+    hints:
+      - Произведение можно посчитать прямо в фигурных скобках.
+      - Формат .2f оставит два знака.
+      - После слова Итого стоит двоеточие и пробел.
+    solution: |
+      price = float(input())
+      count = int(input())
+      print(f"Итого: {price * count:.2f}")
+    explanation: Формат показывает ровно два знака, хотя в самом произведении их может быть больше.
+  - id: python.basics.fstrings.t5
+    type: code
+    title: Забытая буква f
+    difficulty: 2
+    context: development
+    prompt: Программа должна поприветствовать по имени, но печатает фигурные скобки. Исправьте код.
+    starter_code: |
+      name = input()
+      print("Привет, {name}")
+    tests:
+      - stdin: "Mira\n"
+        expected_stdout: "Привет, Mira\n"
+      - stdin: "Leo\n"
+        expected_stdout: "Привет, Leo\n"
+    hints:
+      - Без префикса строка остаётся обычным текстом.
+      - Подстановку включает одна буква.
+      - Поставьте f перед открывающей кавычкой.
+    solution: |
+      name = input()
+      print(f"Привет, {name}")
+    explanation: Фигурные скобки работают только в f-строке. В обычной строке они печатаются как есть.
+  - id: python.basics.fstrings.t6
+    type: code
+    title: Доля выполненного
+    difficulty: 3
+    context: analytics
+    prompt: Первая строка — число выполненных задач, вторая — общее число задач. Выведите долю в процентах с одним знаком после точки и знаком процента, например 37.5%.
+    starter_code: ""
+    tests:
+      - stdin: "3\n8\n"
+        expected_stdout: "37.5%\n"
+      - stdin: "1\n3\n"
+        expected_stdout: "33.3%\n"
+    hints:
+      - Доля — это деление выполненного на общее.
+      - Умножение на 100 можно написать прямо в скобках.
+      - Знак процента допустимо поставить в тексте строки.
+    solution: |
+      done = int(input())
+      total = int(input())
+      print(f"{done / total * 100:.1f}%")
+    explanation: Деление даёт долю, умножение переводит её в проценты, формат оставляет один знак.
+  - id: python.basics.fstrings.t7
+    type: code
+    title: Строка отчёта
+    difficulty: 4
+    context: analytics
+    prompt: Первая строка — название метрики, вторая — измеренное значение, третья — норма. Оба числа дробные. Выведите строку вида Температура, со значением и отклонением от нормы, каждое с одним знаком после точки.
+    starter_code: ""
+    tests:
+      - stdin: "Температура\n18.4\n20.0\n"
+        expected_stdout: "Температура: 18.4, отклонение 1.6\n"
+      - stdin: "Влажность\n55.25\n50.0\n"
+        expected_stdout: "Влажность: 55.2, отклонение 5.2\n"
+    hints:
+      - Отклонение считают как разность без знака.
+      - abs уберёт минус, формат .1f округлит.
+      - Запятая и слово отклонение входят в текст строки.
+    solution: |
+      metric = input()
+      value = float(input())
+      norm = float(input())
+      print(f"{metric}: {value:.1f}, отклонение {abs(value - norm):.1f}")
+    explanation: Одна f-строка собирает текст, число и вычисленное отклонение с нужной точностью.

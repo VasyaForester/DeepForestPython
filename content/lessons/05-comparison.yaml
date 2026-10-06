@@ -1,0 +1,202 @@
+id: python.basics.comparison
+slug: comparison
+section: basics
+title: Сравнения и логические значения
+order: 5
+weight: 1
+prerequisites:
+  - python.basics.arithmetic
+goal: Получать значения True и False из сравнений и читать их как ответ программы.
+tags: [сравнение, bool, True, False, равенство, оператор]
+introduces:
+  - id: comparison
+    title: Операторы сравнения
+    summary: Знаки <, >, <=, >=, ==, != сравнивают два значения и возвращают True или False.
+  - id: equality
+    title: Равенство ==
+    summary: Два знака равно сравнивают значения. Один знак равно присваивает значение имени.
+  - id: chained
+    title: Цепочка сравнений
+    summary: Запись 0 <= n <= 100 проверяет оба условия сразу.
+theory:
+  - "Сравнение — это выражение, у которого есть результат: True или False. Тип такого результата bool. print(5 > 3) выводит True, и это настоящее значение, а не текст."
+  - "Равенство проверяют двумя знаками ==, неравенство — знаком !=. Один знак = присваивает значение имени и сравнением не является. Это разные операции, и путать их нельзя."
+  - "Сравнивать можно и строки. Проверка равенства строк чувствительна к регистру, поэтому \"Да\" == \"да\" даёт False."
+  - "Сравнения можно сцеплять. Запись 0 <= n <= 100 означает, что n не меньше нуля и не больше ста. Так короче и понятнее, чем два отдельных сравнения."
+examples:
+  - title: Сравнение чисел
+    code: |
+      print(5 > 3)
+      print(5 == 3)
+      print(type(5 > 3))
+    explanation: Первое сравнение истинно, второе ложно. Тип результата — bool.
+  - title: Цепочка и строки
+    code: |
+      x = 7
+      print(0 <= x <= 10)
+      print("Да" == "да")
+    explanation: Цепочка проверяет обе границы. Строки с разным регистром не равны.
+outcomes:
+  - сравнивать числа и строки
+  - отличать == от =
+  - читать результат сравнения как bool
+  - проверять попадание в диапазон цепочкой
+resources:
+  - kind: docs
+    title: Comparisons
+    url: https://docs.python.org/3/library/stdtypes.html#comparisons
+  - kind: youtube
+    title: CS50P — Lecture 1, conditionals
+    url: https://www.youtube.com/watch?v=CJJQaqN4LCM
+    author: Harvard CS50
+tasks:
+  - id: python.basics.comparison.t1
+    type: choice
+    title: Нестрогое сравнение
+    difficulty: 1
+    context: neutral
+    prompt: Каким будет результат 4 >= 4?
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: Ошибка, числа равны
+    answer: a
+    hints:
+      - Знак >= читается как «больше или равно».
+      - Равенство здесь тоже подходит.
+      - Результатом сравнения всегда будет True или False.
+    solution: a
+    explanation: Нестрогое сравнение истинно и при равенстве значений.
+  - id: python.basics.comparison.t2
+    type: predict_output
+    title: Регистр важен
+    difficulty: 2
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      print("дуб" == "Дуб")
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: дуб
+    answer: b
+    hints:
+      - Сравниваются строки целиком.
+      - Заглавная и строчная буквы — разные символы.
+      - Текст на экран здесь не попадает, выводится результат сравнения.
+    solution: b
+    explanation: Строки различаются первой буквой, поэтому равенство ложно.
+  - id: python.basics.comparison.t3
+    type: choice
+    title: Присваивание или сравнение
+    difficulty: 2
+    context: development
+    prompt: Какая запись проверяет, что в total лежит число 10?
+    options:
+      - id: a
+        text: total = 10
+      - id: b
+        text: total == 10
+      - id: c
+        text: total != 10
+    answer: b
+    hints:
+      - Один знак равно меняет значение имени.
+      - Проверка ничего не меняет.
+      - Неравенство отвечает на обратный вопрос.
+    solution: b
+    explanation: Сравнение записывается двумя знаками равно. Один знак присвоил бы total значение 10.
+  - id: python.basics.comparison.t4
+    type: code
+    title: Совершеннолетие
+    difficulty: 2
+    context: business
+    prompt: Прочитайте возраст целым числом и выведите результат проверки «возраст не меньше 18».
+    starter_code: |
+      age = int(input())
+    tests:
+      - stdin: "20\n"
+        expected_stdout: "True\n"
+      - stdin: "17\n"
+        expected_stdout: "False\n"
+      - stdin: "18\n"
+        expected_stdout: "True\n"
+    hints:
+      - Нужно нестрогое сравнение.
+      - Результат сравнения можно сразу передать в print.
+      - Ровно 18 тоже подходит.
+    solution: |
+      age = int(input())
+      print(age >= 18)
+    explanation: Сравнение возвращает bool, и print выводит его как True или False.
+  - id: python.basics.comparison.t5
+    type: code
+    title: Два измерения
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте два целых числа с двух строк и выведите результат проверки «числа различаются».
+    starter_code: ""
+    tests:
+      - stdin: "5\n7\n"
+        expected_stdout: "True\n"
+      - stdin: "5\n5\n"
+        expected_stdout: "False\n"
+    hints:
+      - Нужен знак неравенства.
+      - Оба значения преобразуйте через int.
+      - Выводится одно логическое значение.
+    solution: |
+      a = int(input())
+      b = int(input())
+      print(a != b)
+    explanation: Знак != даёт True, когда значения не совпадают.
+  - id: python.basics.comparison.t6
+    type: code
+    title: Диапазон значений
+    difficulty: 3
+    context: security
+    prompt: Прочитайте целое число и выведите результат проверки «число лежит в диапазоне от 0 до 100 включительно». Используйте одну цепочку сравнений.
+    starter_code: ""
+    tests:
+      - stdin: "42\n"
+        expected_stdout: "True\n"
+      - stdin: "100\n"
+        expected_stdout: "True\n"
+      - stdin: "140\n"
+        expected_stdout: "False\n"
+    hints:
+      - Границы входят в диапазон.
+      - Подойдут два нестрогих сравнения в одной записи.
+      - Запись выглядит как 0 <= value <= 100.
+    solution: |
+      value = int(input())
+      print(0 <= value <= 100)
+    explanation: Цепочка проверяет нижнюю и верхнюю границу в одном выражении.
+  - id: python.basics.comparison.t7
+    type: code
+    title: Почините проверку
+    difficulty: 3
+    context: development
+    prompt: Программа должна проверить, что остаток от деления числа на 2 равен нулю, и вывести True или False. Сейчас в проверке стоит присваивание. Исправьте код.
+    starter_code: |
+      number = int(input())
+      print(number % 2 = 0)
+    tests:
+      - stdin: "8\n"
+        expected_stdout: "True\n"
+      - stdin: "7\n"
+        expected_stdout: "False\n"
+    hints:
+      - Один знак равно внутри print вызывает SyntaxError.
+      - Здесь нужна проверка, а не присваивание.
+      - Поставьте два знака равно.
+    solution: |
+      number = int(input())
+      print(number % 2 == 0)
+    explanation: Остаток сравнивают с нулём оператором ==. Так проверяют чётность числа.

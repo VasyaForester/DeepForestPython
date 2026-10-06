@@ -47,7 +47,7 @@ export function DiplomaPage() {
   return (
     <article className="certificate">
       <p className="eyebrow">Deep Forest Academy</p>
-      <h1>Диплом Python (beta)</h1>
+      <h1>Диплом Python (бета)</h1>
       {error && <p>{error}</p>}
       {payload && !payload.ready && <p>Диплом открывается после сертификатов всех опубликованных разделов.</p>}
       {payload?.diploma && (

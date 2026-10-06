@@ -2,16 +2,21 @@ import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodi
 
 const GUARD = `
 import builtins
-_real_import = builtins.__import__
-BANNED = {"os", "subprocess", "socket", "ctypes", "js", "shutil", "multiprocessing", "asyncio", "webbrowser"}
 
-def _guard(name, globals=None, locals=None, fromlist=(), level=0):
-    root = name.split(".")[0]
-    if root in BANNED:
-        raise ImportError("Модуль " + root + " в учебной среде недоступен")
-    return _real_import(name, globals, locals, fromlist, level)
+def _install_guard():
+    real_import = builtins.__import__
+    banned = {"os", "subprocess", "socket", "ctypes", "js", "shutil", "multiprocessing", "asyncio", "webbrowser"}
 
-builtins.__import__ = _guard
+    def guard(name, globals=None, locals=None, fromlist=(), level=0):
+        root = name.split(".")[0]
+        if root in banned:
+            raise ImportError("Модуль " + root + " в учебной среде недоступен")
+        return real_import(name, globals, locals, fromlist, level)
+
+    builtins.__import__ = guard
+
+_install_guard()
+del _install_guard
 `;
 
 let pyodidePromise = null;
@@ -45,29 +50,35 @@ self.onmessage = async (event) => {
       await pyodide.runPythonAsync(`import builtins\nbuiltins._repl_ns = {"__name__": "__main__"}\n`);
       replReady = true;
     }
-    const runner =
+    const target =
       mode === "repl"
-        ? `
-import sys
+        ? `exec(compile(_user_code, "<repl>", "single"), builtins._repl_ns, builtins._repl_ns)`
+        : `exec(compile(_user_code, "main.py", "exec"), {"__name__": "__main__"})`;
+    // Ошибку ученика ловим внутри Python: только так в сообщение попадает
+    // настоящий текст исключения и номер строки, а не общее PythonError.
+    const runner = `
+import sys, traceback
 from io import StringIO
 sys.stdout = StringIO()
 sys.stderr = StringIO()
 sys.stdin = StringIO(_stdin_text)
-code = compile(_user_code, "<repl>", "single")
-exec(code, builtins._repl_ns, builtins._repl_ns)
-`
-        : `
-import sys
-from io import StringIO
-sys.stdout = StringIO()
-sys.stderr = StringIO()
-sys.stdin = StringIO(_stdin_text)
-namespace = {"__name__": "__main__"}
-exec(compile(_user_code, "main.py", "exec"), namespace, namespace)
+_run_error = ""
+try:
+    ${target}
+except SyntaxError as exc:
+    _run_error = "".join(traceback.format_exception_only(type(exc), exc)).strip()
+except BaseException as exc:
+    _run_error = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__.tb_next)).strip()
 `;
     await pyodide.runPythonAsync(runner);
     const stdout = pyodide.runPython("sys.stdout.getvalue()");
     const stderr = pyodide.runPython("sys.stderr.getvalue()");
+    const runError = pyodide.runPython("_run_error");
+    if (runError) {
+      const kind = runError.includes("недоступен") ? "blocked_import" : "python_error";
+      self.postMessage({ id: msg.id, ok: false, stdout, stderr, error: runError, kind });
+      return;
+    }
     self.postMessage({ id: msg.id, ok: true, stdout, stderr });
   } catch (error) {
     const text = String(error && error.message ? error.message : error);

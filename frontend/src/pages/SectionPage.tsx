@@ -3,7 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { api, type Progress } from "../api";
 import manifest from "../content/manifest.json";
 import type { Manifest } from "../content/types";
-import { lessonStatus } from "../lib/progress";
+import { lessonsLabel } from "../lib/plural";
+import { lessonStatus, prereqsMet } from "../lib/progress";
 
 const data = manifest as Manifest;
 
@@ -24,12 +25,17 @@ export function SectionPage() {
       <p className="eyebrow">Раздел {section.order}</p>
       <h1>{section.title}</h1>
       <p>{section.summary}</p>
+      <p className="muted">{lessonsLabel(lessons.length)} в разделе. Последний урок собирает темы раздела вместе.</p>
       <div className="stack">
         {lessons.map((lesson) => {
-          const status = lessonStatus(progress?.lessons || [], lesson.id);
+          const records = progress?.lessons || [];
+          const status = lessonStatus(records, lesson.id);
+          const open = !progress || prereqsMet(lesson, records);
+          const label = status === "completed" ? "Пройден" : status === "skipped" ? "Пропущен" : open ? "Открыт" : "Закрыт";
+          const pill = status === "completed" ? "pill ok" : !open && status !== "skipped" ? "pill lock" : "pill";
           return (
             <Link key={lesson.id} to={`/programs/python/lesson/${lesson.slug}`} className="card">
-              <span className="pill">{status === "completed" ? "Пройден" : status === "skipped" ? "Пропущен" : "Открыт"}</span>
+              <span className={pill}>{label}</span>
               <h2>
                 {lesson.order}. {lesson.title}
               </h2>

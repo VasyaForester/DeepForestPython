@@ -66,7 +66,8 @@ export function LessonPage() {
   if (!lesson || !task) return <p>Урок не найден.</p>;
 
   const records = progress?.lessons || [];
-  const open = prereqsMet(lesson, records);
+  // Порядок тем — механика прогресса. Без входа прогресса нет, и урок открыт целиком.
+  const open = !user || prereqsMet(lesson, records);
   const missing = missingPrereqs(lesson, data.lessons, records);
   const status = lessonStatus(records, lesson.id);
 
@@ -194,14 +195,9 @@ export function LessonPage() {
       </section>
       <section>
         <h2>Практика</h2>
-        {!user && (
-          <p>
-            Задания можно решать сразу. <Link to="/programs/python/profile">Войдите</Link>, чтобы сохранить оценку.
-          </p>
-        )}
-        {user && !open && (
+        {!open && (
           <div className="card">
-            <p>Задания пока недоступны. Сначала завершите или пропустите:</p>
+            <p>Задания доступны после прохождения предыдущих тем. Сначала завершите или пропустите:</p>
             <ul>
               {missing.map((item) => (
                 <li key={item.id}>
@@ -210,6 +206,12 @@ export function LessonPage() {
               ))}
             </ul>
           </div>
+        )}
+        {!user && (
+          <p>
+            {open ? "Задания можно решать. " : "Прогресс по темам сохранится после входа. "}
+            <Link to="/programs/python/profile">Войдите</Link>, чтобы сохранить оценку.
+          </p>
         )}
         <div className="task-layout">
           <div>
@@ -336,6 +338,6 @@ function LessonNav({ lesson }: { lesson: Lesson }) {
 }
 
 function formatRun(result: RunResult): string {
-  if (!result.ok) return result.error;
+  if (!result.ok) return [result.stdout, result.error].filter(Boolean).join("\n");
   return result.stdout || "(без вывода)";
 }

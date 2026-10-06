@@ -32,3 +32,33 @@ questions:
     options: ["ноль", "пустую строку", "отсутствие значения"]
     answer: 2
     suggests: python.basics.variables
+  - id: d7
+    prompt: Что выведет print(10 / 5)?
+    options: ["2", "2.0", "5"]
+    answer: 1
+    suggests: python.basics.arithmetic
+  - id: d8
+    prompt: Чему равно 17 % 5?
+    options: ["3", "2", "3.4"]
+    answer: 1
+    suggests: python.basics.arithmetic
+  - id: d9
+    prompt: Какая запись проверяет равенство, а не присваивает значение?
+    options: ["total = 10", "total == 10", "total := 10"]
+    answer: 1
+    suggests: python.basics.comparison
+  - id: d10
+    prompt: Когда выражение A and B даёт True?
+    options: ["когда истинна хотя бы одна часть", "когда истинны обе части", "когда обе части ложны"]
+    answer: 1
+    suggests: python.basics.logic
+  - id: d11
+    prompt: Что вернёт bool("False")?
+    options: ["True", "False", "None"]
+    answer: 0
+    suggests: python.basics.truthiness
+  - id: d12
+    prompt: Что выведет print(f"{7:.2f}")?
+    options: ["7", "7.00", "{7:.2f}"]
+    answer: 1
+    suggests: python.basics.fstrings

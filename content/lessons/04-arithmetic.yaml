@@ -1,0 +1,237 @@
+id: python.basics.arithmetic
+slug: arithmetic
+section: basics
+title: Арифметические выражения
+order: 4
+weight: 1
+prerequisites:
+  - python.basics.input
+goal: Считать выражения с делением, остатком и степенью и округлять результат.
+tags: [арифметика, деление, остаток, степень, round, float]
+introduces:
+  - id: division
+    title: Деление /
+    summary: Обычное деление. Результат всегда float, даже если делится нацело. 10 / 5 даёт 2.0.
+  - id: floordiv
+    title: Целочисленное деление //
+    summary: Отбрасывает дробную часть. 17 // 5 даёт 3.
+  - id: modulo
+    title: Остаток %
+    summary: Остаток от деления. 17 % 5 даёт 2. Остаток 0 означает, что число делится нацело.
+  - id: power
+    title: Степень **
+    summary: Возведение в степень. 2 ** 10 даёт 1024.
+  - id: round
+    title: round()
+    summary: Округляет число. Второй аргумент задаёт количество знаков после точки.
+  - id: abs
+    title: abs()
+    summary: Возвращает значение без знака. abs(-5) даёт 5.
+theory:
+  - "Python считает выражения обычными знаками: + сложение, - вычитание, * умножение, / деление. Деление / всегда возвращает float, даже когда делится нацело: 10 / 5 даёт 2.0."
+  - "Два знака деления // отбрасывают дробную часть, а % даёт остаток. 17 // 5 равно 3, 17 % 5 равно 2. Остаток отвечает на вопрос «сколько осталось после целых частей»."
+  - "Две звёздочки ** возводят в степень: 2 ** 10 равно 1024. Порядок действий обычный: сначала степень, затем умножение и деление, затем сложение и вычитание. Скобки меняют порядок."
+  - "Числа float хранятся приближённо, поэтому 0.1 + 0.2 даёт 0.30000000000000004. Это не ошибка Python, а свойство дробных чисел в памяти. round(value, 2) округляет до двух знаков, abs(value) убирает знак."
+examples:
+  - title: Три деления
+    code: |
+      print(17 / 5)
+      print(17 // 5)
+      print(17 % 5)
+    explanation: Обычное деление даёт 3.4, целочисленное — 3, остаток — 2.
+  - title: Степень и округление
+    code: |
+      print(2 ** 10)
+      print(0.1 + 0.2)
+      print(round(0.1 + 0.2, 2))
+    explanation: Сумма дробных чисел выглядит неожиданно, пока её не округлить.
+outcomes:
+  - считать выражения с четырьмя действиями
+  - различать /, // и %
+  - возводить в степень
+  - округлять результат через round()
+resources:
+  - kind: docs
+    title: Numeric Types — int, float, complex
+    url: https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex
+  - kind: docs
+    title: Floating Point Arithmetic
+    url: https://docs.python.org/3/tutorial/floatingpoint.html
+  - kind: youtube
+    title: CS50P — Lecture 1
+    url: https://www.youtube.com/watch?v=CJJQaqN4LCM
+    author: Harvard CS50
+tasks:
+  - id: python.basics.arithmetic.t1
+    type: choice
+    title: Результат деления
+    difficulty: 1
+    context: neutral
+    prompt: Что выведет print(10 / 5)?
+    options:
+      - id: a
+        text: "2"
+      - id: b
+        text: "2.0"
+      - id: c
+        text: "5"
+    answer: b
+    hints:
+      - Знак / всегда даёт дробное число.
+      - Целое получилось бы при //.
+      - Тип результата здесь float.
+    solution: b
+    explanation: Деление / возвращает float, поэтому на экране 2.0, а не 2.
+  - id: python.basics.arithmetic.t2
+    type: predict_output
+    title: Остаток
+    difficulty: 1
+    context: neutral
+    prompt: Какое число будет выведено?
+    code: |
+      x = 9
+      print(x % 4)
+    options:
+      - id: a
+        text: "1"
+      - id: b
+        text: "2"
+      - id: c
+        text: "2.25"
+    answer: a
+    hints:
+      - В девятке помещаются две четвёрки.
+      - После них остаётся остаток.
+      - Знак % даёт именно остаток, а не частное.
+    solution: a
+    explanation: 9 = 4 * 2 + 1, поэтому остаток равен 1.
+  - id: python.basics.arithmetic.t3
+    type: predict_output
+    title: Порядок действий
+    difficulty: 2
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      print(2 + 3 * 4)
+    options:
+      - id: a
+        text: "14"
+      - id: b
+        text: "20"
+      - id: c
+        text: "24"
+    answer: a
+    hints:
+      - Умножение выполняется раньше сложения.
+      - Скобок здесь нет.
+      - Сначала считается 3 * 4.
+    solution: a
+    explanation: Сначала 3 * 4, затем прибавляется 2. Чтобы получить 20, нужны скобки.
+  - id: python.basics.arithmetic.t4
+    type: code
+    title: Стоимость заказа
+    difficulty: 2
+    context: business
+    prompt: Первая строка ввода — цена за штуку (целое число), вторая — количество. Выведите стоимость заказа.
+    starter_code: ""
+    tests:
+      - stdin: "250\n4\n"
+        expected_stdout: "1000\n"
+      - stdin: "99\n3\n"
+        expected_stdout: "297\n"
+    hints:
+      - Обе строки нужно преобразовать в int.
+      - Стоимость — произведение цены и количества.
+      - Выводится одно число.
+    solution: |
+      price = int(input())
+      count = int(input())
+      print(price * count)
+    explanation: Числа умножаются уже после преобразования, поэтому результат остаётся целым.
+  - id: python.basics.arithmetic.t5
+    type: code
+    title: Часы и минуты
+    difficulty: 3
+    context: analytics
+    prompt: На вход приходит число минут. Выведите на первой строке целое число часов, на второй — оставшиеся минуты.
+    starter_code: |
+      minutes = int(input())
+    tests:
+      - stdin: "135\n"
+        expected_stdout: "2\n15\n"
+      - stdin: "59\n"
+        expected_stdout: "0\n59\n"
+    hints:
+      - В часе 60 минут.
+      - Целое число часов даёт //.
+      - Остаток минут даёт %.
+    solution: |
+      minutes = int(input())
+      print(minutes // 60)
+      print(minutes % 60)
+    explanation: Целочисленное деление даёт полные часы, остаток — минуты сверх них.
+  - id: python.basics.arithmetic.t6
+    type: code
+    title: Среднее за три дня
+    difficulty: 3
+    context: analytics
+    prompt: Прочитайте три целых числа с трёх строк и выведите их среднее, округлённое до двух знаков после точки.
+    starter_code: ""
+    tests:
+      - stdin: "1\n2\n4\n"
+        expected_stdout: "2.33\n"
+      - stdin: "2\n2\n2\n"
+        expected_stdout: "2.0\n"
+    hints:
+      - Среднее — сумма, делённая на количество.
+      - Деление / уже даёт float.
+      - round с двумя знаками округляет результат.
+    solution: |
+      a = int(input())
+      b = int(input())
+      c = int(input())
+      print(round((a + b + c) / 3, 2))
+    explanation: round убирает лишние знаки. Ровное среднее печатается как 2.0, потому что деление дало float.
+  - id: python.basics.arithmetic.t7
+    type: code
+    title: Почините подсчёт коробок
+    difficulty: 3
+    context: development
+    prompt: В коробку помещается 3 детали. Программа должна вывести, сколько коробок заполнено целиком. Сейчас она печатает дробное число. Исправьте код.
+    starter_code: |
+      items = int(input())
+      print(items / 3)
+    tests:
+      - stdin: "10\n"
+        expected_stdout: "3\n"
+      - stdin: "9\n"
+        expected_stdout: "3\n"
+    hints:
+      - Коробок не бывает дробное число.
+      - Нужна целая часть деления.
+      - Замените / на //.
+    solution: |
+      items = int(input())
+      print(items // 3)
+    explanation: Целочисленное деление отбрасывает неполную коробку и сразу даёт int.
+  - id: python.basics.arithmetic.t8
+    type: code
+    title: Отклонение от нормы
+    difficulty: 3
+    context: security
+    prompt: Первая строка — измеренное значение, вторая — норма. Оба числа дробные. Выведите размер отклонения без знака, округлённый до одного знака после точки.
+    starter_code: ""
+    tests:
+      - stdin: "18.4\n20.0\n"
+        expected_stdout: "1.6\n"
+      - stdin: "21.5\n20.0\n"
+        expected_stdout: "1.5\n"
+    hints:
+      - Преобразуйте обе строки через float.
+      - Разность может получиться отрицательной.
+      - abs убирает знак, round оставляет один знак.
+    solution: |
+      value = float(input())
+      norm = float(input())
+      print(round(abs(value - norm), 1))
+    explanation: abs делает отклонение положительным независимо от того, выше измерение нормы или ниже.

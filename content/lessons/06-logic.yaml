@@ -1,0 +1,234 @@
+id: python.basics.logic
+slug: logic
+section: basics
+title: Логические операторы
+order: 6
+weight: 1
+prerequisites:
+  - python.basics.comparison
+goal: Объединять несколько проверок в одно условие через and, or и not.
+tags: [and, or, not, логика, bool, условие]
+introduces:
+  - id: and
+    title: and
+    summary: Истинно, когда истинны обе части. Иначе ложно.
+  - id: or
+    title: or
+    summary: Истинно, когда истинна хотя бы одна часть.
+  - id: not
+    title: not
+    summary: Меняет логическое значение на противоположное.
+theory:
+  - "Одного сравнения часто мало. Оператор and даёт True, только когда истинны обе части. Оператор or даёт True, когда истинна хотя бы одна. Оператор not меняет значение на противоположное."
+  - "Порядок такой: сначала сравнения, затем not, затем and, затем or. Поэтому age >= 18 and has_pass читается как «возраст не меньше 18 и пропуск есть». Скобки делают порядок явным, и в длинных условиях их лучше ставить."
+  - "Python вычисляет условие слева направо и останавливается, как только ответ известен. Если первая часть and ложна, вторую он уже не считает."
+  - "Частая ошибка — записать «число больше 10 и меньше 20» как 10 < value and < 20. Вторая часть должна быть полным сравнением: 10 < value and value < 20. Короче и понятнее записать это цепочкой 10 < value < 20."
+examples:
+  - title: Два условия
+    code: |
+      age = 20
+      has_pass = True
+      print(age >= 18 and has_pass)
+      print(age < 18 or has_pass)
+      print(not has_pass)
+    explanation: Первое условие истинно целиком. Во втором хватило правой части. not превращает True в False.
+  - title: Порядок операторов
+    code: |
+      print(True and False or True)
+      print(not (3 > 2))
+    explanation: and выполняется раньше or, поэтому сначала получается False, затем False or True даёт True. Скобки во второй строке меняют порядок.
+outcomes:
+  - объединять проверки через and и or
+  - отрицать условие через not
+  - учитывать порядок логических операторов
+  - записывать двойное неравенство правильно
+resources:
+  - kind: docs
+    title: Boolean Operations
+    url: https://docs.python.org/3/library/stdtypes.html#boolean-operations-and-or-not
+  - kind: youtube
+    title: CS50P — Lecture 1, logical operators
+    url: https://www.youtube.com/watch?v=CJJQaqN4LCM
+    author: Harvard CS50
+tasks:
+  - id: python.basics.logic.t1
+    type: choice
+    title: Когда and истинно
+    difficulty: 1
+    context: neutral
+    prompt: При каком условии выражение A and B даёт True?
+    options:
+      - id: a
+        text: Когда истинна хотя бы одна часть
+      - id: b
+        text: Когда истинны обе части
+      - id: c
+        text: Когда обе части ложны
+    answer: b
+    hints:
+      - Оператор and читается как «и».
+      - Хотя бы одна часть — это or.
+      - Обе части должны быть истинными одновременно.
+    solution: b
+    explanation: and требует истинности обеих частей, иначе результат False.
+  - id: python.basics.logic.t2
+    type: predict_output
+    title: Порядок and и or
+    difficulty: 2
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      print(False and False or True)
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: Ошибку
+    answer: a
+    hints:
+      - Сначала выполняется and.
+      - False and False даёт False.
+      - Остаётся False or True.
+    solution: a
+    explanation: and считается раньше or, поэтому выражение сводится к False or True и даёт True.
+  - id: python.basics.logic.t3
+    type: predict_output
+    title: Отрицание
+    difficulty: 2
+    context: neutral
+    prompt: Что выведет этот код?
+    code: |
+      ready = False
+      print(not ready)
+    options:
+      - id: a
+        text: "True"
+      - id: b
+        text: "False"
+      - id: c
+        text: not False
+    answer: a
+    hints:
+      - not меняет значение на противоположное.
+      - Исходное значение ложно.
+      - На экран попадает логическое значение, а не текст выражения.
+    solution: a
+    explanation: not False даёт True.
+  - id: python.basics.logic.t4
+    type: code
+    title: Оба числа положительные
+    difficulty: 2
+    context: analytics
+    prompt: Прочитайте два целых числа с двух строк и выведите результат проверки «оба числа больше нуля».
+    starter_code: ""
+    tests:
+      - stdin: "4\n9\n"
+        expected_stdout: "True\n"
+      - stdin: "4\n-1\n"
+        expected_stdout: "False\n"
+      - stdin: "0\n5\n"
+        expected_stdout: "False\n"
+    hints:
+      - Нужны два полных сравнения.
+      - Соедините их оператором and.
+      - Ноль не больше нуля.
+    solution: |
+      a = int(input())
+      b = int(input())
+      print(a > 0 and b > 0)
+    explanation: Условие истинно, только когда оба сравнения дали True.
+  - id: python.basics.logic.t5
+    type: code
+    title: Доступ в систему
+    difficulty: 3
+    context: security
+    prompt: Первая строка ввода — возраст, вторая — число попыток входа. Выведите результат проверки «возраст не меньше 18 и попыток меньше 3».
+    starter_code: |
+      age = int(input())
+      attempts = int(input())
+    tests:
+      - stdin: "30\n1\n"
+        expected_stdout: "True\n"
+      - stdin: "30\n3\n"
+        expected_stdout: "False\n"
+      - stdin: "16\n0\n"
+        expected_stdout: "False\n"
+    hints:
+      - Возраст проверяется нестрого, попытки — строго.
+      - Ровно три попытки доступа уже не дают.
+      - Соедините проверки через and.
+    solution: |
+      age = int(input())
+      attempts = int(input())
+      print(age >= 18 and attempts < 3)
+    explanation: Отказ достаточно получить по одной причине, поэтому обе проверки обязаны быть истинными.
+  - id: python.basics.logic.t6
+    type: code
+    title: Выходной день
+    difficulty: 3
+    context: business
+    prompt: Прочитайте номер дня недели от 1 до 7 и выведите результат проверки «это суббота или воскресенье».
+    starter_code: ""
+    tests:
+      - stdin: "6\n"
+        expected_stdout: "True\n"
+      - stdin: "7\n"
+        expected_stdout: "True\n"
+      - stdin: "3\n"
+        expected_stdout: "False\n"
+    hints:
+      - Подходит любой из двух номеров.
+      - Для «или» используется or.
+      - Каждое сравнение пишется полностью.
+    solution: |
+      day = int(input())
+      print(day == 6 or day == 7)
+    explanation: or даёт True, если выполнено хотя бы одно из сравнений.
+  - id: python.basics.logic.t7
+    type: code
+    title: Почините условие
+    difficulty: 3
+    context: development
+    prompt: Программа должна проверить, что число строго больше 10 и строго меньше 20. Сейчас второе сравнение записано неполно, и код падает. Исправьте его.
+    starter_code: |
+      value = int(input())
+      print(10 < value and < 20)
+    tests:
+      - stdin: "15\n"
+        expected_stdout: "True\n"
+      - stdin: "20\n"
+        expected_stdout: "False\n"
+      - stdin: "3\n"
+        expected_stdout: "False\n"
+    hints:
+      - У второго сравнения нет левой части.
+      - Имя переменной нужно повторить.
+      - Подойдёт и цепочка 10 < value < 20.
+    solution: |
+      value = int(input())
+      print(10 < value < 20)
+    explanation: Каждое сравнение должно быть полным. Цепочка записывает то же условие короче.
+  - id: python.basics.logic.t8
+    type: code
+    title: Вне диапазона
+    difficulty: 3
+    context: security
+    prompt: Прочитайте целое число и выведите результат проверки «значение НЕ попадает в диапазон от 0 до 100 включительно». Используйте not и цепочку сравнений.
+    starter_code: ""
+    tests:
+      - stdin: "140\n"
+        expected_stdout: "True\n"
+      - stdin: "42\n"
+        expected_stdout: "False\n"
+      - stdin: "0\n"
+        expected_stdout: "False\n"
+    hints:
+      - Сначала запишите проверку попадания в диапазон.
+      - Заключите её в скобки.
+      - Поставьте перед скобками not.
+    solution: |
+      value = int(input())
+      print(not (0 <= value <= 100))
+    explanation: Скобки заставляют not отрицать всю цепочку, а не только первое сравнение.
