@@ -1,13 +1,13 @@
 # Deep Forest Python
 
-Интерактивный курс Python внутри Deep Forest Academy. Сейчас опубликован раздел «Старт и основы Python»: девять уроков, от первой программы до итоговой задачи раздела. Полная программа — 21 раздел и 236 уроков — описана в `COURSE_DESIGN.md`, очередь доработок лежит в `COURSE_BACKLOG.md`.
+Интерактивный курс Python внутри Deep Forest Academy. Сейчас опубликованы три раздела: «Старт и основы Python», «Условия и циклы», «Строки и коллекции» — 32 урока. Полная программа — 21 раздел; единственная карта лежит в `content/course.yaml` и описана в `COURSE_DESIGN.md`. `frontend/src/content/manifest.json` собирается из этих файлов и вручную не правится.
 
 ## Запуск
 
 ```powershell
 pip install -r backend/requirements.txt
-python scripts/validate_content.py
 python scripts/build_course_manifest.py
+python scripts/validate_content.py
 cd backend
 python -m flask --app app run --port 5000
 ```
@@ -21,6 +21,8 @@ npm run dev
 ```
 
 Сайт: http://127.0.0.1:5174/programs/python
+
+`validate_content.py` сверяет `manifest.json` с YAML и не проходит, если манифест устарел. После правки уроков его нужно пересобрать и только потом проверять.
 
 На сайте академии курс открывается карточкой Python и живёт по адресу `/python/`. Математика остаётся в соседней папке и своём репозитории.
 

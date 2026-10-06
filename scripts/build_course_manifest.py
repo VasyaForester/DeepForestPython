@@ -21,7 +21,7 @@ def load_yaml(path: Path) -> dict:
     return data
 
 
-def main() -> None:
+def build_manifest() -> dict:
     course = load_yaml(CONTENT / "course.yaml")
     section_order = {section["id"]: section["order"] for section in course["sections"]}
     lessons = []
@@ -52,10 +52,18 @@ def main() -> None:
                 "snippet": " ".join(blob.split())[:220],
             }
         )
-    manifest = {"course": course, "lessons": lessons, "diagnostic": diagnostic, "references": references, "search": search}
+    return {"course": course, "lessons": lessons, "diagnostic": diagnostic, "references": references, "search": search}
+
+
+def dump_manifest(manifest: dict) -> str:
+    return json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+
+
+def main() -> None:
+    text = dump_manifest(build_manifest())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"wrote {OUT} lessons={len(lessons)}")
+    OUT.write_text(text, encoding="utf-8", newline="\n")
+    print(f"wrote {OUT} lessons={len(json.loads(text)['lessons'])}")
 
 
 if __name__ == "__main__":

@@ -4,14 +4,7 @@ import { api, type Progress, type User } from "../api";
 import { formatGpa } from "../lib/grading";
 
 export function Crest() {
-  return (
-    <svg className="crest" viewBox="0 0 64 64" aria-hidden="true">
-      <circle cx="32" cy="32" r="30" fill="#1b4332" />
-      <path d="M32 10 44 36H20Z" fill="#52b788" />
-      <path d="M32 18 40 36H24Z" fill="#fffdf8" />
-      <rect x="29" y="36" width="6" height="16" fill="#6b4f3a" />
-    </svg>
-  );
+  return <img src="/crest.png" alt="Герб Deep Forest Academy" draggable={false} />;
 }
 
 const embedded = import.meta.env.BASE_URL !== "/";
@@ -39,18 +32,16 @@ export function Layout() {
         {embedded ? (
           <a href="/programs" className="brand">
             <Crest />
-            <span className="brand-name">
+            <div className="brand-name">
               <strong>Deep Forest Academy</strong>
-              <span>Python (бета)</span>
-            </span>
+            </div>
           </a>
         ) : (
           <Link to="/programs" className="brand">
             <Crest />
-            <span className="brand-name">
+            <div className="brand-name">
               <strong>Deep Forest Academy</strong>
-              <span>Python (бета)</span>
-            </span>
+            </div>
           </Link>
         )}
         <nav className="nav">
@@ -90,7 +81,7 @@ export function Layout() {
       <main className="main">
         <Outlet />
       </main>
-      <footer className="footer">Deep Forest Academy · Python выполняется в вашем браузере</footer>
+      <footer className="footer">Deep Forest Academy</footer>
     </div>
   );
 }
