@@ -25,7 +25,7 @@ export function SectionPage() {
       <p className="eyebrow">Раздел {section.order}</p>
       <h1>{section.title}</h1>
       <p>{section.summary}</p>
-      <p className="muted">{lessonsLabel(lessons.length)} в разделе. Последний урок собирает темы раздела вместе.</p>
+      <p className="muted">{lessonsLabel(lessons.length)} в разделе.</p>
       <div className="stack">
         {lessons.map((lesson) => {
           const records = progress?.lessons || [];

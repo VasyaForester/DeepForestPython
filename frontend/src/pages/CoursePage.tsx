@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import manifest from "../content/manifest.json";
 import type { Manifest } from "../content/types";
-import { lessonsLabel } from "../lib/plural";
+import { lessonsLabel, plural } from "../lib/plural";
 
 const data = manifest as Manifest;
 
@@ -16,10 +16,11 @@ export function CoursePage() {
       <p>{data.course.summary}</p>
       <ul className="feature-list">
         <li>
-          {lessonsLabel(planned)} в полной программе, открыто {openLessons}
+          {data.course.sections.every((section) => section.status === "published")
+            ? `${lessonsLabel(openLessons)}, ${data.course.sections.length} ${plural(data.course.sections.length, "раздел", "раздела", "разделов")}`
+            : `${lessonsLabel(planned)} в полной программе, открыто ${openLessons}`}
         </li>
         <li>Браузерная IDE, практика и автопроверка</li>
-        <li>Дальше в курсе: алгоритмы, SQL, pandas, API, backend, Git</li>
       </ul>
       <p>
         <Link className="button" to="/programs/python/section/basics">
@@ -44,7 +45,7 @@ export function CoursePage() {
               <p className="muted">{section.summary}</p>
               <p className="muted">
                 {section.status === "published"
-                  ? `${lessonsLabel(ready)}, написаны и открыты`
+                  ? lessonsLabel(ready)
                   : `В плане ${lessonsLabel(section.planned_lessons)}`}
               </p>
               {section.status === "published" && (

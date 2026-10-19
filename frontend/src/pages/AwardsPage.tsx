@@ -49,7 +49,7 @@ export function DiplomaPage() {
       <p className="eyebrow">Deep Forest Academy</p>
       <h1>Диплом Python (бета)</h1>
       {error && <p>{error}</p>}
-      {payload && !payload.ready && <p>Диплом открывается после сертификатов всех опубликованных разделов.</p>}
+      {payload && !payload.ready && <p>Диплом открывается после сертификатов всех разделов.</p>}
       {payload?.diploma && (
         <>
           <p>{payload.name}</p>

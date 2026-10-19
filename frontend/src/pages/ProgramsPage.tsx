@@ -4,7 +4,7 @@ export function ProgramsPage() {
   return (
     <div>
       <h1>Учебные программы</h1>
-      <p className="muted">Академия растёт. Сейчас в этом приложении открыт курс Python (бета). Математика остаётся отдельной программой академии.</p>
+      <p className="muted">Математика и Python — отдельные программы академии. Курс Python открыт целиком, от первой программы до проекта.</p>
       <div className="grid">
         {import.meta.env.DEV ? (
           <a href="http://localhost:5173/programs" className="card dim" style={{ color: "inherit" }}>
@@ -22,7 +22,7 @@ export function ProgramsPage() {
         <Link to="/programs/python" className="card">
           <span className="pill ok">Открыта</span>
           <h2>Python (бета)</h2>
-          <p className="muted">От первого print до API, SQL, pandas и финального проекта. Сейчас открыт первый раздел целиком.</p>
+          <p className="muted">От первой программы до алгоритмов, SQL, pandas, API, backend, Git и финального проекта. Практика идёт в браузере.</p>
         </Link>
         <article className="card dim">
           <span className="pill lock">Скоро</span>
