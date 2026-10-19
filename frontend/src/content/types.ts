@@ -9,7 +9,8 @@ export type Task = {
   options?: { id: string; text: string }[];
   answer?: string;
   starter_code?: string;
-  tests?: { stdin: string; expected_stdout: string }[];
+  tests?: { stdin: string; expected_stdout: string; compare?: "exact" | "set" }[];
+  requires?: { kind: "comment" | "assign" | "state"; contains?: string; name?: string; min?: number; equals?: string | number | boolean | null }[];
   hints: string[];
   solution: string;
   explanation: string;

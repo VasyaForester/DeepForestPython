@@ -152,6 +152,9 @@ tasks:
     tests:
       - stdin: ""
         expected_stdout: "2026\n"
+    requires:
+      - kind: comment
+        contains: "год отчёта"
     hints:
       - Число можно передать в print без кавычек.
       - "Комментарий начинается с #."

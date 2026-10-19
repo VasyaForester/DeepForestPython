@@ -7,6 +7,7 @@ import manifest from "../content/manifest.json";
 import type { Lesson, Manifest, Task } from "../content/types";
 import { formatGpa } from "../lib/grading";
 import { lessonStatus, missingPrereqs, prereqsMet } from "../lib/progress";
+import { stdoutMatches } from "../lib/taskChecks";
 import { pythonRuntime, type RunResult } from "../runtime/pythonRuntime";
 
 const data = manifest as Manifest;
@@ -94,26 +95,31 @@ export function LessonPage() {
     }
     if (task.type === "code") {
       setOutput("Проверка…");
+      const structure = task.requires?.length ? await pythonRuntime.inspect(code, task.requires, task.tests?.[0]?.stdin || "") : null;
       const results = [];
       for (const test of task.tests || []) {
         const result = await pythonRuntime.run(code, test.stdin || "");
         reportRuntime(result);
         const actual = result.ok ? result.stdout : "";
-        results.push({ passed: result.ok && actual === test.expected_stdout, expected: test.expected_stdout, actual: result.ok ? actual : result.error, stdin: test.stdin });
+        const passed = result.ok && stdoutMatches(actual, test.expected_stdout, test.compare || "exact");
+        results.push({ passed, expected: test.expected_stdout, actual: result.ok ? actual : result.error, stdin: test.stdin });
       }
-      const report = results.map((item, index) => `${item.passed ? "✓" : "✗"} Тест ${index + 1}\nОжидалось: ${JSON.stringify(item.expected)}\nПолучено: ${JSON.stringify(item.actual)}`).join("\n\n");
+      const structureNote = structure && !structure.ok ? structure.error : "";
+      const report = [structureNote, results.map((item, index) => `${item.passed ? "✓" : "✗"} Тест ${index + 1}\nОжидалось: ${JSON.stringify(item.expected)}\nПолучено: ${JSON.stringify(item.actual)}`).join("\n\n")].filter(Boolean).join("\n\n");
       setOutput(report);
-      const passed = results.every((item) => item.passed);
+      const testsPassed = results.every((item) => item.passed);
+      const passed = testsPassed && !structureNote;
+      const failure = structureNote && testsPassed ? structureNote : "Есть непройденные тесты.";
       if (!user) {
-        setMessage(passed ? "Все тесты пройдены. Войдите, чтобы оценка сохранилась." : "Есть непройденные тесты.");
+        setMessage(passed ? "Все тесты пройдены. Войдите, чтобы оценка сохранилась." : failure);
         return;
       }
       const response = await api<Progress & { passed: boolean; score: number }>(`/api/python/task/${task.id}/attempt`, {
         method: "POST",
-        body: JSON.stringify({ code, results: results.map((item) => ({ passed: item.passed })) }),
+        body: JSON.stringify({ code, results: results.map((item) => ({ passed: item.passed && !structureNote })) }),
       });
       setProgress(response);
-      setMessage(response.passed ? `Задание принято. Оценка ${formatGpa(response.score)}` : "Есть непройденные тесты.");
+      setMessage(response.passed ? `Задание принято. Оценка ${formatGpa(response.score)}` : failure);
       return;
     }
     if (!answer) {

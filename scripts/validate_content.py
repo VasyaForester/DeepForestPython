@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import ast
+import importlib.util
 import re
 import subprocess
 import sys
@@ -22,6 +23,10 @@ from build_course_manifest import OUT, build_manifest, dump_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTENT = ROOT / "content"
+_checks_spec = importlib.util.spec_from_file_location("task_checks", ROOT / "frontend" / "public" / "task_checks.py")
+task_checks = importlib.util.module_from_spec(_checks_spec)
+assert _checks_spec and _checks_spec.loader
+_checks_spec.loader.exec_module(task_checks)
 REQUIRED_LESSON = ["id", "slug", "section", "title", "order", "weight", "prerequisites", "goal", "theory", "examples", "outcomes", "resources", "tasks"]
 REQUIRED_TASK = ["id", "type", "title", "difficulty", "prompt", "hints", "solution", "explanation"]
 STUDENT_RUNTIME = "Pyodide 0.27.7"
@@ -271,6 +276,14 @@ def main() -> int:
                 run_code(example["code"], example.get("stdin") or "")
             except Exception as exc:  # noqa: BLE001
                 errors.append(f"{lesson['id']} example failed: {exc}")
+        seen_urls: list[str] = []
+        for resource in lesson.get("resources") or []:
+            url = str(resource.get("url") or "")
+            if not url.startswith("https://"):
+                errors.append(f"{lesson['id']} resource url must be https")
+            if url in seen_urls:
+                errors.append(f"{lesson['id']} duplicate resource {url}")
+            seen_urls.append(url)
         for task in lesson["tasks"]:
             for key in REQUIRED_TASK:
                 if key not in task:
@@ -286,13 +299,21 @@ def main() -> int:
                     if "expected_stdout" not in test:
                         errors.append(f"{task.get('id')} test missing expected_stdout")
                 shared_with_student_runtime(task["solution"], task["id"], errors)
+                solution = textwrap.dedent(task["solution"])
+                note = task_checks.requirement_error(solution, task.get("requires") or [], (tests[0].get("stdin") if tests else "") or "")
+                if note:
+                    errors.append(f"{task['id']} {note}")
                 for test in tests:
+                    mode = test.get("compare") or "exact"
+                    if mode not in {"exact", "set"}:
+                        errors.append(f"{task.get('id')} unknown compare {mode}")
+                        continue
                     try:
-                        actual = run_code(textwrap.dedent(task["solution"]), test.get("stdin") or "")
+                        actual = run_code(solution, test.get("stdin") or "")
                     except Exception as exc:  # noqa: BLE001
                         errors.append(f"{task['id']} solution failed: {exc}")
                         continue
-                    if actual != test["expected_stdout"]:
+                    if not task_checks.compare_stdout(actual, test["expected_stdout"], mode):
                         errors.append(f"{task['id']} stdout {actual!r} != {test['expected_stdout']!r}")
             elif task["type"] in {"choice", "predict_output"}:
                 check_choice(task, errors)
@@ -313,6 +334,13 @@ def main() -> int:
             errors.append(f"{question.get('id')} answer is outside options")
         if question.get("suggests") not in id_set:
             errors.append(f"{question.get('id')} suggests unknown lesson")
+    published = sum(1 for section in course["sections"] if section["status"] == "published")
+    for name in ("README.md", "COURSE_DESIGN.md"):
+        text = (ROOT / name).read_text(encoding="utf-8")
+        if f"{len(course['sections'])} раздел" not in text or f"{len(lessons)} урок" not in text:
+            errors.append(f"{name} не совпадает с course.yaml: {len(course['sections'])} разделов, {len(lessons)} уроков")
+        if published != len(course["sections"]) and "опубликованы все" in text:
+            errors.append(f"{name} говорит, что курс опубликован целиком, но в course.yaml не все разделы published")
     if OUT.is_file():
         actual = OUT.read_text(encoding="utf-8").replace("\r\n", "\n")
         expected = dump_manifest(build_manifest())

@@ -81,12 +81,20 @@ export class PythonRuntime {
   }
 
   run(code: string, stdin = "", timeoutMs = 2000, type: "exec" | "repl" = "exec"): Promise<RunResult> {
+    return this.send({ type, code, stdin }, timeoutMs);
+  }
+
+  inspect(code: string, requires: unknown[], stdin = "", timeoutMs = 2000): Promise<RunResult> {
+    return this.send({ type: "structure", code, requires, stdin }, timeoutMs);
+  }
+
+  private send(message: Record<string, unknown>, timeoutMs: number): Promise<RunResult> {
     this.ensure();
     const id = ++this.seq;
     return new Promise((resolve) => {
       const timer = window.setTimeout(() => this.expire(id), LOAD_TIMEOUT_MS);
       this.pending.set(id, { resolve, timer, phase: "load", timeoutMs });
-      this.worker?.postMessage({ id, type, code, stdin });
+      this.worker?.postMessage({ id, ...message });
     });
   }
 }

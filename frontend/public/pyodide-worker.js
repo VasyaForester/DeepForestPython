@@ -21,6 +21,19 @@ del _install_guard
 
 let pyodidePromise = null;
 let replReady = false;
+let checksReady = null;
+
+function loadChecks(pyodide) {
+  if (!checksReady) {
+    checksReady = fetch(new URL("task_checks.py", self.location))
+      .then((response) => {
+        if (!response.ok) throw new Error("Не удалось загрузить проверку задания");
+        return response.text();
+      })
+      .then((source) => pyodide.runPythonAsync(source));
+  }
+  return checksReady;
+}
 
 function boot() {
   if (!pyodidePromise) {
@@ -46,6 +59,18 @@ self.onmessage = async (event) => {
     pyodide.globals.set("_user_code", msg.code || "");
     const mode = msg.type === "repl" ? "repl" : "exec";
     self.postMessage({ id: msg.id, phase: "start" });
+    if (msg.type === "structure") {
+      await loadChecks(pyodide);
+      pyodide.globals.set("_user_code", msg.code || "");
+      pyodide.globals.set("_requires_json", JSON.stringify(msg.requires || []));
+      await pyodide.runPythonAsync(`
+import json
+_structure_error = requirement_error(_user_code, json.loads(_requires_json), _stdin_text)
+`);
+      const structureError = pyodide.runPython("_structure_error") || "";
+      self.postMessage({ id: msg.id, ok: !structureError, stdout: "", stderr: "", error: structureError });
+      return;
+    }
     if (mode === "repl" && !replReady) {
       await pyodide.runPythonAsync(`import builtins\nbuiltins._repl_ns = {"__name__": "__main__"}\n`);
       replReady = true;
