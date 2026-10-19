@@ -1,0 +1,218 @@
+id: python.capstone.cap-arch
+slug: cap-arch
+section: capstone
+title: Архитектура
+order: 2
+weight: 1
+prerequisites:
+- python.capstone.cap-brief
+goal: Вызвать из main функции parse, keep и report.
+tags:
+- архитектура
+- parse
+- отчёт
+theory:
+- Журнал разбирают тремя функциями. parse превращает строку в имя и число, keep решает, оставить
+  ли запись, report печатает оставшееся.
+- main только вызывает их по порядку. Разбор не печатает, правило не читает input, отчёт не
+  режет строку.
+- Остаются записи со значением больше нуля. Каждая печатается как имя и число. Так по выводу
+  видно и отбор, и форму отчёта.
+examples:
+- title: Одна строка отчёта
+  code: "def parse(text):\n    name, raw = text.split()[:2]\n    return name, int(raw)\ndef\
+    \ keep(row):\n    return row[1] > 0\ndef report(rows):\n    for name, value in rows:\n\
+    \        print(name, value)\nrows = []\nfor text in ['ель 4', 'сосна -1']:\n    row =\
+    \ parse(text)\n    if keep(row):\n        rows.append(row)\nreport(rows)\n"
+  explanation: Отрицательная сосна отброшена, в отчёте остаётся ель 4.
+- title: Две строки
+  code: "def parse(text):\n    name, raw = text.split()[:2]\n    return name, int(raw)\ndef\
+    \ keep(row):\n    return row[1] > 0\ndef report(rows):\n    for name, value in rows:\n\
+    \        print(name, value)\nrows = []\nfor text in ['ель 4', 'пихта 2 ok']:\n    row\
+    \ = parse(text)\n    if keep(row):\n        rows.append(row)\nreport(rows)\n"
+  explanation: Статус ok не мешает разбору, обе положительные записи попадают в отчёт.
+outcomes:
+- разбирать строку в parse
+- оставлять положительное значение в keep
+- печатать результат в report
+- вызывать три функции из main
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кто печатает
+  difficulty: 1
+  context: neutral
+  prompt: Какая функция печатает отчёт?
+  options:
+  - id: a
+    text: report
+  - id: b
+    text: parse
+  - id: c
+    text: keep
+  answer: a
+  hints:
+  - parse возвращает пару.
+  - keep возвращает решение.
+  - Печать стоит в report.
+  solution: a
+  explanation: Отчёт печатает report, получив уже отобранные пары.
+  id: python.capstone.cap-arch.t1
+- type: predict_output
+  title: Сколько строк
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '1'
+  - id: b
+    text: '2'
+  - id: c
+    text: '4'
+  answer: a
+  hints:
+  - Вторая запись отрицательная.
+  - keep её отбрасывает.
+  - Печатается число оставшихся, не само имя.
+  solution: a
+  explanation: После отбора остаётся одна запись.
+  code: "def parse(text):\n    name, raw = text.split()[:2]\n    return name, int(raw)\ndef\
+    \ keep(row):\n    return row[1] > 0\nrows = [parse('ель 4'), parse('сосна -1')]\nprint(len([row\
+    \ for row in rows if keep(row)]))\n"
+  id: python.capstone.cap-arch.t2
+- type: code
+  title: Отчёт по строкам
+  difficulty: 2
+  context: development
+  prompt: Первая строка — количество, дальше строки «имя значение» или «имя значение статус».
+    parse, keep и report вызываются из main. Оставьте значение больше нуля и напечатайте имя
+    и значение каждой оставшейся записи.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 4
+
+      сосна -1
+
+      '
+    expected_stdout: 'ель 4
+
+      '
+  - stdin: '2
+
+      ель 4
+
+      пихта 2 ok
+
+      '
+    expected_stdout: 'ель 4
+
+      пихта 2
+
+      '
+  hints:
+  - Берёте только первые два поля.
+  - keep сравнивает число с нулём.
+  - report печатает уже готовые пары.
+  solution: "def parse(text):\n    name, raw = text.split()[:2]\n    return name, int(raw)\n\
+    def keep(row):\n    return row[1] > 0\ndef report(rows):\n    for name, value in rows:\n\
+    \        print(name, value)\ndef main():\n    count = int(input())\n    rows = []\n  \
+    \  for _ in range(count):\n        row = parse(input())\n        if keep(row):\n     \
+    \       rows.append(row)\n    report(rows)\nmain()\n"
+  explanation: main связывает разбор, отбор и печать, не смешивая их.
+  id: python.capstone.cap-arch.t3
+- type: code
+  title: Только имена
+  difficulty: 2
+  context: development
+  prompt: Тот же ввод и те же parse и keep. report печатает только имена оставшихся записей,
+    каждое на своей строке.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 1
+
+      сосна 2
+
+      '
+    expected_stdout: 'ель
+
+      сосна
+
+      '
+  - stdin: '3
+
+      ель 1
+
+      сосна 0
+
+      пихта 3
+
+      '
+    expected_stdout: 'ель
+
+      пихта
+
+      '
+  hints:
+  - Ноль не проходит keep.
+  - Порядок имён как во вводе.
+  - Число в этой версии отчёта не печатайте.
+  solution: "def parse(text):\n    name, raw = text.split()[:2]\n    return name, int(raw)\n\
+    def keep(row):\n    return row[1] > 0\ndef report(rows):\n    for name, value in rows:\n\
+    \        print(name)\ndef main():\n    count = int(input())\n    rows = []\n    for _\
+    \ in range(count):\n        row = parse(input())\n        if keep(row):\n            rows.append(row)\n\
+    \    report(rows)\nmain()\n"
+  explanation: Смена формы отчёта не заставляет parse читать input.
+  id: python.capstone.cap-arch.t4
+- type: code
+  title: Сколько оставили
+  difficulty: 2
+  context: development
+  prompt: Тот же ввод. report печатает одно число — сколько записей прошло keep.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 1
+
+      сосна -2
+
+      пихта 4
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      ель 0
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - len считает уже отобранный список.
+  - Отрицательные и ноль не входят.
+  - main по-прежнему вызывает три функции.
+  solution: "def parse(text):\n    name, raw = text.split()[:2]\n    return name, int(raw)\n\
+    def keep(row):\n    return row[1] > 0\ndef report(rows):\n    print(len(rows))\ndef main():\n\
+    \    count = int(input())\n    rows = []\n    for _ in range(count):\n        row = parse(input())\n\
+    \        if keep(row):\n            rows.append(row)\n    report(rows)\nmain()\n"
+  explanation: Даже короткий отчёт проходит через report.
+  id: python.capstone.cap-arch.t5
+introduces:
+- id: cap-pipeline
+  title: Три функции журнала
+  summary: parse разбирает строку, keep отбирает, report печатает. main вызывает их по порядку.

@@ -1,0 +1,238 @@
+id: python.viz.viz-line
+slug: viz-line
+section: viz
+title: Что показывает график
+order: 1
+weight: 1
+prerequisites:
+- python.data.data-review
+goal: Читать минимум и максимум ряда, который рисуют линией.
+tags:
+- линия
+- matplotlib
+theory:
+- 'Линейный график показывает последовательность: день за днём или замер за замером. В matplotlib
+  его рисует plt.plot(days, counts).'
+- Нижняя и верхняя точки линии — минимум и максимум ряда. По ним видно размах, ещё до вопроса,
+  растёт ряд или скачет.
+- Упражнение печатает минимум и максимум ряда, потому что matplotlib нет в среде браузера.
+examples:
+- title: Края посадок
+  code: 'counts = [3, 8, 5, 9, 4]
+
+    print(min(counts))
+
+    print(max(counts))
+
+    '
+  explanation: Суточные посадки от 3 до 9. Линия plt.plot прошла бы между этими краями.
+- title: Размах линии
+  code: 'counts = [10, 7, 7]
+
+    print(max(counts) - min(counts))
+
+    '
+  explanation: Размах ряда равен 3.
+outcomes:
+- выбирать линейный график для последовательности
+- читать минимум и максимум ряда
+- считать размах линии
+- отличать концы ряда от его краёв
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Линия plt.plot
+  difficulty: 1
+  context: neutral
+  prompt: Что показывает plt.plot(days, counts)?
+  options:
+  - id: a
+    text: Ход ряда по порядку дней
+  - id: b
+    text: Столбцы отдельных пород
+  - id: c
+    text: Доли одного целого
+  answer: a
+  hints:
+  - plot соединяет точки по порядку.
+  - Столбцы категорий рисует другой вызов.
+  - Доли целого — не линия ряда.
+  solution: a
+  explanation: Линия отвечает на вопрос, как величина шла шаг за шагом.
+  id: python.viz.viz-line.t1
+- type: predict_output
+  title: Края ряда
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 3 9
+  - id: b
+    text: 8 5
+  - id: c
+    text: 4 3
+  answer: a
+  hints:
+  - min ищет меньшее.
+  - max ищет большее.
+  - Порядок в списке на края не влияет.
+  solution: a
+  explanation: Края ряда — 3 и 9.
+  code: 'counts = [3, 8, 5, 9, 4]
+
+    print(min(counts), max(counts))
+
+    '
+  id: python.viz.viz-line.t2
+- type: code
+  title: Минимум и максимум
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n суточных посадок. Выведите минимум и максимум.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      3
+
+      8
+
+      5
+
+      9
+
+      4
+
+      '
+    expected_stdout: '3
+
+      9
+
+      '
+  - stdin: '2
+
+      7
+
+      7
+
+      '
+    expected_stdout: '7
+
+      7
+
+      '
+  hints:
+  - Соберите ряд.
+  - min и max ищут края.
+  - Порядок дней для краёв не важен.
+  solution: 'n = int(input())
+
+    counts = [int(input()) for _ in range(n)]
+
+    print(min(counts))
+
+    print(max(counts))
+
+    '
+  explanation: Эти два числа задают вертикальный размах линии.
+  id: python.viz.viz-line.t3
+- type: code
+  title: Размах
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n значений ряда. Выведите разность максимума и минимума.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      7
+
+      7
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '1
+
+      4
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Вычтите края.
+  - Равные значения дают 0.
+  - Одно число в ответе.
+  solution: 'n = int(input())
+
+    counts = [int(input()) for _ in range(n)]
+
+    print(max(counts) - min(counts))
+
+    '
+  explanation: Размах — высота, на которую растянута линия.
+  id: python.viz.viz-line.t4
+- type: code
+  title: Начало и конец
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n значений уже по порядку дней. Выведите первое и последнее.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      2
+
+      5
+
+      5
+
+      8
+
+      '
+    expected_stdout: '2
+
+      8
+
+      '
+  - stdin: '1
+
+      6
+
+      '
+    expected_stdout: '6
+
+      6
+
+      '
+  hints:
+  - Порядок ввода — порядок линии.
+  - Первый индекс 0.
+  - Последний индекс -1.
+  solution: 'n = int(input())
+
+    counts = [int(input()) for _ in range(n)]
+
+    print(counts[0])
+
+    print(counts[-1])
+
+    '
+  explanation: Концы линии — это концы последовательности, не min и max.
+  id: python.viz.viz-line.t5
+introduces:
+- id: viz-line-chart
+  title: Линейный график
+  summary: Точки ряда, соединённые по порядку. В matplotlib это plt.plot.

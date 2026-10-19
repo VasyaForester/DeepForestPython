@@ -1,0 +1,246 @@
+id: python.stats.stats-dist
+slug: stats-dist
+section: stats
+title: Распределения
+order: 3
+weight: 1
+prerequisites:
+- python.stats.stats-sample
+goal: Считать, как часто встречается каждое значение.
+tags:
+- распределение
+- частота
+theory:
+- Распределение говорит, какие значения бывают и как часто. Для посадок 1, 2, 2, 3, 2 значение
+  2 встречается трижды. Это частоты, не вероятности из формулы.
+- 'Гистограмма рисует те же частоты корзинами. Таблица частот делает то же текстом: значение
+  и сколько раз оно встретилось.'
+- Упражнение считает частоты списком. Модуль statistics и готовые распределения не подключаются.
+examples:
+- title: Три двойки
+  code: 'counts = [1, 2, 2, 3, 2]
+
+    print(counts.count(2))
+
+    print(counts.count(1))
+
+    '
+  explanation: Двойка встретилась 3 раза, единица 1 раз.
+- title: Сколько разных
+  code: 'counts = [5, 5, 7, 7]
+
+    print(len(set(counts)))
+
+    '
+  explanation: В распределении два разных значения.
+outcomes:
+- считать частоту значения
+- называть распределение набором частот
+- выбирать самое частое при явном правиле ничьей
+- не подменять частоту теоретической вероятностью
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое частота
+  difficulty: 1
+  context: neutral
+  prompt: Что показывает частота значения в этом уроке?
+  options:
+  - id: a
+    text: Сколько раз значение встретилось в данных
+  - id: b
+    text: Вероятность из теоретической формулы
+  - id: c
+    text: Среднее всех значений
+  answer: a
+  hints:
+  - Частота считается по списку.
+  - Теоретическую вероятность здесь не задают.
+  - Среднее — другая сводка.
+  solution: a
+  explanation: Распределение здесь — набор частот наблюдаемых чисел.
+  id: python.stats.stats-dist.t1
+- type: predict_output
+  title: Частота двойки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '1'
+  - id: b
+    text: '2'
+  - id: c
+    text: '3'
+  answer: c
+  hints:
+  - count считает совпадения.
+  - В списке три двойки.
+  - Единица и тройка другие.
+  solution: c
+  explanation: Двойка встречается 3 раза.
+  code: 'counts = [1, 2, 2, 3, 2]
+
+    print(counts.count(2))
+
+    '
+  id: python.stats.stats-dist.t2
+- type: code
+  title: Частота числа
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, n посадок и число, которое нужно найти. Выведите, сколько раз оно
+    встретилось.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      1
+
+      2
+
+      2
+
+      3
+
+      2
+
+      2
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '1
+
+      5
+
+      9
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Цель читается после ряда.
+  - count сравнивает на равенство.
+  - Ноль — нормальный ответ, если числа нет.
+  solution: 'n = int(input())
+
+    counts = [int(input()) for _ in range(n)]
+
+    target = int(input())
+
+    print(counts.count(target))
+
+    '
+  explanation: Одна частота — одна клетка распределения.
+  id: python.stats.stats-dist.t3
+- type: code
+  title: Самое частое
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. Выведите самое частое значение и его частоту. При равенстве
+    частот берите меньшее значение.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      1
+
+      2
+
+      2
+
+      3
+
+      2
+
+      '
+    expected_stdout: '2
+
+      3
+
+      '
+  - stdin: '4
+
+      5
+
+      5
+
+      7
+
+      7
+
+      '
+    expected_stdout: '5
+
+      2
+
+      '
+  hints:
+  - Идите по значениям от меньшего.
+  - Меняйте лучшее только при строго большей частоте.
+  - Печатайте значение и частоту.
+  solution: "n = int(input())\nvalues = [int(input()) for _ in range(n)]\nbest = None\nbest_count\
+    \ = -1\nfor value in sorted(set(values)):\n    count = values.count(value)\n    if count\
+    \ > best_count:\n        best = value\n        best_count = count\nprint(best)\nprint(best_count)\n"
+  explanation: Мода — пик распределения. Равные пики разруливает меньшее число.
+  id: python.stats.stats-dist.t4
+- type: code
+  title: Сколько разных цен
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. Выведите число разных значений.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      5
+
+      5
+
+      7
+
+      7
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '3
+
+      1
+
+      2
+
+      3
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Множество убирает повторы.
+  - Порядок цен не важен.
+  - Одно число в ответе.
+  solution: 'n = int(input())
+
+    values = [int(input()) for _ in range(n)]
+
+    print(len(set(values)))
+
+    '
+  explanation: Число разных значений — ширина распределения.
+  id: python.stats.stats-dist.t5
+introduces:
+- id: stats-frequency
+  title: Частота
+  summary: Сколько раз значение встретилось в данных. Набор частот задаёт наблюдаемое распределение.

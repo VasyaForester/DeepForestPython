@@ -1,0 +1,205 @@
+id: python.advanced.adv-with
+slug: adv-with
+section: advanced
+title: Контекстные менеджеры
+order: 6
+weight: 1
+prerequisites:
+- python.advanced.adv-deco
+goal: Открыть и закрыть свой блок методами __enter__ и __exit__.
+tags:
+- with
+- __enter__
+- __exit__
+theory:
+- with вызывает у объекта __enter__ в начале блока и __exit__ в конце. Файл так закрывается
+  сам. Свой класс делает то же для любого парного действия.
+- __enter__ может вернуть значение для as. __exit__ получает тип исключения, само исключение
+  и трассу. Возврат False не прячет ошибку, True спрятал бы её.
+- 'Маркер печатает открыто при входе и закрыто при выходе. Строка внутри блока оказывается
+  между ними: блок не заканчивается раньше __exit__.'
+examples:
+- title: Вход и выход
+  code: "class Marker:\n    def __enter__(self):\n        print('открыто')\n        return\
+    \ self\n    def __exit__(self, exc_type, exc, tb):\n        print('закрыто')\n       \
+    \ return False\nwith Marker():\n    print('работа')\n"
+  explanation: Сначала __enter__, потом тело, потом __exit__. На экране три строки в этом
+    порядке.
+- title: Значение из входа
+  code: "class Marker:\n    def __enter__(self):\n        print('открыто')\n        return\
+    \ 'склад'\n    def __exit__(self, exc_type, exc, tb):\n        print('закрыто')\n    \
+    \    return False\nwith Marker() as label:\n    print(label)\n"
+  explanation: __enter__ вернул склад, as записал его в label. закрыто печатается после тела.
+outcomes:
+- открывать блок в __enter__
+- закрывать его в __exit__
+- возвращать значение для as
+- не прятать исключение возвратом False
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что возвращает __exit__
+  difficulty: 1
+  context: neutral
+  prompt: Что значит return False в __exit__?
+  options:
+  - id: a
+    text: Не прятать исключение, если оно было в блоке
+  - id: b
+    text: Не вызывать __enter__
+  - id: c
+    text: Удалить объект до входа в блок
+  answer: a
+  hints:
+  - True скрыл бы ошибку.
+  - False пропускает её дальше.
+  - __enter__ к этому моменту уже отработал.
+  solution: a
+  explanation: 'False — обычное завершение: исключение, если оно было, не глотается.'
+  id: python.advanced.adv-with.t1
+- type: predict_output
+  title: Порядок строк
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: работа открыто закрыто
+  - id: b
+    text: открыто работа закрыто
+  - id: c
+    text: закрыто открыто работа
+  answer: b
+  hints:
+  - __enter__ срабатывает первым.
+  - Тело блока идёт следом.
+  - __exit__ завершает блок.
+  solution: b
+  explanation: 'Порядок такой: открыто, работа, закрыто.'
+  code: "parts = []\nclass Marker:\n    def __enter__(self):\n        parts.append('открыто')\n\
+    \        return self\n    def __exit__(self, exc_type, exc, tb):\n        parts.append('закрыто')\n\
+    \        return False\nwith Marker():\n    parts.append('работа')\nprint(' '.join(parts))\n"
+  id: python.advanced.adv-with.t2
+- type: code
+  title: Маркер вокруг слова
+  difficulty: 2
+  context: development
+  prompt: Прочитайте слово. Напечатайте открыто, затем это слово, затем закрыто. Вход и выход
+    сделайте методами класса.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'открыто
+
+      ель
+
+      закрыто
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'открыто
+
+      сосна
+
+      закрыто
+
+      '
+  hints:
+  - __enter__ печатает открыто.
+  - input стоит внутри with.
+  - __exit__ печатает закрыто и возвращает False.
+  solution: "class Marker:\n    def __enter__(self):\n        print('открыто')\n        return\
+    \ self\n    def __exit__(self, exc_type, exc, tb):\n        print('закрыто')\n       \
+    \ return False\nwith Marker():\n    print(input())\n"
+  explanation: Слово оказывается между двумя маркерами.
+  id: python.advanced.adv-with.t3
+- type: code
+  title: Подпись из входа
+  difficulty: 2
+  context: business
+  prompt: Прочитайте название. __enter__ возвращает его, внутри блока напечатайте это значение,
+    затем закрыто.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'открыто
+
+      ель
+
+      закрыто
+
+      '
+  - stdin: 'дуб
+
+      '
+    expected_stdout: 'открыто
+
+      дуб
+
+      закрыто
+
+      '
+  hints:
+  - as получает то, что вернул __enter__.
+  - Название сохраните в объекте заранее.
+  - закрыто печатайте в __exit__.
+  solution: "class Marker:\n    def __init__(self, name):\n        self.name = name\n    def\
+    \ __enter__(self):\n        print('открыто')\n        return self.name\n    def __exit__(self,\
+    \ exc_type, exc, tb):\n        print('закрыто')\n        return False\nwith Marker(input())\
+    \ as name:\n    print(name)\n"
+  explanation: Для ели строки будут открыто, ель, закрыто.
+  id: python.advanced.adv-with.t4
+- type: code
+  title: Счётчик входа
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте число. __enter__ возвращает его, блок печатает число, умноженное на 2,
+    __exit__ печатает закрыто.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '8
+
+      закрыто
+
+      '
+  - stdin: '7
+
+      '
+    expected_stdout: '14
+
+      закрыто
+
+      '
+  hints:
+  - __enter__ возвращает число.
+  - Умножение стоит в теле with.
+  - Маркер закрыто идёт последним.
+  solution: "class Marker:\n    def __init__(self, value):\n        self.value = value\n \
+    \   def __enter__(self):\n        return self.value\n    def __exit__(self, exc_type,\
+    \ exc, tb):\n        print('закрыто')\n        return False\nwith Marker(int(input()))\
+    \ as value:\n    print(value * 2)\n"
+  explanation: 4 даёт 8 и закрыто. 7 даёт 14 и закрыто.
+  id: python.advanced.adv-with.t5
+introduces:
+- id: adv-with.enter
+  title: __enter__
+  summary: Вызывается в начале with. Его результат попадает в переменную после as.
+- id: adv-with.exit
+  title: __exit__
+  summary: Вызывается в конце with. False не скрывает исключение из блока.

@@ -1,0 +1,217 @@
+id: python.backend.be-openapi
+slug: be-openapi
+section: backend
+title: OpenAPI
+order: 12
+weight: 1
+prerequisites:
+- python.backend.be-middleware
+goal: Напечатать список маршрутов строками METHOD path по порядку пути.
+tags:
+- OpenAPI
+- маршрут
+- список
+theory:
+- 'Схема OpenAPI в FastAPI собирается из путей и аннотаций. Здесь она не генерируется: печатается
+  список маршрутов, который мы ведём сами.'
+- Каждый элемент — метод и путь. Строка вывода выглядит как METHOD path. Сортировка идёт по
+  пути, а при равном пути — по методу.
+- Такой список сверяют с таблицей функций. Он показывает, что объявлено, и сам обработчики
+  не вызывает.
+examples:
+- title: Три маршрута
+  code: "routes = [('POST', '/orders'), ('GET', '/health'), ('GET', '/orders')]\nfor method,\
+    \ path in sorted(routes, key=lambda item: (item[1], item[0])):\n    print(method, path)\n"
+  explanation: 'Сначала /health, затем два маршрута /orders: GET раньше POST.'
+- title: Один путь
+  code: "routes = [('GET', '/health')]\nfor method, path in sorted(routes, key=lambda item:\
+    \ (item[1], item[0])):\n    print(method, path)\n"
+  explanation: В списке один маршрут, строка GET /health.
+outcomes:
+- вести список маршрутов в коде
+- печатать строки METHOD path
+- сортировать по пути и методу
+- не путать этот список со схемой из аннотаций
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Откуда список
+  difficulty: 1
+  context: neutral
+  prompt: Откуда в этом упражнении берётся перечень путей?
+  options:
+  - id: a
+    text: Из списка, который программа ведёт сама
+  - id: b
+    text: Из автоматически прочитанных аннотаций FastAPI
+  - id: c
+    text: Из случайных имён файлов
+  answer: a
+  hints:
+  - Схема из аннотаций здесь не строится.
+  - В коде есть обычный список кортежей.
+  - Печать не вызывает обработчики.
+  solution: a
+  explanation: Упражнение печатает список, который мы записали сами.
+  id: python.backend.be-openapi.t1
+- type: predict_output
+  title: Первая строка
+  difficulty: 1
+  context: neutral
+  prompt: Какая строка будет напечатана первой?
+  options:
+  - id: a
+    text: GET /a
+  - id: b
+    text: POST /z
+  - id: c
+    text: GET /z
+  answer: a
+  hints:
+  - Сортировка смотрит сначала на путь.
+  - /a раньше /z.
+  - print ставит пробел между методом и путём.
+  solution: a
+  explanation: Первым идёт короткий путь /a.
+  code: "routes = [('POST', '/z'), ('GET', '/a')]\nfor method, path in sorted(routes, key=lambda\
+    \ item: (item[1], item[0])):\n    print(method, path)\n"
+  id: python.backend.be-openapi.t2
+- type: code
+  title: Список из ввода
+  difficulty: 2
+  context: development
+  prompt: Первая строка — количество маршрутов. Дальше идут строки METHOD path. Выведите их
+    в порядке пути, затем метода.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      POST /orders
+
+      GET /health
+
+      '
+    expected_stdout: 'GET /health
+
+      POST /orders
+
+      '
+  - stdin: '2
+
+      GET /b
+
+      GET /a
+
+      '
+    expected_stdout: 'GET /a
+
+      GET /b
+
+      '
+  hints:
+  - Каждую строку режьте split на два слова.
+  - Ключ сортировки — путь, потом метод.
+  - Печатайте method и path через пробел.
+  solution: "count = int(input())\nroutes = []\nfor _ in range(count):\n    method, path =\
+    \ input().split()\n    routes.append((method, path))\nfor method, path in sorted(routes,\
+    \ key=lambda item: (item[1], item[0])):\n    print(method, path)\n"
+  explanation: Порядок вывода задаёт путь, а не порядок ввода.
+  id: python.backend.be-openapi.t3
+- type: code
+  title: Только GET
+  difficulty: 2
+  context: development
+  prompt: Прочитайте N и N строк METHOD path. Выведите только маршруты GET, отсортированные
+    по пути.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      POST /orders
+
+      GET /health
+
+      '
+    expected_stdout: 'GET /health
+
+      '
+  - stdin: '2
+
+      GET /stock
+
+      GET /health
+
+      '
+    expected_stdout: 'GET /health
+
+      GET /stock
+
+      '
+  hints:
+  - POST в список не кладите.
+  - Оставшиеся строки всё равно сортируйте.
+  - 'Формат строки прежний: метод и путь.'
+  solution: "count = int(input())\nroutes = []\nfor _ in range(count):\n    method, path =\
+    \ input().split()\n    if method == 'GET':\n        routes.append((method, path))\nfor\
+    \ method, path in sorted(routes, key=lambda item: (item[1], item[0])):\n    print(method,\
+    \ path)\n"
+  explanation: Фильтр метода не отменяет сортировку по пути.
+  id: python.backend.be-openapi.t4
+- type: code
+  title: Сколько путей
+  difficulty: 2
+  context: development
+  prompt: Прочитайте N и N строк METHOD path. Сначала выведите число разных путей, затем строки
+    маршрутов в порядке пути и метода.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      GET /health
+
+      POST /health
+
+      '
+    expected_stdout: '1
+
+      GET /health
+
+      POST /health
+
+      '
+  - stdin: '2
+
+      GET /a
+
+      GET /b
+
+      '
+    expected_stdout: '2
+
+      GET /a
+
+      GET /b
+
+      '
+  hints:
+  - Множество убирает повтор пути.
+  - Число печатайте до списка.
+  - Маршруты с одним путём и разными методами оба остаются.
+  solution: "count = int(input())\nroutes = []\nfor _ in range(count):\n    method, path =\
+    \ input().split()\n    routes.append((method, path))\npaths = {path for method, path in\
+    \ routes}\nprint(len(paths))\nfor method, path in sorted(routes, key=lambda item: (item[1],\
+    \ item[0])):\n    print(method, path)\n"
+  explanation: Счётчик путей и подробный список отвечают на разные вопросы.
+  id: python.backend.be-openapi.t5
+introduces:
+- id: be-openapi-list
+  title: Список маршрутов
+  summary: Строки METHOD path, которые программа печатает из своего списка, а не из сгенерированной
+    схемы.

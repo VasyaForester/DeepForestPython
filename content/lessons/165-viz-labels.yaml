@@ -1,0 +1,225 @@
+id: python.viz.viz-labels
+slug: viz-labels
+section: viz
+title: Подписи
+order: 3
+weight: 1
+prerequisites:
+- python.viz.viz-bar
+goal: Собирать заголовок и подписи осей так, чтобы график можно было прочитать.
+tags:
+- подписи
+- matplotlib
+theory:
+- 'График без подписей не доказывает утверждение: неясно, что на осях и в каких единицах.
+  В matplotlib оси подписывают plt.xlabel и plt.ylabel, заголовок — plt.title.'
+- 'Подпись должна называть величину и единицу: не «ось Y», а «саженцы, штуки». Заголовок говорит,
+  какое сравнение перед глазами.'
+- Упражнение собирает эти строки из имён осей, потому что matplotlib нет в среде браузера.
+examples:
+- title: Оси
+  code: 'x_name = "день"
+
+    y_name = "саженцы"
+
+    print(y_name + " по оси " + x_name)
+
+    '
+  explanation: 'Фраза называет обе оси: саженцы по оси день.'
+- title: Единица
+  code: 'measure = "высота"
+
+    unit = "м"
+
+    print(measure + ", " + unit)
+
+    '
+  explanation: Подпись столбца содержит и величину, и единицу.
+outcomes:
+- подписывать оси по имени величины
+- собирать заголовок из смысла сравнения
+- указывать единицу измерения
+- не оставлять график без текста
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем подпись
+  difficulty: 1
+  context: neutral
+  prompt: Почему график без подписей осей — слабый аргумент?
+  options:
+  - id: a
+    text: Неясно, какая величина нарисована и в чём она измерена
+  - id: b
+    text: Подпись меняет сами числа
+  - id: c
+    text: Без подписи matplotlib не сохраняет файл
+  answer: a
+  hints:
+  - Ось без имени можно понять по-разному.
+  - Числа от текста подписи не меняются.
+  - Смысл графика сидит в подписях.
+  solution: a
+  explanation: Подпись превращает картинку в утверждение о конкретных величинах.
+  id: python.viz.viz-labels.t1
+- type: predict_output
+  title: Фраза осей
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: саженцы по день
+  - id: b
+    text: день
+  - id: c
+    text: по
+  answer: a
+  hints:
+  - Склеиваются три куска.
+  - Пробелы уже есть в средней части.
+  - Оба имени входят в строку.
+  solution: a
+  explanation: Получается фраза «саженцы по день».
+  code: 'print("саженцы" + " по " + "день")
+
+    '
+  id: python.viz.viz-labels.t2
+- type: code
+  title: Заголовок из осей
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя оси X и имя оси Y. Выведите строку вида «Y по X».
+  starter_code: ''
+  tests:
+  - stdin: 'день
+
+      саженцы
+
+      '
+    expected_stdout: 'саженцы по день
+
+      '
+  - stdin: 'порода
+
+      высота
+
+      '
+    expected_stdout: 'высота по порода
+
+      '
+  hints:
+  - Сначала читается ось X.
+  - В фразе первой стоит ось Y.
+  - Между словами стоит « по ».
+  solution: 'x_name = input().strip()
+
+    y_name = input().strip()
+
+    print(y_name + " по " + x_name)
+
+    '
+  explanation: Заголовок собран из имён осей и читается без графика.
+  id: python.viz.viz-labels.t3
+- type: code
+  title: Три подписи
+  difficulty: 2
+  context: development
+  prompt: Прочитайте заголовок, подпись оси X и подпись оси Y. Выведите их на трёх строках
+    в этом порядке.
+  starter_code: ''
+  tests:
+  - stdin: 'Посадки за март
+
+      день
+
+      саженцы
+
+      '
+    expected_stdout: 'Посадки за март
+
+      день
+
+      саженцы
+
+      '
+  - stdin: 'Склад
+
+      товар
+
+      цена
+
+      '
+    expected_stdout: 'Склад
+
+      товар
+
+      цена
+
+      '
+  hints:
+  - Порядок ввода совпадает с порядком печати.
+  - Ничего не переставляйте.
+  - Пустых строк между ними нет.
+  solution: 'title = input().strip()
+
+    x_name = input().strip()
+
+    y_name = input().strip()
+
+    print(title)
+
+    print(x_name)
+
+    print(y_name)
+
+    '
+  explanation: 'У графика три текстовых места: заголовок и две оси.'
+  id: python.viz.viz-labels.t4
+- type: code
+  title: Величина и единица
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название величины и единицу. Выведите подпись вида «величина, единица».
+  starter_code: ''
+  tests:
+  - stdin: 'высота
+
+      м
+
+      '
+    expected_stdout: 'высота, м
+
+      '
+  - stdin: 'цена
+
+      руб
+
+      '
+    expected_stdout: 'цена, руб
+
+      '
+  hints:
+  - Запятая и пробел стоят между частями.
+  - Единица вторая.
+  - Регистр не меняйте.
+  solution: 'measure = input().strip()
+
+    unit = input().strip()
+
+    print(measure + ", " + unit)
+
+    '
+  explanation: Единица не даёт прочитать метры как рубли.
+  id: python.viz.viz-labels.t5
+introduces:
+- id: viz-axis-label
+  title: Подпись оси
+  summary: Текст, который называет величину на оси. В matplotlib это plt.xlabel и plt.ylabel.

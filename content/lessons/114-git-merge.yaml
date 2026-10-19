@@ -1,0 +1,222 @@
+id: python.github.git-merge
+slug: git-merge
+section: github
+title: merge
+order: 4
+weight: 1
+prerequisites:
+- python.github.git-branch
+goal: Добавить в историю только те коммиты, которых в ней ещё нет.
+tags:
+- merge
+- слияние
+theory:
+- Команда git merge скидка вливает в текущую ветку коммиты ветки скидка. Сообщение, которое
+  уже есть, второй раз не записывают.
+- 'Песочница не вызывает git. Два списка сравнивают по тексту сообщения: новое дописывают
+  в конец принимающей истории, знакомое пропускают.'
+- Если добавить было нечего, история не растёт. Число реально добавленных строк показывает,
+  был ли смысл в этом merge.
+examples:
+- title: Один новый коммит
+  code: "main = ['старт склада']\nother = ['старт склада', 'минус 10']\nfor message in other:\n\
+    \    if message not in main:\n        main.append(message)\nprint(main[-1])\n"
+  explanation: старт склада уже был, минус 10 добавился и стал вершиной.
+- title: Уже на месте
+  code: 'main = [''старт склада'', ''минус 10'']
+
+    print(''уже есть'' if ''минус 10'' in main else ''добавлен'')
+
+    '
+  explanation: Сообщение найдено в истории, повторно его не пишут.
+outcomes:
+- переносить недостающие коммиты
+- не дублировать уже лежащее сообщение
+- сохранять порядок старой истории
+- считать, сколько коммитов добавил merge
+resources:
+- kind: docs
+  title: Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает merge
+  difficulty: 1
+  context: neutral
+  prompt: Что делает команда git merge скидка с коммитом, который уже есть в текущей ветке?
+  options:
+  - id: a
+    text: Не дублирует его
+  - id: b
+    text: Всегда копирует его второй раз
+  - id: c
+    text: Удаляет всю историю
+  answer: a
+  hints:
+  - merge переносит недостающее.
+  - Повтор того же снимка историю не удлиняет.
+  - Удаление истории — не задача merge.
+  solution: a
+  explanation: Уже присутствующий коммит пропускают.
+  id: python.github.git-merge.t1
+- type: predict_output
+  title: Вершина после merge
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: минус 10
+  - id: b
+    text: старт склада
+  - id: c
+    text: '1'
+  answer: a
+  hints:
+  - Первое сообщение уже есть.
+  - Второе новое, его дописывают.
+  - Печатается текст вершины.
+  solution: a
+  explanation: После merge вершина — минус 10.
+  code: "main = ['старт склада']\nother = ['старт склада', 'минус 10']\nfor message in other:\n\
+    \    if message not in main:\n        main.append(message)\nprint(main[-1])\n"
+  id: python.github.git-merge.t2
+- type: code
+  title: Слить списки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число и сообщения первой ветки, затем число и сообщения второй. Выведите
+    первую ветку после добавления недостающих сообщений.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      старт склада
+
+      2
+
+      старт склада
+
+      минус 10
+
+      '
+    expected_stdout: 'старт склада
+
+      минус 10
+
+      '
+  - stdin: '2
+
+      старт склада
+
+      цены поставки
+
+      1
+
+      цены поставки
+
+      '
+    expected_stdout: 'старт склада
+
+      цены поставки
+
+      '
+  hints:
+  - Читайте два списка отдельно.
+  - Добавляйте только отсутствующие.
+  - Порядок старых сообщений не меняйте.
+  solution: "def read_commits():\n    count = int(input())\n    return [input().strip() for\
+    \ _ in range(count)]\nmain = read_commits()\nother = read_commits()\nfor message in other:\n\
+    \    if message not in main:\n        main.append(message)\nfor message in main:\n   \
+    \ print(message)\n"
+  explanation: merge дописывает в хвост только новые сообщения.
+  id: python.github.git-merge.t3
+- type: code
+  title: Уже есть или нет
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сообщение текущей ветки и входящее. Выведите уже есть или добавлен.
+  starter_code: ''
+  tests:
+  - stdin: 'старт склада
+
+      старт склада
+
+      '
+    expected_stdout: 'уже есть
+
+      '
+  - stdin: 'старт склада
+
+      минус 10
+
+      '
+    expected_stdout: 'добавлен
+
+      '
+  hints:
+  - Сравните две строки.
+  - Равенство означает, что коммит уже в истории.
+  - Иначе его нужно добавить.
+  solution: 'current = input().strip()
+
+    incoming = input().strip()
+
+    print(''уже есть'' if incoming == current else ''добавлен'')
+
+    '
+  explanation: Одинаковое сообщение второй раз не записывают.
+  id: python.github.git-merge.t4
+- type: code
+  title: Сколько добавилось
+  difficulty: 2
+  context: development
+  prompt: Прочитайте два списка коммитов, как в слиянии. Выведите, сколько сообщений было
+    добавлено.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      старт склада
+
+      2
+
+      старт склада
+
+      минус 10
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: '1
+
+      старт склада
+
+      1
+
+      старт склада
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Считайте только новые строки.
+  - Знакомое сообщение пропускайте.
+  - Печатайте число.
+  solution: "def read_commits():\n    count = int(input())\n    return [input().strip() for\
+    \ _ in range(count)]\nmain = read_commits()\nother = read_commits()\nadded = 0\nfor message\
+    \ in other:\n    if message not in main:\n        main.append(message)\n        added\
+    \ += 1\nprint(added)\n"
+  explanation: Счётчик показывает, изменила ли история этот merge.
+  id: python.github.git-merge.t5
+introduces:
+- id: github-merge
+  title: git merge
+  summary: Вливание коммитов другой ветки. Команда git merge скидка дописывает только те сообщения,
+    которых ещё нет.

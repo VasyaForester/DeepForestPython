@@ -1,0 +1,202 @@
+id: python.sql.sql-review
+slug: sql-review
+section: sql
+title: 'Итог: SQLAlchemy и Alembic'
+order: 15
+weight: 2
+prerequisites:
+- python.sql.sql-explain
+goal: Применить шаг схемы в sqlite3 и прочитать данные после него.
+tags:
+- итог
+- SQLAlchemy
+- Alembic
+theory:
+- 'SQLAlchemy разговаривает с базой из Python: открывает соединение и выполняет запросы. Alembic
+  меняет схему по шагам. Команда alembic upgrade head доводит базу до последней версии миграций.'
+- 'Миграции нужны, чтобы на каждой машине таблица менялась одинаково и по порядку, а не ручной
+  правкой. Песочница не подключает SQLAlchemy и Alembic: тот же шаг ниже делает sqlite3, CREATE
+  TABLE и ALTER TABLE.'
+- Итог раздела — обычный SQL после маленькой миграции. Новых конструкций запросов нет, есть
+  решение применить шаг схемы или пропустить его.
+examples:
+- title: Таблица после шага
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    print(con.execute(''select count(*) from trees'').fetchone()[0])
+
+    '
+  explanation: После создания таблица есть и пока пустая, счётчик равен 0.
+- title: Второй шаг добавляет столбец
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute(''alter table trees add column care text'')
+
+    print(len(list(con.execute(''pragma table_info(trees)''))))
+
+    '
+  explanation: ALTER TABLE добавляет care, у таблицы становятся три столбца.
+outcomes:
+- понимать, что SQLAlchemy ходит в базу, а Alembic меняет схему
+- применять шаг CREATE TABLE только когда его попросили
+- добавлять столбец следующим шагом
+- читать данные, которые соответствуют версии схемы
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем миграции
+  difficulty: 1
+  context: neutral
+  prompt: Зачем нужна команда alembic upgrade head, если таблицу можно поправить руками?
+  options:
+  - id: a
+    text: Чтобы одна и та же последовательность изменений схемы прошла на каждой базе
+  - id: b
+    text: Чтобы удалить все SELECT из кода
+  - id: c
+    text: Чтобы заменить SQLite на список Python
+  answer: a
+  hints:
+  - Миграция — записанный шаг схемы.
+  - Ручная правка на второй машине легко расходится с первой.
+  - Запросы к данным остаются нужны.
+  solution: a
+  explanation: Миграции держат схему одинаковой и повторяемой.
+  id: python.sql.sql-review.t1
+- type: predict_output
+  title: Сколько столбцов
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: '2'
+  - id: c
+    text: '1'
+  answer: a
+  hints:
+  - Сначала два столбца.
+  - ALTER добавляет третий.
+  - pragma table_info даёт по строке на столбец.
+  solution: a
+  explanation: После шага миграции столбцов три.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute(''alter table trees add column care text'')
+
+    print(len(list(con.execute(''pragma table_info(trees)''))))
+
+    '
+  id: python.sql.sql-review.t2
+- type: code
+  title: Применить или пропустить
+  difficulty: 2
+  context: development
+  prompt: Прочитайте применить или пропустить. Если шаг применён, создайте таблицу trees и
+    выведите число строк. Иначе выведите нет таблицы.
+  starter_code: ''
+  tests:
+  - stdin: 'применить
+
+      '
+    expected_stdout: '0
+
+      '
+  - stdin: 'пропустить
+
+      '
+    expected_stdout: 'нет таблицы
+
+      '
+  hints:
+  - CREATE TABLE только в ветке применить.
+  - Пустая таблица даёт COUNT 0.
+  - Без шага не выполняйте запрос к ней.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\naction = input().strip()\n\
+    if action == 'применить':\n    con.execute('create table trees(name text, height int)')\n\
+    \    print(con.execute('select count(*) from trees').fetchone()[0])\nelse:\n    print('нет\
+    \ таблицы')\n"
+  explanation: Пока миграция не применена, таблицы нет.
+  id: python.sql.sql-review.t3
+- type: code
+  title: Номер версии
+  difficulty: 2
+  context: development
+  prompt: Прочитайте версию 1 или 2. Версия 1 создаёт name и height. Версия 2 добавляет столбец
+    care. Выведите число столбцов.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Базовый шаг выполняйте всегда.
+  - ALTER только со второй версии.
+  - Считайте строки pragma table_info.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\nversion = int(input())\ncon.execute('create\
+    \ table trees(name text, height int)')\nif version >= 2:\n    con.execute('alter table\
+    \ trees add column care text')\nprint(len(list(con.execute('pragma table_info(trees)'))))\n"
+  explanation: Номер миграции определяет, сколько столбцов уже есть.
+  id: python.sql.sql-review.t4
+- type: code
+  title: Данные после шага
+  difficulty: 2
+  context: development
+  prompt: Прочитайте версию 1 или 2. Вставьте ель. Для версии 1 выведите высоту 12, для версии
+    2 — текст полив из нового столбца.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: 'полив
+
+      '
+  hints:
+  - Набор столбцов в INSERT должен совпасть со схемой.
+  - Вторая версия читает care.
+  - Первая версия ещё не имеет этого столбца.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\nversion = int(input())\ncon.execute('create\
+    \ table trees(name text, height int)')\nif version >= 2:\n    con.execute('alter table\
+    \ trees add column care text')\n    con.execute(\"insert into trees values ('ель', 12,\
+    \ 'полив')\")\n    print(con.execute('select care from trees').fetchone()[0])\nelse:\n\
+    \    con.execute(\"insert into trees values ('ель', 12)\")\n    print(con.execute('select\
+    \ height from trees').fetchone()[0])\n"
+  explanation: Код чтения следует за тем шагом схемы, который уже применён.
+  id: python.sql.sql-review.t5

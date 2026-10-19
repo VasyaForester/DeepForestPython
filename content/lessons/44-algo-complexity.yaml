@@ -1,0 +1,208 @@
+id: python.algorithms.algo-complexity
+slug: algo-complexity
+section: algorithms
+title: Оценка сложности
+order: 1
+weight: 1
+prerequisites:
+- python.functions.fn-review
+goal: Оценить рост числа шагов и увидеть его на счётчике цикла.
+tags:
+- сложность
+- цикл
+theory:
+- Оценка сложности показывает, как растёт число шагов, когда записей становится больше. Запись
+  O оставляет главный рост и отбрасывает постоянные мелочи. Один цикл по всем ценам склада
+  делает шаг на каждую цену, это O(n).
+- 'Вложенный цикл по всем парам даёт около n умножить на n шагов, это O(n^2). Один проход
+  по журналу дешевле двойного. Множитель вроде трёх действий на запись внутри такой записи
+  не пишут: на длинном списке он не меняет вывод.'
+- Счётчик шагов — обычная переменная. Её увеличивают в теле цикла и печатают после него. Для
+  четырёх цен один проход напечатает 4, а двойной цикл по трём ценам напечатает 9.
+examples:
+- title: Один проход
+  code: "prices = [12, 40, 7, 5]\nsteps = 0\nfor price in prices:\n    steps = steps + 1\n\
+    print(steps)\n"
+  explanation: Тело выполнилось по разу на каждую из четырёх цен.
+- title: Все пары
+  code: "prices = [12, 40, 7]\nsteps = 0\nfor a in prices:\n    for b in prices:\n       \
+    \ steps = steps + 1\nprint(steps)\n"
+  explanation: Три на три даёт 9 шагов, это рост квадрата.
+outcomes:
+- считать шаги цикла отдельным счётчиком
+- отличать один проход от вложенного
+- записывать рост как O(n) или O(n^2)
+- не тащить постоянный множитель в оценку
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Рост одного цикла
+  difficulty: 1
+  context: neutral
+  prompt: Как растёт число шагов одного цикла по всем ценам?
+  options:
+  - id: a
+    text: Пропорционально числу цен
+  - id: b
+    text: Всегда равно единице, какой бы ни была длина
+  - id: c
+    text: Как квадрат числа цен уже для одного цикла
+  answer: a
+  hints:
+  - На каждую цену приходится шаг.
+  - Длина списка эту сумму меняет.
+  - Квадрат появляется у вложенного прохода.
+  solution: a
+  explanation: Один проход по n ценам делает порядка n шагов.
+  id: python.algorithms.algo-complexity.t1
+- type: predict_output
+  title: Сколько пар
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '9'
+  - id: b
+    text: '3'
+  - id: c
+    text: '6'
+  answer: a
+  hints:
+  - Внешний цикл идёт три раза.
+  - Внутренний тоже три.
+  - 3 умножить на 3 равно 9.
+  solution: a
+  explanation: Вложенные циклы выполняют тело 9 раз.
+  code: "prices = [12, 40, 7]\nsteps = 0\nfor a in prices:\n    for b in prices:\n       \
+    \ steps = steps + 1\nprint(steps)\n"
+  id: python.algorithms.algo-complexity.t2
+- type: code
+  title: Шаги одного прохода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых цен. Посчитайте, сколько раз выполнилось тело одного цикла,
+    и выведите это число.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      12
+
+      40
+
+      7
+
+      5
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      9
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Заведите steps до цикла.
+  - Увеличивайте его на каждой цене.
+  - Напечатайте счётчик.
+  solution: "n = int(input())\nsteps = 0\nfor _ in range(n):\n    int(input())\n    steps\
+    \ = steps + 1\nprint(steps)\n"
+  explanation: Тело выполняется ровно n раз, счётчик равен n.
+  id: python.algorithms.algo-complexity.t3
+- type: code
+  title: Шаги по всем парам
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Соберите список и посчитайте шаги двойного цикла по всем
+    парам, включая пару элемента с самим собой. Выведите число шагов.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      2
+
+      3
+
+      '
+    expected_stdout: '9
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Сначала соберите список.
+  - Вложите цикл в цикл.
+  - Шагов будет n умножить на n.
+  solution: "n = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    steps = 0\nfor a in prices:\n    for b in prices:\n        steps = steps + 1\nprint(steps)\n"
+  explanation: Каждая цена сочетается с каждой, поэтому шагов n в квадрате.
+  id: python.algorithms.algo-complexity.t4
+- type: code
+  title: Сумма и шаги
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. За один проход посчитайте сумму и число шагов. Выведите сумму,
+    затем число шагов.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      40
+
+      7
+
+      '
+    expected_stdout: '59
+
+      3
+
+      '
+  - stdin: '2
+
+      1
+
+      1
+
+      '
+    expected_stdout: '2
+
+      2
+
+      '
+  hints:
+  - Два накопителя до цикла.
+  - Оба обновляйте в теле.
+  - Сначала сумма, потом шаги.
+  solution: "n = int(input())\ntotal = 0\nsteps = 0\nfor _ in range(n):\n    total = total\
+    \ + int(input())\n    steps = steps + 1\nprint(total)\nprint(steps)\n"
+  explanation: Один проход одновременно складывает цены и считает шаги.
+  id: python.algorithms.algo-complexity.t5
+introduces:
+- id: algo-big-o
+  title: Оценка O
+  summary: Запись роста числа шагов от размера данных. Постоянные множители отбрасывают.

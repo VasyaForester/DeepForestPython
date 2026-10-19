@@ -1,0 +1,249 @@
+id: python.viz.viz-bar
+slug: viz-bar
+section: viz
+title: Столбцы
+order: 2
+weight: 1
+prerequisites:
+- python.viz.viz-line
+goal: Показывать категорию и величину парой и упорядочивать такие пары.
+tags:
+- столбцы
+- matplotlib
+theory:
+- 'Столбчатый график сравнивает категории: у каждой породы своя высота столбца. В matplotlib
+  это plt.bar(names, heights).'
+- Порядок столбцов — часть фразы. Сортировка по величине ставит меньшее слева, сортировка
+  по имени помогает искать породу.
+- Упражнение печатает пары категория и значение в заданном порядке, потому что matplotlib
+  нет в среде браузера.
+examples:
+- title: По возрастанию
+  code: 'pairs = [("ель", 12), ("сосна", 20), ("берёза", 7)]
+
+    ordered = sorted(pairs, key=lambda item: item[1])
+
+    print(ordered[0][0], ordered[0][1])
+
+    print(ordered[-1][0], ordered[-1][1])
+
+    '
+  explanation: Меньший столбец — берёза 7, больший — сосна 20.
+- title: Сумма столбцов
+  code: 'pairs = [("ель", 12), ("сосна", 9)]
+
+    print(sum(value for name, value in pairs))
+
+    '
+  explanation: Сумма высот столбцов равна 21.
+outcomes:
+- сопоставлять категорию и величину
+- выбирать plt.bar для сравнения категорий
+- сортировать столбцы по величине или по имени
+- называть самый высокий столбец
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Вызов plt.bar
+  difficulty: 1
+  context: neutral
+  prompt: Что рисует plt.bar(names, heights)?
+  options:
+  - id: a
+    text: Столбец на каждую категорию
+  - id: b
+    text: Линию по дням
+  - id: c
+    text: Коробку с усами
+  answer: a
+  hints:
+  - names — подписи категорий.
+  - heights — высоты столбцов.
+  - Линию и коробку рисуют другими вызовами.
+  solution: a
+  explanation: Столбцы сравнивают отдельные категории, а не ход времени.
+  id: python.viz.viz-bar.t1
+- type: predict_output
+  title: Меньший столбец
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: сосна
+  - id: c
+    text: '12'
+  answer: b
+  hints:
+  - Сортировка идёт по второму полю.
+  - 7 меньше 12.
+  - Печатается имя, не число.
+  solution: b
+  explanation: Первым после сортировки по величине стоит сосна.
+  code: 'pairs = [("ель", 12), ("сосна", 7)]
+
+    ordered = sorted(pairs, key=lambda item: item[1])
+
+    print(ordered[0][0])
+
+    '
+  id: python.viz.viz-bar.t2
+- type: code
+  title: Пары по величине
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте n, затем n блоков: имя и величина на отдельных строках. Выведите пары
+    по возрастанию величины. При равной величине имена идут по алфавиту.'
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель
+
+      12
+
+      сосна
+
+      20
+
+      берёза
+
+      7
+
+      '
+    expected_stdout: 'берёза 7
+
+      ель 12
+
+      сосна 20
+
+      '
+  - stdin: '2
+
+      сосна
+
+      5
+
+      ель
+
+      5
+
+      '
+    expected_stdout: 'ель 5
+
+      сосна 5
+
+      '
+  hints:
+  - Сортируйте пару величина, имя.
+  - Печатайте сначала имя.
+  - Равная величина разруливается именем.
+  solution: "n = int(input())\npairs = []\nfor _ in range(n):\n    name = input().strip()\n\
+    \    value = int(input())\n    pairs.append((value, name))\nfor value, name in sorted(pairs):\n\
+    \    print(name, value)\n"
+  explanation: Порядок ответа — порядок столбцов на графике.
+  id: python.viz.viz-bar.t3
+- type: code
+  title: Пары по имени
+  difficulty: 2
+  context: development
+  prompt: Прочитайте такие же пары. Выведите их по алфавиту имён.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      сосна
+
+      20
+
+      ель
+
+      12
+
+      '
+    expected_stdout: 'ель 12
+
+      сосна 20
+
+      '
+  - stdin: '1
+
+      дуб
+
+      4
+
+      '
+    expected_stdout: 'дуб 4
+
+      '
+  hints:
+  - Ключ сортировки — имя.
+  - Величина печатается второй.
+  - Одна пара тоже печатается.
+  solution: "n = int(input())\npairs = []\nfor _ in range(n):\n    name = input().strip()\n\
+    \    value = int(input())\n    pairs.append((name, value))\nfor name, value in sorted(pairs):\n\
+    \    print(name, value)\n"
+  explanation: Алфавит удобен, когда столбец ищут по подписи.
+  id: python.viz.viz-bar.t4
+- type: code
+  title: Самый высокий столбец
+  difficulty: 2
+  context: development
+  prompt: Прочитайте пары имя и величина. Выведите имя и величину самого высокого столбца.
+    При равенстве берите имя раньше по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель
+
+      12
+
+      сосна
+
+      20
+
+      берёза
+
+      7
+
+      '
+    expected_stdout: 'сосна 20
+
+      '
+  - stdin: '2
+
+      сосна
+
+      5
+
+      ель
+
+      5
+
+      '
+    expected_stdout: 'ель 5
+
+      '
+  hints:
+  - Минус величины ставит большее впереди.
+  - Второе поле разруливает равенство.
+  - Печатайте исходную величину.
+  solution: "n = int(input())\npairs = []\nfor _ in range(n):\n    name = input().strip()\n\
+    \    value = int(input())\n    pairs.append((-value, name))\nrank, name = sorted(pairs)[0]\n\
+    print(name, -rank)\n"
+  explanation: Самый высокий столбец — край сравнения категорий.
+  id: python.viz.viz-bar.t5
+introduces:
+- id: viz-bar-chart
+  title: Столбчатый график
+  summary: Столбец на категорию. В matplotlib это plt.bar.

@@ -1,0 +1,211 @@
+id: python.engineering.eng-docker
+slug: eng-docker
+section: engineering
+title: Docker и Compose
+order: 8
+weight: 1
+prerequisites:
+- python.engineering.eng-secrets
+goal: Разобрать строку имя и образ и напечатать сервис.
+tags:
+- Docker
+- образ
+- сервис
+theory:
+- 'Образ — упакованная среда: файлы и команда, с которыми программа запускается одинаково.
+  Сервис в Compose — имя этой среды в общем файле, например web и его образ.'
+- Docker здесь не запускается. Упражнение разбирает строку «имя образ» и печатает «сервис»
+  и имя. Образ в этой строке только читается.
+- 'Ставить все библиотеки прямо на свою машину хрупко: версии разъедутся. Образ фиксирует
+  среду, даже если сам запуск в уроке не делается.'
+examples:
+- title: Сервис web
+  code: 'line = ''web python:3.12''
+
+    name, image = line.split()
+
+    print(''сервис '' + name)
+
+    '
+  explanation: Из строки взято имя web, образ python:3.12 в этой печати не нужен.
+- title: Сервис db
+  code: 'line = ''db postgres:16''
+
+    name, image = line.split()
+
+    print(''сервис '' + name)
+
+    print(image)
+
+    '
+  explanation: Сначала имя сервиса, затем образ отдельной строкой.
+outcomes:
+- отличать образ от сервиса
+- разбирать строку имя и образ
+- печатать сервис и имя
+- понимать, зачем не ставить всё прямо на свою машину
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем образ
+  difficulty: 1
+  context: neutral
+  prompt: Почему среду фиксируют образом, а не ставят всё на свою машину?
+  options:
+  - id: a
+    text: На своей машине легко получить другие версии библиотек
+  - id: b
+    text: Образ запрещает запускать тесты
+  - id: c
+    text: Сервис Compose заменяет имя программы
+  answer: a
+  hints:
+  - Версии на компьютере разработчика и на сервере расходятся.
+  - Образ как раз собирает одну среду.
+  - Имя сервиса и образ — разные части строки.
+  solution: a
+  explanation: Образ держит одни и те же версии, установка на хост этого не гарантирует.
+  id: python.engineering.eng-docker.t1
+- type: predict_output
+  title: Имя сервиса
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: сервис web
+  - id: b
+    text: python:3.12
+  - id: c
+    text: web python:3.12
+  answer: a
+  hints:
+  - split делит строку по пробелу.
+  - Печатается имя, не образ.
+  - Перед именем стоит слово сервис.
+  solution: a
+  explanation: Строка вывода называет сервис web.
+  code: 'line = ''web python:3.12''
+
+    name, image = line.split()
+
+    print(''сервис '' + name)
+
+    '
+  id: python.engineering.eng-docker.t2
+- type: code
+  title: Имя из строки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку из имени и образа через пробел. Выведите сервис и имя.
+  starter_code: ''
+  tests:
+  - stdin: 'web python:3.12
+
+      '
+    expected_stdout: 'сервис web
+
+      '
+  - stdin: 'worker python:3.12
+
+      '
+    expected_stdout: 'сервис worker
+
+      '
+  hints:
+  - split даёт два слова.
+  - Образ прочитайте, даже если не печатаете.
+  - Между словом сервис и именем один пробел.
+  solution: 'name, image = input().split()
+
+    print(''сервис '' + name)
+
+    '
+  explanation: Из строки Compose-сервиса берётся имя.
+  id: python.engineering.eng-docker.t3
+- type: code
+  title: Имя и образ
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте строку имя и образ. Напечатайте две строки: сервис имя и затем образ.'
+  starter_code: ''
+  tests:
+  - stdin: 'db postgres:16
+
+      '
+    expected_stdout: 'сервис db
+
+      postgres:16
+
+      '
+  - stdin: 'web python:3.12
+
+      '
+    expected_stdout: 'сервис web
+
+      python:3.12
+
+      '
+  hints:
+  - Вторая строка — образ целиком, вместе с двоеточием.
+  - Не режьте образ по двоеточию.
+  - Сначала имя сервиса.
+  solution: 'name, image = input().split()
+
+    print(''сервис '' + name)
+
+    print(image)
+
+    '
+  explanation: 'Оба поля строки полезны: имя сервиса и образ, из которого его поднимают.'
+  id: python.engineering.eng-docker.t4
+- type: code
+  title: Три сервиса
+  difficulty: 2
+  context: development
+  prompt: Первая строка — количество. Дальше строки имя и образ. Для каждой выведите сервис
+    и имя.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      web python:3.12
+
+      db postgres:16
+
+      '
+    expected_stdout: 'сервис web
+
+      сервис db
+
+      '
+  - stdin: '1
+
+      worker python:3.12
+
+      '
+    expected_stdout: 'сервис worker
+
+      '
+  hints:
+  - Цикл идёт по числу строк.
+  - Каждая строка даёт одну печать.
+  - Порядок имён сохраняйте.
+  solution: "count = int(input())\nfor _ in range(count):\n    name, image = input().split()\n\
+    \    print('сервис ' + name)\n"
+  explanation: Список сервисов читается построчно, каждая строка — имя и образ.
+  id: python.engineering.eng-docker.t5
+introduces:
+- id: eng-image
+  title: Образ
+  summary: Упакованная среда запуска. В уроке Docker не стартует, строка образа только разбирается.
+- id: eng-compose-service
+  title: Сервис Compose
+  summary: Имя среды в общем файле. Программа печатает его из строки имя и образ.

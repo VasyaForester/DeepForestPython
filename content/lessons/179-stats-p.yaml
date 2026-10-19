@@ -1,0 +1,204 @@
+id: python.stats.stats-p
+slug: stats-p
+section: stats
+title: p-value
+order: 8
+weight: 1
+prerequisites:
+- python.stats.stats-test
+goal: Сравнить уже данное p в процентах с 5 и не вычислять p.
+tags:
+- p-value
+theory:
+- p-value — насколько необычайны такие данные, если нулевая гипотеза верна. Маленькое p говорит,
+  что при этой гипотезе результат редок. Само p не равно вероятности, что гипотеза верна.
+- 'Границу редкости выбирают заранее. Часто берут 5 процентов, но это договорённость, не закон.
+  p = 5 процентов её не пробивает: нужно меньше.'
+- В упражнении p уже дано целым числом процентов от 0 до 100. Сравнение с 5 печатает «значимо»
+  или «нет». Это не вычисление p. Модуль statistics не используется.
+examples:
+- title: Четыре процента
+  code: 'p = 4
+
+    print("значимо" if p < 5 else "нет")
+
+    '
+  explanation: 4 меньше 5, поэтому слово «значимо». p здесь было дано, не посчитано.
+- title: Ровно пять
+  code: 'p = 5
+
+    print("значимо" if p < 5 else "нет")
+
+    '
+  explanation: Равенство пяти процентам не проходит строгое сравнение.
+outcomes:
+- читать p как редкость данных при нулевой гипотезе
+- не считать p вероятностью самой гипотезы
+- сравнивать готовые проценты с 5
+- не называть равенство 5 процентам значимым
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает сравнение
+  difficulty: 1
+  context: neutral
+  prompt: Что делает в этом уроке сравнение уже напечатанного p в процентах с 5?
+  options:
+  - id: a
+    text: Только сравнивает данное число с порогом и не вычисляет p
+  - id: b
+    text: Считает p по высотам деревьев
+  - id: c
+    text: Доказывает, что нулевая гипотеза ложна с вероятностью p
+  answer: a
+  hints:
+  - p приходит из ввода.
+  - Формулы p в коде нет.
+  - p не является вероятностью гипотезы.
+  solution: a
+  explanation: Урок тренирует чтение порога, а не расчёт p-value.
+  id: python.stats.stats-p.t1
+- type: predict_output
+  title: Четыре
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: значимо
+  - id: b
+    text: нет
+  - id: c
+    text: '4'
+  answer: a
+  hints:
+  - Сравнение строгое.
+  - 4 < 5.
+  - Печатается слово.
+  solution: a
+  explanation: Данные 4 процента помечаются как значимо.
+  code: 'p = 4
+
+    print("значимо" if p < 5 else "нет")
+
+    '
+  id: python.stats.stats-p.t2
+- type: code
+  title: Одно p
+  difficulty: 2
+  context: development
+  prompt: Прочитайте целое p от 0 до 100 — уже готовые проценты. Если p < 5, выведите значимо,
+    иначе нет.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: 'значимо
+
+      '
+  - stdin: '5
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Порог равен 5.
+  - Равенство даёт нет.
+  - p не пересчитывайте.
+  solution: 'p = int(input())
+
+    print("значимо" if p < 5 else "нет")
+
+    '
+  explanation: Программа сравнивает готовое число и не ищет p в данных.
+  id: python.stats.stats-p.t3
+- type: code
+  title: Список p
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n готовых процентов. Для каждого выведите значимо или нет.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      0
+
+      5
+
+      100
+
+      '
+    expected_stdout: 'значимо
+
+      нет
+
+      нет
+
+      '
+  - stdin: '1
+
+      4
+
+      '
+    expected_stdout: 'значимо
+
+      '
+  hints:
+  - Каждое число сравнивается отдельно.
+  - 0 меньше 5.
+  - 100 не меньше.
+  solution: "n = int(input())\nfor _ in range(n):\n    p = int(input())\n    print(\"значимо\"\
+    \ if p < 5 else \"нет\")\n"
+  explanation: Несколько готовых p остаются сравнениями, не расчётами.
+  id: python.stats.stats-p.t4
+- type: code
+  title: Сколько значимых
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n готовых процентов. Выведите, сколько из них строго меньше 5.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      4
+
+      5
+
+      1
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      6
+
+      7
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Считайте прохождения порога.
+  - Пятёрка не входит.
+  - Одно число в ответе.
+  solution: "n = int(input())\ncount = 0\nfor _ in range(n):\n    if int(input()) < 5:\n \
+    \       count += 1\nprint(count)\n"
+  explanation: Счётчик тоже не вычисляет p, а только применяет границу.
+  id: python.stats.stats-p.t5
+introduces:
+- id: stats-pvalue
+  title: p-value
+  summary: Редкость наблюдаемых данных при верной нулевой гипотезе. Этот урок только сравнивает
+    уже данное p с 5 процентами.

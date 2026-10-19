@@ -1,0 +1,209 @@
+id: python.github.git-commit
+slug: git-commit
+section: github
+title: init и commit
+order: 1
+weight: 1
+prerequisites:
+- python.cli.cli-review
+goal: Запомнить сообщение коммита в списке истории.
+tags:
+- git
+- commit
+- init
+theory:
+- Репозиторий начинают командой git init. Файл ставят в индекс командой git add отчёт.py,
+  снимок фиксируют командой git commit -m "добавлен отчёт". Сообщение после -m объясняет,
+  что изменилось.
+- 'Песочница не вызывает git. История здесь — список строк: новый коммит дописывают в конец,
+  последнее сообщение считается вершиной.'
+- Порядок в списке — от старого к новому. Длина списка — сколько снимков уже записано.
+examples:
+- title: Первый снимок
+  code: 'history = []
+
+    history.append(''добавлен отчёт'')
+
+    print(history[-1])
+
+    '
+  explanation: Пустой репозиторий получает одно сообщение, оно же последнее.
+- title: Второй снимок
+  code: 'history = [''начало склада'']
+
+    history.append(''поправлена цена'')
+
+    print(len(history))
+
+    '
+  explanation: После второго append в истории два коммита.
+outcomes:
+- сопоставлять git commit -m с записью сообщения
+- хранить историю списком
+- добавлять новый снимок в конец
+- считать число коммитов
+resources:
+- kind: docs
+  title: Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает commit
+  difficulty: 1
+  context: neutral
+  prompt: Что записывает команда git commit -m "добавлен отчёт"?
+  options:
+  - id: a
+    text: Снимок с сообщением добавлен отчёт
+  - id: b
+    text: Только создаёт пустую папку .git без сообщения
+  - id: c
+    text: Удаляет файл отчёт.py
+  answer: a
+  hints:
+  - -m передаёт текст сообщения.
+  - git init создаёт репозиторий раньше, отдельной командой.
+  - commit не удаляет файл, который добавили.
+  solution: a
+  explanation: commit фиксирует снимок и подпись к нему.
+  id: python.github.git-commit.t1
+- type: predict_output
+  title: Длина истории
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '1'
+  - id: c
+    text: поправлена цена
+  answer: a
+  hints:
+  - В списке уже было одно сообщение.
+  - append добавляет второе.
+  - Печатается длина, не текст.
+  solution: a
+  explanation: Два сообщения — длина 2.
+  code: 'history = [''начало склада'']
+
+    history.append(''поправлена цена'')
+
+    print(len(history))
+
+    '
+  id: python.github.git-commit.t2
+- type: code
+  title: Записать сообщение
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сообщение коммита и выведите его.
+  starter_code: ''
+  tests:
+  - stdin: 'добавлен отчёт
+
+      '
+    expected_stdout: 'добавлен отчёт
+
+      '
+  - stdin: 'поправлена цена
+
+      '
+    expected_stdout: 'поправлена цена
+
+      '
+  hints:
+  - Положите строку в список.
+  - Вершина — последний элемент.
+  - Печатайте текст сообщения.
+  solution: 'message = input().strip()
+
+    history = [message]
+
+    print(history[-1])
+
+    '
+  explanation: Один commit даёт историю из одного сообщения.
+  id: python.github.git-commit.t3
+- type: code
+  title: История по порядку
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число сообщений и сами сообщения от старых к новым. Выведите их в том
+    же порядке.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      начало склада
+
+      поправлена цена
+
+      '
+    expected_stdout: 'начало склада
+
+      поправлена цена
+
+      '
+  - stdin: '1
+
+      первый снимок
+
+      '
+    expected_stdout: 'первый снимок
+
+      '
+  hints:
+  - Сначала прочитайте количество.
+  - Сохраняйте порядок ввода.
+  - Печатайте по одному сообщению на строку.
+  solution: "count = int(input())\nhistory = [input().strip() for _ in range(count)]\nfor\
+    \ message in history:\n    print(message)\n"
+  explanation: Список хранит коммиты от старого к новому.
+  id: python.github.git-commit.t4
+- type: code
+  title: Дописать снимок
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число уже существующих сообщений, сами сообщения и ещё одно новое. Выведите
+    всю историю вместе с новым.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      начало склада
+
+      поправлена цена
+
+      '
+    expected_stdout: 'начало склада
+
+      поправлена цена
+
+      '
+  - stdin: '0
+
+      первый снимок
+
+      '
+    expected_stdout: 'первый снимок
+
+      '
+  hints:
+  - Если число ноль, старых строк нет.
+  - Новое сообщение добавьте в конец.
+  - Напечатайте список целиком.
+  solution: "count = int(input())\nhistory = [input().strip() for _ in range(count)]\nhistory.append(input().strip())\n\
+    for message in history:\n    print(message)\n"
+  explanation: commit дописывает сообщение в хвост истории.
+  id: python.github.git-commit.t5
+introduces:
+- id: github-commit
+  title: Коммит
+  summary: Снимок файлов с сообщением. Команда git commit -m "добавлен отчёт" дописывает это
+    сообщение в историю.

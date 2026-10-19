@@ -1,0 +1,232 @@
+id: python.data.data-filter
+slug: data-filter
+section: data
+title: Фильтрация
+order: 10
+weight: 1
+prerequisites:
+- python.data.data-loc
+goal: Оставлять только строки, которые проходят условие.
+tags:
+- фильтр
+theory:
+- 'Фильтр в pandas выглядит как df[df[''высота''] >= 12]: внутри сравнение даёт столбец из
+  True и False, снаружи остаются подходящие строки.'
+- 'Условие можно соединять. Важно не потерять остальные поля строки: отбрасывается запись
+  целиком, а не одно число.'
+- Упражнение фильтрует список словарей, потому что pandas нет в среде браузера.
+examples:
+- title: Высокие деревья
+  code: 'rows = [{"порода": "ель", "высота": 12}, {"порода": "сосна", "высота": 9}, {"порода":
+    "берёза", "высота": 15}]
+
+    picked = [row for row in rows if row["высота"] >= 12]
+
+    print(len(picked))
+
+    print(picked[0]["порода"])
+
+    '
+  explanation: Две строки прошли порог. Первая из них — ель.
+- title: Дороже ста
+  code: 'prices = [80, 120, 200, 90]
+
+    kept = [price for price in prices if price > 100]
+
+    print(len(kept))
+
+    print(sum(kept))
+
+    '
+  explanation: Остались 120 и 200. Их две, сумма 320.
+outcomes:
+- оставлять строки по условию
+- читать запись df[df[столбец] ...]
+- сохранять порядок отобранных строк
+- суммировать значения после фильтра
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Фильтр pandas
+  difficulty: 1
+  context: neutral
+  prompt: Что делает фрагмент df[df['высота'] >= 12]?
+  options:
+  - id: a
+    text: Оставляет строки, где высота не меньше 12
+  - id: b
+    text: Удаляет столбец высота
+  - id: c
+    text: Сортирует таблицу по имени
+  answer: a
+  hints:
+  - Внутри столбца стоит сравнение.
+  - Наружные скобки отбирают строки.
+  - Имена строк не сортируются.
+  solution: a
+  explanation: Фильтр сохраняет строки с истинным условием.
+  id: python.data.data-filter.t1
+- type: predict_output
+  title: Сколько прошло
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '1'
+  - id: b
+    text: '2'
+  - id: c
+    text: '3'
+  answer: b
+  hints:
+  - Порог 12 включает саму 12.
+  - 9 не проходит.
+  - 12 и 15 проходят.
+  solution: b
+  explanation: Условие истинно для двух строк.
+  code: 'rows = [{"высота": 12}, {"высота": 9}, {"высота": 15}]
+
+    print(len([row for row in rows if row["высота"] >= 12]))
+
+    '
+  id: python.data.data-filter.t2
+- type: code
+  title: Сколько не ниже
+  difficulty: 2
+  context: development
+  prompt: Прочитайте порог, n и n строк имя высота. Выведите число строк с высотой не меньше
+    порога.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      3
+
+      ель 12
+
+      сосна 9
+
+      берёза 15
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '10
+
+      2
+
+      дуб 8
+
+      клён 10
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Сравнивайте высоту с порогом.
+  - Имя в счёте не участвует.
+  - Равенство порогу тоже считается.
+  solution: "limit = int(input())\nn = int(input())\ncount = 0\nfor _ in range(n):\n    name,\
+    \ height = input().split()\n    if int(height) >= limit:\n        count += 1\nprint(count)\n"
+  explanation: Счётчик заменяет булев столбец фильтра.
+  id: python.data.data-filter.t3
+- type: code
+  title: Имена отбора
+  difficulty: 2
+  context: development
+  prompt: Прочитайте порог, n и строки имя высота. Выведите имена, у которых высота не меньше
+    порога, в исходном порядке.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      3
+
+      ель 12
+
+      сосна 9
+
+      берёза 15
+
+      '
+    expected_stdout: 'ель
+
+      берёза
+
+      '
+  - stdin: '1
+
+      2
+
+      дуб 8
+
+      клён 4
+
+      '
+    expected_stdout: 'дуб
+
+      клён
+
+      '
+  hints:
+  - Печатайте имя только при успехе сравнения.
+  - Порядок ввода сохраняйте.
+  - Пустой отбор ничего не печатает.
+  solution: "limit = int(input())\nn = int(input())\nfor _ in range(n):\n    name, height\
+    \ = input().split()\n    if int(height) >= limit:\n        print(name)\n"
+  explanation: Фильтр отдаёт строки целиком, здесь из них нужно имя.
+  id: python.data.data-filter.t4
+- type: code
+  title: Сумма категории
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название категории, n и строки категория цена. Выведите сумму цен этой
+    категории.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      3
+
+      ель 400
+
+      сосна 250
+
+      ель 100
+
+      '
+    expected_stdout: '500
+
+      '
+  - stdin: 'дуб
+
+      1
+
+      клён 90
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Сравнивайте категорию со строкой из ввода.
+  - Чужие цены не прибавляйте.
+  - Если совпадений нет, сумма 0.
+  solution: "kind = input().strip()\nn = int(input())\ntotal = 0\nfor _ in range(n):\n   \
+    \ name, price = input().split()\n    if name == kind:\n        total += int(price)\nprint(total)\n"
+  explanation: Условие на текст столбца оставляет только нужные цены.
+  id: python.data.data-filter.t5
+introduces:
+- id: data-row-filter
+  title: Фильтр строк
+  summary: Отбор записей по условию на столбец. В pandas это df[df['высота'] >= 12].

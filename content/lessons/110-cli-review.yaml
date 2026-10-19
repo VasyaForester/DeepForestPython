@@ -1,0 +1,222 @@
+id: python.cli.cli-review
+slug: cli-review
+section: cli
+title: 'Итог: структура проекта'
+order: 9
+weight: 2
+prerequisites:
+- python.cli.cli-pyproject
+goal: Проверить, что у проекта есть описание и код, и собрать команду запуска.
+tags:
+- итог
+- pyproject.toml
+- структура
+theory:
+- Минимальный проект содержит pyproject.toml и хотя бы один файл .py. Окружение создают командой
+  python -m venv .venv и не кладут эту папку в репозиторий. Зависимости фиксируют и ставят
+  командой pip install -r requirements.txt.
+- 'Секреты остаются в переменных окружения. Песочница не создаёт venv, не вызывает pip и не
+  читает диск: решение принимается по списку имён файлов и по строкам KEY=VALUE.'
+- Итог раздела — узнать описание проекта, файл кода, команду python -m и отдельную настройку
+  окружения. Новых приёмов здесь нет.
+examples:
+- title: Есть описание и код
+  code: 'files = [''pyproject.toml'', ''склад/отчёт.py'']
+
+    has_project = ''pyproject.toml'' in files
+
+    has_code = any(name.endswith(''.py'') for name in files)
+
+    print(''готово'' if has_project and has_code else ''неполно'')
+
+    '
+  explanation: В списке есть и pyproject.toml, и файл Python, поэтому проект описан достаточно.
+- title: Команда окружения
+  code: 'print(''python -m venv .venv'')
+
+    '
+  explanation: Строка напоминает команду создания окружения, но сама папку не создаёт.
+outcomes:
+- узнавать pyproject.toml среди имён файлов
+- считать файлы исходников
+- собирать python -m вместе с настройкой
+- оставлять .venv и секреты вне репозитория
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что коммитить
+  difficulty: 1
+  context: neutral
+  prompt: В проекте есть pyproject.toml, папка .venv и файл отчёт.py. Что не кладут в git
+    после python -m venv .venv?
+  options:
+  - id: a
+    text: Папку .venv
+  - id: b
+    text: Файл pyproject.toml
+  - id: c
+    text: Файл отчёт.py
+  answer: a
+  hints:
+  - pyproject.toml описывает проект, его хранят.
+  - Исходник .py тоже хранят.
+  - Окружение собирают заново на каждой машине.
+  solution: a
+  explanation: .venv — местная папка интерпретатора, не часть исходников.
+  id: python.cli.cli-review.t1
+- type: predict_output
+  title: Полный набор
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: готово
+  - id: b
+    text: неполно
+  - id: c
+    text: .venv
+  answer: a
+  hints:
+  - Ищите точное имя pyproject.toml.
+  - Оно есть в списке.
+  - Папка .venv в этом списке не печатается.
+  solution: a
+  explanation: Описание проекта на месте, поэтому ответ готово.
+  code: 'files = [''pyproject.toml'', ''склад/отчёт.py'']
+
+    print(''готово'' if ''pyproject.toml'' in files else ''неполно'')
+
+    '
+  id: python.cli.cli-review.t2
+- type: code
+  title: Есть ли pyproject
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число имён и сами имена. Выведите готово, если среди них есть pyproject.toml,
+    иначе неполно.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      pyproject.toml
+
+      склад/отчёт.py
+
+      '
+    expected_stdout: 'готово
+
+      '
+  - stdin: '1
+
+      склад/отчёт.py
+
+      '
+    expected_stdout: 'неполно
+
+      '
+  hints:
+  - Сложите имена в список.
+  - Проверьте вхождение pyproject.toml.
+  - Одного .py без описания мало.
+  solution: 'count = int(input())
+
+    files = [input().strip() for _ in range(count)]
+
+    print(''готово'' if ''pyproject.toml'' in files else ''неполно'')
+
+    '
+  explanation: Без pyproject.toml описание проекта неполное.
+  id: python.cli.cli-review.t3
+- type: code
+  title: Сколько модулей
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число имён и сами имена. Выведите, сколько из них оканчивается на .py.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      pyproject.toml
+
+      склад/отчёт.py
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: '3
+
+      отчёт.py
+
+      проверка.py
+
+      README.md
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Смотрите конец строки.
+  - toml и md не считайте.
+  - Суммируйте единицы.
+  solution: 'count = int(input())
+
+    files = [input().strip() for _ in range(count)]
+
+    print(sum(1 for name in files if name.endswith(''.py'')))
+
+    '
+  explanation: Файлы .py — код проекта, остальные имена в счёт не идут.
+  id: python.cli.cli-review.t4
+- type: code
+  title: Запуск и настройка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя модуля и строку KEY=VALUE. Выведите команду python -m и следующей
+    строкой значение.
+  starter_code: ''
+  tests:
+  - stdin: 'sklad
+
+      APP_NAME=Склад
+
+      '
+    expected_stdout: 'python -m sklad
+
+      Склад
+
+      '
+  - stdin: 'reports
+
+      DATABASE_URL=sqlite:///склад.db
+
+      '
+    expected_stdout: 'python -m reports
+
+      sqlite:///склад.db
+
+      '
+  hints:
+  - Команда собирается как раньше.
+  - Значение режьте по первому =.
+  - 'Секрет по-прежнему не придумывайте: печатайте то, что пришло.'
+  solution: 'name = input().strip()
+
+    key, value = input().strip().split(''='', 1)
+
+    print(''python -m '' + name)
+
+    print(value)
+
+    '
+  explanation: Запуск модуля и настройка окружения остаются двумя разными строками.
+  id: python.cli.cli-review.t5

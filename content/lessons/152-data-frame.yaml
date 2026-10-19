@@ -1,0 +1,220 @@
+id: python.data.data-frame
+slug: data-frame
+section: data
+title: Таблица записей
+order: 7
+weight: 1
+prerequisites:
+- python.data.data-vector
+goal: Хранить таблицу списком словарей и доставать столбец по имени.
+tags:
+- dataframe
+- series
+theory:
+- DataFrame в pandas — таблица с именами столбцов. Одна строка — запись, один столбец — Series.
+- 'Список словарей с одинаковыми ключами передаёт ту же идею: ключ — имя столбца, список —
+  набор строк. Series здесь — список значений одного ключа.'
+- Упражнение считает то же самое списками словарей, потому что pandas нет в среде браузера.
+examples:
+- title: Две записи
+  code: 'rows = [{"порода": "ель", "высота": 12}, {"порода": "сосна", "высота": 9}]
+
+    print(rows[0]["порода"])
+
+    print(rows[1]["высота"])
+
+    '
+  explanation: Первая запись даёт породу, вторая — высоту своего столбца.
+- title: Столбец цен
+  code: 'rows = [{"товар": "ель", "цена": 400}, {"товар": "сосна", "цена": 250}, {"товар":
+    "берёза", "цена": 180}]
+
+    series = [row["цена"] for row in rows]
+
+    print(len(series))
+
+    print(series[2])
+
+    '
+  explanation: Столбец цена ведёт себя как Series из трёх чисел. Последнее — 180.
+outcomes:
+- представлять строку словарём
+- собирать столбец по ключу
+- называть таблицу DataFrame, а столбец Series
+- выбирать запись по позиции и поле по имени
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: DataFrame и Series
+  difficulty: 1
+  context: neutral
+  prompt: Как pandas называет таблицу и один её столбец?
+  options:
+  - id: a
+    text: Таблицу DataFrame, столбец Series
+  - id: b
+    text: Таблицу Series, столбец DataFrame
+  - id: c
+    text: И то и другое списком без имён
+  answer: a
+  hints:
+  - DataFrame — вся таблица.
+  - Series — один столбец.
+  - Имена столбцов у таблицы есть.
+  solution: a
+  explanation: Строка лежит в DataFrame, значения одного имени — в Series.
+  id: python.data.data-frame.t1
+- type: predict_output
+  title: Имя второй строки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: сосна
+  - id: c
+    text: '9'
+  answer: b
+  hints:
+  - Индекс 1 — вторая запись.
+  - Ключ порода хранит имя.
+  - 9 лежит в другом ключе.
+  solution: b
+  explanation: Во второй записи порода — сосна.
+  code: 'rows = [{"порода": "ель", "высота": 12}, {"порода": "сосна", "высота": 9}]
+
+    print(rows[1]["порода"])
+
+    '
+  id: python.data.data-frame.t2
+- type: code
+  title: Столбец высот
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n строк вида имя высота. Выведите высоты в том же порядке.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 12
+
+      сосна 9
+
+      '
+    expected_stdout: '12
+
+      9
+
+      '
+  - stdin: '1
+
+      берёза 15
+
+      '
+    expected_stdout: '15
+
+      '
+  hints:
+  - Каждая строка ввода — словарь.
+  - Печатайте ключ высота.
+  - Порядок записей сохраняйте.
+  solution: "n = int(input())\nrows = []\nfor _ in range(n):\n    name, height = input().split()\n\
+    \    rows.append({\"порода\": name, \"высота\": int(height)})\nfor row in rows:\n    print(row[\"\
+    высота\"])\n"
+  explanation: Столбец собран по одному ключу всех записей.
+  id: python.data.data-frame.t3
+- type: code
+  title: Самая высокая порода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте таблицу имя высота. Выведите породу с наибольшей высотой. При равенстве
+    берите первую такую.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 12
+
+      сосна 9
+
+      берёза 15
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  - stdin: '2
+
+      дуб 8
+
+      клён 8
+
+      '
+    expected_stdout: 'дуб
+
+      '
+  hints:
+  - Храните имя вместе с высотой.
+  - Меняйте лучшую только при строго большем.
+  - Первое равенство не перезаписывает.
+  solution: "n = int(input())\nbest_name = \"\"\nbest_height = -1\nfor _ in range(n):\n  \
+    \  name, height = input().split()\n    height = int(height)\n    if height > best_height:\n\
+    \        best_name = name\n        best_height = height\nprint(best_name)\n"
+  explanation: Запись — это строка таблицы, сравнение идёт по столбцу.
+  id: python.data.data-frame.t4
+- type: code
+  title: Число строк и поле
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен вида товар цена. Выведите число строк и цену последней строки.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 400
+
+      сосна 250
+
+      берёза 180
+
+      '
+    expected_stdout: '3
+
+      180
+
+      '
+  - stdin: '1
+
+      дуб 90
+
+      '
+    expected_stdout: '1
+
+      90
+
+      '
+  hints:
+  - len считает строки DataFrame.
+  - Последняя запись имеет индекс -1.
+  - Печатайте именно цену.
+  solution: "n = int(input())\nrows = []\nfor _ in range(n):\n    name, price = input().split()\n\
+    \    rows.append({\"товар\": name, \"цена\": int(price)})\nprint(len(rows))\nprint(rows[-1][\"\
+    цена\"])\n"
+  explanation: У таблицы есть длина, у последней строки — именованное поле.
+  id: python.data.data-frame.t5
+introduces:
+- id: data-dataframe
+  title: DataFrame
+  summary: Таблица с именами столбцов. Здесь её роль играет список словарей.
+- id: data-series
+  title: Series
+  summary: Один именованный столбец таблицы. Здесь это список значений одного ключа.

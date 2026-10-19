@@ -1,0 +1,197 @@
+id: python.performance.perf-profile
+slug: perf-profile
+section: performance
+title: Профилирование
+order: 4
+weight: 1
+prerequisites:
+- python.performance.perf-memory
+goal: Сравнить два счётчика и увидеть, какая функция делает больше шагов.
+tags:
+- профилирование
+- cProfile
+theory:
+- Профилирование ищет, куда уходит работа. cProfile умеет показать, какая функция сколько
+  раз вызывалась и сколько времени заняла. В этом уроке cProfile не импортируется и не запускается.
+- Вместо времени у двух функций стоят счётчики шагов. Больший счётчик — более тяжёлая функция
+  на этом n. Для сетки это n * n, для одного ряда это n.
+- Сравнивать нужно на одних и тех же данных. Иначе больший счётчик может означать просто более
+  длинный вход.
+examples:
+- title: Сетка тяжелее
+  code: "def row_steps(n):\n    steps = 0\n    for _ in range(n):\n        steps += 1\n  \
+    \  return steps\ndef grid_steps(n):\n    steps = 0\n    for _ in range(n):\n        for\
+    \ _ in range(n):\n            steps += 1\n    return steps\nprint(\"сетка\" if grid_steps(4)\
+    \ > row_steps(4) else \"ряд\")\n"
+  explanation: 16 больше 4. Тяжелее сетка. cProfile для этого сравнения не нужен.
+- title: Равенство на единице
+  code: 'print(1 * 1)
+
+    print(1)
+
+    '
+  explanation: 'При n = 1 квадрат и один проход совпадают: оба дают 1.'
+outcomes:
+- сравнивать функции по счётчику шагов
+- знать, что cProfile показывает время и вызовы
+- держать вход одинаковым при сравнении
+- искать тяжёлую функцию прежде мелких правок
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что ищет профиль
+  difficulty: 1
+  context: neutral
+  prompt: Зачем смотреть, какая функция сделала больше шагов?
+  options:
+  - id: a
+    text: Чтобы искать тяжёлое место, а не ускорять всё подряд
+  - id: b
+    text: Чтобы удалить все функции
+  - id: c
+    text: Чтобы заменить данные случайными
+  answer: a
+  hints:
+  - Больший счётчик отмечает больше работы.
+  - Ускорять лёгкую функцию почти бесполезно.
+  - Данные при сравнении те же.
+  solution: a
+  explanation: Профиль направляет усилия в тяжёлую функцию.
+  id: python.performance.perf-profile.t1
+- type: predict_output
+  title: Кто тяжелее
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: сетка
+  - id: b
+    text: ряд
+  - id: c
+    text: поровну
+  answer: a
+  hints:
+  - 16 больше 4.
+  - Печатается имя функции.
+  - Числа сами не выводятся.
+  solution: a
+  explanation: Больший счётчик у сетки.
+  code: 'row = 4
+
+    grid = 16
+
+    print("сетка" if grid > row else "ряд")
+
+    '
+  id: python.performance.perf-profile.t2
+- type: code
+  title: Какой счётчик больше
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n. Функция ряда делает n шагов, функция сетки n * n. Выведите сетка,
+    ряд или поровну.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: 'сетка
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: 'поровну
+
+      '
+  hints:
+  - Считайте обе функции на одном n.
+  - При n = 1 счётчики равны.
+  - Печатайте имя, не число.
+  solution: "def row_steps(n):\n    steps = 0\n    for _ in range(n):\n        steps += 1\n\
+    \    return steps\ndef grid_steps(n):\n    steps = 0\n    for _ in range(n):\n       \
+    \ for _ in range(n):\n            steps += 1\n    return steps\nn = int(input())\nrow_count\
+    \ = row_steps(n)\ngrid_count = grid_steps(n)\nif grid_count > row_count:\n    print(\"\
+    сетка\")\nelif row_count > grid_count:\n    print(\"ряд\")\nelse:\n    print(\"поровну\"\
+    )\n"
+  explanation: Сравнение счётчиков заменяет запуск cProfile в этом уроке.
+  id: python.performance.perf-profile.t3
+- type: code
+  title: Оба счётчика
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n. Выведите счётчик ряда и счётчик сетки.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '3
+
+      9
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '1
+
+      1
+
+      '
+  hints:
+  - Первая строка — один проход.
+  - Вторая — вложенный.
+  - При n = 1 числа равны.
+  solution: 'n = int(input())
+
+    print(n)
+
+    print(n * n)
+
+    '
+  explanation: Два числа — сырой профиль без имён.
+  id: python.performance.perf-profile.t4
+- type: code
+  title: Насколько сетка тяжелее
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте n. Выведите, на сколько шагов сетка больше ряда: n * n - n.'
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - При n = 1 разность 0.
+  - Формула уже равна разности счётчиков.
+  - Одно число.
+  solution: 'n = int(input())
+
+    print(n * n - n)
+
+    '
+  explanation: Разность показывает, сколько шагов добавляет внутренний цикл.
+  id: python.performance.perf-profile.t5
+introduces:
+- id: perf-profile-count
+  title: Сравнение по шагам
+  summary: Какая из двух функций делает больше шагов на одних данных. cProfile отвечает на
+    похожий вопрос временем, но здесь не запускается.

@@ -1,0 +1,166 @@
+id: python.backend.be-authz
+slug: be-authz
+section: backend
+title: Авторизация
+order: 9
+weight: 1
+prerequisites:
+- python.backend.be-auth
+goal: По роли admin или user решить, можно ли действие.
+tags:
+- роль
+- admin
+- доступ
+theory:
+- Авторизация отвечает, можно ли уже известному человеку выполнить действие. Роль admin получает
+  «можно», роль user — «нельзя».
+- Проверка смотрит на строку роли, а не на имя. Два разных человека с одной ролью получают
+  один и тот же ответ.
+- Любая роль кроме admin, включая пустую строку, даёт нельзя. Решение печатается одним словом.
+examples:
+- title: Администратор
+  code: "def allow(role):\n    if role == 'admin':\n        print('можно')\n    else:\n  \
+    \      print('нельзя')\nallow('admin')\n"
+  explanation: Роль совпала с admin, печатается можно.
+- title: Обычная роль
+  code: "def allow(role):\n    if role == 'admin':\n        print('можно')\n    else:\n  \
+    \      print('нельзя')\nallow('user')\n"
+  explanation: user не равен admin, печатается нельзя.
+outcomes:
+- разрешать действие роли admin
+- запрещать действие роли user
+- печатать можно или нельзя
+- не путать роль с именем человека
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кто получает можно
+  difficulty: 1
+  context: neutral
+  prompt: Какая роль в этом уроке разрешает действие?
+  options:
+  - id: a
+    text: Только admin
+  - id: b
+    text: Любая непустая роль
+  - id: c
+    text: Только user
+  answer: a
+  hints:
+  - 'Сравнение одно: роль равна admin.'
+  - user специально получает отказ.
+  - Имя человека в проверке не участвует.
+  solution: a
+  explanation: Разрешение даёт только роль admin.
+  id: python.backend.be-authz.t1
+- type: predict_output
+  title: Роль user
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: нельзя
+  - id: b
+    text: можно
+  - id: c
+    text: user
+  answer: a
+  hints:
+  - Роль сравнивается с admin.
+  - user — другая строка.
+  - Сама роль на экран не выводится.
+  solution: a
+  explanation: Для user печатается нельзя.
+  code: "role = 'user'\nif role == 'admin':\n    print('можно')\nelse:\n    print('нельзя')\n"
+  id: python.backend.be-authz.t2
+- type: code
+  title: Роль из ввода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте роль. Для admin выведите можно, для любой другой строки — нельзя.
+  starter_code: ''
+  tests:
+  - stdin: 'admin
+
+      '
+    expected_stdout: 'можно
+
+      '
+  - stdin: 'user
+
+      '
+    expected_stdout: 'нельзя
+
+      '
+  hints:
+  - Сравнивайте строку целиком.
+  - Ветка else покрывает user.
+  - Печатайте одно слово.
+  solution: "role = input()\nif role == 'admin':\n    print('можно')\nelse:\n    print('нельзя')\n"
+  explanation: Одно сравнение отделяет разрешённую роль от остальных.
+  id: python.backend.be-authz.t3
+- type: code
+  title: Пустая роль
+  difficulty: 2
+  context: development
+  prompt: Прочитайте роль. Пустая строка и user дают нельзя, admin даёт можно.
+  starter_code: ''
+  tests:
+  - stdin: '
+
+      '
+    expected_stdout: 'нельзя
+
+      '
+  - stdin: 'admin
+
+      '
+    expected_stdout: 'можно
+
+      '
+  hints:
+  - Пустая строка не равна admin.
+  - Отдельная проверка пустоты не нужна.
+  - else собирает все отказы.
+  solution: "role = input()\nif role == 'admin':\n    print('можно')\nelse:\n    print('нельзя')\n"
+  explanation: Нет роли admin — действие запрещено.
+  id: python.backend.be-authz.t4
+- type: code
+  title: Функция роли
+  difficulty: 2
+  context: development
+  prompt: Прочитайте роль и передайте её в allow. Функция печатает можно только для admin.
+  starter_code: ''
+  tests:
+  - stdin: 'user
+
+      '
+    expected_stdout: 'нельзя
+
+      '
+  - stdin: 'admin
+
+      '
+    expected_stdout: 'можно
+
+      '
+  hints:
+  - Вся развилка внутри allow.
+  - Аргумент — прочитанная строка.
+  - Слово можно только в одной ветке.
+  solution: "def allow(role):\n    if role == 'admin':\n        print('можно')\n    else:\n\
+    \        print('нельзя')\nallow(input())\n"
+  explanation: Решение спрятано в функции, программа передаёт роль и больше ничего не решает.
+  id: python.backend.be-authz.t5
+introduces:
+- id: be-role
+  title: Роль
+  summary: Строка admin или user. От неё зависит, можно ли выполнить действие.

@@ -1,0 +1,262 @@
+id: python.stats.stats-effect
+slug: stats-effect
+section: stats
+title: Размер эффекта
+order: 10
+weight: 1
+prerequisites:
+- python.stats.stats-errors
+goal: Считать разность двух средних отдельно от значимости.
+tags:
+- размер эффекта
+theory:
+- Размер эффекта говорит, насколько группы различаются. Разность средних цен 15 и 5 равна
+  10. Это величина сдвига, а не редкость случайности.
+- Маленький сдвиг на огромной выборке может быть значимым и бесполезным. Большой сдвиг на
+  трёх деревьях может быть важным и ещё не доказанным. Значимость и размер отвечают на разные
+  вопросы.
+- Упражнение печатает целую разность средних. Обе суммы делятся на свои длины. Модуль statistics
+  не используется.
+examples:
+- title: Десять единиц
+  code: 'first = [10, 20]
+
+    second = [4, 6]
+
+    mean_first = sum(first) // len(first)
+
+    mean_second = sum(second) // len(second)
+
+    print(mean_first - mean_second)
+
+    '
+  explanation: 15 минус 5 равно 10. Это размер разницы, не p-value.
+- title: Одинаковые
+  code: 'first = [3, 5]
+
+    second = [4, 4]
+
+    print(sum(first) // len(first) - sum(second) // len(second))
+
+    '
+  explanation: Оба средних равны 4. Размер эффекта 0.
+outcomes:
+- считать разность двух средних
+- отделять размер эффекта от значимости
+- сохранять знак разности
+- не подменять размер значением p
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Значимость и размер
+  difficulty: 1
+  context: neutral
+  prompt: Средние отличаются на 1, а сравнение с порогом сказало «значимо». Что верно?
+  options:
+  - id: a
+    text: Сдвиг маленький, даже если порог редкости пройден
+  - id: b
+    text: Размер эффекта тогда равен p
+  - id: c
+    text: Группы обязаны отличаться на сотни единиц
+  answer: a
+  hints:
+  - Значимость не измеряет величину сдвига.
+  - p и разность средних — разные числа.
+  - Единица остаётся маленьким сдвигом.
+  solution: a
+  explanation: Значимость не заменяет размер эффекта.
+  id: python.stats.stats-effect.t1
+- type: predict_output
+  title: Разность
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '15'
+  - id: c
+    text: '5'
+  answer: a
+  hints:
+  - Первое среднее 15.
+  - Второе 5.
+  - Печатается разность.
+  solution: a
+  explanation: Размер разницы равен 10.
+  code: 'print(15 - 5)
+
+    '
+  id: python.stats.stats-effect.t2
+- type: code
+  title: Первая минус вторая
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n1, n1 чисел, n2 и n2 чисел. Обе суммы делятся на свои n. Выведите среднее
+    первой группы минус среднее второй.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      10
+
+      20
+
+      2
+
+      4
+
+      6
+
+      '
+    expected_stdout: '10
+
+      '
+  - stdin: '2
+
+      3
+
+      5
+
+      2
+
+      7
+
+      9
+
+      '
+    expected_stdout: '-4
+
+      '
+  hints:
+  - Считайте каждое среднее отдельно.
+  - Знак сохраняйте.
+  - p здесь не спрашивают.
+  solution: 'n1 = int(input())
+
+    mean1 = sum(int(input()) for _ in range(n1)) // n1
+
+    n2 = int(input())
+
+    mean2 = sum(int(input()) for _ in range(n2)) // n2
+
+    print(mean1 - mean2)
+
+    '
+  explanation: Целая разность и есть размер эффекта в этом уроке.
+  id: python.stats.stats-effect.t3
+- type: code
+  title: Кто выше
+  difficulty: 2
+  context: development
+  prompt: Прочитайте две группы так же. Выведите первая, вторая или равно по сравнению средних.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      10
+
+      20
+
+      2
+
+      4
+
+      6
+
+      '
+    expected_stdout: 'первая
+
+      '
+  - stdin: '2
+
+      4
+
+      4
+
+      2
+
+      3
+
+      5
+
+      '
+    expected_stdout: 'равно
+
+      '
+  hints:
+  - Сравнивайте средние, не суммы разных длин.
+  - Равенство — отдельное слово.
+  - Значимость не решайте.
+  solution: "n1 = int(input())\nmean1 = sum(int(input()) for _ in range(n1)) // n1\nn2 = int(input())\n\
+    mean2 = sum(int(input()) for _ in range(n2)) // n2\nif mean1 > mean2:\n    print(\"первая\"\
+    )\nelif mean2 > mean1:\n    print(\"вторая\")\nelse:\n    print(\"равно\")\n"
+  explanation: Направление разницы видно без длинной дроби.
+  id: python.stats.stats-effect.t4
+- type: code
+  title: Модуль разности
+  difficulty: 2
+  context: development
+  prompt: Прочитайте две группы. Выведите модуль разности средних.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      3
+
+      5
+
+      2
+
+      7
+
+      9
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      6
+
+      1
+
+      6
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Модуль убирает знак.
+  - Равные средние дают 0.
+  - Деление групп нацело уже обещано данными.
+  solution: 'n1 = int(input())
+
+    mean1 = sum(int(input()) for _ in range(n1)) // n1
+
+    n2 = int(input())
+
+    mean2 = sum(int(input()) for _ in range(n2)) // n2
+
+    diff = mean1 - mean2
+
+    print(diff if diff >= 0 else -diff)
+
+    '
+  explanation: Величина сдвига без знака остаётся размером, не значимостью.
+  id: python.stats.stats-effect.t5
+introduces:
+- id: stats-effect-size
+  title: Размер эффекта
+  summary: Насколько группы различаются, здесь — целая разность средних. Это не значимость.

@@ -1,0 +1,202 @@
+id: python.algorithms.algo-trees
+slug: algo-trees
+section: algorithms
+title: Деревья
+order: 10
+weight: 1
+prerequisites:
+- python.algorithms.algo-recursion
+goal: Хранить узел словарём и сложить значения всех узлов.
+tags:
+- дерево
+theory:
+- Дерево можно собрать вложенным словарём. У узла есть ключи value, left и right. У листа
+  обе ссылки равны None, детей у него нет.
+- Сумма обходит каждый узел один раз. К значению прибавляют сумму левого поддерева и сумму
+  правого. Ссылка None даёт ноль и останавливает эту ветку.
+- Для корня 4, левого узла 1 и правого 7 сумма равна 12. Обход — это рекурсия по словарю,
+  отдельной формы цикла здесь не требуется. Пустой узел не добавляет ни значения, ни лишней
+  единицы к ответу.
+examples:
+- title: Три узла
+  code: "def tree_sum(node):\n    if node is None:\n        return 0\n    return node['value']\
+    \ + tree_sum(node['left']) + tree_sum(node['right'])\nroot = {'value': 4, 'left': {'value':\
+    \ 1, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}\n\
+    print(tree_sum(root))\n"
+  explanation: 4 + 1 + 7 равно 12, пустые ссылки дают ноль.
+- title: Один узел
+  code: "def tree_sum(node):\n    if node is None:\n        return 0\n    return node['value']\
+    \ + tree_sum(node['left']) + tree_sum(node['right'])\nroot = {'value': 5, 'left': None,\
+    \ 'right': None}\nprint(tree_sum(root))\n"
+  explanation: У листа нет детей, сумма равна его собственному значению 5.
+outcomes:
+- хранить узел словарём со ссылками
+- останавливать обход на None
+- складывать значение и обе ветки
+- собирать небольшое дерево из прочитанных чисел
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Пустая ветка
+  difficulty: 1
+  context: neutral
+  prompt: Чему равна сумма поддерева, если ссылка равна None?
+  options:
+  - id: a
+    text: Нулю, это база обхода
+  - id: b
+    text: Значению корня
+  - id: c
+    text: Минус одному, как при ненайденной цене
+  answer: a
+  hints:
+  - Пустое место — не узел.
+  - К сумме оно ничего не добавляет.
+  - Рекурсия на None должна остановиться.
+  solution: a
+  explanation: База возвращает 0, и родитель просто прибавляет остальные части.
+  id: python.algorithms.algo-trees.t1
+- type: predict_output
+  title: Сумма трёх узлов
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '12'
+  - id: b
+    text: '4'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - 'В дереве три значения: 4, 1 и 7.'
+  - None даёт 0.
+  - Сумма трёх чисел равна 12.
+  solution: a
+  explanation: Обход складывает все три узла и получает 12.
+  code: "def tree_sum(node):\n    if node is None:\n        return 0\n    return node['value']\
+    \ + tree_sum(node['left']) + tree_sum(node['right'])\nroot = {'value': 4, 'left': {'value':\
+    \ 1, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}\n\
+    print(tree_sum(root))\n"
+  id: python.algorithms.algo-trees.t2
+- type: code
+  title: Сумма из трёх чисел
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте три целых: корень, левый и правый. Соберите дерево из трёх узлов и выведите
+    сумму значений.'
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      1
+
+      7
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '5
+
+      0
+
+      0
+
+      '
+    expected_stdout: '5
+
+      '
+  hints:
+  - У листьев left и right равны None.
+  - Сложите value, левую сумму и правую.
+  - Печатайте возврат функции.
+  solution: "def tree_sum(node):\n    if node is None:\n        return 0\n    return node['value']\
+    \ + tree_sum(node['left']) + tree_sum(node['right'])\nroot_v = int(input())\nleft_v =\
+    \ int(input())\nright_v = int(input())\nroot = {'value': root_v, 'left': {'value': left_v,\
+    \ 'left': None, 'right': None}, 'right': {'value': right_v, 'left': None, 'right': None}}\n\
+    print(tree_sum(root))\n"
+  explanation: Три узла дают сумму трёх прочитанных чисел.
+  id: python.algorithms.algo-trees.t3
+- type: code
+  title: Только левый ребёнок
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте два целых: корень и левый узел. Правой ссылки нет, там None. Выведите
+    сумму.'
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      1
+
+      '
+    expected_stdout: '5
+
+      '
+  - stdin: '10
+
+      -2
+
+      '
+    expected_stdout: '8
+
+      '
+  hints:
+  - Правый ребёнок корня — None.
+  - Левый узел сам является листом.
+  - Сумма двух value.
+  solution: "def tree_sum(node):\n    if node is None:\n        return 0\n    return node['value']\
+    \ + tree_sum(node['left']) + tree_sum(node['right'])\nroot = {'value': int(input()), 'left':\
+    \ {'value': int(input()), 'left': None, 'right': None}, 'right': None}\nprint(tree_sum(root))\n"
+  explanation: Правая ветка даёт ноль, складываются корень и левый узел.
+  id: python.algorithms.algo-trees.t4
+- type: code
+  title: Левый узел по желанию
+  difficulty: 2
+  context: development
+  prompt: Прочитайте значение корня и 1 или 0. Если пришла 1, следующей строкой прочитайте
+    левого ребёнка. Правого нет. Выведите сумму.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      1
+
+      1
+
+      '
+    expected_stdout: '5
+
+      '
+  - stdin: '4
+
+      0
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Ноль во второй строке значит, что левого узла нет.
+  - Единица требует ещё одно число.
+  - Сумму всё равно считает одна функция.
+  solution: "def tree_sum(node):\n    if node is None:\n        return 0\n    return node['value']\
+    \ + tree_sum(node['left']) + tree_sum(node['right'])\nvalue = int(input())\nhas_left =\
+    \ int(input())\nleft = None\nif has_left == 1:\n    left = {'value': int(input()), 'left':\
+    \ None, 'right': None}\nroot = {'value': value, 'left': left, 'right': None}\nprint(tree_sum(root))\n"
+  explanation: Отсутствующая ветка остаётся None и добавляет к сумме ноль.
+  id: python.algorithms.algo-trees.t5
+introduces:
+- id: algo-tree
+  title: Дерево
+  summary: Узел со значением и ссылками на левое и правое поддеревья. Пустая ссылка равна
+    None.

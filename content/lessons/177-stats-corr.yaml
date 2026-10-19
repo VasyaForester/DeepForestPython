@@ -1,0 +1,271 @@
+id: python.stats.stats-corr
+slug: stats-corr
+section: stats
+title: Корреляция
+order: 6
+weight: 1
+prerequisites:
+- python.stats.stats-ci
+goal: Определять знак совместного хода двух рядов одним словом.
+tags:
+- корреляция
+theory:
+- 'Корреляция говорит, ходят ли два ряда вместе. Положительный знак: большие с большими. Отрицательный:
+  большие с меньшими. Ноль этой суммы: линейного совместного хода не видно.'
+- Знак совпадает со знаком суммы (x - среднее x) * (y - среднее y). Её можно посчитать целым
+  выражением n * сумма произведений - сумма x * сумма y и не печатать длинный коэффициент.
+- Коэффициент Пирсона ещё делит эту сумму на разбросы. На знак при ненулевых разбросах деление
+  не влияет. Модуль statistics не используется.
+examples:
+- title: Вместе растут
+  code: 'xs = [1, 2, 3]
+
+    ys = [2, 4, 6]
+
+    n = len(xs)
+
+    score = n * sum(x * y for x, y in zip(xs, ys)) - sum(xs) * sum(ys)
+
+    print("положительная" if score > 0 else "отрицательная")
+
+    '
+  explanation: Оба ряда растут. Целая сумма положительна, слово — положительная.
+- title: Встречный ход
+  code: 'xs = [1, 2, 3]
+
+    ys = [6, 4, 2]
+
+    n = len(xs)
+
+    score = n * sum(x * y for x, y in zip(xs, ys)) - sum(xs) * sum(ys)
+
+    print("отрицательная" if score < 0 else "положительная")
+
+    '
+  explanation: Второй ряд падает, пока первый растёт. Знак отрицательный.
+outcomes:
+- определять знак совместного хода
+- считать целую сумму вместо длинного коэффициента
+- не принимать корреляцию за причину
+- называть нулевой знак отдельно
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что не говорит знак
+  difficulty: 1
+  context: neutral
+  prompt: Про высоту елей и их цену получился положительный знак. Что из этого следует?
+  options:
+  - id: a
+    text: Ряды в этих данных ходят вместе, причина не доказана
+  - id: b
+    text: Цена точно вызвана высотой
+  - id: c
+    text: Ряды обязаны идти в противоположные стороны
+  answer: a
+  hints:
+  - Знак описывает совместный ход.
+  - Причину знак не устанавливает.
+  - Противоположный ход дал бы другой знак.
+  solution: a
+  explanation: Положительная корреляция — не причинность.
+  id: python.stats.stats-corr.t1
+- type: predict_output
+  title: Знак роста
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: положительная
+  - id: b
+    text: отрицательная
+  - id: c
+    text: ноль
+  answer: a
+  hints:
+  - Оба ряда возрастают.
+  - Целая сумма больше нуля.
+  - Слово берётся по знаку.
+  solution: a
+  explanation: Совместный рост даёт слово «положительная».
+  code: 'xs = [1, 2, 3]
+
+    ys = [2, 4, 6]
+
+    n = len(xs)
+
+    score = n * sum(x * y for x, y in zip(xs, ys)) - sum(xs) * sum(ys)
+
+    print("положительная" if score > 0 else "ноль")
+
+    '
+  id: python.stats.stats-corr.t2
+- type: code
+  title: Знак двух рядов
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте n, затем n пар: строка x и строка y. Выведите положительная, отрицательная
+    или ноль по знаку целой суммы.'
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      2
+
+      2
+
+      4
+
+      3
+
+      6
+
+      '
+    expected_stdout: 'положительная
+
+      '
+  - stdin: '3
+
+      1
+
+      6
+
+      2
+
+      4
+
+      3
+
+      2
+
+      '
+    expected_stdout: 'отрицательная
+
+      '
+  hints:
+  - Копите оба ряда.
+  - Формула целая, без дроби.
+  - Ноль печатается отдельным словом.
+  solution: "n = int(input())\nxs = []\nys = []\nfor _ in range(n):\n    xs.append(int(input()))\n\
+    \    ys.append(int(input()))\nscore = n * sum(x * y for x, y in zip(xs, ys)) - sum(xs)\
+    \ * sum(ys)\nif score > 0:\n    print(\"положительная\")\nelif score < 0:\n    print(\"\
+    отрицательная\")\nelse:\n    print(\"ноль\")\n"
+  explanation: Слово заменяет длинный коэффициент.
+  id: python.stats.stats-corr.t3
+- type: code
+  title: Плоский ряд
+  difficulty: 2
+  context: development
+  prompt: Прочитайте пары так же. Второй ряд может не меняться. Выведите то же слово знака.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      5
+
+      2
+
+      5
+
+      3
+
+      5
+
+      '
+    expected_stdout: 'ноль
+
+      '
+  - stdin: '2
+
+      1
+
+      4
+
+      2
+
+      8
+
+      '
+    expected_stdout: 'положительная
+
+      '
+  hints:
+  - Одинаковые y дают нулевую сумму.
+  - Растущие пары дают положительное слово.
+  - Дробь не печатайте.
+  solution: "n = int(input())\nxs = []\nys = []\nfor _ in range(n):\n    xs.append(int(input()))\n\
+    \    ys.append(int(input()))\nscore = n * sum(x * y for x, y in zip(xs, ys)) - sum(xs)\
+    \ * sum(ys)\nif score > 0:\n    print(\"положительная\")\nelif score < 0:\n    print(\"\
+    отрицательная\")\nelse:\n    print(\"ноль\")\n"
+  explanation: 'Нулевой знак честно говорит: линейного хода вместе нет.'
+  id: python.stats.stats-corr.t4
+- type: code
+  title: Встречные цены
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n пар день и остаток на складе. Выведите слово знака той же формулой.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      6
+
+      2
+
+      4
+
+      3
+
+      2
+
+      '
+    expected_stdout: 'отрицательная
+
+      '
+  - stdin: '3
+
+      1
+
+      2
+
+      2
+
+      4
+
+      3
+
+      6
+
+      '
+    expected_stdout: 'положительная
+
+      '
+  hints:
+  - День и остаток — обычные два ряда.
+  - Падение остатка при росте дня даёт отрицательное слово.
+  - Сравнивайте сумму с нулём.
+  solution: "n = int(input())\nxs = []\nys = []\nfor _ in range(n):\n    xs.append(int(input()))\n\
+    \    ys.append(int(input()))\nscore = n * sum(x * y for x, y in zip(xs, ys)) - sum(xs)\
+    \ * sum(ys)\nif score > 0:\n    print(\"положительная\")\nelif score < 0:\n    print(\"\
+    отрицательная\")\nelse:\n    print(\"ноль\")\n"
+  explanation: Знак читается одинаково для высот, цен и остатков.
+  id: python.stats.stats-corr.t5
+introduces:
+- id: stats-covariance-sign
+  title: Знак корреляции
+  summary: Положительный, отрицательный или нулевой совместный ход двух рядов. Считается по
+    знаку суммы произведений отклонений.

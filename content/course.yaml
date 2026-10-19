@@ -32,125 +32,125 @@ sections:
     slug: functions
     order: 4
     title: Функции и области видимости
-    status: planned
+    status: published
     planned_lessons: 11
     summary: def, параметры, return, значения по умолчанию, args и kwargs, области видимости, первые аннотации типов.
   - id: algorithms
     slug: algorithms
     order: 5
     title: Алгоритмы и структуры данных
-    status: planned
+    status: published
     planned_lessons: 15
     summary: Big O, хеш-таблицы, стек, очередь, поиск, сортировки, рекурсия, деревья, BFS, DFS, графы, жадные алгоритмы и введение в динамическое программирование.
   - id: files
     slug: files
     order: 6
     title: Файлы, сериализация и модули
-    status: planned
+    status: published
     planned_lessons: 11
     summary: with, pathlib, кодировки, CSV, JSON, datetime, re, collections, secrets и собственный пакет.
   - id: errors
     slug: errors
     order: 7
     title: Исключения, отладка и тестирование
-    status: planned
+    status: published
     planned_lessons: 11
     summary: Traceback, try/except/finally, свои исключения, logging, отладчик, pytest, fixtures, параметризация, моки и coverage.
   - id: oop
     slug: oop
     order: 8
     title: Объектно-ориентированное программирование
-    status: planned
+    status: published
     planned_lessons: 10
     summary: Классы, состояние, методы, композиция, наследование, свойства, dunder-методы и dataclasses.
   - id: advanced
     slug: advanced
     order: 9
     title: Продвинутый Python
-    status: planned
+    status: published
     planned_lessons: 11
     summary: Итераторы, генераторы, замыкания, декораторы, контекстные менеджеры, functools, itertools, дескрипторы и match.
   - id: cli
     slug: cli
     order: 10
     title: Командная строка, окружение и пакеты
-    status: planned
+    status: published
     planned_lessons: 9
     summary: Терминал, пути, запуск Python, python -m, версии, venv, pip, pyproject.toml, зависимости и переменные окружения.
   - id: github
     slug: github
     order: 11
     title: Git и GitHub
-    status: planned
+    status: published
     planned_lessons: 9
     summary: init, commit, ветки, merge, rebase, remote, pull request, конфликты, code review и Actions.
   - id: http
     slug: http
     order: 12
     title: HTTP, веб и API
-    status: planned
+    status: published
     planned_lessons: 11
     summary: URL и параметры, заголовки, коды ответа, httpx, таймауты, повторы, пагинация, лимиты, авторизация, OpenAPI и вебхуки.
   - id: sql
     slug: sql
     order: 13
     title: SQL и базы данных
-    status: planned
+    status: published
     planned_lessons: 15
     summary: SELECT, GROUP BY, JOIN, подзапросы, CTE, оконные функции, индексы, ключи, транзакции, EXPLAIN, SQLAlchemy и миграции Alembic.
   - id: data
     slug: data
     order: 14
     title: Jupyter, NumPy и Pandas
-    status: planned
+    status: published
     planned_lessons: 17
     summary: Ноутбук и воспроизводимость, массивы и векторизация, DataFrame, loc и iloc, пропуски, groupby, merge, pivot, даты и экспорт.
   - id: viz
     slug: viz
     order: 15
     title: Визуализация данных
-    status: planned
+    status: published
     planned_lessons: 9
     summary: matplotlib, seaborn, выбор типа графика, подписи, несколько графиков, распределения и временные ряды.
   - id: stats
     slug: stats
     order: 16
     title: Статистика для анализа данных
-    status: planned
+    status: published
     planned_lessons: 13
     summary: Описательная статистика, выборки, распределения, доверительные интервалы, корреляция, проверка гипотез, A/B-тесты и простая регрессия.
   - id: performance
     slug: performance
     order: 17
     title: Производительность и конкурентное выполнение
-    status: planned
+    status: published
     planned_lessons: 11
     summary: Измерение, профилирование, память, задачи I/O и CPU, threading, GIL, multiprocessing, futures, async, await и asyncio.
   - id: backend
     slug: backend
     order: 18
     title: Backend на FastAPI
-    status: planned
+    status: published
     planned_lessons: 13
     summary: Маршруты, Pydantic, валидация, зависимости, база данных, аутентификация, ошибки, middleware, OpenAPI и тесты. Flask — один обзорный урок.
   - id: engineering
     slug: engineering
     order: 19
     title: Инженерные практики и безопасность
-    status: planned
+    status: published
     planned_lessons: 13
     summary: Структура проекта, конфигурация, типизация и mypy, линтеры, pre-commit, логи, секреты, Docker, CI, мониторинг и безопасная разработка.
   - id: vibe
     slug: vibe
     order: 20
     title: Бонус. Разработка с ИИ-помощником
-    status: planned
+    status: published
     planned_lessons: 5
     summary: Постановка задачи, контекст, генерация, проверка, тесты, отладка, рефакторинг, безопасность и code review.
   - id: capstone
     slug: capstone
     order: 21
     title: Финальный проект и диплом
-    status: planned
+    status: published
     planned_lessons: 10
     summary: Постановка, архитектура, реализация, тесты, развёртывание, защита и диплом.

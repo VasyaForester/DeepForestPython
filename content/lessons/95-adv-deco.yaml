@@ -1,0 +1,174 @@
+id: python.advanced.adv-deco
+slug: adv-deco
+section: advanced
+title: Декораторы
+order: 5
+weight: 1
+prerequisites:
+- python.advanced.adv-closure
+goal: Обернуть функцию другой функцией через @.
+tags:
+- декоратор
+- '@'
+theory:
+- Декоратор — функция, которая принимает функцию и возвращает новую. @shout над greet подменяет
+  greet на результат shout(greet). Тот же знак @ стоит у property.
+- Внутри обычно описывают wrapper. Он вызывает исходную функцию и меняет результат. shout
+  делает буквы верхнего регистра уже после greet.
+- Исходная функция не знает об обёртке. greet по-прежнему собирает «привет, имя», а верхний
+  регистр добавляет декоратор.
+examples:
+- title: Верхний регистр
+  code: "def shout(fn):\n    def wrapper(name):\n        return fn(name).upper()\n    return\
+    \ wrapper\n@shout\ndef greet(name):\n    return 'привет, ' + name\nprint(greet('мир'))\n"
+  explanation: greet собирает привет, мир. Обёртка переводит всю строку в верхний регистр.
+- title: Двойная цена
+  code: "def twice(fn):\n    def wrapper(n):\n        return fn(n) + fn(n)\n    return wrapper\n\
+    @twice\ndef price(n):\n    return n * 10\nprint(price(3))\n"
+  explanation: price(3) равно 30. Декоратор складывает результат с самим собой и получает
+    60.
+outcomes:
+- принимать функцию в декораторе
+- возвращать обёртку
+- ставить @ над функцией
+- менять результат, не трогая исходный расчёт
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает @
+  difficulty: 1
+  context: neutral
+  prompt: Что означает @shout над функцией greet?
+  options:
+  - id: a
+    text: greet заменяется на результат shout(greet)
+  - id: b
+    text: shout вызывается вместо print
+  - id: c
+    text: greet удаляется из программы
+  answer: a
+  hints:
+  - Декоратор получает исходную функцию.
+  - Он возвращает обёртку.
+  - Дальше имя greet указывает на обёртку.
+  solution: a
+  explanation: Запись с @ вызывает декоратор один раз при описании функции.
+  id: python.advanced.adv-deco.t1
+- type: predict_output
+  title: Приветствие
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: привет, мир
+  - id: b
+    text: ПРИВЕТ, МИР
+  - id: c
+    text: мир
+  answer: b
+  hints:
+  - greet собирает строку в нижнем регистре.
+  - wrapper вызывает upper.
+  - Имя тоже попадает в эту строку.
+  solution: b
+  explanation: Вся фраза печатается как ПРИВЕТ, МИР.
+  code: "def shout(fn):\n    def wrapper(name):\n        return fn(name).upper()\n    return\
+    \ wrapper\n@shout\ndef greet(name):\n    return 'привет, ' + name\nprint(greet('мир'))\n"
+  id: python.advanced.adv-deco.t2
+- type: code
+  title: Громкое приветствие
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя. Декоратор shout переводит результат greet в верхний регистр. Выведите
+    строку.
+  starter_code: ''
+  tests:
+  - stdin: 'мир
+
+      '
+    expected_stdout: 'ПРИВЕТ, МИР
+
+      '
+  - stdin: 'лев
+
+      '
+    expected_stdout: 'ПРИВЕТ, ЛЕВ
+
+      '
+  hints:
+  - '@shout стоит сразу над def greet.'
+  - wrapper возвращает upper.
+  - В greet имя добавляется после запятой.
+  solution: "def shout(fn):\n    def wrapper(name):\n        return fn(name).upper()\n   \
+    \ return wrapper\n@shout\ndef greet(name):\n    return 'привет, ' + name\nprint(greet(input()))\n"
+  explanation: мир становится ПРИВЕТ, МИР. лев становится ПРИВЕТ, ЛЕВ.
+  id: python.advanced.adv-deco.t3
+- type: code
+  title: Двойная стоимость
+  difficulty: 2
+  context: business
+  prompt: Прочитайте число. Декоратор twice складывает результат price с самим собой. price
+    считает n * 10. Выведите итог.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '60
+
+      '
+  - stdin: '4
+
+      '
+    expected_stdout: '80
+
+      '
+  hints:
+  - wrapper вызывает fn дважды.
+  - price не знает про удвоение.
+  - 3 * 10 * 2 равно 60.
+  solution: "def twice(fn):\n    def wrapper(n):\n        return fn(n) + fn(n)\n    return\
+    \ wrapper\n@twice\ndef price(n):\n    return n * 10\nprint(price(int(input())))\n"
+  explanation: 3 даёт 60. 4 даёт 80.
+  id: python.advanced.adv-deco.t4
+- type: code
+  title: Пометка склада
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте название. Декоратор mark дописывает к результату label слово ок. Выведите
+    строку.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'склад ель ок
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'склад сосна ок
+
+      '
+  hints:
+  - '@mark стоит над label.'
+  - wrapper вызывает исходную функцию.
+  - Слово ок добавляйте в обёртке.
+  solution: "def mark(fn):\n    def wrapper(name):\n        return fn(name) + ' ок'\n    return\
+    \ wrapper\n@mark\ndef label(name):\n    return 'склад ' + name\nprint(label(input()))\n"
+  explanation: Для ели получится склад ель ок.
+  id: python.advanced.adv-deco.t5
+introduces:
+- id: adv-deco.decorator
+  title: Декоратор
+  summary: Функция, которая принимает функцию и возвращает обёртку. @name записывает эту обёртку
+    под тем же именем.

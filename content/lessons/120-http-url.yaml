@@ -1,0 +1,207 @@
+id: python.http.http-url
+slug: http-url
+section: http
+title: URL
+order: 1
+weight: 1
+prerequisites:
+- python.github.git-review
+goal: Разделить адрес на схему, хост и путь.
+tags:
+- URL
+- схема
+- хост
+theory:
+- Адрес https://sklad.example/orders состоит из схемы https, хоста sklad.example и пути /orders.
+  Двойной слэш после двоеточия отделяет схему от остального.
+- 'Пакет urllib в этих задачах не используют: строку режут split. Сначала по ://, затем хост
+  и путь по первому одинарному слэшу.'
+- Путь в ответе начинается с /. У адреса без пути в задачах всегда есть хотя бы один слэш
+  после хоста.
+examples:
+- title: Три части
+  code: 'url = ''https://sklad.example/orders''
+
+    scheme, rest = url.split(''://'', 1)
+
+    host, path = rest.split(''/'', 1)
+
+    print(scheme)
+
+    print(host)
+
+    print(''/'' + path)
+
+    '
+  explanation: Схема https, хост sklad.example, путь /orders.
+- title: Только хост
+  code: 'url = ''http://api.example/health''
+
+    rest = url.split(''://'', 1)[1]
+
+    print(rest.split(''/'', 1)[0])
+
+    '
+  explanation: После схемы до первого слэша остаётся api.example.
+outcomes:
+- делить URL на схему, хост и путь
+- находить схему до ://
+- возвращать путь с ведущим слэшем
+- разбирать адрес строками, без urllib
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Части адреса
+  difficulty: 1
+  context: neutral
+  prompt: В адресе https://sklad.example/orders что является хостом?
+  options:
+  - id: a
+    text: sklad.example
+  - id: b
+    text: https
+  - id: c
+    text: /orders
+  answer: a
+  hints:
+  - https — схема до ://.
+  - Путь начинается со слэша.
+  - Хост стоит между схемой и путём.
+  solution: a
+  explanation: Хост — имя машины sklad.example.
+  id: python.http.http-url.t1
+- type: predict_output
+  title: Имя хоста
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: sklad.example
+  - id: b
+    text: https
+  - id: c
+    text: /orders
+  answer: a
+  hints:
+  - Сначала отрезают схему.
+  - Дальше берут кусок до слэша.
+  - Путь в этот print не входит.
+  solution: a
+  explanation: Хост этого адреса — sklad.example.
+  code: 'url = ''https://sklad.example/orders''
+
+    rest = url.split(''://'', 1)[1]
+
+    print(rest.split(''/'', 1)[0])
+
+    '
+  id: python.http.http-url.t2
+- type: code
+  title: Схема
+  difficulty: 2
+  context: development
+  prompt: Прочитайте URL и выведите схему до ://.
+  starter_code: ''
+  tests:
+  - stdin: 'https://sklad.example/orders
+
+      '
+    expected_stdout: 'https
+
+      '
+  - stdin: 'http://api.example/health
+
+      '
+    expected_stdout: 'http
+
+      '
+  hints:
+  - Режьте по :// один раз.
+  - Схема — левая часть.
+  - Слэши схемы не печатайте.
+  solution: 'url = input().strip()
+
+    print(url.split(''://'', 1)[0])
+
+    '
+  explanation: Схема — слово перед ://.
+  id: python.http.http-url.t3
+- type: code
+  title: Хост
+  difficulty: 2
+  context: development
+  prompt: Прочитайте URL и выведите хост.
+  starter_code: ''
+  tests:
+  - stdin: 'https://sklad.example/orders
+
+      '
+    expected_stdout: 'sklad.example
+
+      '
+  - stdin: 'http://api.example/health
+
+      '
+    expected_stdout: 'api.example
+
+      '
+  hints:
+  - Сначала уберите схему.
+  - Хост — до следующего слэша.
+  - Путь отбросьте.
+  solution: 'url = input().strip()
+
+    rest = url.split(''://'', 1)[1]
+
+    print(rest.split(''/'', 1)[0])
+
+    '
+  explanation: Хост стоит сразу после ://.
+  id: python.http.http-url.t4
+- type: code
+  title: Путь
+  difficulty: 2
+  context: development
+  prompt: Прочитайте URL и выведите путь, начиная со слэша.
+  starter_code: ''
+  tests:
+  - stdin: 'https://sklad.example/orders
+
+      '
+    expected_stdout: '/orders
+
+      '
+  - stdin: 'http://api.example/health
+
+      '
+    expected_stdout: '/health
+
+      '
+  hints:
+  - Правая часть после хоста не содержит ведущий слэш.
+  - Верните его в печати.
+  - Хвост вроде orders/12 тоже часть пути.
+  solution: 'url = input().strip()
+
+    rest = url.split(''://'', 1)[1]
+
+    path = rest.split(''/'', 1)[1]
+
+    print(''/'' + path)
+
+    '
+  explanation: Путь начинается с / и включает всё после хоста.
+  id: python.http.http-url.t5
+introduces:
+- id: http-url
+  title: URL
+  summary: Адрес из схемы, хоста и пути. В https://sklad.example/orders схема https, хост
+    sklad.example, путь /orders.

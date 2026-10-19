@@ -1,0 +1,242 @@
+id: python.algorithms.algo-binary
+slug: algo-binary
+section: algorithms
+title: Бинарный поиск
+order: 7
+weight: 1
+prerequisites:
+- python.algorithms.algo-linear
+goal: Искать цену в уже отсортированном списке, отбрасывая половину.
+tags:
+- бинарный поиск
+theory:
+- Бинарный поиск требует список, упорядоченный по возрастанию. Смотрят на средний элемент.
+  Если он больше искомого, правая часть уже не нужна, если меньше — отбрасывают левую.
+- Левую и правую границы держат индексами. Пока левая граница не больше правой, середина равна
+  целому от деления суммы границ на 2. Совпадение возвращает индекс, пустой промежуток даёт
+  -1.
+- 'Каждый шаг режет диапазон примерно пополам, поэтому шагов около логарифма длины. На ценах
+  в произвольном порядке метод непригоден: сравнение с серединой тогда ничего не гарантирует.
+  Перед поиском ряд уже должен расти от меньшего к большему.'
+examples:
+- title: Индекс 12
+  code: "def binary(items, target):\n    left = 0\n    right = len(items) - 1\n    while left\
+    \ <= right:\n        mid = (left + right) // 2\n        if items[mid] == target:\n   \
+    \         return mid\n        if items[mid] < target:\n            left = mid + 1\n  \
+    \      else:\n            right = mid - 1\n    return -1\nprint(binary([3, 8, 12, 20],\
+    \ 12))\n"
+  explanation: Середины сужают диапазон, 12 находится на индексе 2.
+- title: Пятёрки нет
+  code: "def binary(items, target):\n    left = 0\n    right = len(items) - 1\n    while left\
+    \ <= right:\n        mid = (left + right) // 2\n        if items[mid] == target:\n   \
+    \         return mid\n        if items[mid] < target:\n            left = mid + 1\n  \
+    \      else:\n            right = mid - 1\n    return -1\nprint(binary([3, 8, 12, 20],\
+    \ 5))\n"
+  explanation: Пятёрка не встречается, границы расходятся, ответ -1.
+outcomes:
+- искать только в упорядоченном списке
+- сужать границы по средней цене
+- возвращать индекс или -1
+- видеть, что шагов около логарифма длины
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда метод годится
+  difficulty: 1
+  context: neutral
+  prompt: Когда бинарный поиск даёт верный индекс?
+  options:
+  - id: a
+    text: Когда список заранее упорядочен по возрастанию
+  - id: b
+    text: Когда все цены равны нулю и список пуст по смыслу задачи
+  - id: c
+    text: Когда цены лежат в произвольном порядке
+  answer: a
+  hints:
+  - Середина должна делить меньшие и большие.
+  - Без порядка отброшенная половина может скрывать ответ.
+  - Пустой список — частный случай, не условие метода.
+  solution: a
+  explanation: Метод опирается на то, что слева числа не больше середины, а справа не меньше.
+  id: python.algorithms.algo-binary.t1
+- type: predict_output
+  title: Где стоит 12
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '-1'
+  - id: c
+    text: '12'
+  answer: a
+  hints:
+  - Список уже отсортирован.
+  - 12 — третий элемент.
+  - Индекс третьего элемента равен 2.
+  solution: a
+  explanation: Число 12 стоит на индексе 2.
+  code: "def binary(items, target):\n    left = 0\n    right = len(items) - 1\n    while left\
+    \ <= right:\n        mid = (left + right) // 2\n        if items[mid] == target:\n   \
+    \         return mid\n        if items[mid] < target:\n            left = mid + 1\n  \
+    \      else:\n            right = mid - 1\n    return -1\nprint(binary([3, 8, 12, 20],\
+    \ 12))\n"
+  id: python.algorithms.algo-binary.t2
+- type: code
+  title: Индекс в упорядоченном ряду
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n целых уже по возрастанию, затем искомое число. Выведите его
+    индекс или -1.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      3
+
+      8
+
+      12
+
+      20
+
+      12
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '3
+
+      1
+
+      2
+
+      4
+
+      3
+
+      '
+    expected_stdout: '-1
+
+      '
+  hints:
+  - Границы включительны, пока left не больше right.
+  - Середину берите целым делением.
+  - Ненайденное число даёт -1.
+  solution: "def binary(items, target):\n    left = 0\n    right = len(items) - 1\n    while\
+    \ left <= right:\n        mid = (left + right) // 2\n        if items[mid] == target:\n\
+    \            return mid\n        if items[mid] < target:\n            left = mid + 1\n\
+    \        else:\n            right = mid - 1\n    return -1\nn = int(input())\nitems =\
+    \ []\nfor _ in range(n):\n    items.append(int(input()))\ntarget = int(input())\nprint(binary(items,\
+    \ target))\n"
+  explanation: Поиск сужает границы, пока не найдёт индекс или не исчерпает диапазон.
+  id: python.algorithms.algo-binary.t3
+- type: code
+  title: Само число или промах
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n целых по возрастанию, затем искомое. Если индекс найден, выведите
+    само число из списка, иначе -1.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      3
+
+      8
+
+      12
+
+      20
+
+      8
+
+      '
+    expected_stdout: '8
+
+      '
+  - stdin: '2
+
+      1
+
+      4
+
+      9
+
+      '
+    expected_stdout: '-1
+
+      '
+  hints:
+  - Сначала получите индекс.
+  - При -1 печатайте -1.
+  - Иначе печатайте элемент по индексу.
+  solution: "def binary(items, target):\n    left = 0\n    right = len(items) - 1\n    while\
+    \ left <= right:\n        mid = (left + right) // 2\n        if items[mid] == target:\n\
+    \            return mid\n        if items[mid] < target:\n            left = mid + 1\n\
+    \        else:\n            right = mid - 1\n    return -1\nn = int(input())\nitems =\
+    \ []\nfor _ in range(n):\n    items.append(int(input()))\ntarget = int(input())\nindex\
+    \ = binary(items, target)\nif index == -1:\n    print(-1)\nelse:\n    print(items[index])\n"
+  explanation: Найденный индекс превращают обратно в цену из того же списка.
+  id: python.algorithms.algo-binary.t4
+- type: code
+  title: Сколько шагов поиска
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n целых по возрастанию, затем искомое. Выведите, сколько раз
+    цикл вычислил середину, пока не нашёл число или не закончился.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      5
+
+      5
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: '4
+
+      3
+
+      8
+
+      12
+
+      20
+
+      20
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Счётчик увеличивайте в начале тела цикла.
+  - На совпадении верните его сразу.
+  - Если число не нашли, верните, сколько середин успели посмотреть.
+  solution: "def steps(items, target):\n    left = 0\n    right = len(items) - 1\n    count\
+    \ = 0\n    while left <= right:\n        count = count + 1\n        mid = (left + right)\
+    \ // 2\n        if items[mid] == target:\n            return count\n        if items[mid]\
+    \ < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\
+    \    return count\nn = int(input())\nitems = []\nfor _ in range(n):\n    items.append(int(input()))\n\
+    target = int(input())\nprint(steps(items, target))\n"
+  explanation: Каждое вычисление середины — один шаг, даже если ответ нашёлся сразу.
+  id: python.algorithms.algo-binary.t5
+introduces:
+- id: algo-binary
+  title: Бинарный поиск
+  summary: 'Поиск в отсортированном списке: каждый шаг отбрасывает половину диапазона.'

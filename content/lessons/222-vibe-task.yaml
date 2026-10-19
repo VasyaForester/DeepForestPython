@@ -1,0 +1,177 @@
+id: python.vibe.vibe-task
+slug: vibe-task
+section: vibe
+title: Постановка задачи
+order: 1
+weight: 1
+prerequisites:
+- python.engineering.eng-review
+goal: Проверить, что в однострочной задаче есть два содержательных слова.
+tags:
+- задача
+- вход
+- выход
+theory:
+- До генерации человек сам называет вход, выход и предел. Иначе помощник додумывает задачу,
+  а проверять будет нечего.
+- 'В упражнении проверка грубая и честная: в строке минимум два слова, и каждое не короче
+  двух букв. Это замена пары «действие и предмет», а не разбор языка.'
+- Короткая строка печатает «уточните», достаточная — «ясно». Текст задачи принимает человек,
+  даже если дальше черновик напишет помощник.
+examples:
+- title: Два слова
+  code: "def judge(task):\n    words = task.split()\n    if len(words) >= 2 and len(words[0])\
+    \ >= 2 and len(words[1]) >= 2:\n        print('ясно')\n    else:\n        print('уточните')\n\
+    judge('посчитать сумму')\n"
+  explanation: Два слова, оба длиннее одной буквы, печатается ясно.
+- title: Одно слово
+  code: "def judge(task):\n    words = task.split()\n    if len(words) >= 2 and len(words[0])\
+    \ >= 2 and len(words[1]) >= 2:\n        print('ясно')\n    else:\n        print('уточните')\n\
+    judge('сумма')\n"
+  explanation: Слова одного мало, программа просит уточнить задачу.
+outcomes:
+- называть вход, выход и предел до черновика
+- требовать два содержательных слова
+- печатать ясно или уточните
+- оставлять принятие задачи за человеком
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что задаёт человек
+  difficulty: 1
+  context: neutral
+  prompt: Что нужно зафиксировать до генерации черновика?
+  options:
+  - id: a
+    text: Вход, выход и предел задачи
+  - id: b
+    text: Только название файла
+  - id: c
+    text: Готовый текст функции без примера
+  answer: a
+  hints:
+  - Без входа и выхода нечего сверять.
+  - Имя файла само задачу не описывает.
+  - Пример нужен, но он не заменяет постановку.
+  solution: a
+  explanation: Человек заранее говорит, что приходит, что получается и где граница.
+  id: python.vibe.vibe-task.t1
+- type: predict_output
+  title: Короткая постановка
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: уточните
+  - id: b
+    text: ясно
+  - id: c
+    text: сумма
+  answer: a
+  hints:
+  - split даёт одно слово.
+  - Нужны минимум два.
+  - Само слово на экран не выводится.
+  solution: a
+  explanation: Одной суммы мало, программа просит уточнение.
+  code: "def judge(task):\n    words = task.split()\n    if len(words) >= 2 and len(words[0])\
+    \ >= 2 and len(words[1]) >= 2:\n        print('ясно')\n    else:\n        print('уточните')\n\
+    judge('сумма')\n"
+  id: python.vibe.vibe-task.t2
+- type: code
+  title: Строка задачи
+  difficulty: 2
+  context: development
+  prompt: Прочитайте одну строку. Если в ней хотя бы два слова и каждое из первых двух не
+    короче двух букв, выведите ясно, иначе уточните.
+  starter_code: ''
+  tests:
+  - stdin: 'посчитать сумму
+
+      '
+    expected_stdout: 'ясно
+
+      '
+  - stdin: 'сумма
+
+      '
+    expected_stdout: 'уточните
+
+      '
+  hints:
+  - Режьте строку по пробелам.
+  - Проверяйте длину первых двух слов.
+  - Одно слово — это уточните.
+  solution: "def judge(task):\n    words = task.split()\n    if len(words) >= 2 and len(words[0])\
+    \ >= 2 and len(words[1]) >= 2:\n        print('ясно')\n    else:\n        print('уточните')\n\
+    judge(input())\n"
+  explanation: Грубая проверка отделяет пустую постановку от строки с действием и предметом.
+  id: python.vibe.vibe-task.t3
+- type: code
+  title: Короткое слово
+  difficulty: 2
+  context: development
+  prompt: То же правило. Слово из одной буквы не считается содержательным.
+  starter_code: ''
+  tests:
+  - stdin: 'и сумма
+
+      '
+    expected_stdout: 'уточните
+
+      '
+  - stdin: 'сложить остаток
+
+      '
+    expected_stdout: 'ясно
+
+      '
+  hints:
+  - Союз из одной буквы не проходит порог длины.
+  - Два нормальных слова дают ясно.
+  - Печатайте одно слово ответа.
+  solution: "def judge(task):\n    words = task.split()\n    if len(words) >= 2 and len(words[0])\
+    \ >= 2 and len(words[1]) >= 2:\n        print('ясно')\n    else:\n        print('уточните')\n\
+    judge(input())\n"
+  explanation: Длины слов хватает, чтобы отсечь обрывок, но это не разбор речи.
+  id: python.vibe.vibe-task.t4
+- type: code
+  title: Лишние слова
+  difficulty: 2
+  context: development
+  prompt: 'То же правило. Третье слово не мешает: смотрите на первые два.'
+  starter_code: ''
+  tests:
+  - stdin: 'посчитать сумму склада
+
+      '
+    expected_stdout: 'ясно
+
+      '
+  - stdin: 'ок
+
+      '
+    expected_stdout: 'уточните
+
+      '
+  hints:
+  - Лишние слова не делают ясную строку неясной.
+  - Одно короткое слово — уточните.
+  - Порог длины равен двум буквам.
+  solution: "def judge(task):\n    words = task.split()\n    if len(words) >= 2 and len(words[0])\
+    \ >= 2 and len(words[1]) >= 2:\n        print('ясно')\n    else:\n        print('уточните')\n\
+    judge(input())\n"
+  explanation: Задача может быть длиннее двух слов, лишь бы начало было содержательным.
+  id: python.vibe.vibe-task.t5
+introduces:
+- id: vibe-spec
+  title: Постановка
+  summary: Вход, выход и предел, которые человек записывает до генерации черновика.

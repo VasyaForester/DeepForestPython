@@ -1,0 +1,261 @@
+id: python.sql.sql-window
+slug: sql-window
+section: sql
+title: Оконные функции
+order: 10
+weight: 1
+prerequisites:
+- python.sql.sql-cte
+goal: Пронумеровать деревья и посчитать сумму города, не схлопывая строки.
+tags:
+- ROW_NUMBER
+- OVER
+- PARTITION BY
+theory:
+- Оконная функция считает значение по набору строк и не схлопывает их, в отличие от GROUP
+  BY. ROW_NUMBER() OVER (ORDER BY height DESC) нумерует деревья с самого высокого.
+- SUM(amount) OVER (PARTITION BY city) пишет сумму города в каждую его строку. У заказа Москвы
+  рядом окажется 25, у заказа Казани — 16, а сами заказы не исчезнут.
+- Номер и сумму достают из подзапроса, где окно уже посчитано. В таблице по-прежнему ель 12,
+  сосна 20, берёза 30.
+examples:
+- title: Номер один
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    row = con.execute(''select name from (select name, row_number() over (order by height
+    desc) as n from trees) where n = 1'').fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Окно сортирует по убыванию высоты, номер 1 получает берёза.
+- title: Сумма рядом со строкой
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table orders(city text, amount int)'')
+
+    con.executemany(''insert into orders values (?, ?)'', [(''Москва'', 10), (''Москва'',
+    15)])
+
+    row = con.execute(''select sum(amount) over (partition by city) from orders'').fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Обе московские строки видят одну и ту же сумму раздела, 25.
+outcomes:
+- нумеровать строки через ROW_NUMBER
+- задавать порядок окна в OVER
+- считать SUM по PARTITION BY
+- не путать окно со свёрткой GROUP BY
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем окно не GROUP BY
+  difficulty: 1
+  context: neutral
+  prompt: Чем ROW_NUMBER() OVER (ORDER BY height DESC) отличается от GROUP BY?
+  options:
+  - id: a
+    text: Нумерует строки и не схлопывает их в одну группу
+  - id: b
+    text: Удаляет столбец height
+  - id: c
+    text: Работает только без SELECT
+  answer: a
+  hints:
+  - GROUP BY уменьшает число строк.
+  - Окно добавляет значение к каждой строке.
+  - OVER задаёт, по какому порядку считать.
+  solution: a
+  explanation: Оконная функция оставляет строки на месте.
+  id: python.sql.sql-window.t1
+- type: predict_output
+  title: Кто первый
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: берёза
+  - id: b
+    text: ель
+  - id: c
+    text: '1'
+  answer: a
+  hints:
+  - Порядок окна — по убыванию высоты.
+  - Самая большая высота — 30.
+  - Печатается имя строки с номером 1.
+  solution: a
+  explanation: Первый номер у берёзы.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    row = con.execute(''select name from (select name, row_number() over (order by height
+    desc) as n from trees) where n = 1'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-window.t2
+- type: code
+  title: Имя по месту
+  difficulty: 2
+  context: development
+  prompt: Прочитайте номер места с 1. Выведите имя дерева с таким ROW_NUMBER по убыванию высоты.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  hints:
+  - Окно упорядочите по height DESC.
+  - Номер фильтруйте снаружи.
+  - Подставьте место через ?.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    rank = int(input())
+
+    query = ''select name from (select name, row_number() over (order by height desc) as n
+    from trees) where n = ?''
+
+    row = con.execute(query, (rank,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Место 1 — берёза, место 2 — сосна.
+  id: python.sql.sql-window.t3
+- type: code
+  title: Место по имени
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и выведите его номер в том же окне.
+  starter_code: ''
+  tests:
+  - stdin: 'берёза
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: 'ель
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Фильтр снаружи ищет имя.
+  - Печатайте столбец номера.
+  - Ель ниже всех и получает номер 3.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    name = input().strip()
+
+    query = ''select n from (select name, row_number() over (order by height desc) as n from
+    trees) where name = ?''
+
+    row = con.execute(query, (name,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Окно нумерует все строки, имя только выбирает одну.
+  id: python.sql.sql-window.t4
+- type: code
+  title: Сумма раздела
+  difficulty: 2
+  context: development
+  prompt: 'Заказы: Москва 10 и 15, Казань 7, 8 и 1. Прочитайте город и выведите сумму его
+    раздела.'
+  starter_code: ''
+  tests:
+  - stdin: 'Москва
+
+      '
+    expected_stdout: '25
+
+      '
+  - stdin: 'Казань
+
+      '
+    expected_stdout: '16
+
+      '
+  hints:
+  - PARTITION BY city делит окно по городам.
+  - LIMIT 1 берёт сумму один раз.
+  - Город фильтруйте через ?.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table orders(city text, amount int)'')
+
+    con.executemany(''insert into orders values (?, ?)'', [(''Москва'', 10), (''Москва'',
+    15), (''Казань'', 7), (''Казань'', 8), (''Казань'', 1)])
+
+    city = input().strip()
+
+    query = ''select total from (select city, sum(amount) over (partition by city) as total
+    from orders) where city = ? limit 1''
+
+    row = con.execute(query, (city,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Сумма раздела одинакова у всех заказов города.
+  id: python.sql.sql-window.t5
+introduces:
+- id: sql-window
+  title: Оконная функция
+  summary: Расчёт по набору строк без свёртки. ROW_NUMBER() OVER (ORDER BY height DESC) нумерует
+    строки.

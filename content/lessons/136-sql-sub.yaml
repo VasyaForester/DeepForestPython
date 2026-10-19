@@ -1,0 +1,226 @@
+id: python.sql.sql-sub
+slug: sql-sub
+section: sql
+title: Подзапросы
+order: 6
+weight: 1
+prerequisites:
+- python.sql.sql-case
+goal: Сравнить строку с результатом другого SELECT.
+tags:
+- подзапрос
+- AVG
+- MAX
+theory:
+- Подзапрос — SELECT внутри другого запроса. SELECT name FROM trees WHERE height > (SELECT
+  AVG(height) FROM trees) оставляет деревья выше средней высоты.
+- В таблице ель 12, сосна 20, берёза 30. Среднее больше 20, поэтому строго выше него только
+  берёза. SELECT MAX(height) и SELECT MIN(height) тоже подзапросы.
+- Внешний запрос видит одно число из внутреннего. Имя снаружи сравнивают уже с этим числом,
+  а не вычисляют среднее в Python.
+examples:
+- title: Выше среднего
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table trees(name\
+    \ text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель', 12),\
+    \ ('сосна', 20), ('берёза', 30)])\nfor row in con.execute('select name from trees where\
+    \ height > (select avg(height) from trees) order by name'):\n    print(row[0])\n"
+  explanation: Среднее трёх высот выше 20, условие проходит только берёза.
+- title: Максимум
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    row = con.execute(''select name from trees where height = (select max(height) from trees)'').fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Внутренний MAX возвращает 30, внешний запрос находит берёзу.
+outcomes:
+- вкладывать SELECT в условие
+- сравнивать высоту со средним
+- находить минимум и максимум подзапросом
+- подписывать одну строку относительно агрегата всей таблицы
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где подзапрос
+  difficulty: 1
+  context: neutral
+  prompt: Что делает скобка в SELECT name FROM trees WHERE height > (SELECT AVG(height) FROM
+    trees)?
+  options:
+  - id: a
+    text: Считает среднее отдельным запросом и сравнивает с ним высоту
+  - id: b
+    text: Удаляет столбец height
+  - id: c
+    text: Сортирует имена по алфавиту
+  answer: a
+  hints:
+  - Внутренний SELECT возвращает одно число.
+  - Внешний WHERE сравнивает каждую высоту с ним.
+  - ORDER BY в этом запросе нет.
+  solution: a
+  explanation: Подзапрос поставляет число для сравнения.
+  id: python.sql.sql-sub.t1
+- type: predict_output
+  title: Имя максимума
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: берёза
+  - id: b
+    text: ель
+  - id: c
+    text: '30'
+  answer: a
+  hints:
+  - MAX возвращает 30.
+  - Эту высоту имеет берёза.
+  - Печатается имя, не число.
+  solution: a
+  explanation: Подзапрос максимума указывает на берёзу.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    row = con.execute(''select name from trees where height = (select max(height) from trees)'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-sub.t2
+- type: code
+  title: Выше или ниже среднего
+  difficulty: 2
+  context: development
+  prompt: Прочитайте above или below. Выведите имена строго выше среднего либо строго ниже,
+    по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: 'above
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  - stdin: 'below
+
+      '
+    expected_stdout: 'ель
+
+      сосна
+
+      '
+  hints:
+  - AVG считайте подзапросом, не в Python.
+  - Для below знак сравнения другой.
+  - ORDER BY name нужен, если строк несколько.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('берёза', 30)])\nmode = input().strip()\nif mode == 'above':\n\
+    \    query = 'select name from trees where height > (select avg(height) from trees) order\
+    \ by name'\nelse:\n    query = 'select name from trees where height < (select avg(height)\
+    \ from trees) order by name'\nfor row in con.execute(query):\n    print(row[0])\n"
+  explanation: Одно и то же среднее служит порогом для обеих сторон.
+  id: python.sql.sql-sub.t3
+- type: code
+  title: Выше ли это дерево
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя. Выведите выше, если его высота больше средней, иначе не выше.
+  starter_code: ''
+  tests:
+  - stdin: 'берёза
+
+      '
+    expected_stdout: 'выше
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'не выше
+
+      '
+  hints:
+  - Подзапрос можно поставить внутрь CASE.
+  - Имя фильтруйте снаружи через ?.
+  - Равенство среднему — уже не выше.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    name = input().strip()
+
+    query = "select case when height > (select avg(height) from trees) then ''выше'' else
+    ''не выше'' end from trees where name = ?"
+
+    row = con.execute(query, (name,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: CASE сравнивает конкретную строку со средним всей таблицы.
+  id: python.sql.sql-sub.t4
+- type: code
+  title: Крайние значения
+  difficulty: 2
+  context: development
+  prompt: Прочитайте max или min. Выведите имя самой большой либо самой маленькой высоты.
+  starter_code: ''
+  tests:
+  - stdin: 'max
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  - stdin: 'min
+
+      '
+    expected_stdout: 'ель
+
+      '
+  hints:
+  - MAX и MIN стоят во внутреннем SELECT.
+  - Внешнее условие — равенство этому числу.
+  - Печатайте имя.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('берёза', 30)])\nword = input().strip()\nif word == 'max':\n  \
+    \  query = 'select name from trees where height = (select max(height) from trees)'\nelse:\n\
+    \    query = 'select name from trees where height = (select min(height) from trees)'\n\
+    row = con.execute(query).fetchone()\nprint(row[0])\n"
+  explanation: Крайнее имя находится через подзапрос, а не через сортировку в Python.
+  id: python.sql.sql-sub.t5
+introduces:
+- id: sql-subquery
+  title: Подзапрос
+  summary: SELECT внутри другого запроса. Внутренний AVG или MAX возвращает число для внешнего
+    условия.

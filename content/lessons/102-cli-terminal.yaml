@@ -1,0 +1,193 @@
+id: python.cli.cli-terminal
+slug: cli-terminal
+section: cli
+title: Терминал
+order: 1
+weight: 1
+prerequisites:
+- python.advanced.adv-match
+goal: Прочитать строку команды и отделить имя от аргументов.
+tags:
+- терминал
+- команда
+- split
+theory:
+- Терминал принимает строку и делит её по пробелам. Первое слово — имя команды, остальные
+  — аргументы. Команда ls показывает файлы текущей папки, команда cd заметки переходит в папку
+  заметки.
+- 'Песочница не запускает команды оболочки. Здесь ту же строку режет split: из ls -l получаются
+  имя ls и аргумент -l.'
+- Один пробел отделяет слова. Если аргумент сам содержит пробел, оболочка требует кавычки;
+  в задачах слова уже разделены одним пробелом.
+examples:
+- title: Имя и аргумент
+  code: 'parts = ''ls -l''.split()
+
+    print(parts[0])
+
+    print(parts[1])
+
+    '
+  explanation: split даёт список ls и -l. Печатаются команда и её аргумент.
+- title: Переход в папку
+  code: 'parts = ''cd заметки''.split()
+
+    print(parts[0])
+
+    print(parts[1])
+
+    '
+  explanation: cd — команда, заметки — папка, в которую она переходит.
+outcomes:
+- делить строку команды методом split
+- отличать имя команды от аргументов
+- узнавать команды ls и cd
+- понимать, что песочница не выполняет оболочку
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Первое слово
+  difficulty: 1
+  context: neutral
+  prompt: В команде cd заметки первое слово — это что?
+  options:
+  - id: a
+    text: Имя команды
+  - id: b
+    text: Содержимое файла заметки
+  - id: c
+    text: Номер версии Python
+  answer: a
+  hints:
+  - Команду пишут в начале строки.
+  - Папка стоит вторым словом.
+  - Версию в cd не передают.
+  solution: a
+  explanation: cd — имя команды, заметки — аргумент.
+  id: python.cli.cli-terminal.t1
+- type: predict_output
+  title: Какое имя
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: ls
+  - id: b
+    text: -l
+  - id: c
+    text: ls -l
+  answer: a
+  hints:
+  - split режет по пробелу.
+  - Индекс 0 — первое слово.
+  - Строка целиком не печатается.
+  solution: a
+  explanation: Первое слово команды ls -l — это ls.
+  code: 'parts = ''ls -l''.split()
+
+    print(parts[0])
+
+    '
+  id: python.cli.cli-terminal.t2
+- type: code
+  title: Имя команды
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку команды и выведите её имя — первое слово.
+  starter_code: ''
+  tests:
+  - stdin: 'ls -l
+
+      '
+    expected_stdout: 'ls
+
+      '
+  - stdin: 'cd заметки
+
+      '
+    expected_stdout: 'cd
+
+      '
+  hints:
+  - Разрежьте строку методом split.
+  - Имя стоит на позиции 0.
+  - Аргументы печатать не нужно.
+  solution: 'parts = input().split()
+
+    print(parts[0])
+
+    '
+  explanation: Первое слово после split — имя команды.
+  id: python.cli.cli-terminal.t3
+- type: code
+  title: Число аргументов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку команды и выведите, сколько у неё аргументов, не считая имя.
+  starter_code: ''
+  tests:
+  - stdin: 'ls -l
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: 'pwd
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Сначала получите список слов.
+  - 'Вычтите единицу: это само имя.'
+  - У pwd список из одного слова.
+  solution: 'parts = input().split()
+
+    print(len(parts) - 1)
+
+    '
+  explanation: Аргументы — все слова, кроме первого.
+  id: python.cli.cli-terminal.t4
+- type: code
+  title: Куда перейти
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку. Если это команда cd, выведите папку. Иначе выведите имя команды.
+  starter_code: ''
+  tests:
+  - stdin: 'cd заметки
+
+      '
+    expected_stdout: 'заметки
+
+      '
+  - stdin: 'ls
+
+      '
+    expected_stdout: 'ls
+
+      '
+  hints:
+  - Сравните первое слово с cd.
+  - Папка — второе слово.
+  - Для другой команды печатайте имя.
+  solution: "parts = input().split()\nif parts[0] == 'cd':\n    print(parts[1])\nelse:\n \
+    \   print(parts[0])\n"
+  explanation: У cd на экран попадает аргумент, у остальных команд — имя.
+  id: python.cli.cli-terminal.t5
+introduces:
+- id: cli-command
+  title: Команда терминала
+  summary: 'Первое слово строки: им вызывают программу, например ls или cd.'
+- id: cli-argument
+  title: Аргумент команды
+  summary: Слово после имени. В cd заметки аргумент — папка заметки.

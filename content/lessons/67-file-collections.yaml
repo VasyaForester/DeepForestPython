@@ -1,0 +1,205 @@
+id: python.files.file-collections
+slug: file-collections
+section: files
+title: collections
+order: 9
+weight: 1
+prerequisites:
+- python.files.file-math
+goal: Считать повторы через Counter и брать первый элемент очереди deque.
+tags:
+- Counter
+- deque
+theory:
+- 'collections.Counter считает, сколько раз встретился каждый элемент. Counter от списка пород
+  работает как словарь: counts["ель"] — число елей, отсутствующая порода даёт 0.'
+- most_common(1) возвращает список пар (элемент, число). Первая пара — самый частый элемент.
+  При равенстве остаётся тот, кто встретился раньше.
+- collections.deque — очередь. append добавляет в конец, popleft снимает с начала. Так первая
+  пришедшая порода уходит первой.
+examples:
+- title: Сколько елей
+  code: 'from collections import Counter
+
+    counts = Counter([''ель'', ''ель'', ''сосна''])
+
+    print(counts[''ель''])
+
+    print(counts[''дуб''])
+
+    '
+  explanation: Ель встретилась дважды. Дуба в списке нет, Counter возвращает 0.
+- title: Очередь
+  code: 'from collections import deque
+
+    line = deque([''ель'', ''сосна''])
+
+    line.append(''дуб'')
+
+    print(line.popleft())
+
+    print(line.popleft())
+
+    '
+  explanation: Дуб встал в конец. Первый popleft забирает ель, второй — сосну.
+outcomes:
+- считать повторы через Counter
+- получать 0 для отсутствующего ключа
+- выбирать самый частый элемент
+- снимать первый элемент deque
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем Counter отличается от списка
+  difficulty: 1
+  context: neutral
+  prompt: Что хранит Counter для списка пород?
+  options:
+  - id: a
+    text: Сколько раз встретилась каждая порода
+  - id: b
+    text: Породы в обратном порядке
+  - id: c
+    text: Только первую породу
+  answer: a
+  hints:
+  - Counter считает повторы.
+  - Порядок очереди — это deque.
+  - Первый элемент сам по себе счётчиком не является.
+  solution: a
+  explanation: По ключу породы лежит число её повторов.
+  id: python.files.file-collections.t1
+- type: predict_output
+  title: Число елей
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: '2'
+  - id: c
+    text: '1'
+  answer: b
+  hints:
+  - В списке три элемента.
+  - Ель записана два раза.
+  - Сосна на счёт ели не влияет.
+  solution: b
+  explanation: Ключ ель равен 2.
+  code: 'from collections import Counter
+
+    print(Counter([''ель'', ''ель'', ''сосна''])[''ель''])
+
+    '
+  id: python.files.file-collections.t2
+- type: code
+  title: Сколько раз
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте строку пород через пробел и выведите, сколько раз встретилась ель.
+  starter_code: ''
+  tests:
+  - stdin: 'ель ель сосна
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: 'сосна дуб
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - split режет строку на слова.
+  - Counter считает слова.
+  - Отсутствующая ель даёт 0.
+  solution: 'from collections import Counter
+
+    print(Counter(input().split())[''ель''])
+
+    '
+  explanation: В первой строке ель дважды, во второй её нет.
+  id: python.files.file-collections.t3
+- type: code
+  title: Самая частая
+  difficulty: 2
+  context: business
+  prompt: Прочитайте строку пород через пробел и выведите ту, которая встретилась чаще всех.
+  starter_code: ''
+  tests:
+  - stdin: 'ель ель сосна
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'дуб сосна сосна
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  hints:
+  - most_common(1) берёт одну пару.
+  - Индекс 0 у пары — само слово.
+  - В примерах лидер один.
+  solution: 'from collections import Counter
+
+    counts = Counter(input().split())
+
+    print(counts.most_common(1)[0][0])
+
+    '
+  explanation: В первой строке лидер ель, во второй сосна.
+  id: python.files.file-collections.t4
+- type: code
+  title: Первый в очереди
+  difficulty: 2
+  context: development
+  prompt: Прочитайте породы через пробел, положите их в deque слева направо и выведите ту,
+    которая стоит в начале.
+  starter_code: ''
+  tests:
+  - stdin: 'ель сосна дуб
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'кедр
+
+      '
+    expected_stdout: 'кедр
+
+      '
+  hints:
+  - deque принимает список слов.
+  - popleft снимает начало.
+  - 'append здесь не нужен: слова уже в очереди.'
+  solution: 'from collections import deque
+
+    line = deque(input().split())
+
+    print(line.popleft())
+
+    '
+  explanation: Первое слово строки и есть начало очереди.
+  id: python.files.file-collections.t5
+introduces:
+- id: file-collections.counter
+  title: Counter
+  summary: Словарь счётчиков. По элементу лежит, сколько раз он встретился.
+- id: file-collections.deque
+  title: deque
+  summary: Очередь. popleft забирает элемент, который добавили раньше других.

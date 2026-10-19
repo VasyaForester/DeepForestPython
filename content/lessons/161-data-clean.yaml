@@ -1,0 +1,211 @@
+id: python.data.data-clean
+slug: data-clean
+section: data
+title: Даты, строки, дубликаты, выбросы
+order: 16
+weight: 1
+prerequisites:
+- python.data.data-pivot
+goal: Почистить края строк, повторы, невозможные числа и прочитать дату.
+tags:
+- очистка
+- даты
+- дубликаты
+theory:
+- 'Перед расчётом текст обрезают: strip снимает пробелы по краям. Повтор имени ловят множеством.
+  Выброс — значение за заранее названным порогом, его не смешивают с обычным максимумом, пока
+  порог не задан.'
+- Дату в ISO, например 2024-03-01, разбирает datetime.date.fromisoformat. В таком виде строки
+  дат ещё и сравниваются по порядку календаря.
+- 'Эти шаги делают и в pandas: str.strip, drop_duplicates, отбор по порогу и to_datetime.
+  Упражнение считает то же списками и модулем datetime, потому что pandas нет в среде браузера.'
+examples:
+- title: Обрезка и повторы
+  code: "names = [\" ель\", \"ель\", \"сосна \"]\nseen = set()\nclean = []\nfor name in names:\n\
+    \    item = name.strip()\n    if item not in seen:\n        seen.add(item)\n        clean.append(item)\n\
+    print(len(clean))\nprint(clean[0])\n"
+  explanation: Пробелы сняты, повтор ели схлопнут. Остались ель и сосна.
+- title: Год посадки
+  code: 'from datetime import date
+
+    day = date.fromisoformat("2024-03-01")
+
+    print(day.year)
+
+    print(day.month)
+
+    '
+  explanation: Дата разбирается на год 2024 и месяц 3.
+outcomes:
+- обрезать пробелы у строк
+- убирать повторы множеством
+- отсекать значения выше заданного порога
+- разбирать дату ISO модулем datetime
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое выброс здесь
+  difficulty: 1
+  context: neutral
+  prompt: 'Высоты: 9, 12, 15, 40. Порог выброса заранее равен 20. Какое значение выбрасывают?'
+  options:
+  - id: a
+    text: '40'
+  - id: b
+    text: '9'
+  - id: c
+    text: все четыре
+  answer: a
+  hints:
+  - Порог задан числом 20.
+  - Край само по себе ещё не выброс.
+  - 40 лежит выше порога.
+  solution: a
+  explanation: Выброс определяют порогом, а не тем, что число просто максимальное.
+  id: python.data.data-clean.t1
+- type: predict_output
+  title: Сколько уникальных
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '3'
+  - id: c
+    text: '1'
+  answer: a
+  hints:
+  - strip убирает пробел.
+  - Две ели становятся одним именем.
+  - Сосна остаётся второй.
+  solution: a
+  explanation: После очистки остаются два разных имени.
+  code: 'names = [" ель", "ель", "сосна"]
+
+    print(len({name.strip() for name in names}))
+
+    '
+  id: python.data.data-clean.t2
+- type: code
+  title: Уникальные имена
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n имён. Снимите пробелы по краям и выведите число разных имён.
+  starter_code: ''
+  tests:
+  - stdin: "4\n ель\nель\nсосна \nсосна\n"
+    expected_stdout: '2
+
+      '
+  - stdin: "1\n дуб\n"
+    expected_stdout: '1
+
+      '
+  hints:
+  - strip обязателен до сравнения.
+  - Множество само убирает повтор.
+  - Печатайте длину.
+  solution: "n = int(input())\nseen = set()\nfor _ in range(n):\n    seen.add(input().strip())\n\
+    print(len(seen))\n"
+  explanation: Повтор после обрезки не считается новым деревом.
+  id: python.data.data-clean.t3
+- type: code
+  title: Отсечь выбросы
+  difficulty: 2
+  context: development
+  prompt: Первая строка — порог. Дальше n и n высот. Оставьте высоты не больше порога. Выведите
+    их количество и сумму.
+  starter_code: ''
+  tests:
+  - stdin: '20
+
+      4
+
+      12
+
+      9
+
+      25
+
+      15
+
+      '
+    expected_stdout: '3
+
+      36
+
+      '
+  - stdin: '5
+
+      2
+
+      5
+
+      6
+
+      '
+    expected_stdout: '1
+
+      5
+
+      '
+  hints:
+  - Порог читается первым.
+  - Строго больше порога не входит.
+  - Равенство порогу остаётся.
+  solution: "limit = int(input())\nn = int(input())\nkept = []\nfor _ in range(n):\n    value\
+    \ = int(input())\n    if value <= limit:\n        kept.append(value)\nprint(len(kept))\n\
+    print(sum(kept))\n"
+  explanation: Порог отделяет выброс от обычной высоты.
+  id: python.data.data-clean.t4
+- type: code
+  title: Поздняя дата
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n дат в виде ГГГГ-ММ-ДД. Выведите самую позднюю в том же виде.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      2024-03-01
+
+      2024-03-15
+
+      '
+    expected_stdout: '2024-03-15
+
+      '
+  - stdin: '1
+
+      2023-12-31
+
+      '
+    expected_stdout: '2023-12-31
+
+      '
+  hints:
+  - Разберите дату через fromisoformat.
+  - Сравнивайте даты, не куски текста вручную.
+  - isoformat возвращает ГГГГ-ММ-ДД.
+  solution: "from datetime import date\nn = int(input())\nlatest = None\nfor _ in range(n):\n\
+    \    current = date.fromisoformat(input().strip())\n    if latest is None or current >\
+    \ latest:\n        latest = current\nprint(latest.isoformat())\n"
+  explanation: Календарное сравнение находит позднюю посадку.
+  id: python.data.data-clean.t5
+introduces:
+- id: data-outlier
+  title: Выброс
+  summary: Значение за названным порогом. Его убирают отдельным правилом, а не потому что
+    оно просто крайнее.
+- id: data-iso-date
+  title: Дата ISO
+  summary: Дата вида ГГГГ-ММ-ДД. Её разбирает datetime.date.fromisoformat.

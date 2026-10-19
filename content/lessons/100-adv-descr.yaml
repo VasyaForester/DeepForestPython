@@ -1,0 +1,186 @@
+id: python.advanced.adv-descr
+slug: adv-descr
+section: advanced
+title: Дескрипторы
+order: 10
+weight: 1
+prerequisites:
+- python.advanced.adv-abc
+goal: Увидеть, как чтение поля вызывает __get__.
+tags:
+- дескриптор
+- __get__
+theory:
+- Дескриптор — объект с методом __get__. Когда у экземпляра читают поле name, Python вызывает
+  __get__ и передаёт туда этот экземпляр.
+- 'Так устроено и property: за чтением поля прячется метод. Здесь дескриптор маленький, только
+  __get__, без записи и удаления.'
+- Если поле читают у класса, а не у экземпляра, в __get__ приходит obj, равный None. Тогда
+  можно вернуть сам дескриптор. У экземпляра метод возвращает его _name.
+examples:
+- title: Имя через дескриптор
+  code: "class Label:\n    def __get__(self, obj, objtype=None):\n        if obj is None:\n\
+    \            return self\n        return obj._name\nclass Tree:\n    name = Label()\n\
+    \    def __init__(self, name):\n        self._name = name\nprint(Tree('ель').name)\n"
+  explanation: Чтение tree.name вызывает __get__. Метод возвращает _name, на экране ель.
+- title: Чтение у класса
+  code: "class Label:\n    def __get__(self, obj, objtype=None):\n        if obj is None:\n\
+    \            return 'класс'\n        return obj._name\nclass Tree:\n    name = Label()\n\
+    print(Tree.name)\n"
+  explanation: Поле прочитано у класса, obj равен None. __get__ возвращает слово класс.
+outcomes:
+- описать __get__ у маленького дескриптора
+- вернуть значение экземпляра из __get__
+- обработать чтение у класса, когда obj is None
+- понимать, что property устроено так же
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кто вызывает __get__
+  difficulty: 1
+  context: neutral
+  prompt: Когда вызывается Label.__get__?
+  options:
+  - id: a
+    text: Когда читают поле, в котором лежит дескриптор
+  - id: b
+    text: Когда вызывают print без аргументов
+  - id: c
+    text: Только внутри __init__
+  answer: a
+  hints:
+  - Поле name хранит объект Label.
+  - Чтение tree.name перехватывается.
+  - property работает тем же способом.
+  solution: a
+  explanation: Чтение поля запускает __get__. property устроен так же.
+  id: python.advanced.adv-descr.t1
+- type: predict_output
+  title: Текст поля
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: Label
+  - id: b
+    text: ель
+  - id: c
+    text: name
+  answer: b
+  hints:
+  - Объект создан с именем ель.
+  - Чтение name вызывает __get__.
+  - obj не None, возвращается _name.
+  solution: b
+  explanation: На экран выходит ель.
+  code: "class Label:\n    def __get__(self, obj, objtype=None):\n        if obj is None:\n\
+    \            return self\n        return obj._name\nclass Tree:\n    name = Label()\n\
+    \    def __init__(self, name):\n        self._name = name\nprint(Tree('ель').name)\n"
+  id: python.advanced.adv-descr.t2
+- type: code
+  title: Имя дерева
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название. Поле name — дескриптор, он возвращает _name. Выведите tree.name.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  hints:
+  - __get__ принимает obj.
+  - У экземпляра верните obj._name.
+  - Читайте поле без скобок.
+  solution: "class Label:\n    def __get__(self, obj, objtype=None):\n        if obj is None:\n\
+    \            return self\n        return obj._name\nclass Tree:\n    name = Label()\n\
+    \    def __init__(self, name):\n        self._name = name\nprint(Tree(input()).name)\n"
+  explanation: Введённое название проходит через __get__.
+  id: python.advanced.adv-descr.t3
+- type: code
+  title: Пустое имя
+  difficulty: 2
+  context: business
+  prompt: Прочитайте строку. Если она пустая, дескриптор возвращает нет, иначе саму строку.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: '
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Пустую строку проверьте внутри __get__.
+  - Для обычного текста верните _name.
+  - Объект всё равно создавайте.
+  solution: "class Label:\n    def __get__(self, obj, objtype=None):\n        if obj is None:\n\
+    \            return self\n        if obj._name == '':\n            return 'нет'\n    \
+    \    return obj._name\nclass Tree:\n    name = Label()\n    def __init__(self, name):\n\
+    \        self._name = name\nprint(Tree(input()).name)\n"
+  explanation: ель печатается как ель. Пустой ввод даёт нет.
+  id: python.advanced.adv-descr.t4
+- type: code
+  title: Два объекта
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте два названия. У каждого Tree своё _name, дескриптор один на класс. Выведите
+    оба имени.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      сосна
+
+      '
+    expected_stdout: 'ель
+
+      сосна
+
+      '
+  - stdin: 'дуб
+
+      кедр
+
+      '
+    expected_stdout: 'дуб
+
+      кедр
+
+      '
+  hints:
+  - Дескриптор записан в классе один раз.
+  - __get__ смотрит на конкретный obj.
+  - Поля экземпляров не смешиваются.
+  solution: "class Label:\n    def __get__(self, obj, objtype=None):\n        if obj is None:\n\
+    \            return self\n        return obj._name\nclass Tree:\n    name = Label()\n\
+    \    def __init__(self, name):\n        self._name = name\nprint(Tree(input()).name)\n\
+    print(Tree(input()).name)\n"
+  explanation: Каждый объект отдаёт своё название.
+  id: python.advanced.adv-descr.t5
+introduces:
+- id: adv-descr.descriptor
+  title: Дескриптор
+  summary: Объект с __get__. Чтение поля вызывает этот метод. property работает тем же способом.

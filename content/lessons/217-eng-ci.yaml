@@ -1,0 +1,181 @@
+id: python.engineering.eng-ci
+slug: eng-ci
+section: engineering
+title: CI
+order: 9
+weight: 1
+prerequisites:
+- python.engineering.eng-docker
+goal: Выполнить шаг test и шаг build только после успешного теста.
+tags:
+- CI
+- тест
+- сборка
+theory:
+- CI гоняет шаги по порядку. В этом уроке сначала test, потом build. Если тест не прошёл,
+  build не начинается.
+- Программа печатает имена шагов, которые реально начались. Провал теста оставляет в выводе
+  только test.
+- Второй статус не спасает проваленный первый. Сборка имеет смысл только после зелёного теста.
+examples:
+- title: Тест прошёл
+  code: "status = 'ok'\nprint('test')\nif status == 'ok':\n    print('build')\n"
+  explanation: Статус ok, поэтому после test печатается и build.
+- title: Тест упал
+  code: "status = 'fail'\nprint('test')\nif status == 'ok':\n    print('build')\n"
+  explanation: test уже напечатан, build не начинается.
+outcomes:
+- запускать test раньше build
+- не начинать сборку после провала теста
+- печатать только начавшиеся шаги
+- останавливать цепочку на первом неуспехе
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда собирать
+  difficulty: 1
+  context: neutral
+  prompt: Когда шаг build имеет право начаться?
+  options:
+  - id: a
+    text: После того как test завершился со статусом ok
+  - id: b
+    text: До теста, чтобы сэкономить время
+  - id: c
+    text: Только если тест напечатал fail
+  answer: a
+  hints:
+  - Порядок шагов фиксирован.
+  - Провал останавливает цепочку.
+  - build не печатается раньше test.
+  solution: a
+  explanation: Сборка идёт следом за успешным тестом.
+  id: python.engineering.eng-ci.t1
+- type: predict_output
+  title: Провал
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: test
+  - id: b
+    text: build
+  - id: c
+    text: fail
+  answer: a
+  hints:
+  - test печатается всегда.
+  - Условие для build ложно.
+  - Слово fail на экран не выводится.
+  solution: a
+  explanation: Единственная строка — имя шага test.
+  code: "status = 'fail'\nprint('test')\nif status == 'ok':\n    print('build')\n"
+  id: python.engineering.eng-ci.t2
+- type: code
+  title: Статус теста
+  difficulty: 2
+  context: development
+  prompt: Прочитайте статус теста. Напечатайте test. Если статус ok, напечатайте ещё build.
+  starter_code: ''
+  tests:
+  - stdin: 'ok
+
+      '
+    expected_stdout: 'test
+
+      build
+
+      '
+  - stdin: 'fail
+
+      '
+    expected_stdout: 'test
+
+      '
+  hints:
+  - Имя шага test печатайте до проверки.
+  - build только внутри условия.
+  - Сам статус на экран не выводите.
+  solution: "status = input()\nprint('test')\nif status == 'ok':\n    print('build')\n"
+  explanation: В выводе остаются только шаги, которые начались.
+  id: python.engineering.eng-ci.t3
+- type: code
+  title: Два явных статуса
+  difficulty: 2
+  context: development
+  prompt: Прочитайте статус test и статус build. Всегда напечатайте test. build печатайте
+    только если тест ok и статус сборки тоже ok.
+  starter_code: ''
+  tests:
+  - stdin: 'ok
+
+      ok
+
+      '
+    expected_stdout: 'test
+
+      build
+
+      '
+  - stdin: 'fail
+
+      ok
+
+      '
+    expected_stdout: 'test
+
+      '
+  hints:
+  - При провале теста вторую строку всё равно прочитайте.
+  - build не печатайте, если тест не ok.
+  - Оба статуса должны быть ok.
+  solution: "test_status = input()\nbuild_status = input()\nprint('test')\nif test_status\
+    \ == 'ok' and build_status == 'ok':\n    print('build')\n"
+  explanation: Провал теста гасит сборку, даже если её статус в данных был бы ok.
+  id: python.engineering.eng-ci.t4
+- type: code
+  title: Остановка на тесте
+  difficulty: 2
+  context: development
+  prompt: Прочитайте статусы test и build по очереди в списке шагов. Печатайте имя шага и
+    прекращайте цикл, если статус этого шага не ok.
+  starter_code: ''
+  tests:
+  - stdin: 'ok
+
+      fail
+
+      '
+    expected_stdout: 'test
+
+      build
+
+      '
+  - stdin: 'fail
+
+      ok
+
+      '
+    expected_stdout: 'test
+
+      '
+  hints:
+  - Шаг печатается до проверки его статуса.
+  - break не даёт перейти к следующему.
+  - При fail на тесте build не печатается.
+  solution: "steps = [('test', input()), ('build', input())]\nfor name, status in steps:\n\
+    \    print(name)\n    if status != 'ok':\n        break\n"
+  explanation: Цепочка обрывается на первом неуспешном шаге после того, как его имя уже показано.
+  id: python.engineering.eng-ci.t5
+introduces:
+- id: eng-pipeline
+  title: Цепочка CI
+  summary: Шаги test и build по порядку. Провал теста не пускает сборку.

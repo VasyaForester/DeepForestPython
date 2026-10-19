@@ -1,0 +1,264 @@
+id: python.sql.sql-join
+slug: sql-join
+section: sql
+title: JOIN
+order: 7
+weight: 1
+prerequisites:
+- python.sql.sql-sub
+goal: Соединить дерево и его заметку по общему идентификатору.
+tags:
+- JOIN
+- LEFT JOIN
+- 'ON'
+theory:
+- JOIN склеивает строки двух таблиц по условию. SELECT species.name, notes.note FROM species
+  JOIN notes ON notes.species_id = species.id возвращает только деревья, у которых заметка
+  есть.
+- LEFT JOIN оставляет и деревья без заметки. Пустую заметку здесь заменяют через COALESCE
+  на слово нет. В данных у ели полив, у сосны замер, у берёзы заметки нет.
+- Связь идёт по числу species_id, а не по совпадению текста имени. Печатают имя и заметку
+  через пробел, порядок имён задаёт ORDER BY.
+examples:
+- title: Заметка ели
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer, name text)'')
+
+    con.execute(''create table notes(species_id integer, note text)'')
+
+    con.executemany(''insert into species values (?, ?)'', [(1, ''ель''), (2, ''сосна''),
+    (3, ''берёза'')])
+
+    con.executemany(''insert into notes values (?, ?)'', [(1, ''полив''), (2, ''замер'')])
+
+    row = con.execute(''select notes.note from species join notes on notes.species_id = species.id
+    where species.name = ?'', (''ель'',)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Условие ON находит заметку с species_id 1, это полив.
+- title: Только пары
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table species(id\
+    \ integer, name text)')\ncon.execute('create table notes(species_id integer, note text)')\n\
+    con.executemany('insert into species values (?, ?)', [(1, 'ель'), (2, 'сосна')])\ncon.execute(\"\
+    insert into notes values (1, 'полив')\")\nfor row in con.execute('select species.name\
+    \ from species join notes on notes.species_id = species.id order by species.name'):\n\
+    \    print(row[0])\n"
+  explanation: 'Внутренний JOIN не выводит сосну: для неё нет строки в notes.'
+outcomes:
+- соединять таблицы по идентификатору
+- отличать JOIN от LEFT JOIN
+- заменять пустую заметку на нет
+- считать заметки дерева, включая нуль
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что связывает JOIN
+  difficulty: 1
+  context: neutral
+  prompt: По какому условию соединяет строки запрос SELECT species.name FROM species JOIN
+    notes ON notes.species_id = species.id?
+  options:
+  - id: a
+    text: По равенству идентификатора и species_id
+  - id: b
+    text: По одинаковой длине текста
+  - id: c
+    text: По порядку вставки, без условия
+  answer: a
+  hints:
+  - ON задаёт правило склейки.
+  - Идентификатор ели равен 1, и заметка ссылается на 1.
+  - Порядок вставки сам по себе таблицы не связывает.
+  solution: a
+  explanation: JOIN держится на равенстве ключей в ON.
+  id: python.sql.sql-join.t1
+- type: predict_output
+  title: Заметка ели
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: полив
+  - id: b
+    text: ель
+  - id: c
+    text: нет
+  answer: a
+  hints:
+  - ON связывает id 1 с species_id 1.
+  - В выборке столбец note.
+  - Имя дерева в этом запросе не печатается.
+  solution: a
+  explanation: Соединённая строка содержит заметку полив.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer, name text)'')
+
+    con.execute(''create table notes(species_id integer, note text)'')
+
+    con.execute("insert into species values (1, ''ель'')")
+
+    con.execute("insert into notes values (1, ''полив'')")
+
+    row = con.execute(''select notes.note from species join notes on notes.species_id = species.id'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-join.t2
+- type: code
+  title: Заметка по имени
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя. В данных ель — полив, сосна — замер. Выведите заметку через JOIN.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'полив
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'замер
+
+      '
+  hints:
+  - Свяжите таблицы по идентификатору.
+  - Имя фильтруйте во внешнем WHERE.
+  - Печатайте столбец note.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer, name text)'')
+
+    con.execute(''create table notes(species_id integer, note text)'')
+
+    con.executemany(''insert into species values (?, ?)'', [(1, ''ель''), (2, ''сосна''),
+    (3, ''берёза'')])
+
+    con.executemany(''insert into notes values (?, ?)'', [(1, ''полив''), (2, ''замер'')])
+
+    name = input().strip()
+
+    query = ''select notes.note from species join notes on notes.species_id = species.id where
+    species.name = ?''
+
+    row = con.execute(query, (name,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: JOIN находит заметку той строки, чей id указан в species_id.
+  id: python.sql.sql-join.t3
+- type: code
+  title: Inner или left
+  difficulty: 2
+  context: development
+  prompt: Прочитайте inner или left. Для inner выведите только деревья с заметкой, для left
+    — все, а пустую заметку замените на нет.
+  starter_code: ''
+  tests:
+  - stdin: 'inner
+
+      '
+    expected_stdout: 'ель полив
+
+      сосна замер
+
+      '
+  - stdin: 'left
+
+      '
+    expected_stdout: 'берёза нет
+
+      ель полив
+
+      сосна замер
+
+      '
+  hints:
+  - LEFT JOIN не отбрасывает берёзу.
+  - COALESCE подставляет нет вместо пустоты.
+  - ORDER BY name фиксирует порядок.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ species(id integer, name text)')\ncon.execute('create table notes(species_id integer,\
+    \ note text)')\ncon.executemany('insert into species values (?, ?)', [(1, 'ель'), (2,\
+    \ 'сосна'), (3, 'берёза')])\ncon.executemany('insert into notes values (?, ?)', [(1, 'полив'),\
+    \ (2, 'замер')])\nkind = input().strip()\nif kind == 'left':\n    query = \"select species.name,\
+    \ coalesce(notes.note, 'нет') from species left join notes on notes.species_id = species.id\
+    \ order by species.name\"\nelse:\n    query = 'select species.name, notes.note from species\
+    \ join notes on notes.species_id = species.id order by species.name'\nfor row in con.execute(query):\n\
+    \    print(row[0] + ' ' + row[1])\n"
+  explanation: Внутренний JOIN прячет дерево без пары, левый показывает его с пометкой нет.
+  id: python.sql.sql-join.t4
+- type: code
+  title: Сколько заметок
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и выведите, сколько у него заметок. У берёзы их ноль.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: 'берёза
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - LEFT JOIN нужен, чтобы берёза вообще попала в счёт.
+  - COUNT от столбца note не считает пустоту.
+  - Фильтр по имени стоит в WHERE.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer, name text)'')
+
+    con.execute(''create table notes(species_id integer, note text)'')
+
+    con.executemany(''insert into species values (?, ?)'', [(1, ''ель''), (2, ''сосна''),
+    (3, ''берёза'')])
+
+    con.executemany(''insert into notes values (?, ?)'', [(1, ''полив''), (2, ''замер'')])
+
+    name = input().strip()
+
+    query = ''select count(notes.note) from species left join notes on notes.species_id =
+    species.id where species.name = ?''
+
+    row = con.execute(query, (name,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Ноль заметок виден только если дерево не исчезло из-за внутреннего JOIN.
+  id: python.sql.sql-join.t5
+introduces:
+- id: sql-join
+  title: JOIN
+  summary: Соединение строк двух таблиц по условию ON, например notes.species_id = species.id.

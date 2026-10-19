@@ -1,0 +1,190 @@
+id: python.files.file-re
+slug: file-re
+section: files
+title: Регулярные выражения
+order: 7
+weight: 1
+prerequisites:
+- python.files.file-datetime
+goal: Находить в строке числа и названия шаблоном re.
+tags:
+- re
+- шаблон
+theory:
+- Модуль re ищет куски строки по шаблону. re.findall возвращает список всех совпадений. re.search
+  возвращает первое либо None, если совпадения нет.
+- Шаблон \d+ означает одну или больше цифр. В строке «заказ 14 и 3» findall находит 14 и 3.
+  Это строки из цифр, для суммы их превращают в int.
+- Шаблон ель|сосна подходит под любое из двух слов. group(0) у результата search возвращает
+  найденный текст. Если search вернул None, совпадения не было.
+examples:
+- title: Все числа
+  code: 'import re
+
+    found = re.findall(r''\d+'', ''заказ 14 и 3'')
+
+    print(found[0])
+
+    print(found[1])
+
+    '
+  explanation: \d+ забирает последовательности цифр. Первое совпадение — 14, второе — 3.
+- title: Первое слово
+  code: 'import re
+
+    found = re.search(r''ель|сосна'', ''на складе сосна и ель'')
+
+    print(found.group(0))
+
+    '
+  explanation: search останавливается на первом подходящем слове. Здесь это сосна.
+outcomes:
+- искать все совпадения через findall
+- брать первое совпадение через search
+- превращать найденные цифры в числа
+- проверять, что совпадения не было
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что вернёт findall
+  difficulty: 1
+  context: neutral
+  prompt: Что делает re.findall с шаблоном цифр?
+  options:
+  - id: a
+    text: Возвращает список всех совпадений
+  - id: b
+    text: Сразу считает сумму чисел
+  - id: c
+    text: Удаляет текст и оставляет файл
+  answer: a
+  hints:
+  - findall собирает все вхождения.
+  - Сумму считают отдельно.
+  - Файл этот вызов не открывает.
+  solution: a
+  explanation: Результат — список строк, которые подошли под шаблон.
+  id: python.files.file-re.t1
+- type: predict_output
+  title: Первое число
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: заказ
+  - id: b
+    text: '14'
+  - id: c
+    text: '3'
+  answer: b
+  hints:
+  - Шаблон берёт цифры.
+  - findall идёт слева направо.
+  - Индекс 0 — первое совпадение.
+  solution: b
+  explanation: Первое число в строке — 14.
+  code: 'import re
+
+    print(re.findall(r''\d+'', ''заказ 14 и 3'')[0])
+
+    '
+  id: python.files.file-re.t2
+- type: code
+  title: Сколько чисел
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте строку и выведите, сколько в ней последовательностей цифр.
+  starter_code: ''
+  tests:
+  - stdin: 'заказ 14 и 3
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: 'без чисел
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Шаблон \d+.
+  - findall вернёт список.
+  - Печатайте его длину.
+  solution: 'import re
+
+    print(len(re.findall(r''\d+'', input())))
+
+    '
+  explanation: В первой строке два числа, во второй список пустой.
+  id: python.files.file-re.t3
+- type: code
+  title: Сумма чисел
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте строку и выведите сумму всех целых чисел, которые в ней найдены. Если
+    чисел нет, выведите 0.
+  starter_code: ''
+  tests:
+  - stdin: '2 и 5
+
+      '
+    expected_stdout: '7
+
+      '
+  - stdin: 'нет
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Найдите все \d+.
+  - Каждый кусок превратите в int.
+  - Сложите в аккумулятор.
+  solution: "import re\nacc = 0\nfor item in re.findall(r'\\d+', input()):\n    acc += int(item)\n\
+    print(acc)\n"
+  explanation: 2 и 5 дают 7. Строка без цифр даёт 0.
+  id: python.files.file-re.t4
+- type: code
+  title: Ель или сосна
+  difficulty: 2
+  context: business
+  prompt: Прочитайте строку. Если в ней есть ель или сосна, выведите найденное слово, иначе
+    выведите нет.
+  starter_code: ''
+  tests:
+  - stdin: 'на складе ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'только дуб
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - search возвращает None, если ничего нет.
+  - group(0) — текст совпадения.
+  - Порядок в шаблоне не важен для одного слова.
+  solution: "import re\nfound = re.search(r'ель|сосна', input())\nif found is None:\n    print('нет')\n\
+    else:\n    print(found.group(0))\n"
+  explanation: В первой строке находится ель. Во второй совпадения нет.
+  id: python.files.file-re.t5
+introduces:
+- id: file-re.findall
+  title: re.findall
+  summary: Возвращает список всех кусков строки, подошедших под шаблон. \d+ — это одна или
+    больше цифр.

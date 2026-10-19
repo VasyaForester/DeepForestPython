@@ -1,0 +1,201 @@
+id: python.http.http-review
+slug: http-review
+section: http
+title: 'Итог: OpenAPI, идемпотентность, вебхуки'
+order: 11
+weight: 2
+prerequisites:
+- python.http.http-auth
+goal: Отличить безопасный повтор от создания ресурса и узнать повторную доставку.
+tags:
+- итог
+- OpenAPI
+- вебхук
+theory:
+- 'OpenAPI описывает контракт: метод и путь, например GET /orders. GET и PUT можно повторить
+  без нового ресурса. POST /payments повторять опасно: второй запрос может создать второй
+  платёж.'
+- 'Вебхук — входящий вызов сервиса к вам, часто POST /webhooks/payment. Повторная доставка
+  того же события не должна стать второй оплатой. Песочница не принимает HTTP: решение видно
+  по методу и по отметке, видели ли событие.'
+- Итог раздела — метод, путь, осторожность POST и повтор события. Новых способов ходить в
+  сеть здесь нет.
+examples:
+- title: Осторожный метод
+  code: 'method = ''POST''
+
+    print(''осторожно'' if method == ''POST'' else ''можно повторять'')
+
+    '
+  explanation: POST может создать ресурс, поэтому повтор не считают безобидным.
+- title: Строка контракта
+  code: 'method = ''GET''
+
+    path = ''/orders''
+
+    print(method + '' '' + path)
+
+    '
+  explanation: Строка GET /orders похожа на запись операции в OpenAPI.
+outcomes:
+- читать операцию OpenAPI как метод и путь
+- осторожно относиться к повтору POST
+- принимать первую доставку вебхука
+- узнавать повтор уже виденного события
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Почему POST осторожен
+  difficulty: 1
+  context: neutral
+  prompt: Почему повтор POST /payments опаснее повтора GET /orders?
+  options:
+  - id: a
+    text: POST может создать второй платёж, GET только читает
+  - id: b
+    text: GET всегда удаляет заказы
+  - id: c
+    text: Оба запроса обязаны создавать новую строку
+  answer: a
+  hints:
+  - GET не меняет ресурс.
+  - Повтор платежа без защиты создаёт ещё одну операцию.
+  - Идемпотентный вызов можно выполнить снова с тем же итогом.
+  solution: a
+  explanation: Чтение повторяют спокойно, создание платежа — нет.
+  id: python.http.http-review.t1
+- type: predict_output
+  title: Метод POST
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: осторожно
+  - id: b
+    text: можно повторять
+  - id: c
+    text: GET
+  answer: a
+  hints:
+  - method равен POST.
+  - Для него выбрано слово осторожно.
+  - GET в этом фрагменте не печатается.
+  solution: a
+  explanation: POST помечен как метод, который нельзя слепо повторять.
+  code: 'method = ''POST''
+
+    print(''осторожно'' if method == ''POST'' else ''можно повторять'')
+
+    '
+  id: python.http.http-review.t2
+- type: code
+  title: Можно ли повторять
+  difficulty: 2
+  context: development
+  prompt: Прочитайте метод. Для POST выведите осторожно, для остальных — можно повторять.
+  starter_code: ''
+  tests:
+  - stdin: 'GET
+
+      '
+    expected_stdout: 'можно повторять
+
+      '
+  - stdin: 'POST
+
+      '
+    expected_stdout: 'осторожно
+
+      '
+  hints:
+  - Сравнивайте с POST.
+  - GET, PUT и DELETE попадают во вторую ветку.
+  - Печатайте одну фразу.
+  solution: 'method = input().strip()
+
+    print(''осторожно'' if method == ''POST'' else ''можно повторять'')
+
+    '
+  explanation: В этой модели осторожность связана именно с POST.
+  id: python.http.http-review.t3
+- type: code
+  title: Строка OpenAPI
+  difficulty: 2
+  context: development
+  prompt: Прочитайте метод и путь. Выведите их через пробел, как операцию контракта.
+  starter_code: ''
+  tests:
+  - stdin: 'GET
+
+      /orders
+
+      '
+    expected_stdout: 'GET /orders
+
+      '
+  - stdin: 'POST
+
+      /webhooks/payment
+
+      '
+    expected_stdout: 'POST /webhooks/payment
+
+      '
+  hints:
+  - Метод идёт первым.
+  - Путь не переставляйте.
+  - Между ними один пробел.
+  solution: 'method = input().strip()
+
+    path = input().strip()
+
+    print(method + '' '' + path)
+
+    '
+  explanation: Контракт называет операцию методом и путём.
+  id: python.http.http-review.t4
+- type: code
+  title: Повтор вебхука
+  difficulty: 2
+  context: development
+  prompt: Прочитайте идентификатор события и слово да или нет — видели ли его раньше. Если
+    да, выведите повтор, иначе принять.
+  starter_code: ''
+  tests:
+  - stdin: 'pay-17
+
+      нет
+
+      '
+    expected_stdout: 'принять
+
+      '
+  - stdin: 'pay-17
+
+      да
+
+      '
+    expected_stdout: 'повтор
+
+      '
+  hints:
+  - Идентификатор прочитайте, даже если он не входит в ответ.
+  - Смотрите вторую строку.
+  - да означает, что доставка уже была.
+  solution: 'event_id = input().strip()
+
+    seen = input().strip()
+
+    print(''повтор'' if seen == ''да'' else ''принять'')
+
+    '
+  explanation: Повторный вебхук узнают по уже виденному идентификатору.
+  id: python.http.http-review.t5

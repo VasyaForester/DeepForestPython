@@ -1,0 +1,195 @@
+id: python.backend.be-request
+slug: be-request
+section: backend
+title: Запрос и ответ
+order: 2
+weight: 1
+prerequisites:
+- python.backend.be-app
+goal: Принять словарь запроса и напечатать статус, затем тело.
+tags:
+- запрос
+- статус
+- тело
+theory:
+- Запрос в этом уроке — словарь query. В живом API туда попали бы поля из адреса, здесь их
+  кладут в словарь явно.
+- 'Обработчик возвращает два значения: целое статус и строку тела. Программа печатает сначала
+  статус, потом тело, каждое на своей строке.'
+- Пустое поле даёт 400 и короткий текст. Неизвестное значение даёт 404. Удачный разбор даёт
+  200 и полезное тело.
+examples:
+- title: Город
+  code: "def handle(query):\n    city = query.get('city', '')\n    if city == '':\n      \
+    \  return 400, 'пусто'\n    return 200, city\nstatus, body = handle({'city': 'Казань'})\n\
+    print(status)\nprint(body)\n"
+  explanation: В словаре есть город. Сначала печатается 200, затем Казань.
+- title: Пустой запрос
+  code: "def handle(query):\n    city = query.get('city', '')\n    if city == '':\n      \
+    \  return 400, 'пусто'\n    return 200, city\nstatus, body = handle({})\nprint(status)\n\
+    print(body)\n"
+  explanation: Ключа city нет, get возвращает пустую строку, статус 400.
+outcomes:
+- собирать запрос в словарь
+- возвращать статус и тело
+- печатать статус раньше тела
+- выбирать 200, 400 или 404 по полям
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Порядок печати
+  difficulty: 1
+  context: neutral
+  prompt: В каком порядке программа показывает ответ?
+  options:
+  - id: a
+    text: Сначала статус, затем тело
+  - id: b
+    text: Сначала тело, затем статус
+  - id: c
+    text: Только словарь query
+  answer: a
+  hints:
+  - handle возвращает пару.
+  - Первый print получает статус.
+  - Тело печатается вторым.
+  solution: a
+  explanation: Статус и тело — разные строки вывода, статус идёт первым.
+  id: python.backend.be-request.t1
+- type: predict_output
+  title: Последняя строка
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано последним?
+  options:
+  - id: a
+    text: Казань
+  - id: b
+    text: '200'
+  - id: c
+    text: city
+  answer: a
+  hints:
+  - Сначала печатается статус.
+  - Второй print печатает тело.
+  - Ключ на экран не выводится.
+  solution: a
+  explanation: Последняя строка — тело ответа, Казань.
+  code: "def handle(query):\n    return 200, query['city']\nstatus, body = handle({'city':\
+    \ 'Казань'})\nprint(status)\nprint(body)\n"
+  id: python.backend.be-request.t2
+- type: code
+  title: Город из ввода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте город. Если строка пустая, напечатайте 400 и пусто. Иначе напечатайте
+    200 и город. Сначала статус, потом тело.
+  starter_code: ''
+  tests:
+  - stdin: 'Казань
+
+      '
+    expected_stdout: '200
+
+      Казань
+
+      '
+  - stdin: '
+
+      '
+    expected_stdout: '400
+
+      пусто
+
+      '
+  hints:
+  - Положите прочитанную строку в словарь.
+  - Пустая строка — это 400.
+  - 'Два print: статус и тело.'
+  solution: "def handle(query):\n    city = query.get('city', '')\n    if city == '':\n  \
+    \      return 400, 'пусто'\n    return 200, city\nstatus, body = handle({'city': input()})\n\
+    print(status)\nprint(body)\n"
+  explanation: Словарь query передаёт город, пара статуса и тела печатается по строкам.
+  id: python.backend.be-request.t3
+- type: code
+  title: Поиск кода
+  difficulty: 2
+  context: development
+  prompt: В каталоге ель имеет цену 120, сосна — 80. Прочитайте имя. Если его нет, напечатайте
+    404 и нет. Иначе 200 и цену.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '200
+
+      120
+
+      '
+  - stdin: 'пихта
+
+      '
+    expected_stdout: '404
+
+      нет
+
+      '
+  hints:
+  - Каталог — обычный словарь.
+  - Чужого имени нет среди ключей.
+  - Печатайте статус и тело отдельно.
+  solution: "def handle(query):\n    catalog = {'ель': '120', 'сосна': '80'}\n    name = query.get('name',\
+    \ '')\n    if name not in catalog:\n        return 404, 'нет'\n    return 200, catalog[name]\n\
+    status, body = handle({'name': input()})\nprint(status)\nprint(body)\n"
+  explanation: Имя ищется в каталоге, неизвестное имя получает 404.
+  id: python.backend.be-request.t4
+- type: code
+  title: Предел
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте строку limit. Пустая строка или число меньше нуля: 400 и пусто. Иначе
+    200 и само число.'
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      '
+    expected_stdout: '200
+
+      10
+
+      '
+  - stdin: '-3
+
+      '
+    expected_stdout: '400
+
+      пусто
+
+      '
+  hints:
+  - Сначала отсеките пустую строку.
+  - Отрицательное число тоже 400.
+  - Тело успешного ответа — строка с числом.
+  solution: "def handle(query):\n    raw = query.get('limit', '')\n    if raw == '':\n   \
+    \     return 400, 'пусто'\n    limit = int(raw)\n    if limit < 0:\n        return 400,\
+    \ 'пусто'\n    return 200, str(limit)\nstatus, body = handle({'limit': input()})\nprint(status)\n\
+    print(body)\n"
+  explanation: Проверка поля решает статус до того, как число уйдёт в ответ.
+  id: python.backend.be-request.t5
+introduces:
+- id: be-query
+  title: Словарь запроса
+  summary: Поля запроса в виде словаря. Обработчик читает их по ключу.
+- id: be-status
+  title: Статус ответа
+  summary: 'Целое число рядом с телом: 200 при успехе, 400 при плохом поле, 404 если записи
+    нет.'

@@ -1,0 +1,232 @@
+id: python.sql.sql-select
+slug: sql-select
+section: sql
+title: SELECT и WHERE
+order: 1
+weight: 1
+prerequisites:
+- python.http.http-review
+goal: Выбрать строки таблицы по условию и напечатать поле.
+tags:
+- SELECT
+- WHERE
+- sqlite3
+theory:
+- Запрос SELECT name FROM trees WHERE height > 15 возвращает имена деревьев выше 15. SELECT
+  выбирает столбцы, WHERE оставляет только подходящие строки.
+- 'База живёт в памяти через sqlite3 и connect(":memory:"). Схему создают тут же: имя и высота.
+  Значение подставляют знаком ?, а не склейкой строки.'
+- Порядок печати задаёт ORDER BY. Без него SQLite вправе вернуть строки как удобно, и проверка
+  стала бы случайной.
+examples:
+- title: Выше пятнадцати
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table trees(name\
+    \ text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель', 12),\
+    \ ('сосна', 20), ('берёза', 30)])\nfor row in con.execute('select name from trees where\
+    \ height > 15 order by name'):\n    print(row[0])\n"
+  explanation: Условие оставляет сосну и берёзу. ORDER BY name печатает берёзу раньше.
+- title: Высота ели
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute(''insert into trees values (?, ?)'', (''ель'', 12))
+
+    row = con.execute(''select height from trees where name = ?'', (''ель'',)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: WHERE name = ? находит одну строку, fetchone достаёт высоту 12.
+outcomes:
+- писать SELECT со столбцом и WHERE
+- подставлять значение через ?
+- фиксировать порядок через ORDER BY
+- считать строки агрегатным COUNT
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что фильтрует WHERE
+  difficulty: 1
+  context: neutral
+  prompt: Что делает условие в запросе SELECT name FROM trees WHERE height > 15?
+  options:
+  - id: a
+    text: Оставляет только строки выше 15
+  - id: b
+    text: Сортирует все строки по имени
+  - id: c
+    text: Удаляет таблицу trees
+  answer: a
+  hints:
+  - SELECT выбирает столбец name.
+  - WHERE решает, какие строки попадут в ответ.
+  - Удаление таблицы здесь не происходит.
+  solution: a
+  explanation: WHERE фильтрует строки до того, как их вернут.
+  id: python.sql.sql-select.t1
+- type: predict_output
+  title: Одна сосна
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: сосна
+  - id: b
+    text: ель
+  - id: c
+    text: пусто
+  answer: a
+  hints:
+  - 12 не больше 15.
+  - 20 проходит условие.
+  - fetchone берёт единственную подходящую строку.
+  solution: a
+  explanation: Условие height > 15 оставляет сосну.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''ель'', 12)")
+
+    con.execute("insert into trees values (''сосна'', 20)")
+
+    row = con.execute(''select name from trees where height > 15'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-select.t2
+- type: code
+  title: Имена выше порога
+  difficulty: 2
+  context: development
+  prompt: В таблице ель 12, сосна 20, берёза 30 прочитайте порог и выведите имена с высотой
+    строго больше порога по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '15
+
+      '
+    expected_stdout: 'берёза
+
+      сосна
+
+      '
+  - stdin: '25
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  hints:
+  - Создайте таблицу в памяти.
+  - Подставьте порог через ?.
+  - ORDER BY name фиксирует порядок.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('берёза', 30)])\nlimit = int(input())\nfor row in con.execute('select\
+    \ name from trees where height > ? order by name', (limit,)):\n    print(row[0])\n"
+  explanation: WHERE отсекает низкие деревья, ORDER BY делает вывод устойчивым.
+  id: python.sql.sql-select.t3
+- type: code
+  title: Высота по имени
+  difficulty: 2
+  context: development
+  prompt: В той же таблице прочитайте имя и выведите его высоту.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: '20
+
+      '
+  hints:
+  - Ищите по столбцу name.
+  - Знак ? заменяет склейку.
+  - Печатайте число из первой колонки.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    name = input().strip()
+
+    row = con.execute(''select height from trees where name = ?'', (name,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Одна строка WHERE name = ? даёт одну высоту.
+  id: python.sql.sql-select.t4
+- type: code
+  title: Сколько выше
+  difficulty: 2
+  context: development
+  prompt: В той же таблице прочитайте порог и выведите, сколько деревьев строго выше него.
+  starter_code: ''
+  tests:
+  - stdin: '15
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '25
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - COUNT(*) считает оставшиеся строки.
+  - Порог снова передайте через ?.
+  - Печатайте одно число.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    limit = int(input())
+
+    row = con.execute(''select count(*) from trees where height > ?'', (limit,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Агрегат считает строки, которые прошли WHERE.
+  id: python.sql.sql-select.t5
+introduces:
+- id: sql-select
+  title: SELECT
+  summary: Запрос, который возвращает столбцы из таблицы.
+- id: sql-where
+  title: WHERE
+  summary: Условие, оставляющее только подходящие строки, как height > 15.

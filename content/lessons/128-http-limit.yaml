@@ -1,0 +1,196 @@
+id: python.http.http-limit
+slug: http-limit
+section: http
+title: Лимит запросов
+order: 9
+weight: 1
+prerequisites:
+- python.http.http-page
+goal: Остановить серию, когда запросов стало больше дозволенного.
+tags:
+- лимит
+- '429'
+- ждать
+theory:
+- Сервис может ответить 429 Too Many Requests, если клиент превысил лимит. Заголовок Retry-After
+  подсказывает, сколько ждать, но в задачах достаточно слова ждать.
+- Счётчик считает уже сделанные вызовы httpx.get. Пока номер вызова не больше лимита, ответ
+  ок. Следующий вызов печатает ждать.
+- Песочница не отправляет запросы и не спит. Лимит и текущее число приходят из ввода.
+examples:
+- title: Четвёртый лишний
+  code: "limit = 3\nfor number in range(1, 5):\n    print('ждать' if number > limit else 'ок')\n"
+  explanation: Три первых вызова проходят, четвёртый уже выше лимита.
+- title: Запас кончился
+  code: 'left = 0
+
+    print(''ждать'' if left == 0 else left - 1)
+
+    '
+  explanation: Нулевой остаток означает, что новый запрос делать рано.
+outcomes:
+- узнавать 429 как превышение лимита
+- сравнивать номер запроса с порогом
+- помечать лишние вызовы словом ждать
+- уменьшать оставшийся запас
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что значит 429
+  difficulty: 1
+  context: neutral
+  prompt: Что означает ответ 429 Too Many Requests на httpx.get("https://sklad.example/orders")?
+  options:
+  - id: a
+    text: Лимит запросов исчерпан, нужно подождать
+  - id: b
+    text: Заказ не найден
+  - id: c
+    text: Сервер навсегда сломан
+  answer: a
+  hints:
+  - 429 — отдельный код про частоту.
+  - Не найден был бы 404.
+  - Постоянный сбой чаще выглядит как 500.
+  solution: a
+  explanation: 429 просит снизить частоту и подождать.
+  id: python.http.http-limit.t1
+- type: predict_output
+  title: Выше лимита
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: ждать
+  - id: b
+    text: ок
+  - id: c
+    text: '429'
+  answer: a
+  hints:
+  - 3 больше 2.
+  - В этой ветке печатают ждать.
+  - Сам код 429 здесь заменён словом.
+  solution: a
+  explanation: Вызов за пределом лимита заставляет ждать.
+  code: 'limit = 2
+
+    count = 3
+
+    print(''ждать'' if count > limit else ''ок'')
+
+    '
+  id: python.http.http-limit.t2
+- type: code
+  title: Можно ли ещё
+  difficulty: 2
+  context: development
+  prompt: Прочитайте лимит и номер запроса. Если номер больше лимита, выведите ждать, иначе
+    ок.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      3
+
+      '
+    expected_stdout: 'ок
+
+      '
+  - stdin: '3
+
+      4
+
+      '
+    expected_stdout: 'ждать
+
+      '
+  hints:
+  - Сравнивайте номер с лимитом.
+  - Равенство лимиту ещё ок.
+  - Строго больше — ждать.
+  solution: 'limit = int(input())
+
+    count = int(input())
+
+    print(''ждать'' if count > limit else ''ок'')
+
+    '
+  explanation: Последний разрешённый запрос проходит, следующий нет.
+  id: python.http.http-limit.t3
+- type: code
+  title: Серия до лимита
+  difficulty: 2
+  context: development
+  prompt: Прочитайте лимит и сколько запросов сделать. Для каждого номера с 1 выведите ок
+    или ждать.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      3
+
+      '
+    expected_stdout: 'ок
+
+      ок
+
+      ждать
+
+      '
+  - stdin: '1
+
+      1
+
+      '
+    expected_stdout: 'ок
+
+      '
+  hints:
+  - Номера начинаются с 1.
+  - 'Порог тот же: больше лимита.'
+  - Печатайте отдельную строку на запрос.
+  solution: "limit = int(input())\ncount = int(input())\nfor number in range(1, count + 1):\n\
+    \    print('ждать' if number > limit else 'ок')\n"
+  explanation: Серия сама показывает, с какого номера пора ждать.
+  id: python.http.http-limit.t4
+- type: code
+  title: Остаток
+  difficulty: 2
+  context: development
+  prompt: Прочитайте, сколько запросов ещё можно сделать. Если ноль, выведите ждать, иначе
+    выведите остаток минус один.
+  starter_code: ''
+  tests:
+  - stdin: '0
+
+      '
+    expected_stdout: 'ждать
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Ноль — отдельная ветка.
+  - Иначе уменьшите запас.
+  - Не уходите в отрицательные числа.
+  solution: "left = int(input())\nif left == 0:\n    print('ждать')\nelse:\n    print(left\
+    \ - 1)\n"
+  explanation: Каждый разрешённый запрос уменьшает остаток на единицу.
+  id: python.http.http-limit.t5
+introduces:
+- id: http-rate-limit
+  title: Лимит запросов
+  summary: Порог частоты. Ответ 429 Too Many Requests означает, что дальше нужно ждать.

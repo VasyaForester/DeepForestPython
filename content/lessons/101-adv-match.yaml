@@ -1,0 +1,192 @@
+id: python.advanced.adv-match
+slug: adv-match
+section: advanced
+title: match
+order: 11
+weight: 1
+prerequisites:
+- python.advanced.adv-descr
+goal: Разобрать кортеж по образцу через match.
+tags:
+- match
+- образец
+theory:
+- match сравнивает значение с образцами сверху вниз и выполняет первый подходящий блок. Дальше
+  образцы уже не смотрят.
+- 'Кортеж ("ель", 4) подходит под образец ("ель", qty): первая часть совпала со строкой, вторая
+  записалась в qty. Из qty собирают текст хвойное 4.'
+- Образец _ подходит под всё, что не совпало выше. Его ставят последним. Сосна без своего
+  образца попадает в эту ветку и даёт другое.
+examples:
+- title: Ель и дуб
+  code: "def label(item):\n    match item:\n        case ('ель', qty):\n            return\
+    \ 'хвойное ' + str(qty)\n        case ('дуб', qty):\n            return 'лиственное '\
+    \ + str(qty)\n        case _:\n            return 'другое'\nprint(label(('ель', 4)))\n\
+    print(label(('дуб', 1)))\n"
+  explanation: Первый кортеж совпал с елью, qty равен 4. Второй совпал с дубом.
+- title: Запасная ветка
+  code: "def label(item):\n    match item:\n        case ('ель', qty):\n            return\
+    \ 'хвойное ' + str(qty)\n        case _:\n            return 'другое'\nprint(label(('сосна',\
+    \ 2)))\n"
+  explanation: Сосны в образцах нет. Срабатывает _, результат другое.
+outcomes:
+- сравнивать кортеж с образцами match
+- забирать второе поле в переменную образца
+- ставить запасной образец _ последним
+- выполнять только первый подходящий блок
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какой образец побеждает
+  difficulty: 1
+  context: neutral
+  prompt: В match два образца подходят под значение. Какой выполнится?
+  options:
+  - id: a
+    text: Первый сверху
+  - id: b
+    text: Последний
+  - id: c
+    text: Оба сразу
+  answer: a
+  hints:
+  - Образцы проверяют по порядку.
+  - После первого совпадения остальные не смотрят.
+  - _ имеет смысл ставить в конце.
+  solution: a
+  explanation: Берётся первый подходящий блок.
+  id: python.advanced.adv-match.t1
+- type: predict_output
+  title: Подпись ели
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: другое
+  - id: b
+    text: '4'
+  - id: c
+    text: хвойное 4
+  answer: c
+  hints:
+  - Первая часть кортежа — ель.
+  - qty получает 4.
+  - Ветка _ не нужна.
+  solution: c
+  explanation: Образец собирает строку хвойное 4.
+  code: "def label(item):\n    match item:\n        case ('ель', qty):\n            return\
+    \ 'хвойное ' + str(qty)\n        case _:\n            return 'другое'\nprint(label(('ель',\
+    \ 4)))\n"
+  id: python.advanced.adv-match.t2
+- type: code
+  title: Ель или дуб
+  difficulty: 2
+  context: development
+  prompt: Прочитайте породу и количество. Для ели выведите «хвойное N», для дуба «лиственное
+    N», иначе другое.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: 'хвойное 4
+
+      '
+  - stdin: 'дуб
+
+      1
+
+      '
+    expected_stdout: 'лиственное 1
+
+      '
+  hints:
+  - Соберите кортеж из двух значений.
+  - Образцы пишите сверху вниз.
+  - qty переведите в строку при склейке.
+  solution: "def label(item):\n    match item:\n        case ('ель', qty):\n            return\
+    \ 'хвойное ' + str(qty)\n        case ('дуб', qty):\n            return 'лиственное '\
+    \ + str(qty)\n        case _:\n            return 'другое'\nprint(label((input(), int(input()))))\n"
+  explanation: ель 4 даёт хвойное 4. дуб 1 даёт лиственное 1.
+  id: python.advanced.adv-match.t3
+- type: code
+  title: Запасной образец
+  difficulty: 2
+  context: business
+  prompt: Прочитайте породу и количество. Ель опишите образцом, всё остальное отправьте в
+    _ и выведите другое.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      2
+
+      '
+    expected_stdout: 'хвойное 2
+
+      '
+  - stdin: 'сосна
+
+      2
+
+      '
+    expected_stdout: 'другое
+
+      '
+  hints:
+  - _ стоит последним.
+  - Для ели используйте qty.
+  - Сосна не должна попасть в ветку ели.
+  solution: "def label(item):\n    match item:\n        case ('ель', qty):\n            return\
+    \ 'хвойное ' + str(qty)\n        case _:\n            return 'другое'\nprint(label((input(),\
+    \ int(input()))))\n"
+  explanation: ель 2 даёт хвойное 2. сосна 2 даёт другое.
+  id: python.advanced.adv-match.t4
+- type: code
+  title: Только количество
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте породу и количество. Если порода ель или дуб, выведите только количество.
+    Иначе выведите 0.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: 'сосна
+
+      9
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - В ветках ели и дуба верните qty.
+  - _ возвращает 0.
+  - print покажет число.
+  solution: "def only_qty(item):\n    match item:\n        case ('ель', qty):\n          \
+    \  return qty\n        case ('дуб', qty):\n            return qty\n        case _:\n \
+    \           return 0\nprint(only_qty((input(), int(input()))))\n"
+  explanation: Для ели печатается 4. Для сосны печатается 0.
+  id: python.advanced.adv-match.t5
+introduces:
+- id: adv-match.match
+  title: match
+  summary: Сравнивает значение с образцами по порядку. Образец кортежа достаёт его части,
+    _ подходит под остальное.

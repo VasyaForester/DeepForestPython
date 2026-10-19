@@ -1,0 +1,196 @@
+id: python.advanced.adv-closure
+slug: adv-closure
+section: advanced
+title: Замыкания
+order: 4
+weight: 1
+prerequisites:
+- python.advanced.adv-func
+goal: Запомнить значение в функции, которую вернули из другой функции.
+tags:
+- замыкание
+- функция
+theory:
+- Замыкание — внутренняя функция, которая пользуется переменной внешней. make_adder(3) возвращает
+  add, и эта add помнит тройку. Вызов add(1) даёт 4.
+- Таких функций можно собрать несколько. Один проход цикла кладёт в список функции для 1 и
+  для 10. Каждая должна помнить своё число, а не последнее в цикле.
+- 'Если написать lambda: i без своего аргумента, все функции прочитают i в момент вызова.
+  После цикла i уже равен последнему значению. Запись lambda i=i: i запоминает число на этом
+  шаге: значение по умолчанию считается сразу.'
+examples:
+- title: Два сумматора
+  code: "def make_adder(n):\n    def add(x):\n        return x + n\n    return add\nprint(make_adder(3)(1))\n\
+    print(make_adder(10)(1))\n"
+  explanation: Первая функция помнит 3 и даёт 4. Вторая помнит 10 и даёт 11.
+- title: Список с значением по умолчанию
+  code: "def make_adders():\n    adders = []\n    for n in (1, 10):\n        def add(x, n=n):\n\
+    \            return x + n\n        adders.append(add)\n    return adders\npair = make_adders()\n\
+    print(pair[0](5))\nprint(pair[1](5))\n"
+  explanation: n=n запоминает 1 и 10 в момент создания. Результаты 6 и 15, а не два раза 15.
+outcomes:
+- возвращать внутреннюю функцию
+- помнить внешнее значение
+- собирать несколько замыканий
+- запоминать шаг цикла значением по умолчанию
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Позднее связывание
+  difficulty: 1
+  context: neutral
+  prompt: 'В цикле for i in range(3) в список добавляют lambda: i без значения по умолчанию.
+    Чему равен funcs[0]() после цикла?'
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '0'
+  - id: c
+    text: '1'
+  answer: a
+  hints:
+  - lambda читает i при вызове.
+  - Цикл к этому моменту закончился.
+  - Последнее значение range(3) равно 2.
+  solution: a
+  explanation: Без значения по умолчанию все три функции видят один и тот же i, он равен 2.
+    Запись i=i запомнила бы число на каждом шаге.
+  id: python.advanced.adv-closure.t1
+- type: predict_output
+  title: Плюс три
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: '4'
+  - id: c
+    text: '1'
+  answer: b
+  hints:
+  - Внешняя функция получила 3.
+  - Внутренняя прибавляет его к 1.
+  - Значение по умолчанию помнит 3.
+  solution: b
+  explanation: 1 + 3 равно 4.
+  code: "def make_adder(n):\n    def add(x, n=n):\n        return x + n\n    return add\n\
+    print(make_adder(3)(1))\n"
+  id: python.advanced.adv-closure.t2
+- type: code
+  title: Прибавить заданное
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число n и число x. Функция, которую вернул make_adder(n), прибавляет
+    n к x. Выведите результат.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '10
+
+      5
+
+      '
+    expected_stdout: '15
+
+      '
+  hints:
+  - make_adder возвращает функцию.
+  - n запомните значением по умолчанию.
+  - Второе число передайте уже во внутреннюю функцию.
+  solution: "def make_adder(n):\n    def add(x, n=n):\n        return x + n\n    return add\n\
+    add_n = make_adder(int(input()))\nprint(add_n(int(input())))\n"
+  explanation: 3 и 1 дают 4. 10 и 5 дают 15.
+  id: python.advanced.adv-closure.t3
+- type: code
+  title: Несколько функций
+  difficulty: 2
+  context: business
+  prompt: Прочитайте слова через пробел и индекс. Для каждого слова создайте функцию со значением
+    по умолчанию и выведите слово по индексу.
+  starter_code: ''
+  tests:
+  - stdin: 'ель сосна дуб
+
+      0
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'ель сосна дуб
+
+      2
+
+      '
+    expected_stdout: 'дуб
+
+      '
+  hints:
+  - name=name пишите в def внутренней функции.
+  - Индекс выбирает функцию из списка.
+  - Вызовите её без аргументов.
+  solution: "def make_pickers(names):\n    pickers = []\n    for name in names:\n        def\
+    \ pick(name=name):\n            return name\n        pickers.append(pick)\n    return\
+    \ pickers\npickers = make_pickers(input().split())\nprint(pickers[int(input())]())\n"
+  explanation: Индекс 0 возвращает ель. Индекс 2 возвращает дуб, а не последнее слово для
+    всех.
+  id: python.advanced.adv-closure.t4
+- type: code
+  title: Два шага
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте два числа. Соберите две функции, которые прибавляют первое и второе число,
+    и выведите оба результата для базы 5.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      10
+
+      '
+    expected_stdout: '6
+
+      15
+
+      '
+  - stdin: '2
+
+      3
+
+      '
+    expected_stdout: '7
+
+      8
+
+      '
+  hints:
+  - Цикл создаёт две функции.
+  - У каждой своё значение по умолчанию.
+  - База 5 передаётся при вызове.
+  solution: "def make_adders(first, second):\n    adders = []\n    for n in (first, second):\n\
+    \        def add(x, n=n):\n            return x + n\n        adders.append(add)\n    return\
+    \ adders\npair = make_adders(int(input()), int(input()))\nprint(pair[0](5))\nprint(pair[1](5))\n"
+  explanation: 1 и 10 дают 6 и 15. 2 и 3 дают 7 и 8.
+  id: python.advanced.adv-closure.t5
+introduces:
+- id: adv-closure.closure
+  title: Замыкание
+  summary: Внутренняя функция, которая помнит значение из внешней. Значение по умолчанию фиксирует
+    его на каждом шаге цикла.

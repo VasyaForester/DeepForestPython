@@ -1,0 +1,211 @@
+id: python.data.data-notebook
+slug: data-notebook
+section: data
+title: Jupyter и воспроизводимость
+order: 1
+weight: 1
+prerequisites:
+- python.sql.sql-review
+goal: Повторять расчёт функцией и не зависеть от порядка ячеек.
+tags:
+- jupyter
+- воспроизводимость
+theory:
+- Jupyter-ноутбук состоит из ячеек. Выполненная ячейка оставляет имена и числа в общей памяти,
+  и следующая ячейка их видит.
+- 'Нижнюю ячейку нельзя честно запускать раньше верхней: имени ещё нет или в нём старый результат.
+  Воспроизводимый ноутбук прогоняют сверху вниз. Скрипт устроен иначе: он всегда идёт с первой
+  строки и не помнит прошлый запуск.'
+- 'Расчёт удобно спрятать в функцию analysis(rows): те же строки снова дают тот же ответ.
+  Упражнение вызывает такую функцию, потому что Jupyter в среде браузера не запускается.'
+examples:
+- title: Повтор суммы высот
+  code: "def analysis(rows):\n    return sum(rows)\nprint(analysis([12, 9, 15]))\nprint(analysis([12,\
+    \ 9, 15]))\n"
+  explanation: Оба вызова печатают 36. Функция не помнит прошлый запуск и считает заново.
+- title: Число и максимум
+  code: "def analysis(rows):\n    print(len(rows))\n    print(max(rows))\nanalysis([4, 7,\
+    \ 4])\n"
+  explanation: 'Список суточных посадок: три дня, максимум 7.'
+outcomes:
+- объяснять, чем ячейки ноутбука отличаются от скрипта
+- прогонять расчёт сверху вниз
+- прятать расчёт в функцию с данными на входе
+- получать тот же результат при повторном вызове
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Порядок ячеек
+  difficulty: 1
+  context: neutral
+  prompt: Почему в ноутбуке важен порядок ячеек?
+  options:
+  - id: a
+    text: Нижняя ячейка может опираться на имя, которое создала верхняя
+  - id: b
+    text: Все ячейки всегда выполняются одновременно
+  - id: c
+    text: Порядок меняет только цвет текста
+  answer: a
+  hints:
+  - Вспомните общую память ноутбука.
+  - Одновременного запуска всех ячеек нет.
+  - От порядка зависит, какие имена уже существуют.
+  solution: a
+  explanation: Ячейка видит только то, что уже выполнилось выше.
+  id: python.data.data-notebook.t1
+- type: predict_output
+  title: Максимум высот
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '4'
+  - id: b
+    text: '11'
+  - id: c
+    text: '21'
+  answer: b
+  hints:
+  - analysis возвращает максимум.
+  - В списке три высоты.
+  - 11 больше 4 и 6.
+  solution: b
+  explanation: Максимум списка равен 11.
+  code: "def analysis(rows):\n    return max(rows)\nprint(analysis([4, 11, 6]))\n"
+  id: python.data.data-notebook.t2
+- type: code
+  title: Сумма высот
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число строк n и n высот деревьев. Функция analysis возвращает сумму.
+    Выведите её.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '36
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - Сначала опишите analysis.
+  - Сложите прочитанный список.
+  - Печатайте результат вызова.
+  solution: "def analysis(rows):\n    return sum(rows)\nn = int(input())\nrows = [int(input())\
+    \ for _ in range(n)]\nprint(analysis(rows))\n"
+  explanation: Функцию можно вызвать с любым списком высот и получить сумму.
+  id: python.data.data-notebook.t3
+- type: code
+  title: Сколько дней и пик
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n суточных посадок. Функция analysis печатает количество и максимум
+    на двух строках.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      5
+
+      8
+
+      2
+
+      '
+    expected_stdout: '3
+
+      8
+
+      '
+  - stdin: '2
+
+      4
+
+      4
+
+      '
+    expected_stdout: '2
+
+      4
+
+      '
+  hints:
+  - len считает дни.
+  - max ищет пик.
+  - Печатайте оба числа внутри функции.
+  solution: "def analysis(rows):\n    print(len(rows))\n    print(max(rows))\nn = int(input())\n\
+    rows = [int(input()) for _ in range(n)]\nanalysis(rows)\n"
+  explanation: Один вызов заново считает оба показателя.
+  id: python.data.data-notebook.t4
+- type: code
+  title: Два одинаковых вызова
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. Функция analysis возвращает минимум. Вызовите её дважды и
+    оба раза выведите результат.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      8
+
+      3
+
+      11
+
+      '
+    expected_stdout: '3
+
+      3
+
+      '
+  - stdin: '2
+
+      5
+
+      9
+
+      '
+    expected_stdout: '5
+
+      5
+
+      '
+  hints:
+  - Минимум не меняется от повторного вызова.
+  - Читайте список один раз.
+  - Печатайте два результата.
+  solution: "def analysis(rows):\n    return min(rows)\nn = int(input())\nrows = [int(input())\
+    \ for _ in range(n)]\nprint(analysis(rows))\nprint(analysis(rows))\n"
+  explanation: Повторный вызов с теми же ценами даёт тот же минимум.
+  id: python.data.data-notebook.t5
+introduces:
+- id: data-notebook-cell
+  title: Ячейка ноутбука
+  summary: Отдельный блок кода в Jupyter. После выполнения имена остаются в общей памяти ноутбука.
+- id: data-rerun
+  title: Повторный прогон
+  summary: Запуск ячеек сверху вниз или повторный вызов функции с теми же данными.

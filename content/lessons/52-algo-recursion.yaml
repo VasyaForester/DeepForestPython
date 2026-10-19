@@ -1,0 +1,192 @@
+id: python.algorithms.algo-recursion
+slug: algo-recursion
+section: algorithms
+title: Рекурсия
+order: 9
+weight: 1
+prerequisites:
+- python.algorithms.algo-sort
+goal: Посчитать факториал и сумму цен вызовом функции самой себя.
+tags:
+- рекурсия
+theory:
+- Рекурсия вызывает ту же функцию на более коротких данных. Для факториала fact(n) равен n
+  умножить на fact(n - 1). Для суммы списка берут первый элемент и прибавляют сумму хвоста.
+- Без базового случая вызовы не кончаются. Для факториала fact(0) возвращает 1. Для суммы
+  пустой список даёт 0, и дальше раскручивать нечего.
+- fact(4) по дороге назад умножает 4, 3, 2 и 1 и получает 24. Глубина равна числу шагов до
+  базы. На нескольких ценах рекурсивная сумма совпадает с результатом обычного цикла.
+examples:
+- title: Факториал четырёх
+  code: "def fact(n):\n    if n == 0:\n        return 1\n    return n * fact(n - 1)\nprint(fact(4))\n"
+  explanation: База возвращает 1, дальше 4 умножается на 3, 2 и 1.
+- title: Сумма хвостом
+  code: "def total(prices):\n    if prices == []:\n        return 0\n    return prices[0]\
+    \ + total(prices[1:])\nprint(total([10, 20, 5]))\n"
+  explanation: 10 плюс сумма [20, 5] даёт 35, пустой хвост останавливает вызовы.
+outcomes:
+- вызывать функцию из неё самой
+- ставить базовый случай
+- считать факториал рекурсией
+- считать сумму списка через голову и хвост
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем база
+  difficulty: 1
+  context: neutral
+  prompt: Зачем рекурсии базовый случай?
+  options:
+  - id: a
+    text: Чтобы цепочка вызовов остановилась
+  - id: b
+    text: Чтобы запретить возврат значения
+  - id: c
+    text: Чтобы список сам упорядочился
+  answer: a
+  hints:
+  - Каждый вызов должен стать короче.
+  - Иначе глубина не кончается.
+  - База возвращает простой ответ без нового вызова.
+  solution: a
+  explanation: База обрывает цепочку, и результаты начинают возвращаться назад.
+  id: python.algorithms.algo-recursion.t1
+- type: predict_output
+  title: Чему равен fact(4)
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '24'
+  - id: b
+    text: '4'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - fact(0) равен 1.
+  - Дальше идут умножения на 1, 2, 3 и 4.
+  - Произведение равно 24.
+  solution: a
+  explanation: Факториал четырёх равен 24.
+  code: "def fact(n):\n    if n == 0:\n        return 1\n    return n * fact(n - 1)\nprint(fact(4))\n"
+  id: python.algorithms.algo-recursion.t2
+- type: code
+  title: Факториал
+  difficulty: 2
+  context: development
+  prompt: Прочитайте целое n не меньше нуля. Функция fact возвращает факториал, fact(0) равен
+    1. Выведите результат.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '24
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - База — ноль, не единица, если условились так.
+  - Шаг умножает n на fact(n - 1).
+  - Печатайте возврат.
+  solution: "def fact(n):\n    if n == 0:\n        return 1\n    return n * fact(n - 1)\n\
+    print(fact(int(input())))\n"
+  explanation: Ноль даёт 1, положительное n раскрывается до этой базы.
+  id: python.algorithms.algo-recursion.t3
+- type: code
+  title: Сумма рекурсией
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Функция total возвращает сумму списка рекурсией по хвосту.
+    Выведите сумму.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      20
+
+      5
+
+      '
+    expected_stdout: '35
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - Пустой список даёт 0.
+  - Берите первый элемент и хвост.
+  - Хвост — срез без первого.
+  solution: "def total(prices):\n    if prices == []:\n        return 0\n    return prices[0]\
+    \ + total(prices[1:])\nn = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    print(total(prices))\n"
+  explanation: Сумма собирается из головы и рекурсивной суммы остатка.
+  id: python.algorithms.algo-recursion.t4
+- type: code
+  title: Положительные рекурсией
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Рекурсивная функция считает, сколько значений строго больше
+    нуля. Выведите это число.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      10
+
+      -2
+
+      0
+
+      4
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      -1
+
+      -5
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - База пустого списка — 0.
+  - К ответу хвоста добавьте 1 только если голова больше нуля.
+  - Ноль добавку не даёт.
+  solution: "def positives(prices):\n    if prices == []:\n        return 0\n    extra = 0\n\
+    \    if prices[0] > 0:\n        extra = 1\n    return extra + positives(prices[1:])\n\
+    n = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\nprint(positives(prices))\n"
+  explanation: Каждый положительный элемент добавляет единицу по дороге к базе.
+  id: python.algorithms.algo-recursion.t5
+introduces:
+- id: algo-recursion
+  title: Рекурсия
+  summary: Вызов функцией самой себя на более коротких данных. Нужен базовый случай, иначе
+    вызовы не закончатся.

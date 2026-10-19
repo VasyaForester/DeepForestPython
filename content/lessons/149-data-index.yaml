@@ -1,0 +1,217 @@
+id: python.data.data-index
+slug: data-index
+section: data
+title: Индексация массива
+order: 4
+weight: 1
+prerequisites:
+- python.data.data-array
+goal: Доставать ячейку по номеру строки и столбца с нуля.
+tags:
+- индекс
+- numpy
+theory:
+- 'В NumPy элемент пишут arr[строка, столбец]. Счёт начинается с нуля: arr[1, 0] — вторая
+  строка и первый столбец.'
+- У списка списков та же позиция выглядит как grid[1][0]. Отрицательный индекс -1 берёт последнюю
+  строку или последнюю ячейку строки.
+- Упражнение берёт ячейки списком списков, потому что NumPy нет в среде браузера.
+examples:
+- title: Две клетки
+  code: 'grid = [[12, 9, 4], [15, 7, 8]]
+
+    print(grid[0][1])
+
+    print(grid[1][2])
+
+    '
+  explanation: Первая строка, второй столбец — 9. Вторая строка, третий столбец — 8.
+- title: Последняя клетка
+  code: 'grid = [[5, 6], [7, 8], [9, 1]]
+
+    print(grid[2][0])
+
+    print(grid[-1][-1])
+
+    '
+  explanation: Индекс 2 — третья строка. -1 указывает на последнюю ячейку, число 1.
+outcomes:
+- нумеровать строки и столбцы с нуля
+- брать ячейку парой индексов
+- пользоваться индексом -1
+- отличать одну ячейку от целой строки
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Индекс NumPy
+  difficulty: 1
+  context: neutral
+  prompt: Что выбирает arr[1, 0] в NumPy?
+  options:
+  - id: a
+    text: Ячейку второй строки и первого столбца
+  - id: b
+    text: Ячейку первой строки и второго столбца
+  - id: c
+    text: Всю вторую строку как список
+  answer: a
+  hints:
+  - Нумерация с нуля.
+  - Первое число — строка.
+  - Второе — столбец, не срез.
+  solution: a
+  explanation: Пара индексов указывает одну ячейку.
+  id: python.data.data-index.t1
+- type: predict_output
+  title: Клетка сетки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '40'
+  - id: c
+    text: '50'
+  answer: b
+  hints:
+  - Строка с индексом 1 — вторая.
+  - Столбец 0 — первый.
+  - Там стоит 40.
+  solution: b
+  explanation: Выбрана ячейка 40.
+  code: 'grid = [[10, 20, 30], [40, 50, 60]]
+
+    print(grid[1][0])
+
+    '
+  id: python.data.data-index.t2
+- type: code
+  title: Ячейка по индексам
+  difficulty: 2
+  context: development
+  prompt: Прочитайте размеры, сетку и строку с двумя индексами i j. Выведите grid[i][j].
+  starter_code: ''
+  tests:
+  - stdin: '2 3
+
+      10 20 30
+
+      40 50 60
+
+      1 2
+
+      '
+    expected_stdout: '60
+
+      '
+  - stdin: '1 2
+
+      7 8
+
+      0 1
+
+      '
+    expected_stdout: '8
+
+      '
+  hints:
+  - Сначала соберите сетку.
+  - Индексы читайте после всех строк.
+  - Печатайте одну ячейку.
+  solution: "rows, cols = map(int, input().split())\ngrid = []\nfor _ in range(rows):\n  \
+    \  grid.append([int(part) for part in input().split()])\ni, j = map(int, input().split())\n\
+    print(grid[i][j])\n"
+  explanation: Два индекса после сетки указывают нужное число.
+  id: python.data.data-index.t3
+- type: code
+  title: Первая и последняя
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сетку. Выведите первую ячейку первой строки и последнюю ячейку последней
+    строки.
+  starter_code: ''
+  tests:
+  - stdin: '2 2
+
+      4 5
+
+      6 7
+
+      '
+    expected_stdout: '4
+
+      7
+
+      '
+  - stdin: '1 3
+
+      8 9 10
+
+      '
+    expected_stdout: '8
+
+      10
+
+      '
+  hints:
+  - Углы сетки — [0][0] и [-1][-1].
+  - Размеры уже задают прямоугольник.
+  - Печатайте два числа.
+  solution: "rows, cols = map(int, input().split())\ngrid = []\nfor _ in range(rows):\n  \
+    \  grid.append([int(part) for part in input().split()])\nprint(grid[0][0])\nprint(grid[-1][-1])\n"
+  explanation: Крайние индексы берут углы без перебора.
+  id: python.data.data-index.t4
+- type: code
+  title: Строка целиком
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сетку и индекс строки i. Выведите ячейки этой строки через пробел.
+  starter_code: ''
+  tests:
+  - stdin: '2 3
+
+      1 2 3
+
+      4 5 6
+
+      1
+
+      '
+    expected_stdout: '4 5 6
+
+      '
+  - stdin: '3 1
+
+      7
+
+      8
+
+      9
+
+      0
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - Возьмите grid[i].
+  - Звёздочка в print распакует числа.
+  - Индекс строки приходит последним.
+  solution: "rows, cols = map(int, input().split())\ngrid = []\nfor _ in range(rows):\n  \
+    \  grid.append([int(part) for part in input().split()])\ni = int(input())\nprint(*grid[i])\n"
+  explanation: Одна строка массива — это один внутренний список.
+  id: python.data.data-index.t5
+introduces:
+- id: data-array-index
+  title: Индекс ячейки
+  summary: Пара номеров строки и столбца с нуля. В NumPy пишется arr[i, j].

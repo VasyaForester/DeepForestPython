@@ -1,0 +1,187 @@
+id: python.backend.be-auth
+slug: be-auth
+section: backend
+title: Аутентификация
+order: 8
+weight: 1
+prerequisites:
+- python.backend.be-db
+goal: По токену напечатать имя пользователя или гость.
+tags:
+- токен
+- пользователь
+- гость
+theory:
+- 'Аутентификация отвечает, кто пришёл. Здесь это словарь: ключ — присланная строка токена,
+  значение — имя пользователя.'
+- Если токена в словаре нет, программа печатает «гость». Заголовок Authorization в упражнении
+  не разбирается.
+- Токен берут из ввода как обычную короткую строку. Это не ключ от внешнего сервиса и не секрет,
+  который нужно сохранять.
+examples:
+- title: Известный токен
+  code: 'tokens = {''mira'': ''Мира'', ''lev'': ''Лев''}
+
+    print(tokens.get(''mira'', ''гость''))
+
+    '
+  explanation: Ключ mira есть в словаре, печатается Мира.
+- title: Неизвестный токен
+  code: 'tokens = {''mira'': ''Мира'', ''lev'': ''Лев''}
+
+    print(tokens.get(''нет'', ''гость''))
+
+    '
+  explanation: Такого ключа нет, get подставляет гость.
+outcomes:
+- искать токен в словаре
+- печатать имя найденного пользователя
+- печатать гость для неизвестного токена
+- не путать токен с паролем сервиса
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кто такой гость
+  difficulty: 1
+  context: neutral
+  prompt: Когда программа печатает гость?
+  options:
+  - id: a
+    text: Когда присланной строки нет в словаре токенов
+  - id: b
+    text: Когда токен совпал с именем
+  - id: c
+    text: Для любой непустой строки
+  answer: a
+  hints:
+  - Смотрите на второй аргумент get.
+  - Найденный ключ возвращает имя.
+  - Пустого совпадения недостаточно, чтобы назвать пользователя.
+  solution: a
+  explanation: Нет ключа — нет пользователя, остаётся гость.
+  id: python.backend.be-auth.t1
+- type: predict_output
+  title: Чужой токен
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: гость
+  - id: b
+    text: Мира
+  - id: c
+    text: нет
+  answer: a
+  hints:
+  - Ключ нет в словаре не лежит.
+  - get подставляет запасное значение.
+  - Мира вернулась бы только для mira.
+  solution: a
+  explanation: Неизвестный токен даёт гость.
+  code: 'tokens = {''mira'': ''Мира''}
+
+    print(tokens.get(''нет'', ''гость''))
+
+    '
+  id: python.backend.be-auth.t2
+- type: code
+  title: Токен из ввода
+  difficulty: 2
+  context: development
+  prompt: 'Словарь токенов: mira — Мира, lev — Лев. Прочитайте токен и выведите имя или гость.'
+  starter_code: ''
+  tests:
+  - stdin: 'mira
+
+      '
+    expected_stdout: 'Мира
+
+      '
+  - stdin: 'чужой
+
+      '
+    expected_stdout: 'гость
+
+      '
+  hints:
+  - Ключи словаря — короткие строки.
+  - get вторым аргументом ставит гость.
+  - Печатайте одно значение.
+  solution: 'tokens = {''mira'': ''Мира'', ''lev'': ''Лев''}
+
+    print(tokens.get(input(), ''гость''))
+
+    '
+  explanation: Строка из ввода либо находит имя, либо становится гостем.
+  id: python.backend.be-auth.t3
+- type: code
+  title: Один допущенный
+  difficulty: 2
+  context: development
+  prompt: Допущен только токен sklad со значением кладовщик. Прочитайте токен и выведите имя
+    или гость.
+  starter_code: ''
+  tests:
+  - stdin: 'sklad
+
+      '
+    expected_stdout: 'кладовщик
+
+      '
+  - stdin: 'mira
+
+      '
+    expected_stdout: 'гость
+
+      '
+  hints:
+  - В словаре один ключ.
+  - Любой другой ввод — гость.
+  - Не сравнивайте токен с именем пользователя.
+  solution: 'tokens = {''sklad'': ''кладовщик''}
+
+    print(tokens.get(input(), ''гость''))
+
+    '
+  explanation: Совпадение со словарём решает, известно ли лицо.
+  id: python.backend.be-auth.t4
+- type: code
+  title: Пустая строка
+  difficulty: 2
+  context: development
+  prompt: 'Токены: a1 — Анна. Прочитайте строку. Пустая строка и любой неизвестный токен дают
+    гость, a1 даёт Анна.'
+  starter_code: ''
+  tests:
+  - stdin: '
+
+      '
+    expected_stdout: 'гость
+
+      '
+  - stdin: 'a1
+
+      '
+    expected_stdout: 'Анна
+
+      '
+  hints:
+  - Пустую строку проверьте до словаря.
+  - Для a1 в словаре есть имя.
+  - Запасное значение get — гость.
+  solution: "tokens = {'a1': 'Анна'}\ntoken = input()\nif token == '':\n    print('гость')\n\
+    else:\n    print(tokens.get(token, 'гость'))\n"
+  explanation: Пустой ввод не считается пользователем, даже если его отдельно проверить.
+  id: python.backend.be-auth.t5
+introduces:
+- id: be-token
+  title: Токен
+  summary: Короткая строка, по которой словарь находит имя. Нет ключа — пользователь гость.

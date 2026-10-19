@@ -1,0 +1,214 @@
+id: python.vibe.vibe-context
+slug: vibe-context
+section: vibe
+title: Контекст
+order: 2
+weight: 1
+prerequisites:
+- python.vibe.vibe-task
+goal: Оставить в списке файлов только те имена, которые можно показать.
+tags:
+- контекст
+- файл
+- секрет
+theory:
+- Помощнику показывают файлы, которые нужны для задачи. Секрет и файл окружения в этот набор
+  не кладут.
+- Программа выбрасывает имена secrets.txt и .env. Остальные печатает по одному на строку —
+  это и есть безопасный список.
+- Такой отбор не читает сами файлы и не заменяет проверку кода. Он только не отдаёт в контекст
+  то, что показывать нельзя.
+examples:
+- title: Три имени
+  code: "blocked = {'secrets.txt', '.env'}\nnames = ['app.py', '.env', 'notes.md']\nsafe =\
+    \ [name for name in names if name not in blocked]\nfor name in safe:\n    print(name)\n"
+  explanation: Файл .env выброшен, остаются app.py и notes.md.
+- title: Секрет в списке
+  code: "blocked = {'secrets.txt', '.env'}\nnames = ['secrets.txt', 'report.py']\nsafe = [name\
+    \ for name in names if name not in blocked]\nfor name in safe:\n    print(name)\n"
+  explanation: secrets.txt не печатается, в списке остаётся report.py.
+outcomes:
+- не показывать secrets.txt
+- не показывать .env
+- печатать оставшиеся имена
+- не путать отбор файлов с проверкой кода
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что не показывают
+  difficulty: 1
+  context: neutral
+  prompt: Какие имена нельзя оставлять в списке для помощника?
+  options:
+  - id: a
+    text: secrets.txt и .env
+  - id: b
+    text: любой файл с кодом
+  - id: c
+    text: только пустые имена
+  answer: a
+  hints:
+  - Секрет и окружение в контекст не идут.
+  - Обычный код как раз может понадобиться.
+  - Правило про конкретные имена.
+  solution: a
+  explanation: Из списка убирают secrets.txt и .env.
+  id: python.vibe.vibe-context.t1
+- type: predict_output
+  title: Сколько имён осталось
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '3'
+  - id: c
+    text: '1'
+  answer: a
+  hints:
+  - .env входит в запрет.
+  - app.py и notes.md остаются.
+  - len считает оставшиеся.
+  solution: a
+  explanation: В безопасном списке два имени.
+  code: 'blocked = {''secrets.txt'', ''.env''}
+
+    names = [''app.py'', ''.env'', ''notes.md'']
+
+    safe = [name for name in names if name not in blocked]
+
+    print(len(safe))
+
+    '
+  id: python.vibe.vibe-context.t2
+- type: code
+  title: Список имён
+  difficulty: 2
+  context: development
+  prompt: Первая строка — количество имён, дальше сами имена. Выбросьте secrets.txt и .env
+    и напечатайте остальные по одному на строку.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      main.py
+
+      .env
+
+      '
+    expected_stdout: 'main.py
+
+      '
+  - stdin: '3
+
+      secrets.txt
+
+      app.py
+
+      notes.md
+
+      '
+    expected_stdout: 'app.py
+
+      notes.md
+
+      '
+  hints:
+  - Запрет — множество из двух имён.
+  - Порядок остальных сохраняйте.
+  - Пустую строку вместо выброшенного имени не печатайте.
+  solution: "blocked = {'secrets.txt', '.env'}\ncount = int(input())\nsafe = []\nfor _ in\
+    \ range(count):\n    name = input()\n    if name not in blocked:\n        safe.append(name)\n\
+    for name in safe:\n    print(name)\n"
+  explanation: На экран попадает только то, что можно показать.
+  id: python.vibe.vibe-context.t3
+- type: code
+  title: Оба запрета
+  difficulty: 2
+  context: development
+  prompt: Тот же ввод. В наборе могут встретиться оба запретных имени. Напечатайте безопасный
+    список.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      .env
+
+      secrets.txt
+
+      report.py
+
+      '
+    expected_stdout: 'report.py
+
+      '
+  - stdin: '2
+
+      read.py
+
+      write.py
+
+      '
+    expected_stdout: 'read.py
+
+      write.py
+
+      '
+  hints:
+  - Оба запретных имени равноправны.
+  - Если запретов нет, печатайте все имена.
+  - Каждое безопасное имя — отдельная строка.
+  solution: "blocked = {'secrets.txt', '.env'}\ncount = int(input())\nsafe = []\nfor _ in\
+    \ range(count):\n    name = input()\n    if name not in blocked:\n        safe.append(name)\n\
+    for name in safe:\n    print(name)\n"
+  explanation: Фильтр не зависит от того, сколько секретных имён пришло.
+  id: python.vibe.vibe-context.t4
+- type: code
+  title: Сколько можно показать
+  difficulty: 2
+  context: development
+  prompt: Тот же ввод. Сначала напечатайте число безопасных имён, затем сами имена.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      app.py
+
+      .env
+
+      '
+    expected_stdout: '1
+
+      app.py
+
+      '
+  - stdin: '1
+
+      secrets.txt
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Число печатайте до имён.
+  - Если безопасных нет, число 0 и больше ничего.
+  - secrets.txt в список не входит.
+  solution: "blocked = {'secrets.txt', '.env'}\ncount = int(input())\nsafe = []\nfor _ in\
+    \ range(count):\n    name = input()\n    if name not in blocked:\n        safe.append(name)\n\
+    print(len(safe))\nfor name in safe:\n    print(name)\n"
+  explanation: Счётчик показывает, сколько файлов вообще можно отдать в контекст.
+  id: python.vibe.vibe-context.t5
+introduces:
+- id: vibe-context-file
+  title: Файл контекста
+  summary: Имя, которое можно показать помощнику. secrets.txt и .env в этот список не входят.

@@ -1,0 +1,191 @@
+id: python.oop.oop-composition
+slug: oop-composition
+section: oop
+title: Композиция
+order: 4
+weight: 1
+prerequisites:
+- python.oop.oop-methods
+goal: Собрать объект из другого объекта, не делая его наследником.
+tags:
+- композиция
+- объект
+theory:
+- Композиция — когда один объект хранит другой. У заказа есть поле price, и в нём лежит отдельный
+  объект Price, а не подкласс.
+- 'Order("ель", Price(120)) создаёт цену и отдаёт её заказу. Сумму читают по цепочке order.price.amount:
+  сначала поле заказа, потом поле цены.'
+- 'Price можно подставить в другой заказ, и наследником Order он от этого не становится. isinstance(order,
+  Price) равно False: заказ не является ценой, он её содержит.'
+examples:
+- title: Цена внутри заказа
+  code: "class Price:\n    def __init__(self, amount):\n        self.amount = amount\nclass\
+    \ Order:\n    def __init__(self, name, price):\n        self.name = name\n        self.price\
+    \ = price\norder = Order('ель', Price(120))\nprint(order.name)\nprint(order.price.amount)\n"
+  explanation: В поле price лежит объект Price. Его amount равен 120.
+- title: Не наследник
+  code: "class Price:\n    def __init__(self, amount):\n        self.amount = amount\nclass\
+    \ Order:\n    def __init__(self, name, price):\n        self.name = name\n        self.price\
+    \ = price\norder = Order('сосна', Price(80))\nprint(isinstance(order, Price))\nprint(order.price.amount)\n"
+  explanation: Заказ не является ценой. Сумму достают из вложенного объекта, она равна 80.
+outcomes:
+- хранить объект в поле другого объекта
+- читать вложенное поле через цепочку точек
+- не путать состав с наследованием
+- считать значение по данным вложенных объектов
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где лежит цена
+  difficulty: 1
+  context: neutral
+  prompt: Как заказ связан с ценой в композиции?
+  options:
+  - id: a
+    text: Держит объект Price в своём поле
+  - id: b
+    text: Сам является наследником Price
+  - id: c
+    text: Копирует класс Price в список
+  answer: a
+  hints:
+  - Поле self.price хранит готовый объект.
+  - Наследование здесь не используется.
+  - isinstance заказа относительно Price ложно.
+  solution: a
+  explanation: Заказ содержит цену. Он не становится её подвидом.
+  id: python.oop.oop-composition.t1
+- type: predict_output
+  title: Сумма вложенного объекта
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '120'
+  - id: b
+    text: Price
+  - id: c
+    text: Order
+  answer: a
+  hints:
+  - Price(120) создаёт объект цены.
+  - Заказ хранит его в price.
+  - amount читают у вложенного объекта.
+  solution: a
+  explanation: Цепочка полей даёт число 120.
+  code: "class Price:\n    def __init__(self, amount):\n        self.amount = amount\nclass\
+    \ Order:\n    def __init__(self, price):\n        self.price = price\nprint(Order(Price(120)).price.amount)\n"
+  id: python.oop.oop-composition.t2
+- type: code
+  title: Заказ с ценой
+  difficulty: 2
+  context: business
+  prompt: Прочитайте название и сумму. Соберите Price и Order и выведите сумму из вложенного
+    объекта.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      120
+
+      '
+    expected_stdout: '120
+
+      '
+  - stdin: 'сосна
+
+      80
+
+      '
+    expected_stdout: '80
+
+      '
+  hints:
+  - Сначала создайте Price.
+  - Передайте его в Order.
+  - Печатайте order.price.amount.
+  solution: "class Price:\n    def __init__(self, amount):\n        self.amount = amount\n\
+    class Order:\n    def __init__(self, name, price):\n        self.name = name\n       \
+    \ self.price = price\norder = Order(input(), Price(int(input())))\nprint(order.price.amount)\n"
+  explanation: Сумма лежит в объекте цены, заказ только хранит его.
+  id: python.oop.oop-composition.t3
+- type: code
+  title: Подпись заказа
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название и сумму. Метод label у Order возвращает «название сумма», беря
+    число из объекта Price.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      120
+
+      '
+    expected_stdout: 'ель 120
+
+      '
+  - stdin: 'дуб
+
+      90
+
+      '
+    expected_stdout: 'дуб 90
+
+      '
+  hints:
+  - label живёт у Order.
+  - Число достаньте через self.price.amount.
+  - Склейте название и сумму.
+  solution: "class Price:\n    def __init__(self, amount):\n        self.amount = amount\n\
+    class Order:\n    def __init__(self, name, price):\n        self.name = name\n       \
+    \ self.price = price\n    def label(self):\n        return self.name + ' ' + str(self.price.amount)\n\
+    print(Order(input(), Price(int(input()))).label())\n"
+  explanation: Метод заказа пользуется вложенной ценой и не наследует её.
+  id: python.oop.oop-composition.t4
+- type: code
+  title: Две цены
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте две суммы. Создайте два объекта Price, положите оба в заказ и выведите
+    их сумму.
+  starter_code: ''
+  tests:
+  - stdin: '120
+
+      80
+
+      '
+    expected_stdout: '200
+
+      '
+  - stdin: '10
+
+      5
+
+      '
+    expected_stdout: '15
+
+      '
+  hints:
+  - В заказе два поля с объектами Price.
+  - total складывает amount обоих.
+  - Order не наследуется от Price.
+  solution: "class Price:\n    def __init__(self, amount):\n        self.amount = amount\n\
+    class Order:\n    def __init__(self, first, second):\n        self.first = first\n   \
+    \     self.second = second\n    def total(self):\n        return self.first.amount + self.second.amount\n\
+    order = Order(Price(int(input())), Price(int(input())))\nprint(order.total())\n"
+  explanation: 120 и 80 дают 200. 10 и 5 дают 15.
+  id: python.oop.oop-composition.t5
+introduces:
+- id: oop-composition.composition
+  title: Композиция
+  summary: Объект хранит другой объект в поле. Заказ содержит Price и не становится его наследником.

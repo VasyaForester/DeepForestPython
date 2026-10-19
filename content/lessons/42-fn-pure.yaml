@@ -1,0 +1,211 @@
+id: python.functions.fn-pure
+slug: fn-pure
+section: functions
+title: Чистые функции
+order: 10
+weight: 1
+prerequisites:
+- python.functions.fn-annotations
+goal: Считать результат только из аргументов и возвращать его без печати.
+tags:
+- чистая функция
+theory:
+- Чистая функция смотрит только на аргументы и отдаёт ответ через return. Одинаковые аргументы
+  дают одинаковый результат. Внутри нет печати и нет записи во внешние имена.
+- Печать журнала оставляют вызывающему коду. Функция считает сумму цен или число положительных
+  остатков и возвращает число. Её можно вызвать дважды и оба раза получить то же самое.
+- 'Ноль не является положительным. Отрицательная цена уменьшает сумму и не увеличивает счётчик.
+  Список, который передали в такую функцию, остаётся прежним: она только читает элементы.'
+examples:
+- title: Два одинаковых вызова
+  code: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\nprint(total([12, 40, 7]))\nprint(total([12, 40, 7]))\n"
+  explanation: Оба вызова с одним списком возвращают 59, внутри печати нет.
+- title: Положительные цены
+  code: "def positives(prices):\n    count = 0\n    for price in prices:\n        if price\
+    \ > 0:\n            count = count + 1\n    return count\nprint(positives([12, -1, 0, 7]))\n"
+  explanation: Строго больше нуля только 12 и 7, поэтому результат 2.
+outcomes:
+- возвращать результат без печати внутри
+- получать один и тот же ответ на одни аргументы
+- считать сумму списка отдельной функцией
+- считать число положительных отдельной функцией
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какая функция чистая
+  difficulty: 1
+  context: neutral
+  prompt: Какую функцию называют чистой?
+  options:
+  - id: a
+    text: Та, что при тех же аргументах всегда возвращает тот же результат и ничего не печатает
+  - id: b
+    text: Та, что печатает ответ вместо возврата
+  - id: c
+    text: Та, что каждый раз читает новое число из ввода
+  answer: a
+  hints:
+  - Смотрите, от чего зависит результат.
+  - Печать внутри портит чистоту.
+  - Ввод внутри тоже делает результат разным.
+  solution: a
+  explanation: Чистая функция зависит только от аргументов и возвращает значение.
+  id: python.functions.fn-pure.t1
+- type: predict_output
+  title: Одна и та же сумма
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '59'
+  - id: b
+    text: '12'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - Сложите 12, 40 и 7.
+  - Функция возвращает сумму.
+  - Печать снаружи одна.
+  solution: a
+  explanation: Сумма трёх цен равна 59.
+  code: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\nprint(total([12, 40, 7]))\n"
+  id: python.functions.fn-pure.t2
+- type: code
+  title: Сумма списка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте количество и столько целых цен. Функция total возвращает сумму и ничего
+    не печатает. Выведите сумму.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      40
+
+      7
+
+      '
+    expected_stdout: '59
+
+      '
+  - stdin: '2
+
+      -1
+
+      4
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Соберите список.
+  - Считайте сумму внутри функции.
+  - Печатайте только результат.
+  solution: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\nn = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    print(total(prices))\n"
+  explanation: Функция возвращает сумму, программа печатает её один раз.
+  id: python.functions.fn-pure.t3
+- type: code
+  title: Сколько положительных
+  difficulty: 2
+  context: development
+  prompt: Прочитайте количество и столько целых. Функция positives возвращает, сколько чисел
+    строго больше нуля. Выведите это число.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      12
+
+      -1
+
+      0
+
+      7
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      -5
+
+      -2
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Ноль не подходит.
+  - Счётчик копите в функции.
+  - Печать одна, снаружи.
+  solution: "def positives(prices):\n    count = 0\n    for price in prices:\n        if price\
+    \ > 0:\n            count = count + 1\n    return count\nn = int(input())\nprices = []\n\
+    for _ in range(n):\n    prices.append(int(input()))\nprint(positives(prices))\n"
+  explanation: В счётчик входят только числа больше нуля.
+  id: python.functions.fn-pure.t4
+- type: code
+  title: Дважды одна сумма
+  difficulty: 2
+  context: development
+  prompt: Прочитайте количество и цены. Чистая функция total возвращает сумму. Вызовите её
+    дважды с одним списком и оба раза выведите результат.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      40
+
+      7
+
+      '
+    expected_stdout: '59
+
+      59
+
+      '
+  - stdin: '2
+
+      -1
+
+      4
+
+      '
+    expected_stdout: '3
+
+      3
+
+      '
+  hints:
+  - Функция не печатает сама.
+  - Оба вызова получают один список.
+  - Две строки вывода совпадут.
+  solution: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\nn = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    print(total(prices))\nprint(total(prices))\n"
+  explanation: Повторный вызов с теми же ценами даёт ту же сумму.
+  id: python.functions.fn-pure.t5
+introduces:
+- id: fn-pure
+  title: Чистая функция
+  summary: Функция без печати и без изменения внешних данных. Одни и те же аргументы дают
+    один и тот же результат.

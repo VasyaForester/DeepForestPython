@@ -1,0 +1,184 @@
+id: python.http.http-timeout
+slug: http-timeout
+section: http
+title: Таймаут и повтор
+order: 6
+weight: 1
+prerequisites:
+- python.http.http-client
+goal: Повторить попытку, пока не кончится лимит или не придёт ответ.
+tags:
+- таймаут
+- повтор
+- httpx
+theory:
+- 'Клиенту задают предел ожидания: httpx.get("https://sklad.example/orders", timeout=2.0).
+  Если ответ не успел, это таймаут, и вызов иногда повторяют.'
+- 'Песочница не ждёт сеть и не измеряет секунды. Неудачи уже записаны списком слов: timeout
+  означает сорвавшуюся попытку, 200 — удачный ответ.'
+- Лимит — сколько попыток можно потратить. Если удачный исход так и не встретился, результат
+  — не вышло.
+examples:
+- title: Удача с третьей
+  code: "outcomes = ['timeout', 'timeout', '200']\nfor item in outcomes:\n    if item != 'timeout':\n\
+    \        print(item)\n        break\n"
+  explanation: Два таймаута пропускают, третий элемент 200 печатается и цикл останавливается.
+- title: Сколько попыток
+  code: "outcomes = ['timeout', '200']\nused = 0\nfor item in outcomes:\n    used += 1\n \
+    \   if item != 'timeout':\n        break\nprint(used)\n"
+  explanation: Ответ нашёлся на второй попытке, поэтому счётчик равен 2.
+outcomes:
+- понимать timeout как предел ожидания httpx
+- останавливаться на первом удачном исходе
+- уважать число попыток
+- сообщать, что ответ так и не пришёл
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что ограничивает timeout
+  difficulty: 1
+  context: neutral
+  prompt: Зачем в вызове httpx.get("https://sklad.example/orders", timeout=2.0) указан timeout?
+  options:
+  - id: a
+    text: Чтобы не ждать ответ дольше двух секунд
+  - id: b
+    text: Чтобы обязательно получить 200
+  - id: c
+    text: Чтобы отключить повторы навсегда
+  answer: a
+  hints:
+  - timeout — предел ожидания.
+  - Код 200 он не гарантирует.
+  - Повтор — отдельное решение после таймаута.
+  solution: a
+  explanation: timeout обрывает слишком долгое ожидание.
+  id: python.http.http-timeout.t1
+- type: predict_output
+  title: Первый успех
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '200'
+  - id: b
+    text: timeout
+  - id: c
+    text: '404'
+  answer: a
+  hints:
+  - Первый элемент пропускают.
+  - Второй не равен timeout.
+  - break останавливает цикл.
+  solution: a
+  explanation: Печатается первый исход, который не таймаут.
+  code: "outcomes = ['timeout', '200']\nfor item in outcomes:\n    if item != 'timeout':\n\
+    \        print(item)\n        break\n"
+  id: python.http.http-timeout.t2
+- type: code
+  title: В пределах лимита
+  difficulty: 2
+  context: development
+  prompt: Прочитайте лимит попыток и строку исходов через пробел. Выведите первый не-timeout,
+    если он попал в лимит, иначе не вышло.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      timeout timeout 200
+
+      '
+    expected_stdout: '200
+
+      '
+  - stdin: '2
+
+      timeout timeout 200
+
+      '
+    expected_stdout: 'не вышло
+
+      '
+  hints:
+  - Тратите попытку на каждый просмотренный исход.
+  - Останавливайтесь на первом ответе.
+  - Если лимит кончился на timeout, оставьте не вышло.
+  solution: "limit = int(input())\noutcomes = input().split()\nresult = 'не вышло'\nused =\
+    \ 0\nfor item in outcomes:\n    if used == limit:\n        break\n    used += 1\n    if\
+    \ item != 'timeout':\n        result = item\n        break\nprint(result)\n"
+  explanation: Повтор имеет смысл, только пока есть оставшиеся попытки.
+  id: python.http.http-timeout.t3
+- type: code
+  title: Число попыток
+  difficulty: 2
+  context: development
+  prompt: Прочитайте лимит и строку исходов. Выведите, сколько попыток ушло до первого успеха
+    или до исчерпания лимита.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      timeout 200
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      200
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Увеличивайте счётчик на каждой попытке.
+  - Успех тоже считается попыткой.
+  - Не выходите за лимит.
+  solution: "limit = int(input())\noutcomes = input().split()\nused = 0\nfor item in outcomes:\n\
+    \    if used == limit:\n        break\n    used += 1\n    if item != 'timeout':\n    \
+    \    break\nprint(used)\n"
+  explanation: Успешный ответ тоже занимает одну попытку.
+  id: python.http.http-timeout.t4
+- type: code
+  title: Есть ли ответ
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку исходов через пробел. Выведите первый не-timeout или слово таймаут,
+    если его нет.
+  starter_code: ''
+  tests:
+  - stdin: 'timeout 200
+
+      '
+    expected_stdout: '200
+
+      '
+  - stdin: 'timeout timeout
+
+      '
+    expected_stdout: 'таймаут
+
+      '
+  hints:
+  - Идите по словам слева направо.
+  - Замените ответ на первый успех.
+  - Если цикл кончился, оставьте таймаут.
+  solution: "found = 'таймаут'\nfor item in input().split():\n    if item != 'timeout':\n\
+    \        found = item\n        break\nprint(found)\n"
+  explanation: Без единого ответа итог — таймаут.
+  id: python.http.http-timeout.t5
+introduces:
+- id: http-retry
+  title: Повтор после таймаута
+  summary: Новая попытка, если httpx.get не дождался ответа. Лимит попыток не даёт повторять
+    бесконечно.

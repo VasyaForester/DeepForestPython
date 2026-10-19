@@ -1,0 +1,191 @@
+id: python.capstone.cap-tests
+slug: cap-tests
+section: capstone
+title: Тесты
+order: 7
+weight: 1
+prerequisites:
+- python.capstone.cap-report
+goal: Сравнить чистую функцию с ожиданием и напечатать прошёл или сломано.
+tags:
+- тест
+- функция
+- ожидание
+theory:
+- 'Проверяют чистую функцию: одни и те же числа всегда дают одну сумму. pytest здесь не запускается,
+  сравнение пишут сами.'
+- Если результат не равен ожиданию, печатают «сломано». Если равен — «прошёл». Ожидание приходит
+  отдельно от данных.
+- Падение проверки не чинит функцию само. Оно показывает, что пример и код разошлись, и смотреть
+  нужно на расчёт.
+examples:
+- title: Сумма сошлась
+  code: "def positive_sum(nums):\n    return sum(n for n in nums if n > 0)\ngot = positive_sum([2,\
+    \ -1, 3])\nif got != 5:\n    print('сломано')\nelse:\n    print('прошёл')\n"
+  explanation: Положительные 2 и 3 дают 5, проверка печатает прошёл.
+- title: Чужое ожидание
+  code: "def positive_sum(nums):\n    return sum(n for n in nums if n > 0)\ngot = positive_sum([2,\
+    \ -1, 3])\nif got != 4:\n    print('сломано')\nelse:\n    print('прошёл')\n"
+  explanation: Функция посчитала 5, ожидание было 4, печатается сломано.
+outcomes:
+- писать чистую функцию суммы
+- сравнивать результат с ожиданием
+- печатать прошёл при равенстве
+- печатать сломано при расхождении
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда писать сломано
+  difficulty: 1
+  context: neutral
+  prompt: Когда проверка печатает сломано?
+  options:
+  - id: a
+    text: Когда результат функции не равен ожиданию
+  - id: b
+    text: Когда в данных есть отрицательное число
+  - id: c
+    text: Когда функция вообще вызвана
+  answer: a
+  hints:
+  - Отрицательное число само по себе не ошибка проверки.
+  - Смотрят на неравенство.
+  - Совпадение печатает прошёл.
+  solution: a
+  explanation: сломано означает расхождение результата и ожидания.
+  id: python.capstone.cap-tests.t1
+- type: predict_output
+  title: Верная сумма
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: прошёл
+  - id: b
+    text: сломано
+  - id: c
+    text: '5'
+  answer: a
+  hints:
+  - Сумма положительных равна 5.
+  - Ожидание тоже 5.
+  - Число само не печатается.
+  solution: a
+  explanation: Проверка проходит.
+  code: "def positive_sum(nums):\n    return sum(n for n in nums if n > 0)\ngot = positive_sum([2,\
+    \ -1, 3])\nif got != 5:\n    print('сломано')\nelse:\n    print('прошёл')\n"
+  id: python.capstone.cap-tests.t2
+- type: code
+  title: Сверить сумму
+  difficulty: 2
+  context: development
+  prompt: positive_sum складывает числа больше нуля. Первая строка — числа через пробел, вторая
+    — ожидание. Выведите прошёл или сломано.
+  starter_code: ''
+  tests:
+  - stdin: '2 -1 3
+
+      5
+
+      '
+    expected_stdout: 'прошёл
+
+      '
+  - stdin: '1 1
+
+      3
+
+      '
+    expected_stdout: 'сломано
+
+      '
+  hints:
+  - В сумму не кладите минус.
+  - Сравнивайте got и expected.
+  - Не печатайте саму сумму.
+  solution: "def positive_sum(nums):\n    return sum(n for n in nums if n > 0)\nnums = [int(part)\
+    \ for part in input().split()]\nexpected = int(input())\ngot = positive_sum(nums)\nif\
+    \ got != expected:\n    print('сломано')\nelse:\n    print('прошёл')\n"
+  explanation: Одна развилка отличает совпадение от провала.
+  id: python.capstone.cap-tests.t3
+- type: code
+  title: Сверить отбор
+  difficulty: 2
+  context: development
+  prompt: kept_count считает, сколько чисел больше нуля. Сверьте его с ожиданием тем же способом.
+  starter_code: ''
+  tests:
+  - stdin: '2 -1 3
+
+      2
+
+      '
+    expected_stdout: 'прошёл
+
+      '
+  - stdin: '2 -1 3
+
+      3
+
+      '
+    expected_stdout: 'сломано
+
+      '
+  hints:
+  - Ноль и минус не считаются.
+  - Ожидание — отдельная строка.
+  - Слова ответа те же.
+  solution: "def kept_count(nums):\n    return len([n for n in nums if n > 0])\nnums = [int(part)\
+    \ for part in input().split()]\nexpected = int(input())\ngot = kept_count(nums)\nif got\
+    \ != expected:\n    print('сломано')\nelse:\n    print('прошёл')\n"
+  explanation: Проверка смотрит на число отобранных, а не на сумму.
+  id: python.capstone.cap-tests.t4
+- type: code
+  title: Два примера
+  difficulty: 2
+  context: development
+  prompt: Прочитайте два ожидания для одной и той же positive_sum на списке 2, -1, 3. Для
+    каждого ожидания напечатайте прошёл или сломано.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      5
+
+      '
+    expected_stdout: 'сломано
+
+      прошёл
+
+      '
+  - stdin: '5
+
+      4
+
+      '
+    expected_stdout: 'прошёл
+
+      сломано
+
+      '
+  hints:
+  - Функцию считайте один раз.
+  - Каждое ожидание — свой вердикт.
+  - Верная сумма этого списка — 5.
+  solution: "def positive_sum(nums):\n    return sum(n for n in nums if n > 0)\ngot = positive_sum([2,\
+    \ -1, 3])\nfor _ in range(2):\n    expected = int(input())\n    if got != expected:\n\
+    \        print('сломано')\n    else:\n        print('прошёл')\n"
+  explanation: Один расчёт можно сверить с несколькими ожиданиями.
+  id: python.capstone.cap-tests.t5
+introduces:
+- id: cap-pure-check
+  title: Сверка функции
+  summary: Вызов чистой функции и сравнение с ожиданием. pytest для этого не нужен.

@@ -1,0 +1,215 @@
+id: python.algorithms.algo-sort
+slug: algo-sort
+section: algorithms
+title: Сортировки
+order: 8
+weight: 1
+prerequisites:
+- python.algorithms.algo-binary
+goal: Упорядочить цены выбором и сравнить этот способ со sorted.
+tags:
+- сортировка
+theory:
+- Сортировка выбором на каждом шаге ищет минимум среди ещё не поставленных цен и меняет его
+  с текущей позицией. Внешних шагов около n, и внутри каждого тоже до n сравнений. Поэтому
+  оценка такого способа — O(n^2).
+- 'Встроенный sorted на длинном журнале делает меньше сравнений: рост около n log n, а не
+  квадрат числа цен. На коротком списке разница почти незаметна, на тысячах записей уже важна.
+  Учебный выбор минимума полезно один раз написать руками, а в готовом отчёте взять sorted.'
+- sorted возвращает новый список и не обязан портить исходный. Сортировка выбором переставляет
+  элементы в том же списке. Для цен 40, 7 и 12 оба пути приводят к порядку 7, 12, 40.
+examples:
+- title: Выбор минимума
+  code: "prices = [40, 7, 12]\nfor i in range(len(prices)):\n    best = i\n    for j in range(i\
+    \ + 1, len(prices)):\n        if prices[j] < prices[best]:\n            best = j\n   \
+    \ prices[i], prices[best] = prices[best], prices[i]\nprint(prices)\n"
+  explanation: Минимумы по очереди встают на свои места, получается [7, 12, 40].
+- title: Готовая сортировка
+  code: 'prices = [40, 7, 12]
+
+    print(sorted(prices))
+
+    '
+  explanation: sorted возвращает новый список в том же порядке 7, 12, 40.
+outcomes:
+- упорядочивать список выбором минимума
+- оценивать такой способ как O(n^2)
+- получать новый список через sorted
+- отличать оценку n log n от квадрата
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Оценка выбора
+  difficulty: 1
+  context: neutral
+  prompt: Как растёт число сравнений у сортировки выбором?
+  options:
+  - id: a
+    text: Как квадрат числа цен из-за вложенных проходов
+  - id: b
+    text: Всегда на один шаг, список ведь конечный
+  - id: c
+    text: Как один проход без вложенного цикла
+  answer: a
+  hints:
+  - Снаружи около n шагов.
+  - Внутри снова просмотр хвоста.
+  - Произведение этих проходов даёт квадрат.
+  solution: a
+  explanation: Вложенные циклы сортировки выбором дают оценку O(n^2).
+  id: python.algorithms.algo-sort.t1
+- type: predict_output
+  title: Порядок цен
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '[7, 12, 40]'
+  - id: b
+    text: '[40, 7, 12]'
+  - id: c
+    text: '[12, 7, 40]'
+  answer: a
+  hints:
+  - Сначала на нулевое место встаёт 7.
+  - Потом 12 меняется с 40.
+  - Итог растёт слева направо.
+  solution: a
+  explanation: После выбора минимумов список печатается как [7, 12, 40].
+  code: "prices = [40, 7, 12]\nfor i in range(len(prices)):\n    best = i\n    for j in range(i\
+    \ + 1, len(prices)):\n        if prices[j] < prices[best]:\n            best = j\n   \
+    \ prices[i], prices[best] = prices[best], prices[i]\nprint(prices)\n"
+  id: python.algorithms.algo-sort.t2
+- type: code
+  title: Сортировка выбором
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Упорядочьте список выбором минимума по возрастанию и выведите
+    его.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      40
+
+      7
+
+      12
+
+      '
+    expected_stdout: '[7, 12, 40]
+
+      '
+  - stdin: '2
+
+      5
+
+      5
+
+      '
+    expected_stdout: '[5, 5]
+
+      '
+  hints:
+  - Ищите минимум только в хвосте.
+  - Меняйте его с позицией i.
+  - Печатайте тот же список.
+  solution: "n = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    for i in range(len(prices)):\n    best = i\n    for j in range(i + 1, len(prices)):\n\
+    \        if prices[j] < prices[best]:\n            best = j\n    prices[i], prices[best]\
+    \ = prices[best], prices[i]\nprint(prices)\n"
+  explanation: Каждый проход ставит очередной минимум на своё место.
+  id: python.algorithms.algo-sort.t3
+- type: code
+  title: Через sorted
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Выведите новый список, который вернул sorted, по возрастанию.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      2
+
+      9
+
+      1
+
+      '
+    expected_stdout: '[1, 2, 9]
+
+      '
+  - stdin: '1
+
+      4
+
+      '
+    expected_stdout: '[4]
+
+      '
+  hints:
+  - Соберите исходный список.
+  - Печатайте результат sorted.
+  - Исходный порядок в выводе не нужен.
+  solution: "n = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    print(sorted(prices))\n"
+  explanation: sorted сам упорядочивает цены и возвращает новый список.
+  id: python.algorithms.algo-sort.t4
+- type: code
+  title: Сколько обменов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. В сортировке выбором посчитайте только те шаги, где минимум
+    стоит не на текущем месте и его правда меняют местами. Выведите число обменов.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      40
+
+      7
+
+      12
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '3
+
+      1
+
+      2
+
+      3
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Обмен нужен, только если best не равен i.
+  - Уже растущий ряд обменов не требует.
+  - Печатайте счётчик, не список.
+  solution: "n = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    swaps = 0\nfor i in range(len(prices)):\n    best = i\n    for j in range(i + 1, len(prices)):\n\
+    \        if prices[j] < prices[best]:\n            best = j\n    if best != i:\n     \
+    \   prices[i], prices[best] = prices[best], prices[i]\n        swaps = swaps + 1\nprint(swaps)\n"
+  explanation: Два обмена ставят 7 и 12 на места, готовый ряд не двигают.
+  id: python.algorithms.algo-sort.t5
+introduces:
+- id: algo-selection
+  title: Сортировка выбором
+  summary: На каждом шаге ставит минимум хвоста на текущее место. Сравнений около n в квадрате.
+- id: algo-nlogn
+  title: Оценка n log n
+  summary: Рост числа шагов у sorted. На длинном списке их меньше, чем у сортировки с оценкой
+    n в квадрате.

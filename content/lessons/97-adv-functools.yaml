@@ -1,0 +1,192 @@
+id: python.advanced.adv-functools
+slug: adv-functools
+section: advanced
+title: functools
+order: 7
+weight: 1
+prerequisites:
+- python.advanced.adv-with
+goal: Зафиксировать часть аргументов через functools.partial.
+tags:
+- partial
+- functools
+theory:
+- functools.partial строит новую функцию, у которой часть аргументов уже заполнена. partial(cost,
+  10) помнит цену 10 и ждёт только количество.
+- Вызов one(3) равен cost(10, 3). Зафиксированные аргументы идут первыми, остальные передают
+  потом.
+- Результат обычный и не зависит от прошлого вызова. partial здесь не хранит память между
+  вызовами, он только подставляет цену.
+examples:
+- title: Цена 10
+  code: "from functools import partial\ndef cost(price, count):\n    return price * count\n\
+    one = partial(cost, 10)\nprint(one(3))\nprint(one(1))\n"
+  explanation: Цена зафиксирована. 3 штуки дают 30, одна штука даёт 10.
+- title: Другая цена
+  code: "from functools import partial\ndef cost(price, count):\n    return price * count\n\
+    print(partial(cost, 7)(2))\n"
+  explanation: partial сразу вызывают. 7 * 2 равно 14.
+outcomes:
+- импортировать partial из functools
+- фиксировать первые аргументы
+- вызывать полученную функцию с остатком
+- получать тот же результат, что у исходной функции
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что фиксирует partial
+  difficulty: 1
+  context: neutral
+  prompt: Что делает partial(cost, 10)?
+  options:
+  - id: a
+    text: Возвращает функцию, у которой цена уже равна 10
+  - id: b
+    text: Сразу печатает 10
+  - id: c
+    text: Удаляет аргумент count
+  answer: a
+  hints:
+  - partial не вызывает cost сразу.
+  - Первый аргумент запоминается.
+  - Остальные передают при вызове.
+  solution: a
+  explanation: Новая функция ждёт только количество и умножает его на 10.
+  id: python.advanced.adv-functools.t1
+- type: predict_output
+  title: Три штуки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '30'
+  - id: c
+    text: '13'
+  answer: b
+  hints:
+  - Цена зафиксирована как 10.
+  - При вызове передают 3.
+  - cost перемножает аргументы.
+  solution: b
+  explanation: 10 * 3 равно 30.
+  code: "from functools import partial\ndef cost(price, count):\n    return price * count\n\
+    print(partial(cost, 10)(3))\n"
+  id: python.advanced.adv-functools.t2
+- type: code
+  title: Фиксированная цена
+  difficulty: 2
+  context: business
+  prompt: Прочитайте цену и количество. partial запоминает цену, вызов с количеством возвращает
+    стоимость.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '7
+
+      2
+
+      '
+    expected_stdout: '14
+
+      '
+  hints:
+  - Импортируйте partial из functools.
+  - Первый ввод — цена.
+  - Второй передайте уже в новую функцию.
+  solution: "from functools import partial\ndef cost(price, count):\n    return price * count\n\
+    fixed = partial(cost, int(input()))\nprint(fixed(int(input())))\n"
+  explanation: 10 и 3 дают 30. 7 и 2 дают 14.
+  id: python.advanced.adv-functools.t3
+- type: code
+  title: Надбавка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте надбавку и число. partial запоминает надбавку у функции add. Выведите
+    сумму.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      5
+
+      '
+    expected_stdout: '15
+
+      '
+  - stdin: '2
+
+      8
+
+      '
+    expected_stdout: '10
+
+      '
+  hints:
+  - extra фиксируется первым аргументом.
+  - n передаётся при вызове.
+  - Печатайте результат plus.
+  solution: "from functools import partial\ndef add(extra, n):\n    return n + extra\nplus\
+    \ = partial(add, int(input()))\nprint(plus(int(input())))\n"
+  explanation: 10 и 5 дают 15. 2 и 8 дают 10.
+  id: python.advanced.adv-functools.t4
+- type: code
+  title: Два количества
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте цену, затем два количества. Одна и та же partial-функция считает обе
+    стоимости. Выведите их.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      2
+
+      4
+
+      '
+    expected_stdout: '20
+
+      40
+
+      '
+  - stdin: '5
+
+      1
+
+      3
+
+      '
+    expected_stdout: '5
+
+      15
+
+      '
+  hints:
+  - partial создайте один раз.
+  - Оба количества передайте отдельными вызовами.
+  - Цена в обоих одна.
+  solution: "from functools import partial\ndef cost(price, count):\n    return price * count\n\
+    fixed = partial(cost, int(input()))\nprint(fixed(int(input())))\nprint(fixed(int(input())))\n"
+  explanation: Цена 10 даёт 20 и 40. Цена 5 даёт 5 и 15.
+  id: python.advanced.adv-functools.t5
+introduces:
+- id: adv-functools.partial
+  title: functools.partial
+  summary: Возвращает функцию с уже заполненными первыми аргументами.

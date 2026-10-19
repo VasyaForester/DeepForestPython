@@ -1,0 +1,175 @@
+id: python.performance.perf-bigo
+slug: perf-bigo
+section: performance
+title: Сложность на практике
+order: 2
+weight: 1
+prerequisites:
+- python.performance.perf-time
+goal: Увидеть, что вложенный цикл по n делает n * n шагов.
+tags:
+- сложность
+theory:
+- Оценка сложности говорит, как растёт число шагов, когда данных становится больше. Один проход
+  по n высотам делает порядка n шагов. Цикл внутри такого же цикла делает n * n.
+- На n = 3 это 9 шагов, на n = 10 уже 100. Разница видна по счётчику раньше, чем по секундам.
+  Запись квадратичного роста как раз про такой рост, а не про красивую букву.
+- Упражнение печатает счётчик вложенного цикла. Модуль time не вызывается.
+examples:
+- title: Три на три
+  code: "n = 3\nsteps = 0\nfor _ in range(n):\n    for _ in range(n):\n        steps += 1\n\
+    print(steps)\n"
+  explanation: Внутренний цикл проходит 3 раза на каждый из 3 внешних. Счётчик 9.
+- title: Один проход
+  code: "n = 3\nsteps = 0\nfor _ in range(n):\n    steps += 1\nprint(steps)\n"
+  explanation: Один цикл даёт 3, не 9. Вложенность и есть источник квадрата.
+outcomes:
+- считать шаги вложенного цикла
+- связывать n * n с двумя проходами по n
+- сравнивать линейный проход с квадратом
+- смотреть на рост шагов до измерения секунд
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Откуда квадрат
+  difficulty: 1
+  context: neutral
+  prompt: Почему два вложенных цикла по n дают n * n шагов?
+  options:
+  - id: a
+    text: На каждый шаг внешнего цикла внутренний проходит n раз
+  - id: b
+    text: Потому что n всегда равно 2
+  - id: c
+    text: Потому что print вызывается один раз
+  answer: a
+  hints:
+  - Внешний цикл выбирает строку.
+  - Внутренний обходит всю длину.
+  - Произведение длин — число пар.
+  solution: a
+  explanation: Квадрат появляется из произведения двух проходов по n.
+  id: python.performance.perf-bigo.t1
+- type: predict_output
+  title: Счётчик девяти
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: '6'
+  - id: c
+    text: '9'
+  answer: c
+  hints:
+  - Внешний цикл три раза.
+  - Внутри ещё три.
+  - 3 * 3 = 9.
+  solution: c
+  explanation: Вложенный цикл делает 9 шагов.
+  code: "n = 3\nsteps = 0\nfor _ in range(n):\n    for _ in range(n):\n        steps += 1\n\
+    print(steps)\n"
+  id: python.performance.perf-bigo.t2
+- type: code
+  title: Квадрат шагов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n. Вложенным циклом посчитайте n * n шагов и выведите счётчик.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '9
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Оба цикла идут до n.
+  - Счётчик растёт во внутреннем теле.
+  - Не печатайте n вместо произведения.
+  solution: "n = int(input())\nsteps = 0\nfor _ in range(n):\n    for _ in range(n):\n   \
+    \     steps += 1\nprint(steps)\n"
+  explanation: Счётчик совпадает с n * n.
+  id: python.performance.perf-bigo.t3
+- type: code
+  title: n и квадрат
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n. Выведите n и n * n на двух строках.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '3
+
+      9
+
+      '
+  - stdin: '10
+
+      '
+    expected_stdout: '10
+
+      100
+
+      '
+  hints:
+  - Вторая строка — произведение.
+  - При n = 1 оба числа равны 1.
+  - Цикл не обязателен, если печатаете формулу.
+  solution: 'n = int(input())
+
+    print(n)
+
+    print(n * n)
+
+    '
+  explanation: Рядом видно, как быстро квадрат обгоняет n.
+  id: python.performance.perf-bigo.t4
+- type: code
+  title: Один проход для сравнения
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n. Один цикл делает n шагов. Выведите этот счётчик.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Цикл один, без вложения.
+  - Счётчик равен n.
+  - С квадратом его сравнивают отдельно.
+  solution: "n = int(input())\nsteps = 0\nfor _ in range(n):\n    steps += 1\nprint(steps)\n"
+  explanation: Линейный проход остаётся равен n.
+  id: python.performance.perf-bigo.t5
+introduces:
+- id: perf-quadratic
+  title: Квадратичный рост
+  summary: Число шагов растёт как n * n, когда на каждый элемент внешний цикл запускает проход
+    длины n.

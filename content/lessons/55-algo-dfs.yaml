@@ -1,0 +1,219 @@
+id: python.algorithms.algo-dfs
+slug: algo-dfs
+section: algorithms
+title: Обход в глубину
+order: 12
+weight: 1
+prerequisites:
+- python.algorithms.algo-bfs
+goal: Спуститься по первой ветке графа до конца и напечатать порядок.
+tags:
+- обход
+- рекурсия
+theory:
+- Обход в глубину уходит по первому соседу до конца и только потом берёт следующего. Граф
+  снова задают словарём списков. Рекурсивный вызов повторяет этот спуск на каждом соседе.
+- Вершину отмечают до обхода её соседей. Иначе цикл между складом и лесом не остановится.
+  Печать в момент входа даёт порядок спуска, а не порядок слоя.
+- 'У склада соседи лес и цех, у леса сосед ель. Порядок будет «склад лес ель цех»: ветка леса
+  кончается раньше, чем начинается цех. Обход слоями на том же старте отдал бы цех раньше
+  ели.'
+examples:
+- title: Сначала лес
+  code: "graph = {'склад': ['лес', 'цех'], 'лес': ['ель'], 'цех': [], 'ель': []}\nseen = set()\n\
+    order = []\ndef walk(node):\n    seen.add(node)\n    order.append(node)\n    for nxt in\
+    \ graph[node]:\n        if nxt not in seen:\n            walk(nxt)\nwalk('склад')\nprint('\
+    \ '.join(order))\n"
+  explanation: Спуск идёт в лес и до ели, цех начинается после возврата.
+- title: Две породы вглубь
+  code: "graph = {'лес': ['ель', 'сосна'], 'ель': [], 'сосна': []}\nseen = set()\norder =\
+    \ []\ndef walk(node):\n    seen.add(node)\n    order.append(node)\n    for nxt in graph[node]:\n\
+    \        if nxt not in seen:\n            walk(nxt)\nwalk('лес')\nprint(' '.join(order))\n"
+  explanation: Сначала полностью берётся ель, затем сосна.
+outcomes:
+- спускаться в первого соседа до конца
+- отмечать вершину до рекурсии
+- печатать вершину в момент входа
+- возвращаться к следующему соседу
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Куда идти сначала
+  difficulty: 1
+  context: neutral
+  prompt: Куда обход в глубину идёт в первую очередь?
+  options:
+  - id: a
+    text: До конца первой ветки, потом к следующему соседу
+  - id: b
+    text: Сразу ко всем соседям старта, слой за слоем
+  - id: c
+    text: Только к вершине с самым длинным именем
+  answer: a
+  hints:
+  - Рекурсия уходит в первого соседа.
+  - Остальные соседи ждут возврата.
+  - Имя вершины на порядок не влияет.
+  solution: a
+  explanation: Первая ветка исчерпывается раньше, чем начинается вторая.
+  id: python.algorithms.algo-dfs.t1
+- type: predict_output
+  title: Порядок склада
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: склад лес ель цех
+  - id: b
+    text: склад лес цех ель
+  - id: c
+    text: ель
+  answer: a
+  hints:
+  - Старт печатают сразу.
+  - Первый сосед склада — лес.
+  - Ель лежит глубже леса и идёт раньше цеха.
+  solution: a
+  explanation: 'Порядок входа: склад, лес, ель, цех.'
+  code: "graph = {'склад': ['лес', 'цех'], 'лес': ['ель'], 'цех': [], 'ель': []}\nseen = set()\n\
+    order = []\ndef walk(node):\n    seen.add(node)\n    order.append(node)\n    for nxt in\
+    \ graph[node]:\n        if nxt not in seen:\n            walk(nxt)\nwalk('склад')\nprint('\
+    \ '.join(order))\n"
+  id: python.algorithms.algo-dfs.t2
+- type: code
+  title: Четыре вершины
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте четыре имени: старт, первый сосед, его ребёнок и второй сосед старта.
+    Выведите порядок обхода в глубину через пробел.'
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      лес
+
+      ель
+
+      цех
+
+      '
+    expected_stdout: 'склад лес ель цех
+
+      '
+  - stdin: 'лес
+
+      ель
+
+      пихта
+
+      сосна
+
+      '
+    expected_stdout: 'лес ель пихта сосна
+
+      '
+  hints:
+  - Сначала идите в первого соседа до конца.
+  - Второго соседа старта берите после возврата.
+  - Имена печатайте через пробел.
+  solution: "a = input()\nb = input()\nc = input()\nd = input()\ngraph = {a: [b, d], b: [c],\
+    \ c: [], d: []}\nseen = set()\norder = []\ndef walk(node):\n    seen.add(node)\n    order.append(node)\n\
+    \    for nxt in graph[node]:\n        if nxt not in seen:\n            walk(nxt)\nwalk(a)\n\
+    print(' '.join(order))\n"
+  explanation: Глубина первой ветки заканчивается раньше второго соседа старта.
+  id: python.algorithms.algo-dfs.t3
+- type: code
+  title: Кто последний
+  difficulty: 2
+  context: development
+  prompt: Те же четыре имени и те же рёбра. Выведите имя, которое обошли последним.
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      лес
+
+      ель
+
+      цех
+
+      '
+    expected_stdout: 'цех
+
+      '
+  - stdin: 'лес
+
+      ель
+
+      пихта
+
+      сосна
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  hints:
+  - Соберите порядок, как в обходе.
+  - Последний элемент списка — конец спуска по второй ветке.
+  - Печатайте одно имя.
+  solution: "a = input()\nb = input()\nc = input()\nd = input()\ngraph = {a: [b, d], b: [c],\
+    \ c: [], d: []}\nseen = set()\norder = []\ndef walk(node):\n    seen.add(node)\n    order.append(node)\n\
+    \    for nxt in graph[node]:\n        if nxt not in seen:\n            walk(nxt)\nwalk(a)\n\
+    print(order[-1])\n"
+  explanation: Второй сосед старта не имеет продолжения и закрывает порядок.
+  id: python.algorithms.algo-dfs.t4
+- type: code
+  title: Кто второй
+  difficulty: 2
+  context: development
+  prompt: Те же четыре имени и те же рёбра. Выведите вторую посещённую вершину.
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      лес
+
+      ель
+
+      цех
+
+      '
+    expected_stdout: 'лес
+
+      '
+  - stdin: 'лес
+
+      ель
+
+      пихта
+
+      сосна
+
+      '
+    expected_stdout: 'ель
+
+      '
+  hints:
+  - Индексы с нуля, второй элемент имеет индекс 1.
+  - Это первый сосед старта.
+  - Не печатайте весь порядок.
+  solution: "a = input()\nb = input()\nc = input()\nd = input()\ngraph = {a: [b, d], b: [c],\
+    \ c: [], d: []}\nseen = set()\norder = []\ndef walk(node):\n    seen.add(node)\n    order.append(node)\n\
+    \    for nxt in graph[node]:\n        if nxt not in seen:\n            walk(nxt)\nwalk(a)\n\
+    print(order[1])\n"
+  explanation: Сразу после старта обход входит в первого соседа.
+  id: python.algorithms.algo-dfs.t5
+introduces:
+- id: algo-dfs
+  title: Обход в глубину
+  summary: Спуск по первой ветке до конца с возвратом к следующему соседу. Повторный вход
+    закрывают множеством seen.

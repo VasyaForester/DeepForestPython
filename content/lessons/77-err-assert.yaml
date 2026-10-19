@@ -1,0 +1,193 @@
+id: python.errors.err-assert
+slug: err-assert
+section: errors
+title: assert и pytest
+order: 8
+weight: 1
+prerequisites:
+- python.errors.err-debug
+goal: Проверить ожидание через assert и узнать, как это выглядит в pytest.
+tags:
+- assert
+- pytest
+theory:
+- assert условие проверяет ожидание. Если условие истинно, программа идёт дальше. Если ложно,
+  Python поднимает AssertionError и останавливается.
+- 'В pytest проверка обычно выглядит как функция с именем на test_ и assert внутри: def test_total():
+  assert total([2, 3]) == 5. pytest находит такие функции и выполняет их.'
+- Здесь pytest не подключается. assert стоит в самой программе. После верной проверки печатается
+  ok и результат.
+examples:
+- title: Проверка прошла
+  code: "def total(prices):\n    return sum(prices)\nassert total([2, 3]) == 5\nprint('ok')\n"
+  explanation: 2 + 3 равно 5, assert молчит, затем печатается ok.
+- title: Удвоение
+  code: "def double(n):\n    return n * 2\nassert double(4) == 8\nprint('ok')\nprint(double(4))\n"
+  explanation: Ожидание 8 совпало. Печатаются ok и само удвоенное число.
+outcomes:
+- ставить assert на ожидание
+- продолжать программу после истинного assert
+- узнавать тест pytest по имени test_
+- печатать ok после успешной проверки
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Как pytest берёт тест
+  difficulty: 1
+  context: neutral
+  prompt: "В файле написано:\ndef test_total():\n    assert total([2, 3]) == 5\nЧто делает\
+    \ pytest?"
+  options:
+  - id: a
+    text: Находит функцию по имени test_ и выполняет assert
+  - id: b
+    text: Пропускает assert и всегда печатает ok
+  - id: c
+    text: Запускает только функции, в имени которых нет test_
+  answer: a
+  hints:
+  - Имя начинается с test_.
+  - assert внутри — сама проверка.
+  - pytest не игнорирует ложное условие.
+  solution: a
+  explanation: pytest собирает функции test_ и выполняет утверждения. Ложный assert считается
+    падением теста.
+  id: python.errors.err-assert.t1
+- type: predict_output
+  title: После assert
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: AssertionError
+  - id: b
+    text: ok
+  - id: c
+    text: '6'
+  answer: b
+  hints:
+  - 3 * 2 равно 6.
+  - Условие истинно, ошибки нет.
+  - Печатается строка после assert.
+  solution: b
+  explanation: Проверка проходит, на экране ok.
+  code: "def double(n):\n    return n * 2\nassert double(3) == 6\nprint('ok')\n"
+  id: python.errors.err-assert.t2
+- type: code
+  title: Проверить удвоение
+  difficulty: 2
+  context: development
+  prompt: Прочитайте целое число. Удвойте его функцией и проверьте assert, что результат равен
+    числу, умноженному на 2. Выведите ok и результат.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: 'ok
+
+      6
+
+      '
+  - stdin: '4
+
+      '
+    expected_stdout: 'ok
+
+      8
+
+      '
+  hints:
+  - assert сравнивает с n * 2.
+  - После успешного assert печатайте ok.
+  - Второй print показывает удвоенное число.
+  solution: "def double(n):\n    return n * 2\nn = int(input())\nassert double(n) == n * 2\n\
+    print('ok')\nprint(double(n))\n"
+  explanation: Для 3 выйдут ok и 6. Для 4 выйдут ok и 8.
+  id: python.errors.err-assert.t3
+- type: code
+  title: Проверить сумму
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте два целых числа. assert проверяет, что их сумма равна функции total.
+    Выведите ok и сумму.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      3
+
+      '
+    expected_stdout: 'ok
+
+      5
+
+      '
+  - stdin: '10
+
+      0
+
+      '
+    expected_stdout: 'ok
+
+      10
+
+      '
+  hints:
+  - total складывает аргументы.
+  - assert стоит до печати.
+  - Сумма печатается второй строкой.
+  solution: "def total(a, b):\n    return a + b\na = int(input())\nb = int(input())\nassert\
+    \ total(a, b) == a + b\nprint('ok')\nprint(total(a, b))\n"
+  explanation: 2 и 3 дают ok и 5. 10 и 0 дают ok и 10.
+  id: python.errors.err-assert.t4
+- type: code
+  title: Проверить цену
+  difficulty: 2
+  context: business
+  prompt: Прочитайте цену и количество. assert проверяет, что стоимость равна их произведению
+    и не отрицательна. Выведите ok и стоимость.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      '
+    expected_stdout: 'ok
+
+      30
+
+      '
+  - stdin: '5
+
+      1
+
+      '
+    expected_stdout: 'ok
+
+      5
+
+      '
+  hints:
+  - Два assert проверяют разные ожидания.
+  - Оба должны быть истинны.
+  - Печатайте ok только после них.
+  solution: "def cost(price, count):\n    return price * count\nprice = int(input())\ncount\
+    \ = int(input())\nresult = cost(price, count)\nassert result == price * count\nassert\
+    \ result >= 0\nprint('ok')\nprint(result)\n"
+  explanation: 10 на 3 даёт 30. 5 на 1 даёт 5. Обе стоимости неотрицательны.
+  id: python.errors.err-assert.t5
+introduces:
+- id: err-assert.assert
+  title: assert
+  summary: Проверяет условие. Ложное условие поднимает AssertionError, истинное пропускает
+    программу дальше.

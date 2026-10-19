@@ -1,0 +1,199 @@
+id: python.backend.be-middleware
+slug: be-middleware
+section: backend
+title: Middleware
+order: 11
+weight: 1
+prerequisites:
+- python.backend.be-errors
+goal: Обернуть обработчик печатью до и после.
+tags:
+- middleware
+- обёртка
+- порядок
+theory:
+- Middleware — обёртка вокруг обработчика. В FastAPI она видит запрос до функции и ответ после.
+  Здесь обёртка печатает «до», вызывает обработчик и печатает «после».
+- Сам обработчик про обёртку не знает. Его можно вызвать и напрямую, тогда строк до и после
+  не будет.
+- 'Полезная печать обработчика оказывается между этими двумя словами. Так по выводу видно
+  порядок: подготовка, работа, завершение.'
+examples:
+- title: Три строки
+  code: "def wrap(handler):\n    def inner():\n        print('до')\n        handler()\n  \
+    \      print('после')\n    return inner\ndef show():\n    print('заказ')\nwrap(show)()\n"
+  explanation: Сначала до, затем заказ из обработчика, затем после.
+- title: Другой обработчик
+  code: "def wrap(handler):\n    def inner():\n        print('до')\n        handler()\n  \
+    \      print('после')\n    return inner\ndef show():\n    print('склад')\nwrap(show)()\n"
+  explanation: Обёртка та же, между до и после печатается склад.
+outcomes:
+- оборачивать обработчик функцией
+- печатать до перед вызовом
+- печатать после после вызова
+- оставлять текст обработчика между метками
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где стоит обёртка
+  difficulty: 1
+  context: neutral
+  prompt: Что делает middleware в этом уроке?
+  options:
+  - id: a
+    text: Печатает до и после вокруг вызова обработчика
+  - id: b
+    text: Заменяет тело ответа на до
+  - id: c
+    text: Проверяет типы полей
+  answer: a
+  hints:
+  - Слова до и после печатает обёртка.
+  - Текст заказа печатает сам обработчик.
+  - Обёртка не меняет функцию, а вызывает её.
+  solution: a
+  explanation: Обёртка окружает вызов, обработчик остаётся прежним.
+  id: python.backend.be-middleware.t1
+- type: predict_output
+  title: Последнее слово
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано последним?
+  options:
+  - id: a
+    text: после
+  - id: b
+    text: до
+  - id: c
+    text: заказ
+  answer: a
+  hints:
+  - Сначала печатается до.
+  - Потом обработчик печатает заказ.
+  - после стоит последним в inner.
+  solution: a
+  explanation: Последняя строка обёртки — после.
+  code: "def wrap(handler):\n    def inner():\n        print('до')\n        handler()\n  \
+    \      print('после')\n    return inner\ndef show():\n    print('заказ')\nwrap(show)()\n"
+  id: python.backend.be-middleware.t2
+- type: code
+  title: Текст между метками
+  difficulty: 2
+  context: development
+  prompt: wrap печатает до, вызывает обработчик и печатает после. Обработчик печатает одну
+    прочитанную строку.
+  starter_code: ''
+  tests:
+  - stdin: 'заказ
+
+      '
+    expected_stdout: 'до
+
+      заказ
+
+      после
+
+      '
+  - stdin: 'склад
+
+      '
+    expected_stdout: 'до
+
+      склад
+
+      после
+
+      '
+  hints:
+  - inner вызывает handler без аргументов.
+  - input стоит внутри show.
+  - после печатается в любом случае.
+  solution: "def wrap(handler):\n    def inner():\n        print('до')\n        handler()\n\
+    \        print('после')\n    return inner\ndef show():\n    print(input())\nwrap(show)()\n"
+  explanation: Строка пользователя оказывается между до и после.
+  id: python.backend.be-middleware.t3
+- type: code
+  title: Число между метками
+  difficulty: 2
+  context: development
+  prompt: Прочитайте целое число. Обработчик печатает его удвоенным. Обёртка добавляет до
+    и после.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: 'до
+
+      8
+
+      после
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: 'до
+
+      0
+
+      после
+
+      '
+  hints:
+  - Удвоение делает обработчик.
+  - Обёртка не знает про число.
+  - 'Порядок строк: до, число, после.'
+  solution: "def wrap(handler):\n    def inner():\n        print('до')\n        handler()\n\
+    \        print('после')\n    return inner\ndef show():\n    print(int(input()) * 2)\n\
+    wrap(show)()\n"
+  explanation: Обёртка не меняет расчёт, только окружает его печатью.
+  id: python.backend.be-middleware.t4
+- type: code
+  title: Два вызова
+  difficulty: 2
+  context: development
+  prompt: Прочитайте слово. Если оно стоп, обработчик печатает стоп. Иначе печатает идём.
+    В обоих случаях вызов идёт через wrap.
+  starter_code: ''
+  tests:
+  - stdin: 'стоп
+
+      '
+    expected_stdout: 'до
+
+      стоп
+
+      после
+
+      '
+  - stdin: 'дальше
+
+      '
+    expected_stdout: 'до
+
+      идём
+
+      после
+
+      '
+  hints:
+  - Развилка внутри show.
+  - wrap вызывается один раз.
+  - Метки не зависят от слова.
+  solution: "def wrap(handler):\n    def inner():\n        print('до')\n        handler()\n\
+    \        print('после')\n    return inner\nword = input()\ndef show():\n    if word ==\
+    \ 'стоп':\n        print('стоп')\n    else:\n        print('идём')\nwrap(show)()\n"
+  explanation: Решение обработчика меняется, рамка до и после остаётся.
+  id: python.backend.be-middleware.t5
+introduces:
+- id: be-middleware
+  title: Промежуточный слой
+  summary: Обёртка, которая печатает до и после вызова обработчика.

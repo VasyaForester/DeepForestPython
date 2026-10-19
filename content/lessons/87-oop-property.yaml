@@ -1,0 +1,180 @@
+id: python.oop.oop-property
+slug: oop-property
+section: oop
+title: Свойства
+order: 7
+weight: 1
+prerequisites:
+- python.oop.oop-override
+goal: Читать вычисляемое значение как поле через @property.
+tags:
+- property
+- свойство
+theory:
+- Свойство выглядит как поле, а считается методом. Над def пишут @property. Снаружи пишут
+  tree.height без скобок.
+- Само число держат в _height. Свойство height возвращает его. Одно подчёркивание помечает
+  поле, которое снаружи напрямую не нужно.
+- Свойство может и вычислять. total у заказа умножает цену на количество при каждом чтении.
+  Отдельный вызов со скобками для этого не пишут.
+examples:
+- title: Высота как поле
+  code: "class Tree:\n    def __init__(self, height):\n        self._height = height\n   \
+    \ @property\n    def height(self):\n        return self._height\nprint(Tree(12).height)\n"
+  explanation: height читают без скобок. Метод за свойством возвращает 12.
+- title: Сумма заказа
+  code: "class Order:\n    def __init__(self, price, count):\n        self.price = price\n\
+    \        self.count = count\n    @property\n    def total(self):\n        return self.price\
+    \ * self.count\nprint(Order(10, 3).total)\n"
+  explanation: total не хранится отдельно. При чтении считается 10 * 3 и получается 30.
+outcomes:
+- помечать метод через @property
+- читать его как поле без скобок
+- прятать исходное число в поле с подчёркиванием
+- вычислять значение в момент чтения
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Как читают свойство
+  difficulty: 1
+  context: neutral
+  prompt: Как получить значение метода, помеченного @property?
+  options:
+  - id: a
+    text: Как поле, без скобок
+  - id: b
+    text: Только через super()
+  - id: c
+    text: Вызовом со скобками, иначе будет ошибка
+  answer: a
+  hints:
+  - '@property меняет способ чтения.'
+  - Скобки у такого имени не ставят.
+  - super здесь не нужен.
+  solution: a
+  explanation: tree.height вызывает метод и сразу возвращает число.
+  id: python.oop.oop-property.t1
+- type: predict_output
+  title: Чтение height
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: _height
+  - id: b
+    text: '12'
+  - id: c
+    text: height
+  answer: b
+  hints:
+  - В _height записано 12.
+  - Свойство возвращает это число.
+  - Имя свойства на экран не выводится.
+  solution: b
+  explanation: Чтение height даёт 12.
+  code: "class Tree:\n    def __init__(self, height):\n        self._height = height\n   \
+    \ @property\n    def height(self):\n        return self._height\nprint(Tree(12).height)\n"
+  id: python.oop.oop-property.t2
+- type: code
+  title: Высота
+  difficulty: 2
+  context: development
+  prompt: Прочитайте высоту. Спрячьте её в _height и отдайте через свойство height. Выведите
+    значение свойства.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '8
+
+      '
+    expected_stdout: '8
+
+      '
+  hints:
+  - '@property стоит над методом.'
+  - Читайте tree.height без скобок.
+  - Метод возвращает _height.
+  solution: "class Tree:\n    def __init__(self, height):\n        self._height = height\n\
+    \    @property\n    def height(self):\n        return self._height\nprint(Tree(int(input())).height)\n"
+  explanation: Снаружи высота выглядит как поле и равна введённому числу.
+  id: python.oop.oop-property.t3
+- type: code
+  title: Сумма свойством
+  difficulty: 2
+  context: business
+  prompt: Прочитайте цену и количество. Свойство total возвращает произведение. Выведите его
+    без скобок.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '8
+
+      2
+
+      '
+    expected_stdout: '16
+
+      '
+  hints:
+  - total пометьте @property.
+  - Внутри умножьте поля.
+  - В print не ставьте скобки после total.
+  solution: "class Order:\n    def __init__(self, price, count):\n        self.price = price\n\
+    \        self.count = count\n    @property\n    def total(self):\n        return self.price\
+    \ * self.count\nprint(Order(int(input()), int(input())).total)\n"
+  explanation: 10 и 3 дают 30. 8 и 2 дают 16.
+  id: python.oop.oop-property.t4
+- type: code
+  title: Подпись склада
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте количество. Свойство label возвращает пусто при нуле и есть N при остальных
+    значениях.
+  starter_code: ''
+  tests:
+  - stdin: '0
+
+      '
+    expected_stdout: 'пусто
+
+      '
+  - stdin: '4
+
+      '
+    expected_stdout: 'есть 4
+
+      '
+  hints:
+  - Ноль проверьте внутри свойства.
+  - Для остальных склейте есть и число.
+  - Читайте label без скобок.
+  solution: "class Stock:\n    def __init__(self, qty):\n        self._qty = qty\n    @property\n\
+    \    def label(self):\n        if self._qty == 0:\n            return 'пусто'\n      \
+    \  return 'есть ' + str(self._qty)\nprint(Stock(int(input())).label)\n"
+  explanation: 0 даёт пусто. 4 даёт есть 4.
+  id: python.oop.oop-property.t5
+introduces:
+- id: oop-property.property
+  title: '@property'
+  summary: Делает метод читаемым как поле. tree.height вызывает метод и возвращает значение
+    без скобок у вызова.

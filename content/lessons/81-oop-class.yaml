@@ -1,0 +1,192 @@
+id: python.oop.oop-class
+slug: oop-class
+section: oop
+title: Класс и объект
+order: 1
+weight: 1
+prerequisites:
+- python.errors.err-review
+goal: Описать класс и создать из него отдельные объекты.
+tags:
+- класс
+- объект
+theory:
+- Класс задаёт новый тип. Запись class Tree и двоеточие начинает описание. Пока внутри нет
+  своих команд, ставят pass.
+- 'Вызов Tree() создаёт объект, экземпляр этого класса. Два вызова дают два разных объекта:
+  first is second равно False, хотя тип у них один.'
+- type(tree).__name__ возвращает имя класса строкой Tree. isinstance(tree, Tree) проверяет,
+  что объект именно этого типа. Строка ель таким объектом не является.
+examples:
+- title: Тип объекта
+  code: "class Tree:\n    pass\ntree = Tree()\nprint(type(tree).__name__)\nprint(isinstance(tree,\
+    \ Tree))\n"
+  explanation: Tree() создаёт объект. Его тип называется Tree, проверка isinstance даёт True.
+- title: Два объекта
+  code: "class Tree:\n    pass\nfirst = Tree()\nsecond = Tree()\nprint(first is second)\n\
+    print(type(first).__name__)\n"
+  explanation: Два вызова создают два объекта. Они не один и тот же объект, имя типа у первого
+    — Tree.
+outcomes:
+- описывать класс через class
+- создавать объект вызовом класса
+- различать два объекта одного типа
+- проверять тип через isinstance и type
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем класс отличается от объекта
+  difficulty: 1
+  context: neutral
+  prompt: Что делает вызов Tree(), если class Tree уже описан?
+  options:
+  - id: a
+    text: Создаёт новый объект этого класса
+  - id: b
+    text: Стирает описание класса
+  - id: c
+    text: Печатает все поля строки
+  answer: a
+  hints:
+  - Скобки после имени класса создают экземпляр.
+  - Описание class остаётся.
+  - У пустого класса ещё нет своих полей.
+  solution: a
+  explanation: Класс — чертёж типа. Tree() собирает по нему один объект.
+  id: python.oop.oop-class.t1
+- type: predict_output
+  title: Имя типа
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: type
+  - id: b
+    text: Tree
+  - id: c
+    text: pass
+  answer: b
+  hints:
+  - Tree() создаёт объект.
+  - type(...).__name__ берёт имя класса.
+  - pass на экран не выводится.
+  solution: b
+  explanation: У свежего объекта имя типа Tree.
+  code: "class Tree:\n    pass\nprint(type(Tree()).__name__)\n"
+  id: python.oop.oop-class.t2
+- type: code
+  title: Сколько объектов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте целое число не меньше 1. Создайте столько объектов Tree и выведите их
+    количество и имя типа первого.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      '
+    expected_stdout: '2
+
+      Tree
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '1
+
+      Tree
+
+      '
+  hints:
+  - Класс опишите один раз.
+  - В цикле вызывайте Tree().
+  - Имя типа возьмите у первого объекта.
+  solution: "class Tree:\n    pass\ncount = int(input())\nforest = []\nfor _ in range(count):\n\
+    \    forest.append(Tree())\nprint(len(forest))\nprint(type(forest[0]).__name__)\n"
+  explanation: Два вызова дают длину 2. Один вызов даёт длину 1. Тип в обоих случаях Tree.
+  id: python.oop.oop-class.t3
+- type: code
+  title: Строка не дерево
+  difficulty: 2
+  context: business
+  prompt: Прочитайте слово. Выведите его, затем False, потому что строка не Tree, и True для
+    нового объекта Tree.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      False
+
+      True
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'сосна
+
+      False
+
+      True
+
+      '
+  hints:
+  - isinstance проверяет тип.
+  - Введённое слово — строка.
+  - Tree() — объект класса Tree.
+  solution: "class Tree:\n    pass\nword = input()\nprint(word)\nprint(isinstance(word, Tree))\n\
+    print(isinstance(Tree(), Tree))\n"
+  explanation: Слово печатается как есть. Строка не является Tree, новый объект является.
+  id: python.oop.oop-class.t4
+- type: code
+  title: Один и тот же
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте метку. Создайте два объекта Order и выведите, один ли это объект, имя
+    типа и саму метку.
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      '
+    expected_stdout: 'False
+
+      Order
+
+      склад
+
+      '
+  - stdin: 'кассе
+
+      '
+    expected_stdout: 'False
+
+      Order
+
+      кассе
+
+      '
+  hints:
+  - Два вызова Order() дают два объекта.
+  - is сравнивает сам объект, не имя.
+  - Метку выведите отдельно, на объект она не записывается.
+  solution: "class Order:\n    pass\nmark = input()\nfirst = Order()\nsecond = Order()\nprint(first\
+    \ is second)\nprint(type(first).__name__)\nprint(mark)\n"
+  explanation: Объекты разные, тип называется Order, метка печатается последней строкой.
+  id: python.oop.oop-class.t5
+introduces:
+- id: oop-class.class
+  title: Класс
+  summary: Описание нового типа. Вызов имени класса создаёт отдельный объект этого типа.

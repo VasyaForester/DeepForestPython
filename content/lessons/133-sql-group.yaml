@@ -1,0 +1,242 @@
+id: python.sql.sql-group
+slug: sql-group
+section: sql
+title: GROUP BY и агрегаты
+order: 3
+weight: 1
+prerequisites:
+- python.sql.sql-order
+goal: Свернуть строки города в сумму и количество.
+tags:
+- GROUP BY
+- SUM
+- COUNT
+theory:
+- Запрос SELECT city, SUM(amount) FROM orders GROUP BY city даёт одну строку на город. SUM
+  складывает суммы заказов, COUNT(*) считает сами заказы.
+- 'В таблице пять заказов: Москва 10, Москва 15, Казань 7, Казань 8, Казань 1. Сумма Москвы
+  25 при двух заказах, сумма Казани 16 при трёх.'
+- Группировка делается в SQL, не циклом по уже выгруженным строкам. Город для поиска передают
+  через ?.
+examples:
+- title: Сумма Москвы
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table orders(city text, amount int)'')
+
+    con.executemany(''insert into orders values (?, ?)'', [(''Москва'', 10), (''Москва'',
+    15), (''Казань'', 7), (''Казань'', 8), (''Казань'', 1)])
+
+    row = con.execute("select sum(amount) from orders group by city having city = ''Москва''").fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Две московские суммы складываются в 25.
+- title: Число заказов
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table orders(city text, amount int)'')
+
+    con.executemany(''insert into orders values (?, ?)'', [(''Москва'', 10), (''Москва'',
+    15), (''Казань'', 7)])
+
+    row = con.execute("select count(*) from orders where city = ''Казань''").fetchone()
+
+    print(row[0])
+
+    '
+  explanation: В этом коротком наборе у Казани один заказ.
+outcomes:
+- группировать заказы по городу
+- считать SUM и COUNT
+- не путать сумму с числом строк
+- выбирать группу через ORDER BY агрегата
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем GROUP BY
+  difficulty: 1
+  context: neutral
+  prompt: Что делает GROUP BY city в запросе SELECT city, SUM(amount) FROM orders GROUP BY
+    city?
+  options:
+  - id: a
+    text: Сворачивает заказы города в одну строку с суммой
+  - id: b
+    text: Удаляет повторы букв в названии города
+  - id: c
+    text: Сортирует суммы по убыванию
+  answer: a
+  hints:
+  - Каждая группа — один city.
+  - SUM считает значение внутри группы.
+  - Порядок без ORDER BY этим запросом не обещан.
+  solution: a
+  explanation: GROUP BY собирает строки с одинаковым городом.
+  id: python.sql.sql-group.t1
+- type: predict_output
+  title: Сумма двух заказов
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '25'
+  - id: b
+    text: '10'
+  - id: c
+    text: '2'
+  answer: a
+  hints:
+  - В группе Москвы два заказа.
+  - 10 и 15 дают 25.
+  - COUNT здесь не печатается.
+  solution: a
+  explanation: Сумма группы Москва равна 25.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table orders(city text, amount int)'')
+
+    con.executemany(''insert into orders values (?, ?)'', [(''Москва'', 10), (''Москва'',
+    15), (''Казань'', 7)])
+
+    row = con.execute("select sum(amount) from orders group by city having city = ''Москва''").fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-group.t2
+- type: code
+  title: Сумма города
+  difficulty: 2
+  context: development
+  prompt: 'Заказы: Москва 10 и 15, Казань 7, 8 и 1. Прочитайте город и выведите сумму его
+    заказов.'
+  starter_code: ''
+  tests:
+  - stdin: 'Москва
+
+      '
+    expected_stdout: '25
+
+      '
+  - stdin: 'Казань
+
+      '
+    expected_stdout: '16
+
+      '
+  hints:
+  - Фильтруйте город через ?.
+  - SUM складывает amount.
+  - Печатайте одно число.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table orders(city text, amount int)'')
+
+    con.executemany(''insert into orders values (?, ?)'', [(''Москва'', 10), (''Москва'',
+    15), (''Казань'', 7), (''Казань'', 8), (''Казань'', 1)])
+
+    city = input().strip()
+
+    row = con.execute(''select sum(amount) from orders where city = ?'', (city,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Все заказы города схлопываются в одну сумму.
+  id: python.sql.sql-group.t3
+- type: code
+  title: Сколько заказов
+  difficulty: 2
+  context: development
+  prompt: В той же таблице прочитайте город и выведите число его заказов.
+  starter_code: ''
+  tests:
+  - stdin: 'Москва
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: 'Казань
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - COUNT(*) считает строки, не суммы.
+  - Город снова передайте через ?.
+  - Казань встречается трижды.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table orders(city text, amount int)'')
+
+    con.executemany(''insert into orders values (?, ?)'', [(''Москва'', 10), (''Москва'',
+    15), (''Казань'', 7), (''Казань'', 8), (''Казань'', 1)])
+
+    city = input().strip()
+
+    row = con.execute(''select count(*) from orders where city = ?'', (city,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Количество заказов и их сумма — разные агрегаты.
+  id: python.sql.sql-group.t4
+- type: code
+  title: Чья группа больше
+  difficulty: 2
+  context: development
+  prompt: Прочитайте sum или count. Выведите город с наибольшей суммой либо с наибольшим числом
+    заказов.
+  starter_code: ''
+  tests:
+  - stdin: 'sum
+
+      '
+    expected_stdout: 'Москва
+
+      '
+  - stdin: 'count
+
+      '
+    expected_stdout: 'Казань
+
+      '
+  hints:
+  - GROUP BY city обязателен перед агрегатом в ORDER BY.
+  - Для суммы и для счётчика разные запросы.
+  - LIMIT 1 оставляет победителя.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ orders(city text, amount int)')\ncon.executemany('insert into orders values (?, ?)',\
+    \ [('Москва', 10), ('Москва', 15), ('Казань', 7), ('Казань', 8), ('Казань', 1)])\nkind\
+    \ = input().strip()\nif kind == 'sum':\n    query = 'select city from orders group by\
+    \ city order by sum(amount) desc limit 1'\nelse:\n    query = 'select city from orders\
+    \ group by city order by count(*) desc limit 1'\nrow = con.execute(query).fetchone()\n\
+    print(row[0])\n"
+  explanation: По сумме побеждает Москва, по числу заказов — Казань.
+  id: python.sql.sql-group.t5
+introduces:
+- id: sql-group-by
+  title: GROUP BY
+  summary: Свёртка строк с одинаковым ключом. SUM и COUNT считают значение внутри каждой группы.

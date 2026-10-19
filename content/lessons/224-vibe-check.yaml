@@ -1,0 +1,193 @@
+id: python.vibe.vibe-check
+slug: vibe-check
+section: vibe
+title: Генерация и проверка
+order: 3
+weight: 1
+prerequisites:
+- python.vibe.vibe-context
+goal: Сверить свою функцию с примером и напечатать сошлось или фактическое значение.
+tags:
+- проверка
+- пример
+- функция
+theory:
+- Черновик может выглядеть правдоподобно и ошибаться. Удвоение легко написать как прибавление
+  единицы. Верная функция умножает число на два.
+- Проверку делают на примере. Для 4 ожидают 8. Если результат совпал, печатают «сошлось»,
+  иначе печатают получившееся значение.
+- Пока пример не сошёлся, черновик не принимают. Запуск и сравнение делает человек, даже если
+  первую версию предложил помощник.
+examples:
+- title: Верное удвоение
+  code: "def double(n):\n    return n * 2\ngot = double(4)\nif got == 8:\n    print('сошлось')\n\
+    else:\n    print(got)\n"
+  explanation: 4 умножили на 2, получилось 8, печатается сошлось.
+- title: Чужое ожидание
+  code: "def double(n):\n    return n * 2\ngot = double(4)\nif got == 9:\n    print('сошлось')\n\
+    else:\n    print(got)\n"
+  explanation: Функция верна и даёт 8, но пример ждал 9, поэтому печатается фактическое 8.
+outcomes:
+- писать функцию, которая проходит пример
+- сравнивать результат с ожиданием
+- печатать сошлось при совпадении
+- печатать фактическое значение при расхождении
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда принимать черновик
+  difficulty: 1
+  context: neutral
+  prompt: Когда результат функции можно принять?
+  options:
+  - id: a
+    text: Когда запуск на примере совпал с ожидаемым значением
+  - id: b
+    text: Когда текст функции похож на правильный
+  - id: c
+    text: Когда помощник написал, что проверка не нужна
+  answer: a
+  hints:
+  - Сходство текста ничего не доказывает.
+  - Нужен запуск.
+  - Несовпадение печатает фактическое значение, а не сошлось.
+  solution: a
+  explanation: Принимают результат, который сошёлся с примером.
+  id: python.vibe.vibe-check.t1
+- type: predict_output
+  title: Пример сошёлся
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: сошлось
+  - id: b
+    text: '8'
+  - id: c
+    text: '4'
+  answer: a
+  hints:
+  - double(4) равно 8.
+  - Ожидание тоже 8.
+  - Ветка else не выполняется.
+  solution: a
+  explanation: Пример совпал, печатается сошлось.
+  code: "def double(n):\n    return n * 2\ngot = double(4)\nif got == 8:\n    print('сошлось')\n\
+    else:\n    print(got)\n"
+  id: python.vibe.vibe-check.t2
+- type: code
+  title: Удвоить и сверить
+  difficulty: 2
+  context: development
+  prompt: Напишите double, которая умножает число на 2. Прочитайте число и ожидание. Если
+    double дала ожидание, выведите сошлось, иначе выведите получившееся значение.
+  starter_code: "def double(n):\n    return n + 1\n"
+  tests:
+  - stdin: '4
+
+      8
+
+      '
+    expected_stdout: 'сошлось
+
+      '
+  - stdin: '4
+
+      9
+
+      '
+    expected_stdout: '8
+
+      '
+  hints:
+  - Умножайте на 2, не прибавляйте 1.
+  - Сравнивайте got с ожиданием.
+  - При несовпадении печатайте got, не слово ошибки.
+  solution: "def double(n):\n    return n * 2\nnumber = int(input())\nexpected = int(input())\n\
+    got = double(number)\nif got == expected:\n    print('сошлось')\nelse:\n    print(got)\n"
+  explanation: Верная функция на примере 4 и 8 печатает сошлось, на чужом ожидании показывает
+    фактическое 8.
+  id: python.vibe.vibe-check.t3
+- type: code
+  title: Сумма двух
+  difficulty: 2
+  context: development
+  prompt: Функция total складывает два целых числа. Прочитайте пару и ожидание. Совпало —
+    сошлось, иначе печатайте получившуюся сумму.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      3
+
+      5
+
+      '
+    expected_stdout: 'сошлось
+
+      '
+  - stdin: '2
+
+      3
+
+      6
+
+      '
+    expected_stdout: '5
+
+      '
+  hints:
+  - Складывайте оба числа.
+  - Ожидание читается третьей строкой.
+  - Чужое ожидание не меняет саму сумму.
+  solution: "def total(a, b):\n    return a + b\na = int(input())\nb = int(input())\nexpected\
+    \ = int(input())\ngot = total(a, b)\nif got == expected:\n    print('сошлось')\nelse:\n\
+    \    print(got)\n"
+  explanation: 'Проверка отделена от функции: функция считает, сравнение решает слово на экране.'
+  id: python.vibe.vibe-check.t4
+- type: code
+  title: Положительная сумма
+  difficulty: 2
+  context: development
+  prompt: positive_sum складывает только числа больше нуля. Прочитайте строку чисел и ожидание.
+    Сверьте результат.
+  starter_code: ''
+  tests:
+  - stdin: '2 -1 3
+
+      5
+
+      '
+    expected_stdout: 'сошлось
+
+      '
+  - stdin: '2 -1 3
+
+      4
+
+      '
+    expected_stdout: '5
+
+      '
+  hints:
+  - Ноль и минус в сумму не входят.
+  - 2 и 3 дают 5.
+  - При чужом ожидании печатайте 5.
+  solution: "def positive_sum(nums):\n    return sum(n for n in nums if n > 0)\nnums = [int(part)\
+    \ for part in input().split()]\nexpected = int(input())\ngot = positive_sum(nums)\nif\
+    \ got == expected:\n    print('сошлось')\nelse:\n    print(got)\n"
+  explanation: Пример либо подтверждает функцию, либо показывает фактическую сумму.
+  id: python.vibe.vibe-check.t5
+introduces:
+- id: vibe-check-example
+  title: Сверка с примером
+  summary: Запуск функции на известных данных. Совпало — сошлось, иначе печатают фактический
+    результат.

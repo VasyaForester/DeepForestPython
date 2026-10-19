@@ -1,0 +1,200 @@
+id: python.performance.perf-async
+slug: perf-async
+section: performance
+title: async и await
+order: 9
+weight: 1
+prerequisites:
+- python.performance.perf-futures
+goal: Разобрать очередь задач и не запускать asyncio.
+tags:
+- async
+- await
+theory:
+- async def описывает корутину. Само описание её не запускает. await внутри неё отдаёт управление
+  в момент ожидания ввода-вывода, чтобы другая задача могла идти. Это не поток и не второй
+  процесс.
+- Цикл событий следит за готовыми задачами. Пока одна ждёт файл, другая может занять очередь.
+  asyncio этот цикл реализует, но в уроке не импортируется.
+- 'Упражнение держит задачи строками и печатает их порядок. Слово «ожидание» после печати
+  ставит в конец метку «ответ»: так изображается продолжение после ожидания.'
+examples:
+- title: Описание не запуск
+  code: "async def fetch():\n    return \"саженцы\"\nprint(\"очередь\")\n"
+  explanation: Корутина описана и не вызвана. Печатается очередь. asyncio не импортирован.
+- title: Порядок очереди
+  code: "queue = [\"прочитать\", \"посчитать\", \"записать\"]\nwhile queue:\n    print(queue.pop(0))\n"
+  explanation: Задачи выходят в том порядке, в котором лежали.
+outcomes:
+- отличать описание async def от запуска
+- понимать await как отдачу управления на ожидании
+- не путать корутину с потоком
+- печатать задачи в порядке очереди
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает await
+  difficulty: 1
+  context: neutral
+  prompt: Что делает await при ожидании ввода-вывода?
+  options:
+  - id: a
+    text: Отдаёт управление на время ожидания, и это не запуск потока
+  - id: b
+    text: Создаёт новый процесс на каждое ожидание
+  - id: c
+    text: Считает дисперсию
+  answer: a
+  hints:
+  - await стоит на месте ожидания.
+  - Поток здесь не появляется.
+  - Дисперсия к await не относится.
+  solution: a
+  explanation: await освобождает цикл событий на время ожидания.
+  id: python.performance.perf-async.t1
+- type: predict_output
+  title: Тело не выполнилось
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: очередь
+  - id: b
+    text: саженцы
+  - id: c
+    text: fetch
+  answer: a
+  hints:
+  - async def только описывает функцию.
+  - fetch никто не вызывает.
+  - print печатает очередь.
+  solution: a
+  explanation: Описание корутины не запускает её тело.
+  code: "async def fetch():\n    return \"саженцы\"\nprint(\"очередь\")\n"
+  id: python.performance.perf-async.t2
+- type: code
+  title: Порядок очереди
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n меток задач. Выведите их в том же порядке, снимая с начала очереди.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      прочитать
+
+      посчитать
+
+      записать
+
+      '
+    expected_stdout: 'прочитать
+
+      посчитать
+
+      записать
+
+      '
+  - stdin: '1
+
+      архив
+
+      '
+    expected_stdout: 'архив
+
+      '
+  hints:
+  - pop(0) берёт начало.
+  - Цикл идёт, пока очередь не пуста.
+  - asyncio не импортируйте.
+  solution: "n = int(input())\nqueue = [input().strip() for _ in range(n)]\nwhile queue:\n\
+    \    print(queue.pop(0))\n"
+  explanation: Порядок печати — порядок очереди.
+  id: python.performance.perf-async.t3
+- type: code
+  title: Ответ после ожидания
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n меток. Печатайте очередь с начала. Если метка равна ожидание, после
+    неё добавьте в конец метку ответ.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      ожидание
+
+      '
+    expected_stdout: 'ожидание
+
+      ответ
+
+      '
+  - stdin: '2
+
+      счёт
+
+      запись
+
+      '
+    expected_stdout: 'счёт
+
+      запись
+
+      '
+  hints:
+  - Ответ добавляйте после печати ожидания.
+  - Обычные метки ничего не добавляют.
+  - Метка ответ сама новую метку не ставит.
+  solution: "n = int(input())\nready = [input().strip() for _ in range(n)]\nguard = 0\nwhile\
+    \ ready:\n    guard += 1\n    if guard > 20:\n        break\n    item = ready.pop(0)\n\
+    \    print(item)\n    if item == \"ожидание\":\n        ready.append(\"ответ\")\n"
+  explanation: Продолжение после ожидания встаёт в хвост очереди.
+  id: python.performance.perf-async.t4
+- type: code
+  title: Сколько вышло
+  difficulty: 2
+  context: development
+  prompt: Прочитайте очередь. Применяйте то же правило с меткой ожидание. Выведите, сколько
+    меток было обработано.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      ожидание
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      счёт
+
+      запись
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Считайте и добавленный ответ.
+  - Без ожидания счёт равен n.
+  - Сами метки можно не печатать.
+  solution: "n = int(input())\nready = [input().strip() for _ in range(n)]\ndone = 0\nguard\
+    \ = 0\nwhile ready:\n    guard += 1\n    if guard > 20:\n        break\n    item = ready.pop(0)\n\
+    \    done += 1\n    if item == \"ожидание\":\n        ready.append(\"ответ\")\nprint(done)\n"
+  explanation: Ожидание добавляет ещё одну метку в работу очереди.
+  id: python.performance.perf-async.t5
+introduces:
+- id: perf-await
+  title: await
+  summary: Точка, где корутина отдаёт управление на время ожидания ввода-вывода. Это не запуск
+    потока.

@@ -1,0 +1,191 @@
+id: python.oop.oop-dunder
+slug: oop-dunder
+section: oop
+title: Методы __init__ __str__ __eq__
+order: 8
+weight: 1
+prerequisites:
+- python.oop.oop-property
+goal: Задать создание объекта, его текст и сравнение.
+tags:
+- __str__
+- __eq__
+- __init__
+theory:
+- '__init__ заполняет поля при создании. __str__ возвращает текст объекта: print(tree) печатает
+  его, а не адрес в памяти.'
+- __eq__ отвечает за ==. Его вызывают, когда сравнивают два объекта. Верните True только если
+  второй объект тоже Tree и имя совпало.
+- 'Разные имена дают False. Сравнение с числом или строкой тоже должно вернуть False, а не
+  упасть: сначала проверяют isinstance.'
+examples:
+- title: Текст и равенство
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\n    def __str__(self):\n\
+    \        return 'дерево ' + self.name\n    def __eq__(self, other):\n        return isinstance(other,\
+    \ Tree) and self.name == other.name\nprint(Tree('ель'))\nprint(Tree('ель') == Tree('ель'))\n\
+    print(Tree('ель') == Tree('сосна'))\n"
+  explanation: print использует __str__. Одинаковые имена равны, ель и сосна нет.
+- title: Чужой тип
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\n    def __eq__(self,\
+    \ other):\n        return isinstance(other, Tree) and self.name == other.name\nprint(Tree('ель')\
+    \ == 'ель')\n"
+  explanation: Строка не является Tree, поэтому == возвращает False и не лезет в чужое поле.
+outcomes:
+- заполнять объект в __init__
+- задавать текст объекта в __str__
+- сравнивать объекты в __eq__
+- проверять тип перед чтением чужих полей
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что печатает print
+  difficulty: 1
+  context: neutral
+  prompt: Какой метод вызывается, когда объект печатают через print?
+  options:
+  - id: a
+    text: __str__
+  - id: b
+    text: __eq__
+  - id: c
+    text: __init__
+  answer: a
+  hints:
+  - print нужен текст.
+  - __eq__ отвечает за ==.
+  - __init__ работает при создании.
+  solution: a
+  explanation: Если __str__ возвращает имя, print показывает это имя.
+  id: python.oop.oop-dunder.t1
+- type: predict_output
+  title: Равны ли деревья
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 'False'
+  - id: b
+    text: ель
+  - id: c
+    text: 'True'
+  answer: c
+  hints:
+  - Оба объекта Tree.
+  - Имена совпали.
+  - == вызывает __eq__.
+  solution: c
+  explanation: Имена равны, __eq__ возвращает True.
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\n    def __eq__(self,\
+    \ other):\n        return isinstance(other, Tree) and self.name == other.name\nprint(Tree('ель')\
+    \ == Tree('ель'))\n"
+  id: python.oop.oop-dunder.t2
+- type: code
+  title: Напечатать дерево
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название. __str__ возвращает «дерево название». Выведите объект через
+    print.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'дерево ель
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'дерево сосна
+
+      '
+  hints:
+  - __str__ возвращает строку.
+  - print вызывает его сам.
+  - Не печатайте отдельно поле name.
+  solution: "class Tree:\n    def __init__(self, name):\n        self.name = name\n    def\
+    \ __str__(self):\n        return 'дерево ' + self.name\nprint(Tree(input()))\n"
+  explanation: Для ели на экране будет дерево ель.
+  id: python.oop.oop-dunder.t3
+- type: code
+  title: Сравнить имена
+  difficulty: 2
+  context: business
+  prompt: Прочитайте два названия. Выведите True, если два объекта Tree с этими именами равны,
+    иначе False.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      ель
+
+      '
+    expected_stdout: 'True
+
+      '
+  - stdin: 'ель
+
+      сосна
+
+      '
+    expected_stdout: 'False
+
+      '
+  hints:
+  - __eq__ сравнивает name.
+  - isinstance отсекает чужой тип.
+  - Печатайте результат ==.
+  solution: "class Tree:\n    def __init__(self, name):\n        self.name = name\n    def\
+    \ __eq__(self, other):\n        return isinstance(other, Tree) and self.name == other.name\n\
+    print(Tree(input()) == Tree(input()))\n"
+  explanation: Одинаковые имена дают True, разные дают False.
+  id: python.oop.oop-dunder.t4
+- type: code
+  title: Текст и сравнение
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте название. Выведите текст объекта и True, если он равен новому Tree с
+    тем же именем.
+  starter_code: ''
+  tests:
+  - stdin: 'дуб
+
+      '
+    expected_stdout: 'дуб
+
+      True
+
+      '
+  - stdin: 'кедр
+
+      '
+    expected_stdout: 'кедр
+
+      True
+
+      '
+  hints:
+  - __str__ возвращает само имя.
+  - Второй объект создайте с тем же name.
+  - == должен вызвать __eq__.
+  solution: "class Tree:\n    def __init__(self, name):\n        self.name = name\n    def\
+    \ __str__(self):\n        return self.name\n    def __eq__(self, other):\n        return\
+    \ isinstance(other, Tree) and self.name == other.name\nname = input()\ntree = Tree(name)\n\
+    print(tree)\nprint(tree == Tree(name))\n"
+  explanation: Сначала печатается имя, затем True.
+  id: python.oop.oop-dunder.t5
+introduces:
+- id: oop-dunder.str
+  title: __str__
+  summary: Возвращает текст объекта для print.
+- id: oop-dunder.eq
+  title: __eq__
+  summary: Вызывается при ==. Сравнивает поля и проверяет тип второго объекта.

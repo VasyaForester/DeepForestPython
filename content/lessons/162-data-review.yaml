@@ -1,0 +1,223 @@
+id: python.data.data-review
+slug: data-review
+section: data
+title: Итог и когда не нужен apply
+order: 17
+weight: 2
+prerequisites:
+- python.data.data-clean
+goal: Фильтровать и суммировать столбец без вызова Python на каждую строку.
+tags:
+- apply
+- итог
+theory:
+- DataFrame.apply с axis=1 вызывает функцию Python отдельно на каждой строке. Так пишут, когда
+  правило правда смотрит на всю запись и готовой операции столбца нет.
+- Сумма столбца, сравнение и отбор строк — операции столбца. Они не нуждаются в apply. Вызов
+  Python на каждую строку медленнее и легче прячет простую формулу.
+- Упражнение фильтрует и суммирует список словарей без отдельной функции на строку, потому
+  что pandas нет в среде браузера.
+examples:
+- title: Сумма живых
+  code: 'rows = [{"порода": "ель", "высота": 12, "живая": 1}, {"порода": "сосна", "высота":
+    9, "живая": 0}, {"порода": "берёза", "высота": 15, "живая": 1}]
+
+    picked = [row["высота"] for row in rows if row["живая"] == 1]
+
+    print(sum(picked))
+
+    '
+  explanation: Условие и сумма идут по столбцам. Отдельная функция на строку не нужна. Сумма
+    27.
+- title: Цены от ста
+  code: 'prices = [80, 120, 40, 200]
+
+    print(sum(price for price in prices if price >= 100))
+
+    '
+  explanation: Сравнение и сумма выражены прямо. Получается 320.
+outcomes:
+- выбирать операцию столбца вместо apply
+- фильтровать и суммировать одним проходом
+- объяснять, почему apply по строкам медленнее
+- оставлять apply для правила, которому мало одного столбца
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда не нужен apply
+  difficulty: 1
+  context: neutral
+  prompt: Когда не стоит вызывать DataFrame.apply по строкам?
+  options:
+  - id: a
+    text: 'Когда ту же работу делает операция столбца: сравнение или сумма'
+  - id: b
+    text: Когда в таблице ровно одна строка и apply обязателен
+  - id: c
+    text: Когда нужно переименовать файл с данными
+  answer: a
+  hints:
+  - apply зовёт Python на каждую строку.
+  - Сумма и сравнение уже есть у столбца.
+  - Имя файла к apply не относится.
+  solution: a
+  explanation: Операция столбца быстрее и прямее, чем функция на строку.
+  id: python.data.data-review.t1
+- type: predict_output
+  title: Сумма выше порога
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '27'
+  - id: b
+    text: '44'
+  - id: c
+    text: '12'
+  answer: a
+  hints:
+  - Порог пропускает 9 и 8.
+  - Остаются 12 и 15.
+  - 44 было бы суммой всех.
+  solution: a
+  explanation: Сумма отобранных высот равна 27.
+  code: 'heights = [12, 9, 15, 8]
+
+    print(sum(height for height in heights if height >= 10))
+
+    '
+  id: python.data.data-review.t2
+- type: code
+  title: Сумма высоких
+  difficulty: 2
+  context: development
+  prompt: Прочитайте порог, n и n строк порода высота. Выведите сумму высот не меньше порога.
+    Отдельную функцию на строку не пишите.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      3
+
+      ель 12
+
+      сосна 9
+
+      берёза 15
+
+      '
+    expected_stdout: '27
+
+      '
+  - stdin: '1
+
+      2
+
+      дуб 8
+
+      клён 4
+
+      '
+    expected_stdout: '12
+
+      '
+  hints:
+  - Сравнивайте высоту в том же цикле.
+  - Имя не суммируйте.
+  - Ниже порога пропускайте.
+  solution: "limit = int(input())\nn = int(input())\ntotal = 0\nfor _ in range(n):\n    name,\
+    \ height = input().split()\n    height = int(height)\n    if height >= limit:\n      \
+    \  total += height\nprint(total)\n"
+  explanation: Фильтр и сумма записаны как действия над значениями, без apply.
+  id: python.data.data-review.t3
+- type: code
+  title: Сумма категории
+  difficulty: 2
+  context: development
+  prompt: Прочитайте категорию, n и строки категория цена. Выведите сумму цен этой категории
+    без функции на строку.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      3
+
+      ель 400
+
+      сосна 250
+
+      ель 100
+
+      '
+    expected_stdout: '500
+
+      '
+  - stdin: 'дуб
+
+      2
+
+      клён 5
+
+      дуб 7
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - Категория приходит первой строкой.
+  - Прибавляйте цену только при совпадении имени.
+  - Функция для одной строки не нужна.
+  solution: "kind = input().strip()\nn = int(input())\ntotal = 0\nfor _ in range(n):\n   \
+    \ name, price = input().split()\n    if name == kind:\n        total += int(price)\nprint(total)\n"
+  explanation: Условие на столбец заменяет построчный apply.
+  id: python.data.data-review.t4
+- type: code
+  title: Число дорогих
+  difficulty: 2
+  context: development
+  prompt: Прочитайте порог, n и n цен. Выведите, сколько цен не меньше порога.
+  starter_code: ''
+  tests:
+  - stdin: '100
+
+      4
+
+      80
+
+      120
+
+      40
+
+      200
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '5
+
+      1
+
+      5
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Считайте строки, не сумму.
+  - Равенство порогу входит.
+  - Один проход достаточен.
+  solution: "limit = int(input())\nn = int(input())\ncount = 0\nfor _ in range(n):\n    if\
+    \ int(input()) >= limit:\n        count += 1\nprint(count)\n"
+  explanation: Подсчёт по условию — тоже операция столбца.
+  id: python.data.data-review.t5

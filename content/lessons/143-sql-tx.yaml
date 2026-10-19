@@ -1,0 +1,234 @@
+id: python.sql.sql-tx
+slug: sql-tx
+section: sql
+title: Транзакции
+order: 13
+weight: 1
+prerequisites:
+- python.sql.sql-normal
+goal: Убедиться, что откат отменяет вставку, а фиксация оставляет её.
+tags:
+- COMMIT
+- ROLLBACK
+- транзакция
+theory:
+- Транзакция собирает несколько изменений в один шаг. COMMIT фиксирует их, ROLLBACK отменяет.
+  После отката вставленного дуба в таблице не видно.
+- Изоляция решает, видят ли другие соединения ещё не зафиксированные строки. В SQLite чтение
+  обычно видит снимок, а не чужой незавершённый INSERT. Задачи идут в одном соединении и показывают
+  именно откат и фиксацию.
+- Начальные ель и сосна фиксируют до эксперимента. Иначе откат унёс бы и их. Новая строка
+  — дуб высотой 30.
+examples:
+- title: Откат дуба
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''ель'', 12)")
+
+    con.commit()
+
+    con.execute("insert into trees values (''дуб'', 30)")
+
+    con.rollback()
+
+    print(con.execute("select count(*) from trees where name = ''дуб''").fetchone()[0])
+
+    '
+  explanation: ROLLBACK отменяет незафиксированную вставку, дуба в таблице нет.
+- title: Фиксация дуба
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''ель'', 12)")
+
+    con.commit()
+
+    con.execute("insert into trees values (''дуб'', 30)")
+
+    con.commit()
+
+    print(con.execute("select count(*) from trees where name = ''дуб''").fetchone()[0])
+
+    '
+  explanation: После COMMIT строка дуба остаётся, счётчик равен 1.
+outcomes:
+- фиксировать изменения через COMMIT
+- отменять незафиксированный INSERT через ROLLBACK
+- не откатывать уже зафиксированные строки
+- понимать, что изоляция скрывает чужие незавершённые правки
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что отменяет ROLLBACK
+  difficulty: 1
+  context: neutral
+  prompt: Что делает ROLLBACK с INSERT, который ещё не прошёл COMMIT?
+  options:
+  - id: a
+    text: Отменяет вставку, строка не остаётся в таблице
+  - id: b
+    text: Печатает план запроса
+  - id: c
+    text: Включает внешние ключи
+  answer: a
+  hints:
+  - COMMIT закрепляет изменения.
+  - До фиксации откат их снимает.
+  - План показывает EXPLAIN, не ROLLBACK.
+  solution: a
+  explanation: Незафиксированная вставка исчезает после отката.
+  id: python.sql.sql-tx.t1
+- type: predict_output
+  title: Дуб после отката
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '0'
+  - id: b
+    text: '1'
+  - id: c
+    text: дуб
+  answer: a
+  hints:
+  - Ель зафиксирована раньше.
+  - Дуб вставлен после commit.
+  - rollback снимает только эту вставку.
+  solution: a
+  explanation: Дуба в таблице не остаётся.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''ель'', 12)")
+
+    con.commit()
+
+    con.execute("insert into trees values (''дуб'', 30)")
+
+    con.rollback()
+
+    print(con.execute("select count(*) from trees where name = ''дуб''").fetchone()[0])
+
+    '
+  id: python.sql.sql-tx.t2
+- type: code
+  title: Commit или rollback
+  difficulty: 2
+  context: development
+  prompt: В таблице уже есть ель и сосна. Прочитайте commit или rollback, вставьте дуб и выполните
+    это действие. Выведите, сколько строк с именем дуб осталось.
+  starter_code: ''
+  tests:
+  - stdin: 'rollback
+
+      '
+    expected_stdout: '0
+
+      '
+  - stdin: 'commit
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Сначала зафиксируйте исходные строки.
+  - Потом вставьте дуб.
+  - rollback оставляет счётчик нулевым.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20)])\ncon.commit()\naction = input().strip()\ncon.execute(\"insert into\
+    \ trees values ('дуб', 30)\")\nif action == 'commit':\n    con.commit()\nelse:\n    con.rollback()\n\
+    print(con.execute(\"select count(*) from trees where name = 'дуб'\").fetchone()[0])\n"
+  explanation: Видимость новой строки зависит от фиксации.
+  id: python.sql.sql-tx.t3
+- type: code
+  title: Видно ли имя
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и слово commit или rollback. Вставьте это имя высотой 30 и выполните
+    действие. Выведите да или нет.
+  starter_code: ''
+  tests:
+  - stdin: 'дуб
+
+      rollback
+
+      '
+    expected_stdout: 'нет
+
+      '
+  - stdin: 'дуб
+
+      commit
+
+      '
+    expected_stdout: 'да
+
+      '
+  hints:
+  - Имя подставляйте через ?.
+  - Проверяйте ту же строку после действия.
+  - Ноль — это нет.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.execute(\"insert into trees values ('ель', 12)\"\
+    )\ncon.commit()\nname = input().strip()\naction = input().strip()\ncon.execute('insert\
+    \ into trees values (?, 30)', (name,))\nif action == 'commit':\n    con.commit()\nelse:\n\
+    \    con.rollback()\nfound = con.execute('select count(*) from trees where name = ?',\
+    \ (name,)).fetchone()[0]\nprint('да' if found else 'нет')\n"
+  explanation: После отката имя не находится, после фиксации находится.
+  id: python.sql.sql-tx.t4
+- type: code
+  title: Сколько строк всего
+  difficulty: 2
+  context: development
+  prompt: В таблице две исходные строки. Прочитайте commit или rollback после вставки дуба
+    и выведите общий COUNT.
+  starter_code: ''
+  tests:
+  - stdin: 'rollback
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: 'commit
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Исходные две строки уже зафиксированы.
+  - Откат возвращает счётчик к двум.
+  - Фиксация оставляет три.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20)])\ncon.commit()\naction = input().strip()\ncon.execute(\"insert into\
+    \ trees values ('дуб', 30)\")\nif action == 'commit':\n    con.commit()\nelse:\n    con.rollback()\n\
+    print(con.execute('select count(*) from trees').fetchone()[0])\n"
+  explanation: Общий размер таблицы показывает, пережила ли вставка откат.
+  id: python.sql.sql-tx.t5
+introduces:
+- id: sql-transaction
+  title: Транзакция
+  summary: Группа изменений. COMMIT их фиксирует, ROLLBACK отменяет ещё не зафиксированный
+    INSERT.

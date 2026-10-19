@@ -1,0 +1,271 @@
+id: python.performance.perf-process
+slug: perf-process
+section: performance
+title: Процессы
+order: 7
+weight: 1
+prerequisites:
+- python.performance.perf-thread
+goal: Разделить список пополам, сложить половины и собрать общий итог.
+tags:
+- процессы
+theory:
+- Процесс — отдельная программа со своей памятью. multiprocessing запускает такие процессы.
+  Они не делят GIL и могут считать одновременно на разных ядрах.
+- 'Обмен между процессами стоит отдельно: числа нужно передать и забрать. Имеет смысл делить
+  крупный счёт, а не три сложения.'
+- 'Упражнение делит список высот пополам, суммирует половины и печатает общий итог. Процессы
+  не запускаются: они могли бы считать половины раздельно. Нечётная длина отдаёт лишний элемент
+  правой половине.'
+examples:
+- title: Две половины
+  code: 'heights = [12, 9, 15, 8]
+
+    mid = len(heights) // 2
+
+    left = sum(heights[:mid])
+
+    right = sum(heights[mid:])
+
+    print(left + right)
+
+    '
+  explanation: Слева 21, справа 23, вместе 44. Это вся сумма списка.
+- title: Нечётный ряд
+  code: 'heights = [1, 2, 3, 4, 5]
+
+    mid = len(heights) // 2
+
+    print(sum(heights[:mid]))
+
+    print(sum(heights[mid:]))
+
+    '
+  explanation: Середина целого деления — 2. Слева 3, справа 12.
+outcomes:
+- делить работу на две половины
+- собирать общий итог из частных сумм
+- понимать, что процессы считают раздельно
+- не запускать процесс ради крошечного списка
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем процесс
+  difficulty: 1
+  context: neutral
+  prompt: Когда процессы уместнее потоков?
+  options:
+  - id: a
+    text: Когда счёт занимает процессор и его можно разделить на части
+  - id: b
+    text: Когда нужно только ждать один файл
+  - id: c
+    text: Когда список короче двух элементов
+  answer: a
+  hints:
+  - Процессы не делят GIL.
+  - Ожидание одного файла процессами не ускорить.
+  - Маленький список не окупает запуск.
+  solution: a
+  explanation: Процесс нужен для отдельного тяжёлого счёта.
+  id: python.performance.perf-process.t1
+- type: predict_output
+  title: Сумма половин
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '44'
+  - id: b
+    text: '21'
+  - id: c
+    text: '4'
+  answer: a
+  hints:
+  - Левая половина 12+9.
+  - Правая 15+8.
+  - Складываются обе.
+  solution: a
+  explanation: Общий итог равен 44.
+  code: 'heights = [12, 9, 15, 8]
+
+    mid = len(heights) // 2
+
+    print(sum(heights[:mid]) + sum(heights[mid:]))
+
+    '
+  id: python.performance.perf-process.t2
+- type: code
+  title: Общий итог
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n высот. Разделите список пополам через n // 2, сложите половины
+    и выведите общую сумму.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      12
+
+      9
+
+      15
+
+      8
+
+      '
+    expected_stdout: '44
+
+      '
+  - stdin: '5
+
+      1
+
+      2
+
+      3
+
+      4
+
+      5
+
+      '
+    expected_stdout: '15
+
+      '
+  hints:
+  - mid = n // 2.
+  - Правая половина забирает остаток.
+  - Печатайте одну общую сумму.
+  solution: 'n = int(input())
+
+    values = [int(input()) for _ in range(n)]
+
+    mid = n // 2
+
+    left = sum(values[:mid])
+
+    right = sum(values[mid:])
+
+    print(left + right)
+
+    '
+  explanation: Сумма половин совпадает с суммой всего списка.
+  id: python.performance.perf-process.t3
+- type: code
+  title: Три числа
+  difficulty: 2
+  context: development
+  prompt: Прочитайте высоты. Выведите сумму левой половины, сумму правой и общий итог.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      12
+
+      9
+
+      15
+
+      8
+
+      '
+    expected_stdout: '21
+
+      23
+
+      44
+
+      '
+  - stdin: '1
+
+      6
+
+      '
+    expected_stdout: '0
+
+      6
+
+      6
+
+      '
+  hints:
+  - При одном элементе левая сумма 0.
+  - Правая тогда равна всему списку.
+  - Третья строка — их сумма.
+  solution: 'n = int(input())
+
+    values = [int(input()) for _ in range(n)]
+
+    mid = n // 2
+
+    left = sum(values[:mid])
+
+    right = sum(values[mid:])
+
+    print(left)
+
+    print(right)
+
+    print(left + right)
+
+    '
+  explanation: Две части и итог показывают частные суммы и сборку.
+  id: python.performance.perf-process.t4
+- type: code
+  title: Правая длина
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n высот. Выведите, сколько элементов ушло в правую половину.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      1
+
+      2
+
+      3
+
+      4
+
+      5
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '4
+
+      1
+
+      1
+
+      1
+
+      1
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Правая длина равна n - n // 2.
+  - При чётном n половины равны.
+  - Сами высоты на длину не влияют.
+  solution: "n = int(input())\nfor _ in range(n):\n    input()\nmid = n // 2\nprint(n - mid)\n"
+  explanation: Лишний элемент нечётного списка остаётся справа.
+  id: python.performance.perf-process.t5
+introduces:
+- id: perf-process-half
+  title: Процесс
+  summary: Отдельная программа со своей памятью. multiprocessing мог бы отдать каждой половине
+    свой процесс.

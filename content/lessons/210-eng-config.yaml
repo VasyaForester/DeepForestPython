@@ -1,0 +1,172 @@
+id: python.engineering.eng-config
+slug: eng-config
+section: engineering
+title: Конфигурация
+order: 2
+weight: 1
+prerequisites:
+- python.engineering.eng-structure
+goal: Читать настройку из словаря и сообщать, если ключа нет.
+tags:
+- настройка
+- словарь
+- ключ
+theory:
+- Настройка — это данные, а не условие, размазанное по коду. Порт, имя склада и порог лежат
+  в одном словаре.
+- Программа просит ключ и либо печатает значение, либо «нет настройки». Второе означает, что
+  ключ забыли положить в словарь.
+- Менять порт тогда значит поменять значение в словаре, а не искать числа по всем веткам if.
+examples:
+- title: Порт на месте
+  code: "settings = {'port': '8000', 'name': 'склад'}\nkey = 'port'\nif key not in settings:\n\
+    \    print('нет настройки')\nelse:\n    print(settings[key])\n"
+  explanation: Ключ port есть, печатается 8000.
+- title: Нет ключа
+  code: "settings = {'port': '8000'}\nkey = 'host'\nif key not in settings:\n    print('нет\
+    \ настройки')\nelse:\n    print(settings[key])\n"
+  explanation: host в словарь не клали, программа сообщает об этом.
+outcomes:
+- хранить настройки в одном словаре
+- читать значение по ключу
+- сообщать нет настройки
+- не копировать параметры по веткам if
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где хранить порт
+  difficulty: 1
+  context: neutral
+  prompt: Где в этом уроке должна лежать настройка?
+  options:
+  - id: a
+    text: В словаре данных, из которого её читают по ключу
+  - id: b
+    text: Отдельным числом внутри каждой ветки if
+  - id: c
+    text: В тексте сообщения об ошибке
+  answer: a
+  hints:
+  - Один словарь на все ключи.
+  - Ветки if не хранят сам порт.
+  - Сообщение нет настройки — это отсутствие ключа.
+  solution: a
+  explanation: Конфигурация — данные в словаре, а не копии числа по коду.
+  id: python.engineering.eng-config.t1
+- type: predict_output
+  title: Чужой ключ
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: нет настройки
+  - id: b
+    text: '8000'
+  - id: c
+    text: host
+  answer: a
+  hints:
+  - В словаре только port.
+  - host отсутствует.
+  - Печатается запасная фраза, не сам ключ.
+  solution: a
+  explanation: Пропущенный ключ даёт нет настройки.
+  code: "settings = {'port': '8000'}\nkey = 'host'\nif key not in settings:\n    print('нет\
+    \ настройки')\nelse:\n    print(settings[key])\n"
+  id: python.engineering.eng-config.t2
+- type: code
+  title: Ключ из ввода
+  difficulty: 2
+  context: development
+  prompt: В словаре port равен 8000, name равен склад. Прочитайте ключ. Если его нет, выведите
+    нет настройки, иначе значение.
+  starter_code: ''
+  tests:
+  - stdin: 'port
+
+      '
+    expected_stdout: '8000
+
+      '
+  - stdin: 'host
+
+      '
+    expected_stdout: 'нет настройки
+
+      '
+  hints:
+  - Не выдумывайте значение для чужого ключа.
+  - Проверка not in стоит до чтения.
+  - Печатайте строку из словаря как есть.
+  solution: "settings = {'port': '8000', 'name': 'склад'}\nkey = input()\nif key not in settings:\n\
+    \    print('нет настройки')\nelse:\n    print(settings[key])\n"
+  explanation: Один словарь отвечает и за найденную настройку, и за отсутствие ключа.
+  id: python.engineering.eng-config.t3
+- type: code
+  title: Порог
+  difficulty: 2
+  context: development
+  prompt: 'Настройки: limit равен 10. Прочитайте ключ. Для limit выведите число, для любого
+    другого ключа — нет настройки.'
+  starter_code: ''
+  tests:
+  - stdin: 'limit
+
+      '
+    expected_stdout: '10
+
+      '
+  - stdin: 'port
+
+      '
+    expected_stdout: 'нет настройки
+
+      '
+  hints:
+  - В словаре один ключ.
+  - port сюда не добавлен.
+  - Значение уже строка, int не нужен.
+  solution: "settings = {'limit': '10'}\nkey = input()\nif key not in settings:\n    print('нет\
+    \ настройки')\nelse:\n    print(settings[key])\n"
+  explanation: Запрос чужой настройки не подставляет молча чужое число.
+  id: python.engineering.eng-config.t4
+- type: code
+  title: Функция настройки
+  difficulty: 2
+  context: development
+  prompt: 'Напишите setting(key). Словарь: port 8000, name склад. Функция возвращает значение
+    или строку нет настройки. Прочитайте ключ и напечатайте результат.'
+  starter_code: ''
+  tests:
+  - stdin: 'name
+
+      '
+    expected_stdout: 'склад
+
+      '
+  - stdin: 'limit
+
+      '
+    expected_stdout: 'нет настройки
+
+      '
+  hints:
+  - Возвращайте строку, печать снаружи.
+  - Одинаковая фраза для любого чужого ключа.
+  - Ключ name есть в словаре.
+  solution: "def setting(key):\n    settings = {'port': '8000', 'name': 'склад'}\n    if key\
+    \ not in settings:\n        return 'нет настройки'\n    return settings[key]\nprint(setting(input()))\n"
+  explanation: Доступ к настройкам собран в одной функции.
+  id: python.engineering.eng-config.t5
+introduces:
+- id: eng-settings
+  title: Настройка
+  summary: Пара ключ-значение в словаре. Нет ключа — программа печатает нет настройки.

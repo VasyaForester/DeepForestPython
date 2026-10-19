@@ -1,0 +1,207 @@
+id: python.files.file-csv
+slug: file-csv
+section: files
+title: CSV
+order: 4
+weight: 1
+prerequisites:
+- python.files.file-paths
+goal: Записать строки таблицы в CSV и прочитать их обратно.
+tags:
+- csv
+- таблица
+theory:
+- 'CSV хранит таблицу текстом: одна строка файла — одна строка таблицы, значения разделены
+  запятыми. Модуль csv сам расставляет запятые и кавычки.'
+- csv.writer пишет списки через writerow. Первой строкой часто кладут заголовки name и qty,
+  дальше идут данные. newline="" нужен, чтобы перевод строки не задвоился.
+- 'csv.reader читает файл и отдаёт каждую строку списком строк. Число из файла тоже приходит
+  строкой: qty "4", а не число 4, пока его не превратят через int.'
+examples:
+- title: Одна позиция
+  code: "import csv\nwith open('stock.csv', 'w', encoding='utf-8', newline='') as handle:\n\
+    \    writer = csv.writer(handle)\n    writer.writerow(['name', 'qty'])\n    writer.writerow(['ель',\
+    \ '4'])\nwith open('stock.csv', encoding='utf-8', newline='') as handle:\n    rows = list(csv.reader(handle))\n\
+    print(rows[1][0])\nprint(rows[1][1])\n"
+  explanation: Строка с индексом 0 — заголовки. Строка 1 — ель и количество 4, оба значения
+    строки.
+- title: Две позиции
+  code: "import csv\nwith open('stock.csv', 'w', encoding='utf-8', newline='') as handle:\n\
+    \    writer = csv.writer(handle)\n    writer.writerow(['name', 'qty'])\n    writer.writerow(['ель',\
+    \ '4'])\n    writer.writerow(['сосна', '1'])\nwith open('stock.csv', encoding='utf-8',\
+    \ newline='') as handle:\n    rows = list(csv.reader(handle))\nprint(len(rows) - 1)\n\
+    print(rows[2][0])\n"
+  explanation: Заголовок не считается позицией склада. Вторая позиция — сосна.
+outcomes:
+- писать строки через csv.writer
+- читать их через csv.reader
+- не путать заголовок со строкой данных
+- превращать количество из строки в int
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем читается CSV
+  difficulty: 1
+  context: neutral
+  prompt: Что возвращает csv.reader для строки ель,4?
+  options:
+  - id: a
+    text: Список строк, например название и количество
+  - id: b
+    text: Одно число 4
+  - id: c
+    text: Словарь с байтами файла
+  answer: a
+  hints:
+  - reader режет строку по запятым.
+  - Количество пока остаётся текстом.
+  - Словарь из CSV сам не строится.
+  solution: a
+  explanation: Каждая строка файла становится списком значений-строк.
+  id: python.files.file-csv.t1
+- type: predict_output
+  title: Какое имя
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: name
+  - id: b
+    text: ель
+  - id: c
+    text: '4'
+  answer: b
+  hints:
+  - Индекс 0 у rows — заголовок.
+  - Индекс 1 — первая позиция.
+  - Столбец 0 в ней — название.
+  solution: b
+  explanation: В первой строке данных записана ель.
+  code: "import csv\nwith open('stock.csv', 'w', encoding='utf-8', newline='') as handle:\n\
+    \    writer = csv.writer(handle)\n    writer.writerow(['name', 'qty'])\n    writer.writerow(['ель',\
+    \ '4'])\nwith open('stock.csv', encoding='utf-8', newline='') as handle:\n    rows = list(csv.reader(handle))\n\
+    print(rows[1][0])\n"
+  id: python.files.file-csv.t2
+- type: code
+  title: Записать позицию
+  difficulty: 2
+  context: business
+  prompt: Прочитайте название и количество. Запишите заголовок и эту строку в stock.csv, затем
+    выведите название, прочитанное из файла.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'сосна
+
+      1
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  hints:
+  - Импортируйте csv.
+  - Сначала строка заголовков.
+  - Печатайте первый столбец строки данных.
+  solution: "import csv\nname = input()\nqty = input()\nwith open('stock.csv', 'w', encoding='utf-8',\
+    \ newline='') as handle:\n    writer = csv.writer(handle)\n    writer.writerow(['name',\
+    \ 'qty'])\n    writer.writerow([name, qty])\nwith open('stock.csv', encoding='utf-8',\
+    \ newline='') as handle:\n    rows = list(csv.reader(handle))\nprint(rows[1][0])\n"
+  explanation: writerow кладёт введённые значения, reader достаёт название.
+  id: python.files.file-csv.t3
+- type: code
+  title: Количество числом
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте название и количество. Запишите их в stock.csv и выведите количество
+    уже как целое число.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: 'дуб
+
+      12
+
+      '
+    expected_stdout: '12
+
+      '
+  hints:
+  - Из reader приходит строка.
+  - int превращает её в число.
+  - Печатайте второй столбец.
+  solution: "import csv\nname = input()\nqty = input()\nwith open('stock.csv', 'w', encoding='utf-8',\
+    \ newline='') as handle:\n    writer = csv.writer(handle)\n    writer.writerow(['name',\
+    \ 'qty'])\n    writer.writerow([name, qty])\nwith open('stock.csv', encoding='utf-8',\
+    \ newline='') as handle:\n    rows = list(csv.reader(handle))\nprint(int(rows[1][1]))\n"
+  explanation: В файле количество лежит текстом, int возвращает число для вывода.
+  id: python.files.file-csv.t4
+- type: code
+  title: Две строки данных
+  difficulty: 2
+  context: business
+  prompt: Прочитайте две пары «название количество», каждую пару с двух строк. Запишите обе
+    в stock.csv и выведите название второй строки данных.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      сосна
+
+      1
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  - stdin: 'дуб
+
+      2
+
+      кедр
+
+      7
+
+      '
+    expected_stdout: 'кедр
+
+      '
+  hints:
+  - Сначала запишите заголовок.
+  - Потом обе пары по порядку.
+  - Вторая строка данных имеет индекс 2.
+  solution: "import csv\nrows_in = [(input(), input()), (input(), input())]\nwith open('stock.csv',\
+    \ 'w', encoding='utf-8', newline='') as handle:\n    writer = csv.writer(handle)\n   \
+    \ writer.writerow(['name', 'qty'])\n    for name, qty in rows_in:\n        writer.writerow([name,\
+    \ qty])\nwith open('stock.csv', encoding='utf-8', newline='') as handle:\n    rows = list(csv.reader(handle))\n\
+    print(rows[2][0])\n"
+  explanation: После заголовка вторая позиция — сосна или кедр.
+  id: python.files.file-csv.t5
+introduces:
+- id: file-csv.csv
+  title: CSV
+  summary: Текстовая таблица. csv.writer записывает списки, csv.reader возвращает строки значений.

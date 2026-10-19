@@ -1,0 +1,239 @@
+id: python.capstone.cap-ship
+slug: cap-ship
+section: capstone
+title: Сборка
+order: 9
+weight: 1
+prerequisites:
+- python.capstone.cap-secure
+goal: Разобрать журнал, оставить положительные значения и напечатать две строки отчёта.
+tags:
+- сборка
+- отчёт
+- сумма
+theory:
+- Сборка соединяет уже знакомые шаги в одной программе. parse разбирает строку, битую пропускает,
+  положительное значение оставляет.
+- Отчёт из двух строк. Первая — имена оставшихся записей через пробел, в порядке ввода. Вторая
+  — их сумма.
+- Статус в третьем поле по-прежнему не участвует. Ноль, минус и нечисло до отчёта не доходят.
+examples:
+- title: Одно имя
+  code: 'rows = [(''ель'', 4), (''сосна'', -1)]
+
+    kept = [(name, value) for name, value in rows if value > 0]
+
+    print('' ''.join(name for name, value in kept))
+
+    print(sum(value for name, value in kept))
+
+    '
+  explanation: Остаётся ель, сумма равна 4. Это две строки отчёта.
+- title: Два имени
+  code: 'rows = [(''ель'', 1), (''пихта'', 2)]
+
+    kept = [(name, value) for name, value in rows if value > 0]
+
+    print('' ''.join(name for name, value in kept))
+
+    print(sum(value for name, value in kept))
+
+    '
+  explanation: Оба значения положительные, первая строка ель пихта, вторая 3.
+outcomes:
+- разбирать и пропускать битые строки
+- оставлять только положительные значения
+- печатать имена отобранных записей
+- печатать их сумму второй строкой
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Сколько строк на выходе
+  difficulty: 1
+  context: neutral
+  prompt: Что печатает собранная программа?
+  options:
+  - id: a
+    text: Имена отобранных записей и затем их сумму
+  - id: b
+    text: Каждую исходную строку как есть
+  - id: c
+    text: Только слово готово
+  answer: a
+  hints:
+  - Строк вывода две.
+  - Битые и неположительные в имена не входят.
+  - Сумма стоит на второй строке.
+  solution: a
+  explanation: Отчёт — имена и сумма.
+  id: python.capstone.cap-ship.t1
+- type: predict_output
+  title: Вторая строка
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано последним?
+  options:
+  - id: a
+    text: '4'
+  - id: b
+    text: ель
+  - id: c
+    text: '-1'
+  answer: a
+  hints:
+  - Сначала печатаются имена.
+  - В сумме только 4.
+  - Минус в отчёт не входит.
+  solution: a
+  explanation: Последняя строка — сумма 4.
+  code: 'rows = [(''ель'', 4), (''сосна'', -1)]
+
+    kept = [(name, value) for name, value in rows if value > 0]
+
+    print('' ''.join(name for name, value in kept))
+
+    print(sum(value for name, value in kept))
+
+    '
+  id: python.capstone.cap-ship.t2
+- type: code
+  title: Две строки отчёта
+  difficulty: 2
+  context: development
+  prompt: 'Первая строка — количество, дальше строки журнала. Разберите их, оставьте значение
+    больше нуля и выведите две строки: имена через пробел и сумму.'
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 4
+
+      сосна -1
+
+      '
+    expected_stdout: 'ель
+
+      4
+
+      '
+  - stdin: '3
+
+      ель 1
+
+      пихта 2 ok
+
+      сосна 0
+
+      '
+    expected_stdout: 'ель пихта
+
+      3
+
+      '
+  hints:
+  - Битую строку parse превращает в None.
+  - Ноль не добавляйте в список.
+  - Сначала имена, потом сумма.
+  solution: "def parse(text):\n    parts = text.split()\n    if len(parts) < 2:\n        return\
+    \ None\n    try:\n        return parts[0], int(parts[1])\n    except ValueError:\n   \
+    \     return None\ncount = int(input())\nrows = []\nfor _ in range(count):\n    row =\
+    \ parse(input())\n    if row is not None and row[1] > 0:\n        rows.append(row)\nprint('\
+    \ '.join(name for name, value in rows))\nprint(sum(value for name, value in rows))\n"
+  explanation: Одна программа и разбирает, и отбирает, и печатает короткий отчёт.
+  id: python.capstone.cap-ship.t3
+- type: code
+  title: С пропуском битой
+  difficulty: 2
+  context: development
+  prompt: Тот же отчёт из двух строк. Строка без числа не должна ломать программу.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      битая
+
+      ель 2
+
+      пихта 3
+
+      '
+    expected_stdout: 'ель пихта
+
+      5
+
+      '
+  - stdin: '2
+
+      ель x
+
+      сосна 5
+
+      '
+    expected_stdout: 'сосна
+
+      5
+
+      '
+  hints:
+  - ValueError не выпускайте наружу.
+  - Имена годных строк сохраняют порядок.
+  - Сумма считается по оставшимся.
+  solution: "def parse(text):\n    parts = text.split()\n    if len(parts) < 2:\n        return\
+    \ None\n    try:\n        return parts[0], int(parts[1])\n    except ValueError:\n   \
+    \     return None\ncount = int(input())\nrows = []\nfor _ in range(count):\n    row =\
+    \ parse(input())\n    if row is not None and row[1] > 0:\n        rows.append(row)\nprint('\
+    \ '.join(name for name, value in rows))\nprint(sum(value for name, value in rows))\n"
+  explanation: Битая строка исчезает, отчёт строится по остальным.
+  id: python.capstone.cap-ship.t4
+- type: code
+  title: Одно положительное
+  difficulty: 2
+  context: development
+  prompt: Тот же формат двух строк. В журнале может остаться одна запись.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      пихта 6
+
+      '
+    expected_stdout: 'пихта
+
+      6
+
+      '
+  - stdin: '2
+
+      ель -2
+
+      пихта 9
+
+      '
+    expected_stdout: 'пихта
+
+      9
+
+      '
+  hints:
+  - Одно имя на первой строке без лишнего пробела.
+  - Сумма совпадает с единственным значением.
+  - Отрицательное имя не печатайте.
+  solution: "def parse(text):\n    parts = text.split()\n    if len(parts) < 2:\n        return\
+    \ None\n    try:\n        return parts[0], int(parts[1])\n    except ValueError:\n   \
+    \     return None\ncount = int(input())\nrows = []\nfor _ in range(count):\n    row =\
+    \ parse(input())\n    if row is not None and row[1] > 0:\n        rows.append(row)\nprint('\
+    \ '.join(name for name, value in rows))\nprint(sum(value for name, value in rows))\n"
+  explanation: Короткий журнал тоже даёт две строки отчёта.
+  id: python.capstone.cap-ship.t5
+introduces:
+- id: cap-assembly
+  title: Сборка журнала
+  summary: Одна программа разбирает строки, оставляет положительные значения и печатает имена
+    с суммой.

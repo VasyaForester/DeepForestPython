@@ -1,0 +1,179 @@
+id: python.errors.err-mocks
+slug: err-mocks
+section: errors
+title: Моки и покрытие
+order: 10
+weight: 1
+prerequisites:
+- python.errors.err-fixtures
+goal: Подменить источник данных функцией и проверить расчёт отдельно.
+tags:
+- мок
+- покрытие
+theory:
+- Мок — подмена настоящей функции. В расчёт передают короткую функцию, которая сразу возвращает
+  известное число, без склада и без файла.
+- total(get_price, count) умножает результат get_price() на количество. Если подмена вернула
+  10, а итог не равен 10 * count, ошибка в формуле, а не в складе.
+- Покрытие показывает, какие строки выполнились во время проверок. Подмена помогает пройти
+  расчёт на заданном числе и увидеть, что эта строка действительно работала.
+examples:
+- title: Подмена цены
+  code: "def total(get_price, count):\n    return get_price() * count\ndef fake_price():\n\
+    \    return 10\nprint(total(fake_price, 3))\n"
+  explanation: В total попадает fake_price, а не склад. 10 * 3 равно 30.
+- title: Другая подмена
+  code: "def report(get_qty):\n    return get_qty('ель')\ndef fake_qty(name):\n    return\
+    \ 4\nprint(report(fake_qty))\n"
+  explanation: report не знает, откуда берётся количество. Подмена на имя ель возвращает 4.
+outcomes:
+- передавать функцию как источник данных
+- подменять её короткой fake-функцией
+- проверять формулу на известном числе
+- понимать, что покрытие считает выполненные строки
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем подмена
+  difficulty: 1
+  context: neutral
+  prompt: Зачем в total передают fake_price вместо функции склада?
+  options:
+  - id: a
+    text: Чтобы проверить расчёт на известном числе, не обращаясь к складу
+  - id: b
+    text: Чтобы стереть цену из программы
+  - id: c
+    text: Чтобы остановить покрытие строк
+  answer: a
+  hints:
+  - Подмена возвращает заранее известное число.
+  - Формулу так видно отдельно от источника.
+  - Покрытие как раз смотрит, какие строки выполнились.
+  solution: a
+  explanation: Мок фиксирует данные. Ошибка в итоге тогда сидит в самом расчёте.
+  id: python.errors.err-mocks.t1
+- type: predict_output
+  title: Итог с подменой
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '3'
+  - id: c
+    text: '30'
+  answer: c
+  hints:
+  - fake_price возвращает 10.
+  - count равен 3.
+  - total перемножает эти числа.
+  solution: c
+  explanation: 10 * 3 равно 30.
+  code: "def total(get_price, count):\n    return get_price() * count\ndef fake_price():\n\
+    \    return 10\nprint(total(fake_price, 3))\n"
+  id: python.errors.err-mocks.t2
+- type: code
+  title: Цена из подмены
+  difficulty: 2
+  context: development
+  prompt: Прочитайте цену и количество. fake_price возвращает цену, total умножает её на количество.
+    Выведите итог.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '5
+
+      4
+
+      '
+    expected_stdout: '20
+
+      '
+  hints:
+  - Сначала прочитайте оба числа.
+  - fake_price не принимает аргументов и возвращает цену.
+  - В total передайте саму функцию, без скобок.
+  solution: "price = int(input())\ncount = int(input())\ndef fake_price():\n    return price\n\
+    def total(get_price, count):\n    return get_price() * count\nprint(total(fake_price,\
+    \ count))\n"
+  explanation: 10 и 3 дают 30. 5 и 4 дают 20.
+  id: python.errors.err-mocks.t3
+- type: code
+  title: Количество по имени
+  difficulty: 2
+  context: business
+  prompt: Прочитайте количество. fake_qty(name) всегда возвращает его. report спрашивает количество
+    для ели. Выведите результат.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - fake_qty принимает имя и не использует его.
+  - report передаёт строку ель.
+  - Печатайте то, что вернул report.
+  solution: "qty = int(input())\ndef fake_qty(name):\n    return qty\ndef report(get_qty):\n\
+    \    return get_qty('ель')\nprint(report(fake_qty))\n"
+  explanation: 'Подмена отрезает настоящий склад: печатается введённое количество.'
+  id: python.errors.err-mocks.t4
+- type: code
+  title: Две породы
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте цену. Одна и та же fake_price используется для ели и сосны. Выведите
+    сумму двух стоимостей при количестве 1.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      '
+    expected_stdout: '20
+
+      '
+  - stdin: '7
+
+      '
+    expected_stdout: '14
+
+      '
+  hints:
+  - Цикл проходит по двум именам.
+  - Каждый вызов подмены даёт одну и ту же цену.
+  - Сложите оба результата.
+  solution: "price = int(input())\ndef fake_price(name):\n    return price\ndef total(get_price,\
+    \ names):\n    acc = 0\n    for name in names:\n        acc += get_price(name)\n    return\
+    \ acc\nprint(total(fake_price, ['ель', 'сосна']))\n"
+  explanation: 'Две одинаковые цены дают удвоенное число: 20 или 14.'
+  id: python.errors.err-mocks.t5
+introduces:
+- id: err-mocks.mock
+  title: Мок
+  summary: Подмена настоящей функции. В расчёт передают функцию с заранее известным результатом.
+    Покрытие показывает, какие строки при этом выполнились.

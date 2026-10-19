@@ -1,0 +1,226 @@
+id: python.sql.sql-normal
+slug: sql-normal
+section: sql
+title: Нормализация
+order: 12
+weight: 1
+prerequisites:
+- python.sql.sql-keys
+goal: Вынести повторяющийся список из одной ячейки в отдельную таблицу.
+tags:
+- 1NF
+- нормализация
+theory:
+- '1NF требует одно значение в ячейке. Текст полив,замер в одном столбце — повторяющаяся группа:
+  его режут и кладут действия отдельными строками второй таблицы. 2NF коротко: столбец, который
+  зависит лишь от части составного ключа, тоже выносят; здесь достаточно увидеть сам приём
+  на двух таблицах.'
+- Исполняемый шаг создаёт species и actions. Строка ели остаётся одной, а каждое действие
+  получает свой species_id. Список через запятую в ячейке больше не хранится.
+- 'Если в ячейке нет запятой, значение и так атомное: во вторую таблицу уходит одна строка.
+  Печатают пометку и затем строки второй таблицы по алфавиту.'
+examples:
+- title: Две строки действий
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table species(id\
+    \ integer primary key, name text)')\ncon.execute('create table actions(species_id integer,\
+    \ action text)')\ncon.execute(\"insert into species values (1, 'ель')\")\ncon.executemany('insert\
+    \ into actions values (?, ?)', [(1, 'полив'), (1, 'замер')])\nfor row in con.execute('select\
+    \ action from actions order by action'):\n    print(row[0])\n"
+  explanation: Бывший список стал двумя строками. Алфавит ставит замер перед поливом.
+- title: Сколько кусков
+  code: 'cell = ''полив,замер''
+
+    print(len(cell.split('','')))
+
+    '
+  explanation: Запятая показывает, что в ячейке было два значения, а не одно.
+outcomes:
+- узнавать повторяющуюся группу в ячейке
+- раскладывать список на строки второй таблицы
+- читать действия через связь по id
+- оставлять одно атомарное значение одной строкой
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что не так с ячейкой
+  difficulty: 1
+  context: neutral
+  prompt: Почему столбец со значением полив,замер нарушает 1NF?
+  options:
+  - id: a
+    text: В одной ячейке лежит список значений, а не одно
+  - id: b
+    text: В таблице слишком много строк
+  - id: c
+    text: У таблицы нет SELECT
+  answer: a
+  hints:
+  - 1NF — одно значение на ячейку.
+  - Список выносят во вторую таблицу.
+  - Число строк само по себе форму не ломает.
+  solution: a
+  explanation: Повторяющуюся группу переносят в связанные строки.
+  id: python.sql.sql-normal.t1
+- type: predict_output
+  title: Два действия
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '1'
+  - id: c
+    text: полив
+  answer: a
+  hints:
+  - split режет по запятой.
+  - Кусков два.
+  - Печатается длина, не первый кусок.
+  solution: a
+  explanation: В ячейке два значения.
+  code: 'cell = ''полив,замер''
+
+    print(len(cell.split('','')))
+
+    '
+  id: python.sql.sql-normal.t2
+- type: code
+  title: Действия вида
+  difficulty: 2
+  context: development
+  prompt: 'Таблица species: ель и сосна. У ели действия полив и замер, у сосны только замер.
+    Прочитайте имя и выведите его действия по алфавиту.'
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'замер
+
+      полив
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'замер
+
+      '
+  hints:
+  - Не храните оба действия ели в одной ячейке.
+  - Соедините таблицы по id.
+  - ORDER BY делает порядок устойчивым.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ species(id integer primary key, name text)')\ncon.execute('create table actions(species_id\
+    \ integer, action text)')\ncon.executemany('insert into species values (?, ?)', [(1, 'ель'),\
+    \ (2, 'сосна')])\ncon.executemany('insert into actions values (?, ?)', [(1, 'полив'),\
+    \ (1, 'замер'), (2, 'замер')])\nname = input().strip()\nquery = 'select actions.action\
+    \ from species join actions on actions.species_id = species.id where species.name = ?\
+    \ order by actions.action'\nfor row in con.execute(query, (name,)):\n    print(row[0])\n"
+  explanation: Нормализованные действия читаются отдельными строками.
+  id: python.sql.sql-normal.t3
+- type: code
+  title: Сколько действий
+  difficulty: 2
+  context: development
+  prompt: В тех же двух таблицах прочитайте имя и выведите число его действий.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Считайте строки второй таблицы.
+  - JOIN не даст посчитать чужие действия.
+  - Печатайте число.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer primary key, name text)'')
+
+    con.execute(''create table actions(species_id integer, action text)'')
+
+    con.executemany(''insert into species values (?, ?)'', [(1, ''ель''), (2, ''сосна'')])
+
+    con.executemany(''insert into actions values (?, ?)'', [(1, ''полив''), (1, ''замер''),
+    (2, ''замер'')])
+
+    name = input().strip()
+
+    query = ''select count(*) from species join actions on actions.species_id = species.id
+    where species.name = ?''
+
+    row = con.execute(query, (name,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: У ели две строки действий, у сосны одна.
+  id: python.sql.sql-normal.t4
+- type: code
+  title: Разобрать ячейку
+  difficulty: 2
+  context: development
+  prompt: Прочитайте ячейку вида полив,замер или одно слово. Создайте две таблицы, положите
+    ель и каждое действие отдельно. Выведите повторы или атом, имя вида и действия по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: 'полив,замер
+
+      '
+    expected_stdout: 'повторы
+
+      ель
+
+      замер
+
+      полив
+
+      '
+  - stdin: 'полив
+
+      '
+    expected_stdout: 'атом
+
+      ель
+
+      полив
+
+      '
+  hints:
+  - Режьте ячейку по запятой.
+  - Каждый кусок — строка actions, не кусок текста в species.
+  - Одно значение пометьте как атом.
+  solution: "import sqlite3\ncell = input().strip()\nparts = cell.split(',')\ncon = sqlite3.connect(':memory:')\n\
+    con.execute('create table species(id integer primary key, name text)')\ncon.execute('create\
+    \ table actions(species_id integer, action text)')\ncon.execute(\"insert into species\
+    \ values (1, 'ель')\")\nfor action in parts:\n    con.execute('insert into actions values\
+    \ (1, ?)', (action,))\nprint('повторы' if len(parts) > 1 else 'атом')\nprint(con.execute('select\
+    \ name from species').fetchone()[0])\nfor row in con.execute('select action from actions\
+    \ order by action'):\n    print(row[0])\n"
+  explanation: После разбора список живёт во второй таблице, а вид — в первой.
+  id: python.sql.sql-normal.t5
+introduces:
+- id: sql-normal-form
+  title: 1NF
+  summary: Одно значение в ячейке. Список вроде полив,замер выносят отдельными строками во
+    вторую таблицу.

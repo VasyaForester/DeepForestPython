@@ -1,0 +1,203 @@
+id: python.http.http-auth
+slug: http-auth
+section: http
+title: Авторизация и токены
+order: 10
+weight: 1
+prerequisites:
+- python.http.http-limit
+goal: Проверить заголовок Bearer по учебному словарю токенов.
+tags:
+- авторизация
+- Bearer
+- token
+theory:
+- 'Закрытый запрос несёт заголовок Authorization: Bearer demo-token. Слово Bearer — тип, дальше
+  сам token. Сервер ищет token в уже выданных значениях и узнаёт пользователя.'
+- 'Настоящий token не выдумывают и не вставляют в учебный код из продакшена. В задачах token
+  — это данные: строки demo-token и read-token заранее лежат в словаре.'
+- Песочница не проверяет живой сервис. Если тип не Bearer или token неизвестен, доступ не
+  дают.
+examples:
+- title: Знакомый token
+  code: 'users = {''demo-token'': ''Мира''}
+
+    header = ''Bearer demo-token''
+
+    token = header.split('' '', 1)[1]
+
+    print(users[token])
+
+    '
+  explanation: После Bearer стоит demo-token, по нему находится Мира.
+- title: Чужой token
+  code: 'users = {''demo-token'': ''Мира''}
+
+    print(users.get(''чужой-token'', ''нет''))
+
+    '
+  explanation: Такого token в словаре нет, поэтому ответ нет.
+outcomes:
+- 'читать заголовок Authorization: Bearer'
+- искать token в выданных данных
+- отклонять неизвестный token
+- не сочинять настоящие секреты
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где лежит token
+  difficulty: 1
+  context: neutral
+  prompt: 'Что стоит в заголовке Authorization: Bearer demo-token после слова Bearer?'
+  options:
+  - id: a
+    text: Учебный token, который сервер уже выдал
+  - id: b
+    text: Пароль, который нужно придумать самому
+  - id: c
+    text: Код ответа 200
+  answer: a
+  hints:
+  - Bearer обозначает тип.
+  - Дальше идёт выданное значение.
+  - Новый секрет для этой строки сочинять не надо.
+  solution: a
+  explanation: token — данные, которые проверяют, а не секрет, выдуманный в коде.
+  id: python.http.http-auth.t1
+- type: predict_output
+  title: Кто пришёл
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: Мира
+  - id: b
+    text: demo-token
+  - id: c
+    text: Bearer
+  answer: a
+  hints:
+  - split отделяет тип от token.
+  - В словаре ключ — token.
+  - Печатается имя, не сам token.
+  solution: a
+  explanation: demo-token соответствует Мире.
+  code: 'users = {''demo-token'': ''Мира''}
+
+    token = ''Bearer demo-token''.split('' '', 1)[1]
+
+    print(users[token])
+
+    '
+  id: python.http.http-auth.t2
+- type: code
+  title: Кто по заголовку
+  difficulty: 2
+  context: development
+  prompt: Прочитайте заголовок целиком. Если token есть в словаре demo-token → Мира и read-token
+    → Лев, выведите имя, иначе нет.
+  starter_code: ''
+  tests:
+  - stdin: 'Bearer demo-token
+
+      '
+    expected_stdout: 'Мира
+
+      '
+  - stdin: 'Bearer чужой-token
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Отрежьте второе слово.
+  - Ищите его в словаре.
+  - Неизвестный token — нет.
+  solution: 'users = {''demo-token'': ''Мира'', ''read-token'': ''Лев''}
+
+    parts = input().strip().split('' '', 1)
+
+    token = parts[1] if len(parts) == 2 else ''''
+
+    print(users.get(token, ''нет''))
+
+    '
+  explanation: Заголовок Bearer сводится к поиску token в выданных данных.
+  id: python.http.http-auth.t3
+- type: code
+  title: Известен ли token
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сам token без слова Bearer. Выведите да, если это demo-token или read-token,
+    иначе нет.
+  starter_code: ''
+  tests:
+  - stdin: 'demo-token
+
+      '
+    expected_stdout: 'да
+
+      '
+  - stdin: 'чужой-token
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Сравнивайте со множеством известных значений.
+  - Не просите придумать новый token.
+  - Чужая строка даёт нет.
+  solution: 'known = {''demo-token'', ''read-token''}
+
+    print(''да'' if input().strip() in known else ''нет'')
+
+    '
+  explanation: Проверка смотрит, выдавался ли такой token.
+  id: python.http.http-auth.t4
+- type: code
+  title: Только Bearer
+  difficulty: 2
+  context: development
+  prompt: Прочитайте тип и token двумя строками. Если тип не Bearer, выведите не тот тип.
+    Иначе выведите Мира для demo-token или нет.
+  starter_code: ''
+  tests:
+  - stdin: 'Bearer
+
+      demo-token
+
+      '
+    expected_stdout: 'Мира
+
+      '
+  - stdin: 'Basic
+
+      demo-token
+
+      '
+    expected_stdout: 'не тот тип
+
+      '
+  hints:
+  - Сначала проверьте тип.
+  - Basic не принимайте, даже если token знакомый.
+  - Для Bearer ищите token в словаре.
+  solution: "scheme = input().strip()\ntoken = input().strip()\nusers = {'demo-token': 'Мира'}\n\
+    if scheme != 'Bearer':\n    print('не тот тип')\nelse:\n    print(users.get(token, 'нет'))\n"
+  explanation: Тип Bearer обязателен, знакомый token при другом типе не проходит.
+  id: python.http.http-auth.t5
+introduces:
+- id: http-bearer
+  title: Bearer-token
+  summary: Значение после Bearer в заголовке Authorization. Это выданные данные для проверки,
+    а не секрет, который придумывают в коде.

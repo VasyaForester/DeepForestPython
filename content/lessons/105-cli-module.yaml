@@ -1,0 +1,204 @@
+id: python.cli.cli-module
+slug: cli-module
+section: cli
+title: python -m
+order: 4
+weight: 1
+prerequisites:
+- python.cli.cli-run
+goal: Собрать команду запуска модуля через python -m.
+tags:
+- python -m
+- модуль
+- venv
+theory:
+- 'Команда python -m venv .venv запускает модуль venv как программу и передаёт ему аргумент
+  .venv. Так же устроен python -m http.server: Python ищет модуль в пути импорта, а не файл
+  в текущей папке.'
+- Песочница не запускает модули. По имени модуля здесь собирают готовую строку команды python
+  -m имя.
+- Точка в имени, как в http.server, отделяет пакет от модуля. Первая часть до точки — имя
+  пакета.
+examples:
+- title: Команда venv
+  code: 'name = ''venv''
+
+    print(''python -m '' + name)
+
+    '
+  explanation: К флагу -m приписывают имя модуля и получают python -m venv.
+- title: Модуль с точкой
+  code: 'name = ''http.server''
+
+    print(''python -m '' + name)
+
+    print(name.split(''.'')[0])
+
+    '
+  explanation: Команда печатается целиком, отдельно — пакет http до первой точки.
+outcomes:
+- собирать команду python -m
+- добавлять аргумент модуля
+- отделять имя пакета до точки
+- не запускать модуль из песочницы
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем -m
+  difficulty: 1
+  context: neutral
+  prompt: Что делает команда python -m venv .venv?
+  options:
+  - id: a
+    text: Запускает модуль venv и передаёт ему папку .venv
+  - id: b
+    text: Компилирует весь проект в один файл
+  - id: c
+    text: Показывает версию Python
+  answer: a
+  hints:
+  - -m означает запуск модуля.
+  - Папка .venv — аргумент модуля venv.
+  - Версию смотрят другой командой.
+  solution: a
+  explanation: python -m выполняет модуль так же, как программу.
+  id: python.cli.cli-module.t1
+- type: predict_output
+  title: Строка команды
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: python -m venv
+  - id: b
+    text: venv
+  - id: c
+    text: python
+  answer: a
+  hints:
+  - Имя дописывают после -m.
+  - Одного имени модуля мало.
+  - Флаг -m входит в строку.
+  solution: a
+  explanation: Получается полная команда python -m venv.
+  code: 'name = ''venv''
+
+    print(''python -m '' + name)
+
+    '
+  id: python.cli.cli-module.t2
+- type: code
+  title: Собрать python -m
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя модуля и выведите команду python -m и это имя.
+  starter_code: ''
+  tests:
+  - stdin: 'venv
+
+      '
+    expected_stdout: 'python -m venv
+
+      '
+  - stdin: 'json.tool
+
+      '
+    expected_stdout: 'python -m json.tool
+
+      '
+  hints:
+  - Прочитайте одну строку.
+  - Перед именем поставьте python -m и пробел.
+  - Имя не переводите.
+  solution: 'name = input().strip()
+
+    print(''python -m '' + name)
+
+    '
+  explanation: Команда состоит из python, флага -m и имени модуля.
+  id: python.cli.cli-module.t3
+- type: code
+  title: Модуль и аргумент
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя модуля и ещё один аргумент. Выведите команду python -m с ними.
+  starter_code: ''
+  tests:
+  - stdin: 'venv
+
+      .venv
+
+      '
+    expected_stdout: 'python -m venv .venv
+
+      '
+  - stdin: 'http.server
+
+      8000
+
+      '
+    expected_stdout: 'python -m http.server 8000
+
+      '
+  hints:
+  - Читайте две строки.
+  - 'Порядок: python -m, имя, аргумент.'
+  - Между частями один пробел.
+  solution: 'name = input().strip()
+
+    extra = input().strip()
+
+    print(''python -m '' + name + '' '' + extra)
+
+    '
+  explanation: Аргумент модуля стоит в команде после его имени.
+  id: python.cli.cli-module.t4
+- type: code
+  title: Пакет до точки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя модуля. Выведите команду python -m и следующей строкой часть имени
+    до первой точки.
+  starter_code: ''
+  tests:
+  - stdin: 'http.server
+
+      '
+    expected_stdout: 'python -m http.server
+
+      http
+
+      '
+  - stdin: 'venv
+
+      '
+    expected_stdout: 'python -m venv
+
+      venv
+
+      '
+  hints:
+  - Команду соберите как в прошлом задании.
+  - split по точке даёт куски имени.
+  - Если точки нет, вся строка и есть первый кусок.
+  solution: 'name = input().strip()
+
+    print(''python -m '' + name)
+
+    print(name.split(''.'')[0])
+
+    '
+  explanation: У http.server пакет — http, у venv имя без точки остаётся целиком.
+  id: python.cli.cli-module.t5
+introduces:
+- id: cli-python-m
+  title: python -m
+  summary: 'Запуск модуля как программы: python -m venv .venv. Модуль ищется в пути импорта.'

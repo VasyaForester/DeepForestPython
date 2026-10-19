@@ -1,0 +1,185 @@
+id: python.functions.fn-scope
+slug: fn-scope
+section: functions
+title: Локальные и глобальные имена
+order: 6
+weight: 1
+prerequisites:
+- python.functions.fn-varargs
+goal: Понимать, какое имя живёт внутри функции, а какое снаружи.
+tags:
+- область видимости
+- global
+theory:
+- Имя, которому присвоили значение внутри функции, локальное. Оно живёт только на время этого
+  вызова и снаружи не видно. Запись stock = 4 внутри функции не трогает stock, который был
+  до вызова.
+- Имя, которое в функции только читают, берётся снаружи. Расчёт может увидеть цену, заданную
+  до вызова, если сам её не записывает. Стоит появиться присваиванию, и имя считается локальным
+  во всей функции, даже выше этой строки.
+- Слово global относит присваивание к внешнему имени. Счётчик журнала тогда растёт в функции
+  и остаётся новым после неё. Без этого слова та же запись создаст локальное имя, а внешнее
+  число не изменится.
+examples:
+- title: Своё имя внутри
+  code: "stock = 10\ndef take():\n    stock = 4\n    print(stock)\ntake()\nprint(stock)\n"
+  explanation: Внутри печатается 4. Внешний stock остаётся 10.
+- title: Общий счётчик
+  code: "count = 0\ndef add_entry():\n    global count\n    count = count + 1\nadd_entry()\n\
+    add_entry()\nprint(count)\n"
+  explanation: global связывает присваивание с внешним count, поэтому печатается 2.
+outcomes:
+- отличать локальное имя от внешнего
+- читать внешнее имя, если внутри нет присваивания
+- помечать присваивание словом global
+- не ждать, что параметр изменит имя снаружи
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Внешний остаток
+  difficulty: 1
+  context: neutral
+  prompt: Что будет с внешним stock, если внутри функции есть stock = 4 и нет слова global?
+  options:
+  - id: a
+    text: Внешнее число не изменится
+  - id: b
+    text: Внешнее число станет 4
+  - id: c
+    text: Имя stock исчезнет из программы
+  answer: a
+  hints:
+  - Внутри есть присваивание.
+  - Без global оно создаёт локальное имя.
+  - После вызова внешнее значение прежнее.
+  solution: a
+  explanation: Присваивание без global не пишет во внешнее имя.
+  id: python.functions.fn-scope.t1
+- type: predict_output
+  title: Что осталось снаружи
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '4'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - В функции есть присваивание stock.
+  - Слова global нет.
+  - Печатают имя уже после вызова.
+  solution: a
+  explanation: Локальная запись не меняет внешний stock, печатается 10.
+  code: "stock = 10\ndef take():\n    stock = 4\ntake()\nprint(stock)\n"
+  id: python.functions.fn-scope.t2
+- type: code
+  title: Счётчик записей
+  difficulty: 2
+  context: development
+  prompt: Счётчик count снаружи равен нулю. Прочитайте, сколько записей добавить. Функция
+    add_entry увеличивает count через global. Выведите count.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Пометьте count словом global.
+  - Вызовите функцию столько раз, сколько прочитали.
+  - Печатайте внешнее имя после цикла.
+  solution: "count = 0\ndef add_entry():\n    global count\n    count = count + 1\nn = int(input())\n\
+    for _ in range(n):\n    add_entry()\nprint(count)\n"
+  explanation: Каждый вызов прибавляет единицу к внешнему счётчику.
+  id: python.functions.fn-scope.t3
+- type: code
+  title: Локальная надбавка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число. Функция shadow возвращает его плюс 5 и не меняет аргумент снаружи.
+    Выведите сначала результат функции, затем исходное число.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      '
+    expected_stdout: '15
+
+      10
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: '7
+
+      2
+
+      '
+  hints:
+  - Присваивание параметру локальное.
+  - return отдаёт новое число.
+  - Вторая печать показывает исходное имя.
+  solution: "def shadow(n):\n    n = n + 5\n    return n\nouter = int(input())\nprint(shadow(outer))\n\
+    print(outer)\n"
+  explanation: Параметр n внутри функции — своё имя, outer снаружи не меняется.
+  id: python.functions.fn-scope.t4
+- type: code
+  title: Приход на склад
+  difficulty: 2
+  context: development
+  prompt: Прочитайте текущий остаток и приход. Запишите остаток во внешнее имя stock. Функция
+    receive прибавляет приход через global. Выведите новый остаток.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      4
+
+      '
+    expected_stdout: '14
+
+      '
+  - stdin: '0
+
+      3
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Сначала прочитайте остаток во внешнее имя.
+  - В функции нужен global.
+  - Печатайте stock после вызова.
+  solution: "stock = 0\ndef receive(amount):\n    global stock\n    stock = stock + amount\n\
+    stock = int(input())\nreceive(int(input()))\nprint(stock)\n"
+  explanation: Приход прибавляется к внешнему остатку, потому что присваивание помечено global.
+  id: python.functions.fn-scope.t5
+introduces:
+- id: fn-local
+  title: Локальное имя
+  summary: Имя, которому присвоили значение внутри функции. Снаружи этого присваивания не
+    видно.
+- id: fn-global-kw
+  title: global
+  summary: Помечает, что присваивание внутри функции меняет одноимённое имя снаружи.

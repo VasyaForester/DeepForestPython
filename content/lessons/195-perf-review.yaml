@@ -1,0 +1,200 @@
+id: python.performance.perf-review
+slug: perf-review
+section: performance
+title: 'Итог: выбрать модель'
+order: 11
+weight: 2
+prerequisites:
+- python.performance.perf-loop
+goal: Выбирать потоки или async для ожидания и процессы для счёта.
+tags:
+- модель исполнения
+theory:
+- 'Модель выбирают по узкому месту. Ожидание устройства выдерживают поток или async: пока
+  один ждёт, другой может идти. GIL такому ожиданию почти не мешает.'
+- Счёт, который занимает процессор, потоки Python не ускоряют. Его делят на процессы. Один
+  await без задач тоже не считает таблицу на нескольких ядрах.
+- Упражнение читает io или cpu и печатает «поток или async» либо «процессы». Ни потоки, ни
+  процессы, ни asyncio здесь не запускаются.
+examples:
+- title: Ожидание
+  code: 'kind = "io"
+
+    print("поток или async" if kind == "io" else "процессы")
+
+    '
+  explanation: Для ожидания устройства подходят поток или async.
+- title: Счёт
+  code: 'kind = "cpu"
+
+    print("поток или async" if kind == "io" else "процессы")
+
+    '
+  explanation: Для процессорного счёта выбор — процессы.
+outcomes:
+- выбирать поток или async для ожидания устройства
+- выбирать процессы для счёта на процессоре
+- помнить про GIL при потоках
+- не запускать модель, пока не названо узкое место
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Модель для счёта
+  difficulty: 1
+  context: neutral
+  prompt: Нужно посчитать много строк таблицы, и время уходит на процессор. Какую модель выбрать?
+  options:
+  - id: a
+    text: Процессы
+  - id: b
+    text: Много потоков в одном процессе ради этого счёта
+  - id: c
+    text: Один await без задач на других ядрах
+  answer: a
+  hints:
+  - GIL не ускоряет такой счёт потоками.
+  - Процессы считают раздельно.
+  - Один await не занимает несколько ядер.
+  solution: a
+  explanation: Процессорный счёт делят процессами.
+  id: python.performance.perf-review.t1
+- type: predict_output
+  title: Модель для io
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: поток или async
+  - id: b
+    text: процессы
+  - id: c
+    text: io
+  answer: a
+  hints:
+  - kind равен io.
+  - Печатается первая фраза.
+  - Слово io само не выводится.
+  solution: a
+  explanation: Ожидание ведёт к потоку или async.
+  code: 'kind = "io"
+
+    print("поток или async" if kind == "io" else "процессы")
+
+    '
+  id: python.performance.perf-review.t2
+- type: code
+  title: Одно место
+  difficulty: 2
+  context: development
+  prompt: Прочитайте io или cpu. Для io выведите поток или async, для cpu выведите процессы.
+  starter_code: ''
+  tests:
+  - stdin: 'io
+
+      '
+    expected_stdout: 'поток или async
+
+      '
+  - stdin: 'cpu
+
+      '
+    expected_stdout: 'процессы
+
+      '
+  hints:
+  - Сравнивайте со строкой io.
+  - Вторая фраза — процессы.
+  - Ничего не запускайте.
+  solution: 'kind = input().strip()
+
+    print("поток или async" if kind == "io" else "процессы")
+
+    '
+  explanation: Слово узкого места выбирает модель.
+  id: python.performance.perf-review.t3
+- type: code
+  title: Журнал мест
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n слов io или cpu. Для каждого выведите модель.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      io
+
+      cpu
+
+      '
+    expected_stdout: 'поток или async
+
+      процессы
+
+      '
+  - stdin: '1
+
+      cpu
+
+      '
+    expected_stdout: 'процессы
+
+      '
+  hints:
+  - Каждая строка входа даёт строку ответа.
+  - Порядок сохраняйте.
+  - Фразы не меняйте.
+  solution: "n = int(input())\nfor _ in range(n):\n    kind = input().strip()\n    print(\"\
+    поток или async\" if kind == \"io\" else \"процессы\")\n"
+  explanation: Разные места в одной программе могут требовать разных моделей.
+  id: python.performance.perf-review.t4
+- type: code
+  title: Три метки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте три слова io или cpu. Выведите три модели.
+  starter_code: ''
+  tests:
+  - stdin: 'cpu
+
+      io
+
+      io
+
+      '
+    expected_stdout: 'процессы
+
+      поток или async
+
+      поток или async
+
+      '
+  - stdin: 'io
+
+      cpu
+
+      cpu
+
+      '
+    expected_stdout: 'поток или async
+
+      процессы
+
+      процессы
+
+      '
+  hints:
+  - Строк всегда три.
+  - cpu каждый раз даёт процессы.
+  - io каждый раз даёт поток или async.
+  solution: "for _ in range(3):\n    kind = input().strip()\n    print(\"поток или async\"\
+    \ if kind == \"io\" else \"процессы\")\n"
+  explanation: Повтор слова не меняет правило выбора.
+  id: python.performance.perf-review.t5

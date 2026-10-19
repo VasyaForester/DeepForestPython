@@ -1,0 +1,173 @@
+id: python.engineering.eng-types
+slug: eng-types
+section: engineering
+title: Типизация и mypy
+order: 3
+weight: 1
+prerequisites:
+- python.engineering.eng-config
+goal: Показать, что аннотация не меняет значение при запуске.
+tags:
+- аннотация
+- mypy
+- тип
+theory:
+- 'Аннотация пишет ожидание: аргумент как будто int, результат как будто int. Обычный запуск
+  Python эту пометку не проверяет.'
+- mypy такую ошибку заметил бы, но здесь он не запускается. Функция с пометкой int спокойно
+  принимает строку и возвращает её как есть.
+- Программа печатает то значение, которое получилось при выполнении. По выводу видно, что
+  аннотация не превратила строку в число.
+examples:
+- title: Строка вместо int
+  code: "def twice(text: int) -> int:\n    return text * 2\nprint(twice('ель'))\n"
+  explanation: 'Аннотация обещает int, но строка удваивается как текст: ельель.'
+- title: Та же функция с числом
+  code: "def twice(text: int) -> int:\n    return text * 2\nprint(twice(3))\n"
+  explanation: Если передать число, умножение даёт 6. Аннотация и тут ничего не проверяет,
+    просто совпала с фактом.
+outcomes:
+- читать аннотацию как пометку
+- видеть, что запуск её не проверяет
+- печатать фактическое значение
+- понимать, что mypy смотрит пометки отдельно
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кто ловит ошибку
+  difficulty: 1
+  context: neutral
+  prompt: Что произойдёт при обычном запуске, если в функцию с аннотацией int передать строку?
+  options:
+  - id: a
+    text: Python выполнит код, а mypy такую ошибку заметил бы
+  - id: b
+    text: Python остановится на аннотации до вызова
+  - id: c
+    text: Аннотация сама превратит строку в число
+  answer: a
+  hints:
+  - Аннотация не исполняется как проверка.
+  - mypy смотрит пометки отдельно от запуска.
+  - На экран попадает результат операции.
+  solution: a
+  explanation: Запуск не проверяет аннотации. Этим занимается mypy, и здесь он не запущен.
+  id: python.engineering.eng-types.t1
+- type: predict_output
+  title: Удвоение текста
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ельель
+  - id: b
+    text: '2'
+  - id: c
+    text: ель
+  answer: a
+  hints:
+  - В функцию попала строка.
+  - Умножение строки на 2 повторяет её.
+  - Аннотация int на это не влияет.
+  solution: a
+  explanation: Строка ель повторяется дважды.
+  code: "def twice(text: int) -> int:\n    return text * 2\nprint(twice('ель'))\n"
+  id: python.engineering.eng-types.t2
+- type: code
+  title: Повторить ввод
+  difficulty: 2
+  context: development
+  prompt: Функция twice помечена как int, но умножает значение на 2 как есть. Прочитайте строку,
+    передайте её в twice и напечатайте результат.
+  starter_code: ''
+  tests:
+  - stdin: 'ab
+
+      '
+    expected_stdout: 'abab
+
+      '
+  - stdin: '3
+
+      '
+    expected_stdout: '33
+
+      '
+  hints:
+  - Не вызывайте int вокруг input.
+  - Аннотация остаётся в скобках def.
+  - Печатайте то, что вернула функция.
+  solution: "def twice(text: int) -> int:\n    return text * 2\nprint(twice(input()))\n"
+  explanation: Строка удваивается, хотя пометка обещала число.
+  id: python.engineering.eng-types.t3
+- type: code
+  title: Тип результата
+  difficulty: 2
+  context: development
+  prompt: 'Та же twice принимает строку из ввода. Напечатайте результат и со второй строки
+    имя типа: str.'
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ельель
+
+      str
+
+      '
+  - stdin: '12
+
+      '
+    expected_stdout: '1212
+
+      str
+
+      '
+  hints:
+  - type показывает фактический тип.
+  - Имя str печатайте через __name__.
+  - Аннотация -> int тип не меняет.
+  solution: "def twice(text: int) -> int:\n    return text * 2\ngot = twice(input())\nprint(got)\n\
+    print(type(got).__name__)\n"
+  explanation: Вторая строка подтверждает, что во время выполнения значение осталось строкой.
+  id: python.engineering.eng-types.t4
+- type: code
+  title: Вернуть как есть
+  difficulty: 2
+  context: development
+  prompt: Функция amount помечена как int и просто возвращает аргумент. Прочитайте строку
+    и напечатайте её без преобразования в число.
+  starter_code: ''
+  tests:
+  - stdin: '120
+
+      '
+    expected_stdout: '120
+
+      '
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  hints:
+  - В теле нет int().
+  - return отдаёт то же значение.
+  - По виду 120 это всё ещё текст из input.
+  solution: "def amount(value: int) -> int:\n    return value\nprint(amount(input()))\n"
+  explanation: Функция выполняется и отдаёт строку, несмотря на неверную пометку.
+  id: python.engineering.eng-types.t5
+introduces:
+- id: eng-annotation
+  title: Аннотация
+  summary: Пометка типа у параметра или результата. Обычный Python по ней значение не проверяет.

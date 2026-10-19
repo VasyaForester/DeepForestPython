@@ -1,0 +1,187 @@
+id: python.oop.oop-methods
+slug: oop-methods
+section: oop
+title: Методы
+order: 3
+weight: 1
+prerequisites:
+- python.oop.oop-state
+goal: Добавить объекту действие, которое пользуется его полями.
+tags:
+- метод
+- self
+theory:
+- Метод — функция внутри класса. Первым параметром он принимает self и через него видит поля
+  объекта. Вызов tree.label() подставляет сам объект в self.
+- 'label собирает строку из self.name и self.height. Снаружи скобки обязательны: без них получится
+  сам метод, а не результат.'
+- Данные приходят в __init__, действие живёт в отдельном методе. Один и тот же label работает
+  у разных деревьев, потому что self каждый раз другой.
+examples:
+- title: Подпись
+  code: "class Tree:\n    def __init__(self, name, height):\n        self.name = name\n  \
+    \      self.height = height\n    def label(self):\n        return self.name + ' ' + str(self.height)\n\
+    print(Tree('ель', 12).label())\n"
+  explanation: label читает поля этого объекта и возвращает ель 12.
+- title: Два вызова
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\n    def label(self):\n\
+    \        return 'дерево ' + self.name\nprint(Tree('ель').label())\nprint(Tree('сосна').label())\n"
+  explanation: Один метод, два объекта. Подписи различаются, потому что name разный.
+outcomes:
+- описывать метод с первым параметром self
+- вызывать метод через точку
+- читать поля объекта внутри метода
+- передавать методу дополнительные аргументы
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Куда попадает объект
+  difficulty: 1
+  context: neutral
+  prompt: Куда попадает объект при вызове tree.label()?
+  options:
+  - id: a
+    text: В параметр self
+  - id: b
+    text: В имя класса
+  - id: c
+    text: В отдельный список аргументов после скобок
+  answer: a
+  hints:
+  - Скобки у label пустые снаружи.
+  - Объект передаётся автоматически.
+  - self пишут первым в def.
+  solution: a
+  explanation: Вызов с точкой подставляет объект первым аргументом метода.
+  id: python.oop.oop-methods.t1
+- type: predict_output
+  title: Текст подписи
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: дерево ель
+  - id: c
+    text: label
+  answer: b
+  hints:
+  - label возвращает строку.
+  - В ней есть слово дерево и поле name.
+  - Имя метода не печатается.
+  solution: b
+  explanation: Поле name равно ель, подпись получается дерево ель.
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\n    def label(self):\n\
+    \        return 'дерево ' + self.name\nprint(Tree('ель').label())\n"
+  id: python.oop.oop-methods.t2
+- type: code
+  title: Подпись дерева
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название и высоту. Метод label возвращает строку «название высота». Выведите
+    её.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      12
+
+      '
+    expected_stdout: 'ель 12
+
+      '
+  - stdin: 'сосна
+
+      8
+
+      '
+    expected_stdout: 'сосна 8
+
+      '
+  hints:
+  - height храните числом.
+  - В label переведите высоту в строку.
+  - Печатайте результат вызова со скобками.
+  solution: "class Tree:\n    def __init__(self, name, height):\n        self.name = name\n\
+    \        self.height = height\n    def label(self):\n        return self.name + ' ' +\
+    \ str(self.height)\nprint(Tree(input(), int(input())).label())\n"
+  explanation: Метод собирает оба поля в одну строку.
+  id: python.oop.oop-methods.t3
+- type: code
+  title: Стоимость заказа
+  difficulty: 2
+  context: business
+  prompt: Прочитайте цену и количество. Метод total возвращает произведение. Выведите его.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '8
+
+      2
+
+      '
+    expected_stdout: '16
+
+      '
+  hints:
+  - Оба числа сохраните в полях.
+  - total умножает self.price на self.count.
+  - Вызовите метод у созданного заказа.
+  solution: "class Order:\n    def __init__(self, price, count):\n        self.price = price\n\
+    \        self.count = count\n    def total(self):\n        return self.price * self.count\n\
+    print(Order(int(input()), int(input())).total())\n"
+  explanation: 10 и 3 дают 30. 8 и 2 дают 16.
+  id: python.oop.oop-methods.t4
+- type: code
+  title: Хватает ли
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте количество на складе и потребность. Метод enough возвращает да, если
+    количества хватает, иначе нет.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      3
+
+      '
+    expected_stdout: 'да
+
+      '
+  - stdin: '1
+
+      5
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - need — обычный параметр после self.
+  - Сравнивайте поле с need.
+  - Верните строку да или нет.
+  solution: "class Stock:\n    def __init__(self, qty):\n        self.qty = qty\n    def enough(self,\
+    \ need):\n        if self.qty >= need:\n            return 'да'\n        return 'нет'\n\
+    print(Stock(int(input())).enough(int(input())))\n"
+  explanation: 4 покрывает 3. 1 не покрывает 5.
+  id: python.oop.oop-methods.t5
+introduces:
+- id: oop-methods.method
+  title: Метод
+  summary: Функция внутри класса. При вызове через точку объект попадает в self.

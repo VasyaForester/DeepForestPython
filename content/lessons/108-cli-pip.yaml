@@ -1,0 +1,190 @@
+id: python.cli.cli-pip
+slug: cli-pip
+section: cli
+title: pip и зависимости
+order: 7
+weight: 1
+prerequisites:
+- python.cli.cli-venv
+goal: Разобрать строку зависимости с именем пакета и версией.
+tags:
+- pip
+- зависимости
+- requirements
+theory:
+- Команда pip install requests ставит пакет в текущее окружение. Команда pip install -r requirements.txt
+  ставит сразу список. Строка requests==2.31.0 фиксирует точную версию.
+- Песочница не вызывает pip и ничего не скачивает. Строку из списка режут по знаку ==, >=
+  или <= на имя и версию.
+- Имя может содержать дефис, как у sqlite-utils. Версия остаётся текстом справа от знака,
+  её не вычисляют.
+examples:
+- title: Имя и версия
+  code: 'line = ''requests==2.31.0''
+
+    name, version = line.split(''=='')
+
+    print(name)
+
+    print(version)
+
+    '
+  explanation: Слева от == имя пакета, справа точная версия.
+- title: Только имя
+  code: 'line = ''httpx==0.27.0''
+
+    print(line.split(''=='')[0])
+
+    '
+  explanation: Нулевой кусок после split — имя httpx.
+outcomes:
+- читать строку requirements
+- отделять имя пакета от версии
+- узнавать знаки ==, >= и <=
+- понимать, что pip из песочницы не запускается
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что фиксирует ==
+  difficulty: 1
+  context: neutral
+  prompt: Что означает строка requests==2.31.0 в файле, который ставят командой pip install
+    -r requirements.txt?
+  options:
+  - id: a
+    text: Пакет requests строго версии 2.31.0
+  - id: b
+    text: Адрес сайта requests
+  - id: c
+    text: Команда удалить пакет
+  answer: a
+  hints:
+  - Слева имя пакета.
+  - == в списке зависимостей — точная версия.
+  - Это не URL и не команда удаления.
+  solution: a
+  explanation: Двойное равно закрепляет версию, которую pip поставит.
+  id: python.cli.cli-pip.t1
+- type: predict_output
+  title: Правая часть
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: 0.27.0
+  - id: b
+    text: httpx
+  - id: c
+    text: ==
+  answer: a
+  hints:
+  - split даёт два куска.
+  - Индекс 1 — правый.
+  - Знак == в куски не входит.
+  solution: a
+  explanation: Справа от == остаётся номер версии.
+  code: 'line = ''httpx==0.27.0''
+
+    print(line.split(''=='')[1])
+
+    '
+  id: python.cli.cli-pip.t2
+- type: code
+  title: Имя пакета
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку вида имя==версия и выведите имя.
+  starter_code: ''
+  tests:
+  - stdin: 'requests==2.31.0
+
+      '
+    expected_stdout: 'requests
+
+      '
+  - stdin: 'httpx==0.27.0
+
+      '
+    expected_stdout: 'httpx
+
+      '
+  hints:
+  - Режьте по ==.
+  - Имя — левая часть.
+  - Версию в этом задании не печатайте.
+  solution: 'name, version = input().strip().split(''=='')
+
+    print(name)
+
+    '
+  explanation: Имя зависимости стоит до знака точной версии.
+  id: python.cli.cli-pip.t3
+- type: code
+  title: Номер версии
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку имя==версия и выведите версию.
+  starter_code: ''
+  tests:
+  - stdin: 'requests==2.31.0
+
+      '
+    expected_stdout: '2.31.0
+
+      '
+  - stdin: 'httpx==0.27.0
+
+      '
+    expected_stdout: '0.27.0
+
+      '
+  hints:
+  - Тот же split.
+  - Печатайте правую часть.
+  - Не отрезайте точки в номере.
+  solution: 'name, version = input().strip().split(''=='')
+
+    print(version)
+
+    '
+  explanation: Версия — текст после ==.
+  id: python.cli.cli-pip.t4
+- type: code
+  title: Какой знак
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку зависимости со знаком ==, >= или <=. Выведите сам знак.
+  starter_code: ''
+  tests:
+  - stdin: 'requests==2.31.0
+
+      '
+    expected_stdout: '==
+
+      '
+  - stdin: 'httpx>=0.27.0
+
+      '
+    expected_stdout: '>=
+
+      '
+  hints:
+  - Проверяйте длинные знаки раньше одиночного =.
+  - == не входит в >=.
+  - Напечатайте первый подошедший знак.
+  solution: "line = input().strip()\nfor op in ('==', '>=', '<='):\n    if op in line:\n \
+    \       print(op)\n        break\n"
+  explanation: Знак говорит, точная это версия или граница.
+  id: python.cli.cli-pip.t5
+introduces:
+- id: cli-requirement
+  title: Строка зависимости
+  summary: Запись вроде requests==2.31.0. Её ставит pip install -r requirements.txt.

@@ -1,0 +1,219 @@
+id: python.data.data-loc
+slug: data-loc
+section: data
+title: Выбор строк и столбцов
+order: 9
+weight: 1
+prerequisites:
+- python.data.data-load
+goal: Брать столбец по имени и строку по номеру.
+tags:
+- loc
+- iloc
+theory:
+- 'В pandas loc выбирает по метке: df.loc[0, ''высота''] — строка с меткой 0 и столбец высота.
+  iloc выбирает по позиции: df.iloc[0, 1] — первая строка и второй столбец, счёт с нуля.'
+- Метка и позиция часто совпадают, пока строки не фильтровали. После фильтра метки могут остаться
+  старыми, а позиции сдвинуться. Поэтому loc и iloc путать нельзя.
+- Упражнение берёт поле по ключу словаря и строку по индексу списка, потому что pandas нет
+  в среде браузера.
+examples:
+- title: Имя и цена
+  code: 'rows = [{"порода": "ель", "высота": 12, "цена": 400}, {"порода": "сосна", "высота":
+    9, "цена": 250}]
+
+    print(rows[1]["порода"])
+
+    print(rows[0]["цена"])
+
+    '
+  explanation: Вторая строка по индексу даёт породу. Первая строка по ключу даёт цену 400.
+- title: Столбец целиком
+  code: 'rows = [{"товар": "ель", "число": 3}, {"товар": "сосна", "число": 5}]
+
+    column = [row["число"] for row in rows]
+
+    print(column[0], column[1])
+
+    '
+  explanation: 'Ключ число собирает столбец: 3 и 5.'
+outcomes:
+- выбирать строку по индексу
+- выбирать столбец по имени
+- различать loc и iloc
+- не путать метку строки с позицией после фильтра
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: loc и iloc
+  difficulty: 1
+  context: neutral
+  prompt: 'Фрагмент pandas: df.loc[0, ''высота''] и df.iloc[0, 1]. В чём разница?'
+  options:
+  - id: a
+    text: loc берёт метку строки и имя столбца, iloc берёт позиции
+  - id: b
+    text: Оба всегда возвращают последнюю строку
+  - id: c
+    text: loc считает среднее по столбцу
+  answer: a
+  hints:
+  - loc смотрит на подписи.
+  - iloc смотрит на порядковые номера.
+  - Среднее здесь не считается.
+  solution: a
+  explanation: Имя столбца и метка строки — это loc. Пара номеров — это iloc.
+  id: python.data.data-loc.t1
+- type: predict_output
+  title: Цена первой строки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: '400'
+  - id: c
+    text: '250'
+  answer: b
+  hints:
+  - Индекс 0 — первая строка.
+  - Ключ цена выбирает столбец.
+  - 250 стоит во второй строке.
+  solution: b
+  explanation: В первой строке цена 400.
+  code: 'rows = [{"порода": "ель", "цена": 400}, {"порода": "сосна", "цена": 250}]
+
+    print(rows[0]["цена"])
+
+    '
+  id: python.data.data-loc.t2
+- type: code
+  title: Строка по номеру
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n строк имя высота и номер i. Выведите имя и высоту строки i.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 12
+
+      сосна 9
+
+      берёза 15
+
+      1
+
+      '
+    expected_stdout: 'сосна 9
+
+      '
+  - stdin: '2
+
+      дуб 8
+
+      клён 11
+
+      0
+
+      '
+    expected_stdout: 'дуб 8
+
+      '
+  hints:
+  - Соберите строки по порядку.
+  - i читается в конце.
+  - Печатайте оба поля выбранной строки.
+  solution: "n = int(input())\nrows = []\nfor _ in range(n):\n    name, height = input().split()\n\
+    \    rows.append((name, int(height)))\ni = int(input())\nprint(rows[i][0], rows[i][1])\n"
+  explanation: Номер строки работает как позиция iloc, поля остаются именованными.
+  id: python.data.data-loc.t3
+- type: code
+  title: Только столбец
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n строк имя цена. Выведите только цены, каждая на своей строке.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 400
+
+      сосна 250
+
+      '
+    expected_stdout: '400
+
+      250
+
+      '
+  - stdin: '1
+
+      дуб 90
+
+      '
+    expected_stdout: '90
+
+      '
+  hints:
+  - Имя пропускайте.
+  - Цена — второе поле.
+  - Порядок строк сохраняйте.
+  solution: "n = int(input())\nfor _ in range(n):\n    name, price = input().split()\n   \
+    \ print(int(price))\n"
+  explanation: Один ключ даёт столбец, как Series.
+  id: python.data.data-loc.t4
+- type: code
+  title: Клетка таблицы
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, строки имя высота цена и номер i. Выведите цену строки i.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 12 400
+
+      сосна 9 250
+
+      1
+
+      '
+    expected_stdout: '250
+
+      '
+  - stdin: '1
+
+      дуб 8 90
+
+      0
+
+      '
+    expected_stdout: '90
+
+      '
+  hints:
+  - Строку храните словарём.
+  - Индекс выбирает запись.
+  - Ключ цена выбирает столбец.
+  solution: "n = int(input())\nrows = []\nfor _ in range(n):\n    name, height, price = input().split()\n\
+    \    rows.append({\"порода\": name, \"высота\": int(height), \"цена\": int(price)})\n\
+    i = int(input())\nprint(rows[i][\"цена\"])\n"
+  explanation: 'Вместе это loc: строка по месту и столбец по имени.'
+  id: python.data.data-loc.t5
+introduces:
+- id: data-loc
+  title: loc
+  summary: 'Выбор по метке строки и имени столбца: df.loc[0, ''высота''].'
+- id: data-iloc
+  title: iloc
+  summary: 'Выбор по позиции с нуля: df.iloc[0, 1].'

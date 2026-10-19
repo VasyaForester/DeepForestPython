@@ -1,0 +1,183 @@
+id: python.errors.err-debug
+slug: err-debug
+section: errors
+title: Отладка
+order: 7
+weight: 1
+prerequisites:
+- python.errors.err-logging
+goal: Найти сбой по промежуточной печати и по номеру строки в трассе.
+tags:
+- отладка
+- печать
+theory:
+- 'Если итог неверный, печатают состояние по ходу: сумму после каждого числа, номер шага,
+  текущее имя. По строкам вывода видно, на каком шаге значение стало неправильным.'
+- Трасса указывает файл и строку. В сообщении File "total.py", line 4 смотреть нужно на строку
+  4, а не на последнюю строку файла вообще. Рядом написано, какое действие не удалось.
+- 'Вызов breakpoint() останавливает программу и открывает отладчик. Здесь остановка не используется:
+  ту же проверку делает печать промежуточных значений.'
+examples:
+- title: Сумма по шагам
+  code: "acc = 0\nfor price in (10, 5):\n    acc += price\n    print(acc)\n"
+  explanation: После 10 сумма 10, после 5 сумма 15. Оба шага видны на экране.
+- title: Номер и имя
+  code: "for index, name in enumerate(('ель', 'сосна'), 1):\n    print(index, name)\n"
+  explanation: Нумерация с 1. Сначала строка 1 ель, затем 2 сосна.
+outcomes:
+- печатать промежуточную сумму
+- нумеровать шаги
+- читать в трассе номер строки
+- знать, что breakpoint() открывает отладчик
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает breakpoint
+  difficulty: 1
+  context: neutral
+  prompt: Что делает вызов breakpoint()?
+  options:
+  - id: a
+    text: Останавливает программу и открывает отладчик
+  - id: b
+    text: Печатает все переменные и сразу продолжает работу
+  - id: c
+    text: Удаляет последнюю ошибку из трассы
+  answer: a
+  hints:
+  - Это точка остановки.
+  - Печать сама по себе программу не останавливает.
+  - Трассу вызов не стирает.
+  solution: a
+  explanation: breakpoint() передаёт управление отладчику. Промежуточная печать обходится
+    без этой остановки.
+  id: python.errors.err-debug.t1
+- type: predict_output
+  title: Итог суммы
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '15'
+  - id: c
+    text: '5'
+  answer: b
+  hints:
+  - Сначала прибавляется 10.
+  - Потом прибавляется 5.
+  - Печать одна, в конце.
+  solution: b
+  explanation: 10 + 5 равно 15.
+  code: "acc = 0\nfor price in (10, 5):\n    acc += price\nprint(acc)\n"
+  id: python.errors.err-debug.t2
+- type: code
+  title: Сумма по шагам
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте числа через пробел. После каждого прибавления выводите текущую сумму.
+  starter_code: ''
+  tests:
+  - stdin: '10 5
+
+      '
+    expected_stdout: '10
+
+      15
+
+      '
+  - stdin: '2 2 2
+
+      '
+    expected_stdout: '2
+
+      4
+
+      6
+
+      '
+  hints:
+  - Идите по числам слева направо.
+  - Печатайте acc внутри цикла.
+  - Не ждите конца, чтобы показать шаги.
+  solution: "acc = 0\nfor part in input().split():\n    acc += int(part)\n    print(acc)\n"
+  explanation: 10 5 даёт строки 10 и 15. Три двойки дают 2, 4 и 6.
+  id: python.errors.err-debug.t3
+- type: code
+  title: Номер слова
+  difficulty: 2
+  context: development
+  prompt: Прочитайте слова через пробел и выведите каждое с номером, начиная с 1.
+  starter_code: ''
+  tests:
+  - stdin: 'ель сосна
+
+      '
+    expected_stdout: '1 ель
+
+      2 сосна
+
+      '
+  - stdin: 'дуб
+
+      '
+    expected_stdout: '1 дуб
+
+      '
+  hints:
+  - enumerate со стартом 1.
+  - Печатайте номер и слово через пробел.
+  - Пустых строк между ними нет.
+  solution: "for index, name in enumerate(input().split(), 1):\n    print(index, name)\n"
+  explanation: Два слова дают две строки. Одно слово даёт строку 1 дуб.
+  id: python.errors.err-debug.t4
+- type: code
+  title: Сколько и сумма
+  difficulty: 2
+  context: business
+  prompt: Прочитайте целые числа через пробел. Сначала выведите, сколько их, затем их сумму.
+  starter_code: ''
+  tests:
+  - stdin: '1 2 3
+
+      '
+    expected_stdout: '3
+
+      6
+
+      '
+  - stdin: '10
+
+      '
+    expected_stdout: '1
+
+      10
+
+      '
+  hints:
+  - Сначала соберите список чисел.
+  - len считает, сколько их.
+  - sum складывает.
+  solution: 'parts = [int(item) for item in input().split()]
+
+    print(len(parts))
+
+    print(sum(parts))
+
+    '
+  explanation: 1 2 3 даёт 3 и 6. Одно число 10 даёт 1 и 10.
+  id: python.errors.err-debug.t5
+introduces:
+- id: err-debug.breakpoint
+  title: breakpoint()
+  summary: Останавливает программу и открывает отладчик. Промежуточная печать показывает состояние
+    без остановки.

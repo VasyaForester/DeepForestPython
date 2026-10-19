@@ -1,0 +1,193 @@
+id: python.oop.oop-inherit
+slug: oop-inherit
+section: oop
+title: Наследование
+order: 5
+weight: 1
+prerequisites:
+- python.oop.oop-composition
+goal: Получить поля родителя в классе-наследнике.
+tags:
+- наследование
+- isinstance
+theory:
+- 'Наследование объявляют скобками: class Pine(Tree). Pine получает то, что описано у Tree,
+  включая __init__ и поля.'
+- 'Pine("сосна") вызывает родительский __init__, поэтому у объекта есть name. isinstance(pine,
+  Tree) равно True: сосна является деревом.'
+- Новый метод needle не заменяет родительские. Он добавляет действие только сосне. Поле name
+  по-прежнему приходит из Tree.
+examples:
+- title: Сосна тоже дерево
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\nclass Pine(Tree):\n\
+    \    def needle(self):\n        return 'хвоя'\npine = Pine('сосна')\nprint(pine.name)\n\
+    print(pine.needle())\nprint(isinstance(pine, Tree))\n"
+  explanation: Имя записала родительская __init__. needle добавлен у Pine. Проверка на Tree
+    даёт True.
+- title: Два наследника
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\nclass Pine(Tree):\n\
+    \    pass\nclass Oak(Tree):\n    pass\nprint(Pine('сосна').name)\nprint(Oak('дуб').name)\n"
+  explanation: Оба класса пользуются одним __init__ родителя. Имена разные, способ записи
+    общий.
+outcomes:
+- объявлять наследника в скобках класса
+- пользоваться __init__ родителя
+- проверять объект через isinstance на родителя
+- добавлять наследнику свой метод
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что получает наследник
+  difficulty: 1
+  context: neutral
+  prompt: Что верно про объект Pine, если class Pine(Tree)?
+  options:
+  - id: a
+    text: Он является и Pine, и Tree
+  - id: b
+    text: Он стирает класс Tree
+  - id: c
+    text: У него не может быть полей родителя
+  answer: a
+  hints:
+  - В скобках указан родитель.
+  - isinstance относительно Tree истинен.
+  - Поля из __init__ родителя сохраняются.
+  solution: a
+  explanation: Наследник остаётся экземпляром родителя и добавляет своё.
+  id: python.oop.oop-inherit.t1
+- type: predict_output
+  title: Проверка родителя
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 'False'
+  - id: b
+    text: 'True'
+  - id: c
+    text: сосна
+  answer: b
+  hints:
+  - Pine наследует Tree.
+  - isinstance смотрит и на родителей.
+  - Печатается результат проверки, не имя.
+  solution: b
+  explanation: Объект Pine является Tree.
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\nclass Pine(Tree):\n\
+    \    pass\nprint(isinstance(Pine('сосна'), Tree))\n"
+  id: python.oop.oop-inherit.t2
+- type: code
+  title: Имя наследника
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название. Создайте Pine(Tree) и выведите имя и True, если объект является
+    Tree.
+  starter_code: ''
+  tests:
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'сосна
+
+      True
+
+      '
+  - stdin: 'кедр
+
+      '
+    expected_stdout: 'кедр
+
+      True
+
+      '
+  hints:
+  - __init__ опишите у Tree.
+  - Pine укажите в скобках родителя.
+  - Имя читайте как у обычного поля.
+  solution: "class Tree:\n    def __init__(self, name):\n        self.name = name\nclass Pine(Tree):\n\
+    \    pass\npine = Pine(input())\nprint(pine.name)\nprint(isinstance(pine, Tree))\n"
+  explanation: Наследник получает поле name и остаётся деревом.
+  id: python.oop.oop-inherit.t3
+- type: code
+  title: Своя пометка
+  difficulty: 2
+  context: business
+  prompt: Прочитайте название. У Pine есть метод needle, он возвращает хвоя. Выведите имя
+    и эту пометку.
+  starter_code: ''
+  tests:
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'сосна
+
+      хвоя
+
+      '
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      хвоя
+
+      '
+  hints:
+  - Метод добавьте только в Pine.
+  - Родительский __init__ не копируйте.
+  - Вызовите needle со скобками.
+  solution: "class Tree:\n    def __init__(self, name):\n        self.name = name\nclass Pine(Tree):\n\
+    \    def needle(self):\n        return 'хвоя'\npine = Pine(input())\nprint(pine.name)\n\
+    print(pine.needle())\n"
+  explanation: Имя берётся из родителя, хвоя — из нового метода.
+  id: python.oop.oop-inherit.t4
+- type: code
+  title: Дуб и сосна
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте два названия. Первое отдайте Pine, второе Oak. Оба наследуют Tree. Выведите
+    оба имени.
+  starter_code: ''
+  tests:
+  - stdin: 'сосна
+
+      дуб
+
+      '
+    expected_stdout: 'сосна
+
+      дуб
+
+      '
+  - stdin: 'кедр
+
+      бук
+
+      '
+    expected_stdout: 'кедр
+
+      бук
+
+      '
+  hints:
+  - Оба класса укажите как наследников Tree.
+  - __init__ нужен только у родителя.
+  - Печатайте name каждого объекта.
+  solution: "class Tree:\n    def __init__(self, name):\n        self.name = name\nclass Pine(Tree):\n\
+    \    pass\nclass Oak(Tree):\n    pass\nprint(Pine(input()).name)\nprint(Oak(input()).name)\n"
+  explanation: Общий родитель записывает имя и сосне, и дубу.
+  id: python.oop.oop-inherit.t5
+introduces:
+- id: oop-inherit.inheritance
+  title: Наследование
+  summary: Класс в скобках родителя получает его поля и методы. Объект наследника является
+    и своим типом, и типом родителя.

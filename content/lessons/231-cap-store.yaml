@@ -1,0 +1,236 @@
+id: python.capstone.cap-store
+slug: cap-store
+section: capstone
+title: Хранение
+order: 5
+weight: 1
+prerequisites:
+- python.capstone.cap-rules
+goal: Записать строки журнала в sqlite3 и напечатать их число.
+tags:
+- sqlite3
+- таблица
+- журнал
+theory:
+- Разобранные записи можно положить в таблицу sqlite3 в памяти. Файл базы не создаётся.
+- Таблица journal хранит имя и целое значение. Вставка передаёт их через ?, без склейки текста
+  запроса.
+- После всех вставок программа печатает count. Это число строк в таблице, а не сумма значений.
+examples:
+- title: Две вставки
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table journal(name text, value integer)'')
+
+    con.execute(''insert into journal(name, value) values (?, ?)'', (''ель'', 2))
+
+    con.execute(''insert into journal(name, value) values (?, ?)'', (''сосна'', 3))
+
+    print(con.execute(''select count(*) from journal'').fetchone()[0])
+
+    '
+  explanation: В таблице две строки, count печатает 2.
+- title: Одна строка
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table journal(name text, value integer)'')
+
+    con.execute(''insert into journal(name, value) values (?, ?)'', (''пихта'', 4))
+
+    print(con.execute(''select count(*) from journal'').fetchone()[0])
+
+    '
+  explanation: Одна вставка даёт count 1.
+outcomes:
+- создавать таблицу journal в памяти
+- вставлять имя и значение через ?
+- не склеивать текст запроса
+- печатать число строк
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что печатает хранение
+  difficulty: 1
+  context: neutral
+  prompt: Что показывает число в конце этого шага?
+  options:
+  - id: a
+    text: Сколько строк лежит в таблице
+  - id: b
+    text: Сумму значений
+  - id: c
+    text: Имя первой записи
+  answer: a
+  hints:
+  - Для суммы есть другое правило.
+  - count(*) считает строки.
+  - Имя в этот ответ не входит.
+  solution: a
+  explanation: Ответ — число строк, записанных в journal.
+  id: python.capstone.cap-store.t1
+- type: predict_output
+  title: Две строки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '5'
+  - id: c
+    text: ель
+  answer: a
+  hints:
+  - Вставки две.
+  - count не складывает 2 и 3.
+  - Имя не печатается.
+  solution: a
+  explanation: В таблице две строки.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table journal(name text, value integer)'')
+
+    con.execute(''insert into journal(name, value) values (?, ?)'', (''ель'', 2))
+
+    con.execute(''insert into journal(name, value) values (?, ?)'', (''сосна'', 3))
+
+    print(con.execute(''select count(*) from journal'').fetchone()[0])
+
+    '
+  id: python.capstone.cap-store.t2
+- type: code
+  title: Запись журнала
+  difficulty: 2
+  context: development
+  prompt: Первая строка — количество, дальше «имя значение» или «имя значение статус». Вставьте
+    пары в таблицу journal через ? и выведите count.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 2
+
+      сосна 3
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      пихта 4 ok
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Создайте таблицу до вставок.
+  - В ? передайте имя и int.
+  - Статус не кладите в таблицу.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ journal(name text, value integer)')\ncount = int(input())\nfor _ in range(count):\n\
+    \    parts = input().split()\n    con.execute('insert into journal(name, value) values\
+    \ (?, ?)', (parts[0], int(parts[1])))\nprint(con.execute('select count(*) from journal').fetchone()[0])\n"
+  explanation: Каждая годная пара становится строкой, count считает их.
+  id: python.capstone.cap-store.t3
+- type: code
+  title: Только положительные
+  difficulty: 2
+  context: development
+  prompt: Тот же ввод. Вставляйте только значение больше нуля и выведите, сколько строк оказалось
+    в таблице.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 2
+
+      сосна 0
+
+      пихта 5
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      ель -1
+
+      сосна -2
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Ноль не вставляйте.
+  - Пустая таблица даёт count 0.
+  - Параметр по-прежнему ?.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ journal(name text, value integer)')\ncount = int(input())\nfor _ in range(count):\n\
+    \    parts = input().split()\n    value = int(parts[1])\n    if value > 0:\n        con.execute('insert\
+    \ into journal(name, value) values (?, ?)', (parts[0], value))\nprint(con.execute('select\
+    \ count(*) from journal').fetchone()[0])\n"
+  explanation: В таблице остаются только отобранные записи.
+  id: python.capstone.cap-store.t4
+- type: code
+  title: Имя из таблицы
+  difficulty: 2
+  context: development
+  prompt: Вставьте одну прочитанную пару через ? и выведите имя, прочитанное select-ом, а
+    не исходную переменную.
+  starter_code: ''
+  tests:
+  - stdin: 'ель 4
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'сосна 1 ok
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  hints:
+  - select идёт после insert.
+  - Печатайте поле из кортежа.
+  - Третье слово строки не сохраняйте.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table journal(name text, value integer)'')
+
+    parts = input().split()
+
+    con.execute(''insert into journal(name, value) values (?, ?)'', (parts[0], int(parts[1])))
+
+    row = con.execute(''select name from journal'').fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Имя на экране пришло из таблицы.
+  id: python.capstone.cap-store.t5
+introduces:
+- id: cap-journal-table
+  title: Таблица журнала
+  summary: sqlite3 в памяти с колонками имени и значения. Строки вставляют через ?.

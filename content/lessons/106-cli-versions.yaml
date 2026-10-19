@@ -1,0 +1,211 @@
+id: python.cli.cli-versions
+slug: cli-versions
+section: cli
+title: Версии Python
+order: 5
+weight: 1
+prerequisites:
+- python.cli.cli-module
+goal: Сравнивать версии как кортежи чисел, а не как строки.
+tags:
+- версия
+- кортеж
+- python --version
+theory:
+- 'В терминале версию показывают командой python --version. В коде удобнее кортеж: (3, 11)
+  больше или равен (3, 9), потому что после равной тройки сравнивают 11 и 9.'
+- Песочница могла бы прочитать версию текущего интерпретатора, но тогда тест зависел бы от
+  машины. Кортеж передают во вход, и сравнение остаётся одинаковым.
+- 'Строки сравнивать нельзя: ''3.11'' меньше ''3.9'', потому что после ''3.'' символ ''1''
+  идёт раньше ''9''. Сначала режут по точке и превращают куски в int.'
+examples:
+- title: Кортеж новее
+  code: 'print((3, 11) >= (3, 9))
+
+    '
+  explanation: Старшие числа равны, 11 не меньше 9, поэтому результат True.
+- title: Порог 3.10
+  code: 'current = (3, 12)
+
+    need = (3, 10)
+
+    print(current >= need)
+
+    '
+  explanation: 12 больше 10 при той же мажорной версии, порог пройден.
+outcomes:
+- сравнивать версии кортежами чисел
+- не полагаться на алфавитный порядок строк
+- разбирать запись мажор.минор
+- передавать версию из ввода, а не читать её у интерпретатора
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Почему не строка
+  difficulty: 1
+  context: neutral
+  prompt: Почему версию из python --version сравнивают кортежем, а не строками '3.11' и '3.9'?
+  options:
+  - id: a
+    text: Строка '3.11' меньше '3.9', хотя версия новее
+  - id: b
+    text: Кортеж занимает меньше памяти на диске
+  - id: c
+    text: Строки нельзя хранить в переменной
+  answer: a
+  hints:
+  - Сравнение строк идёт посимвольно.
+  - После общей приставки '3.' единица меньше девятки.
+  - У чисел 11 больше 9.
+  solution: a
+  explanation: Порядок версий — это порядок чисел, а не алфавит.
+  id: python.cli.cli-versions.t1
+- type: predict_output
+  title: Старая тройка
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: 'False'
+  - id: b
+    text: 'True'
+  - id: c
+    text: '3.9'
+  answer: a
+  hints:
+  - Сначала сравниваются первые числа, они равны.
+  - Дальше 9 меньше 11.
+  - На экран попадает результат сравнения, не сам кортеж.
+  solution: a
+  explanation: Версия 3.9 не дотягивает до 3.11.
+  code: 'print((3, 9) >= (3, 11))
+
+    '
+  id: python.cli.cli-versions.t2
+- type: code
+  title: Порог 3.9
+  difficulty: 2
+  context: development
+  prompt: Прочитайте два целых числа — мажор и минор. Выведите да, если кортеж не меньше (3,
+    9), иначе нет.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      11
+
+      '
+    expected_stdout: 'да
+
+      '
+  - stdin: '3
+
+      8
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Соберите кортеж из двух int.
+  - Сравнивайте с (3, 9).
+  - Печатайте да или нет.
+  solution: 'major = int(input())
+
+    minor = int(input())
+
+    print(''да'' if (major, minor) >= (3, 9) else ''нет'')
+
+    '
+  explanation: Кортеж (3, 11) проходит порог, (3, 8) нет.
+  id: python.cli.cli-versions.t3
+- type: code
+  title: Две версии
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте четыре целых числа: две пары мажор и минор. Выведите да, если первая
+    версия не меньше второй.'
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      11
+
+      3
+
+      9
+
+      '
+    expected_stdout: 'да
+
+      '
+  - stdin: '3
+
+      8
+
+      3
+
+      9
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Первые два числа — одна версия.
+  - Следующие два — вторая.
+  - Оператор >= для кортежей сравнивает по порядку.
+  solution: 'first = (int(input()), int(input()))
+
+    second = (int(input()), int(input()))
+
+    print(''да'' if first >= second else ''нет'')
+
+    '
+  explanation: 'Сравнение идёт слева направо: сначала мажор, потом минор.'
+  id: python.cli.cli-versions.t4
+- type: code
+  title: Версия из текста
+  difficulty: 2
+  context: development
+  prompt: Прочитайте версию вида 3.11. Выведите да, если она не меньше 3.10, иначе нет.
+  starter_code: ''
+  tests:
+  - stdin: '3.11
+
+      '
+    expected_stdout: 'да
+
+      '
+  - stdin: '3.9
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Разрежьте строку по точке.
+  - Оба куска превратите в int.
+  - Сравните кортеж с (3, 10).
+  solution: 'major, minor = input().strip().split(''.'')
+
+    current = (int(major), int(minor))
+
+    print(''да'' if current >= (3, 10) else ''нет'')
+
+    '
+  explanation: После разбора 3.11 становится (3, 11) и проходит порог.
+  id: python.cli.cli-versions.t5
+introduces:
+- id: cli-version-tuple
+  title: Кортеж версии
+  summary: Пара чисел (3, 11). Сравнение кортежей идёт по порядку компонентов, а не как у
+    строк '3.11' и '3.9'.

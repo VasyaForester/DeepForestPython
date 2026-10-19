@@ -1,0 +1,235 @@
+id: python.viz.viz-time
+slug: viz-time
+section: viz
+title: Временной ряд
+order: 8
+weight: 1
+prerequisites:
+- python.viz.viz-scatter
+goal: Считать изменение от первого значения ряда к последнему.
+tags:
+- временной ряд
+theory:
+- Временной ряд — величины в порядке времени. Линейный график по датам рисует plt.plot(dates,
+  values). Ось времени не перемешивают.
+- Даты здесь уже отсортированы и записаны строками. Прирост ряда — последнее значение минус
+  первое. Это не разница соседних дней и не максимум.
+- Упражнение печатает эту разность, потому что matplotlib нет в среде браузера.
+examples:
+- title: Прирост за три дня
+  code: 'days = ["2024-03-01", "2024-03-02", "2024-03-03"]
+
+    counts = [4, 6, 10]
+
+    print(counts[-1] - counts[0])
+
+    '
+  explanation: Даты уже по порядку. Конец 10 минус начало 4 равно 6.
+- title: Первая дата
+  code: 'days = ["2024-03-01", "2024-03-02"]
+
+    print(days[0])
+
+    print(days[-1])
+
+    '
+  explanation: Концы оси времени — первая и последняя даты.
+outcomes:
+- держать даты в календарном порядке
+- рисовать временной ряд линией
+- считать прирост как конец минус начало
+- не путать прирост с максимумом
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: График ряда
+  difficulty: 1
+  context: neutral
+  prompt: Какой вызов показывает временной ряд?
+  options:
+  - id: a
+    text: plt.plot(dates, values) при датах по порядку
+  - id: b
+    text: plt.hist(values) без дат
+  - id: c
+    text: plt.bar с породами деревьев
+  answer: a
+  hints:
+  - Ряд идёт по времени.
+  - Гистограмма забывает порядок.
+  - Породы — категории, не даты.
+  solution: a
+  explanation: Линия по упорядоченным датам — график временного ряда.
+  id: python.viz.viz-time.t1
+- type: predict_output
+  title: Прирост
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '6'
+  - id: b
+    text: '4'
+  - id: c
+    text: '10'
+  answer: a
+  hints:
+  - Берётся конец и начало.
+  - Середина 6 в разность не входит.
+  - 10 минус 4.
+  solution: a
+  explanation: Прирост ряда равен 6.
+  code: 'counts = [4, 6, 10]
+
+    print(counts[-1] - counts[0])
+
+    '
+  id: python.viz.viz-time.t2
+- type: code
+  title: Прирост ряда
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n блоков дата и значение. Даты уже по порядку. Выведите последнее
+    значение минус первое.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      2024-03-01
+
+      4
+
+      2024-03-02
+
+      6
+
+      2024-03-03
+
+      10
+
+      '
+    expected_stdout: '6
+
+      '
+  - stdin: '2
+
+      2024-01-01
+
+      5
+
+      2024-01-02
+
+      5
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Дату прочитайте, даже если печатаете число.
+  - Первое значение запомните.
+  - 'Последнее вычтите из него в обратную сторону: конец минус начало.'
+  solution: "n = int(input())\nfirst = None\nlast = None\nfor _ in range(n):\n    input()\n\
+    \    value = int(input())\n    if first is None:\n        first = value\n    last = value\n\
+    print(last - first)\n"
+  explanation: Прирост смотрит на концы ряда, даты держат порядок.
+  id: python.viz.viz-time.t3
+- type: code
+  title: Концы дат
+  difficulty: 2
+  context: development
+  prompt: Прочитайте тот же ряд. Выведите первую дату и последнюю.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      2024-03-01
+
+      4
+
+      2024-03-02
+
+      6
+
+      '
+    expected_stdout: '2024-03-01
+
+      2024-03-02
+
+      '
+  - stdin: '1
+
+      2024-05-01
+
+      8
+
+      '
+    expected_stdout: '2024-05-01
+
+      2024-05-01
+
+      '
+  hints:
+  - Значение после даты тоже прочитайте.
+  - Первая дата пишется один раз.
+  - Последняя дата обновляется каждый шаг.
+  solution: "n = int(input())\nfirst_day = \"\"\nlast_day = \"\"\nfor index in range(n):\n\
+    \    day = input().strip()\n    input()\n    if index == 0:\n        first_day = day\n\
+    \    last_day = day\nprint(first_day)\nprint(last_day)\n"
+  explanation: Ось времени читается по крайним датам.
+  id: python.viz.viz-time.t4
+- type: code
+  title: Конец ряда
+  difficulty: 2
+  context: development
+  prompt: Прочитайте ряд дата-значение. Выведите последнее значение.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      2024-03-01
+
+      4
+
+      2024-03-02
+
+      6
+
+      2024-03-03
+
+      10
+
+      '
+    expected_stdout: '10
+
+      '
+  - stdin: '1
+
+      2024-05-01
+
+      8
+
+      '
+    expected_stdout: '8
+
+      '
+  hints:
+  - Каждое новое значение заменяет прежнее.
+  - Даты не печатайте.
+  - Ответ — одно число.
+  solution: "n = int(input())\nlast = 0\nfor _ in range(n):\n    input()\n    last = int(input())\n\
+    print(last)\n"
+  explanation: Правый конец линии — последнее наблюдение.
+  id: python.viz.viz-time.t5
+introduces:
+- id: viz-time-series
+  title: Временной ряд
+  summary: Значения в порядке времени. Линию по датам рисует plt.plot.

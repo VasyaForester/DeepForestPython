@@ -1,0 +1,196 @@
+id: python.stats.stats-errors
+slug: stats-errors
+section: stats
+title: Ошибки I и II рода
+order: 9
+weight: 1
+prerequisites:
+- python.stats.stats-p
+goal: Раскладывать ложную тревогу и пропуск по именам ошибок.
+tags:
+- ошибки рода
+theory:
+- 'Ошибка I рода — ложная тревога: нулевая гипотеза была верна, а её отклонили. Сигнал прозвучал
+  зря.'
+- 'Ошибка II рода — пропуск: нулевая гипотеза была неверна, а её оставили. Сдвиг в данных
+  не заметили.'
+- Упражнение получает уже названный исход словами «ложная тревога» или «пропуск» и печатает
+  I или II. Оно не решает по данным, какая ошибка случилась.
+examples:
+- title: Тревога
+  code: 'word = "ложная тревога"
+
+    print("I" if word == "ложная тревога" else "II")
+
+    '
+  explanation: Ложная тревога — ошибка I рода.
+- title: Пропуск
+  code: 'word = "пропуск"
+
+    print("II" if word == "пропуск" else "I")
+
+    '
+  explanation: Пропуск эффекта — ошибка II рода.
+outcomes:
+- называть ложную тревогу ошибкой I рода
+- называть пропуск ошибкой II рода
+- не путать редкость p с уже случившейся ошибкой
+- классифицировать названный исход, а не угадывать его по среднему
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Имя первой ошибки
+  difficulty: 1
+  context: neutral
+  prompt: Какая ошибка называется ошибкой I рода?
+  options:
+  - id: a
+    text: 'Ложная тревога: отклонили верную нулевую гипотезу'
+  - id: b
+    text: 'Пропуск: оставили неверную нулевую гипотезу'
+  - id: c
+    text: Слишком короткий список высот
+  answer: a
+  hints:
+  - I род — действие, когда верную гипотезу отвергли.
+  - Пропуск — II род.
+  - Длина списка сама по себе не род ошибки.
+  solution: a
+  explanation: Ложная тревога и ошибка I рода — одно и то же событие.
+  id: python.stats.stats-errors.t1
+- type: predict_output
+  title: Номер пропуска
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: I
+  - id: b
+    text: II
+  - id: c
+    text: пропуск
+  answer: b
+  hints:
+  - Слово не совпало с ложной тревогой.
+  - В этой развилке остаётся II.
+  - Исходное слово не печатается.
+  solution: b
+  explanation: Пропуск помечается как II.
+  code: 'word = "пропуск"
+
+    print("I" if word == "ложная тревога" else "II")
+
+    '
+  id: python.stats.stats-errors.t2
+- type: code
+  title: Один исход
+  difficulty: 2
+  context: development
+  prompt: Прочитайте «ложная тревога» или «пропуск». Выведите I или II.
+  starter_code: ''
+  tests:
+  - stdin: 'ложная тревога
+
+      '
+    expected_stdout: 'I
+
+      '
+  - stdin: 'пропуск
+
+      '
+    expected_stdout: 'II
+
+      '
+  hints:
+  - Сравнивайте всю фразу.
+  - Пропуск — II.
+  - Печатайте римскую цифру.
+  solution: 'word = input().strip()
+
+    print("I" if word == "ложная тревога" else "II")
+
+    '
+  explanation: Имена уже даны, программа только ставит номер рода.
+  id: python.stats.stats-errors.t3
+- type: code
+  title: Несколько исходов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n таких фраз. Для каждой выведите I или II.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ложная тревога
+
+      пропуск
+
+      '
+    expected_stdout: 'I
+
+      II
+
+      '
+  - stdin: '1
+
+      пропуск
+
+      '
+    expected_stdout: 'II
+
+      '
+  hints:
+  - Каждая фраза на своей строке.
+  - Порядок сохраняйте.
+  - Других фраз во вводе нет.
+  solution: "n = int(input())\nfor _ in range(n):\n    word = input().strip()\n    print(\"\
+    I\" if word == \"ложная тревога\" else \"II\")\n"
+  explanation: Серия исходов раскладывается тем же словарём имён.
+  id: python.stats.stats-errors.t4
+- type: code
+  title: Сколько тревог
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n фраз. Выведите, сколько среди них ошибок I рода.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      пропуск
+
+      ложная тревога
+
+      ложная тревога
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      пропуск
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Считайте только ложную тревогу.
+  - Пропуск не прибавляет.
+  - Одно число в ответе.
+  solution: "n = int(input())\ncount = 0\nfor _ in range(n):\n    if input().strip() == \"\
+    ложная тревога\":\n        count += 1\nprint(count)\n"
+  explanation: Счётчик I рода не ищет ошибку в числах, он считает уже названные исходы.
+  id: python.stats.stats-errors.t5
+introduces:
+- id: stats-error-type
+  title: Ошибки I и II рода
+  summary: I — отклонили верную нулевую гипотезу, II — не отклонили ложную.

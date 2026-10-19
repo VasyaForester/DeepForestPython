@@ -1,0 +1,212 @@
+id: python.engineering.eng-secure
+slug: eng-secure
+section: engineering
+title: Безопасная разработка
+order: 12
+weight: 1
+prerequisites:
+- python.engineering.eng-deps
+goal: Писать запрос с подстановкой и отклонять путь с двумя точками.
+tags:
+- SQL
+- путь
+- запрос
+theory:
+- 'Текст SQL не склеивают со строкой пользователя: так ввод становится частью команды. В sqlite3
+  значение передают через ? отдельно от текста запроса.'
+- 'Путь из ввода, в котором есть .., отклоняют: иначе строка может выйти из нужной папки.
+  Нельзя и запрашивать произвольный адрес из данных пользователя, это SSRF, и нельзя загружать
+  pickle из недоверенных байтов.'
+- 'pickle здесь не импортируется, сетевого запроса нет. Упражнение делает две обычные проверки:
+  параметризованный запрос sqlite3 и отказ, если в пути есть ..'
+examples:
+- title: Цена через параметр
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table goods(name text, price integer)'')
+
+    con.execute(''insert into goods(name, price) values (?, ?)'', (''ель'', 120))
+
+    row = con.execute(''select price from goods where name = ?'', (''ель'',)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Имя передано отдельно от текста запроса, цена ели равна 120.
+- title: Путь с выходом
+  code: "path = 'notes/../../env'\nif '..' in path:\n    print('нельзя')\nelse:\n    print('можно')\n"
+  explanation: В строке есть .., программа печатает нельзя.
+outcomes:
+- передавать значения в SQL через ?
+- не склеивать ввод с текстом запроса
+- отклонять путь, в котором есть ..
+- не качать произвольный адрес и не загружать чужой pickle
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Опасный набор
+  difficulty: 1
+  context: neutral
+  prompt: Какой приём опасен в обработчике?
+  options:
+  - id: a
+    text: Склеивать SQL со вводом, качать произвольный URL или загружать pickle
+  - id: b
+    text: Передавать значение через ? и отклонять путь с ..
+  - id: c
+    text: Сравнивать роль со строкой admin
+  answer: a
+  hints:
+  - Склейка SQL — инъекция.
+  - Произвольный URL — это SSRF, чужой pickle тоже нельзя распаковывать.
+  - Знак вопроса и отказ от .. как раз защита.
+  solution: a
+  explanation: Опасны склейка SQL, запрос произвольного адреса и pickle недоверенных данных.
+  id: python.engineering.eng-secure.t1
+- type: predict_output
+  title: Чужой путь
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: нельзя
+  - id: b
+    text: можно
+  - id: c
+    text: env
+  answer: a
+  hints:
+  - В пути есть две точки подряд.
+  - Условие истинно.
+  - Имя файла само не печатается.
+  solution: a
+  explanation: Путь с .. отклоняется.
+  code: "path = 'notes/../../env'\nif '..' in path:\n    print('нельзя')\nelse:\n    print('можно')\n"
+  id: python.engineering.eng-secure.t2
+- type: code
+  title: Цена по имени
+  difficulty: 2
+  context: development
+  prompt: В памяти создайте goods с ель 120 и сосна 80. Прочитайте имя и выведите цену запросом
+    с ?. Если строки нет, выведите нет.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '120
+
+      '
+  - stdin: 'пихта
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - В тексте запроса стоит знак вопроса.
+  - Имя передайте вторым аргументом execute.
+  - fetchone равен None, если записи нет.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ goods(name text, price integer)')\ncon.execute('insert into goods(name, price) values\
+    \ (?, ?)', ('ель', 120))\ncon.execute('insert into goods(name, price) values (?, ?)',\
+    \ ('сосна', 80))\nname = input()\nrow = con.execute('select price from goods where name\
+    \ = ?', (name,)).fetchone()\nif row is None:\n    print('нет')\nelse:\n    print(row[0])\n"
+  explanation: Значение не вклеивается в текст SQL, а передаётся отдельно.
+  id: python.engineering.eng-secure.t3
+- type: code
+  title: Путь
+  difficulty: 2
+  context: development
+  prompt: Прочитайте путь. Если в нём есть .., выведите нельзя, иначе можно.
+  starter_code: ''
+  tests:
+  - stdin: 'warehouse/ель
+
+      '
+    expected_stdout: 'можно
+
+      '
+  - stdin: 'warehouse/../../secret
+
+      '
+    expected_stdout: 'нельзя
+
+      '
+  hints:
+  - Ищите подстроку из двух точек.
+  - Обычный путь без точек проходит.
+  - Печатайте одно слово.
+  solution: "path = input()\nif '..' in path:\n    print('нельзя')\nelse:\n    print('можно')\n"
+  explanation: Строка с выходом наверх отклоняется до любого чтения файла.
+  id: python.engineering.eng-secure.t4
+- type: code
+  title: Вставка параметром
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и целую цену. Вставьте их в goods через ? и выведите имя и цену из
+    select по этому имени, тоже через ?.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      120
+
+      '
+    expected_stdout: 'ель
+
+      120
+
+      '
+  - stdin: 'сосна
+
+      80
+
+      '
+    expected_stdout: 'сосна
+
+      80
+
+      '
+  hints:
+  - И вставка, и чтение используют ?.
+  - Кортеж значений стоит отдельно от текста.
+  - Печатайте оба поля найденной строки.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table goods(name text, price integer)'')
+
+    name = input()
+
+    price = int(input())
+
+    con.execute(''insert into goods(name, price) values (?, ?)'', (name, price))
+
+    row = con.execute(''select name, price from goods where name = ?'', (name,)).fetchone()
+
+    print(row[0])
+
+    print(row[1])
+
+    '
+  explanation: Оба запроса передают данные параметрами, без склейки строк.
+  id: python.engineering.eng-secure.t5
+introduces:
+- id: eng-parameter
+  title: Параметр запроса
+  summary: Знак ? в sqlite3. Значение уходит отдельно от текста SQL.
+- id: eng-path-traversal
+  title: Выход из папки
+  summary: Путь с .. отклоняют, чтобы строка не ушла выше нужного каталога.

@@ -1,0 +1,201 @@
+id: python.algorithms.algo-greedy
+slug: algo-greedy
+section: algorithms
+title: Жадные алгоритмы
+order: 14
+weight: 1
+prerequisites:
+- python.algorithms.algo-graphs
+goal: Разменять сумму монетами 10, 5 и 1 и выбрать непересекающиеся смены.
+tags:
+- жадный алгоритм
+theory:
+- Жадный шаг берёт локально лучший кусок и не пересматривает прошлое. Для размена монетами
+  10, 5 и 1 сначала берут как можно больше десяток, потом пятёрок, потом единиц. Для этих
+  номиналов получается наименьшее число монет.
+- Крупная монета здесь всегда выгодна, потому что она собрана из более мелких без остатка.
+  Сумму делят на номинал нацело, остаток переносят к следующему номиналу. Количества монет
+  всех видов складывают.
+- 'Сумма 28 даёт две монеты по 10, одну по 5 и три по 1, всего 6. Сумма 0 даёт 0 монет. Тот
+  же принцип у смен склада: брать интервал, который раньше кончается и не пересекается с уже
+  взятым.'
+examples:
+- title: Размен 28
+  code: "def coins(amount):\n    count = 0\n    for nominal in (10, 5, 1):\n        count\
+    \ = count + amount // nominal\n        amount = amount % nominal\n    return count\nprint(coins(28))\n"
+  explanation: Две десятки, одна пятёрка и три единицы дают 6 монет.
+- title: Ровно пятёрка
+  code: "def coins(amount):\n    count = 0\n    for nominal in (10, 5, 1):\n        count\
+    \ = count + amount // nominal\n        amount = amount % nominal\n    return count\nprint(coins(5))\n"
+  explanation: Десятка не берётся, одна монета в 5 закрывает сумму.
+outcomes:
+- брать самый крупный подходящий номинал
+- считать монеты 10, 5 и 1
+- не пересматривать уже взятые монеты
+- выбирать интервал с самым ранним концом
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какую монету брать
+  difficulty: 1
+  context: neutral
+  prompt: Какую монету жадный размен этими номиналами берёт, пока она не больше остатка?
+  options:
+  - id: a
+    text: Самую крупную из 10, 5 и 1
+  - id: b
+    text: Всегда единицу, чтобы не промахнуться
+  - id: c
+    text: Сразу все номиналы по одной, не глядя на сумму
+  answer: a
+  hints:
+  - Сначала проверяют 10.
+  - Потом остаток сравнивают с 5.
+  - Единицы добирают хвост.
+  solution: a
+  explanation: Пока остаток позволяет, берут более крупный номинал.
+  id: python.algorithms.algo-greedy.t1
+- type: predict_output
+  title: Монет на 28
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '6'
+  - id: b
+    text: '28'
+  - id: c
+    text: '2'
+  answer: a
+  hints:
+  - 28 делится на 10 дважды, остаток 8.
+  - Пятёрка берётся один раз, остаток 3.
+  - Три единицы доводят счёт до 6.
+  solution: a
+  explanation: Жадный размен 28 требует 6 монет.
+  code: "def coins(amount):\n    count = 0\n    for nominal in (10, 5, 1):\n        count\
+    \ = count + amount // nominal\n        amount = amount % nominal\n    return count\nprint(coins(28))\n"
+  id: python.algorithms.algo-greedy.t2
+- type: code
+  title: Число монет
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сумму. Разменяйте её монетами 10, 5 и 1 жадным способом. Выведите число
+    монет.
+  starter_code: ''
+  tests:
+  - stdin: '28
+
+      '
+    expected_stdout: '6
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Номиналы идут от крупных к мелким.
+  - Берите целую часть и остаток.
+  - Ноль монет для суммы 0 — нормальный ответ.
+  solution: "def coins(amount):\n    count = 0\n    for nominal in (10, 5, 1):\n        count\
+    \ = count + amount // nominal\n        amount = amount % nominal\n    return count\nprint(coins(int(input())))\n"
+  explanation: Остаток после десяток и пятёрок добирается единицами.
+  id: python.algorithms.algo-greedy.t3
+- type: code
+  title: Сколько десяток
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сумму. Выведите, сколько монет по 10 возьмёт жадный размен. Пятёрки и
+    единицы не печатайте.
+  starter_code: ''
+  tests:
+  - stdin: '28
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '9
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Десятка — первый номинал.
+  - Нужна целая часть от деления на 10.
+  - Остаток в ответ не входит.
+  solution: 'amount = int(input())
+
+    print(amount // 10)
+
+    '
+  explanation: Число десяток равно сумме, делённой на 10 нацело.
+  id: python.algorithms.algo-greedy.t4
+- type: code
+  title: Смены без наложений
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n смен как начало и конец. Конец не меньше начала, времена не
+    меньше нуля. Возьмите как можно больше непересекающихся смен, каждый раз беря ту, что
+    раньше кончается. Соприкосновение конца и начала разрешено. Выведите число смен.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      3
+
+      2
+
+      4
+
+      3
+
+      5
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      0
+
+      5
+
+      1
+
+      4
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Сортируйте смены по концу.
+  - Берите смену, если она начинается не раньше прошлого конца.
+  - Увеличивайте счётчик только при взятии.
+  solution: "n = int(input())\nitems = []\nfor _ in range(n):\n    start = int(input())\n\
+    \    end = int(input())\n    items.append((end, start))\nitems.sort()\ncount = 0\nlast\
+    \ = None\nfor end, start in items:\n    if last is None or start >= last:\n        count\
+    \ = count + 1\n        last = end\nprint(count)\n"
+  explanation: Ранний конец оставляет больше места следующим сменам.
+  id: python.algorithms.algo-greedy.t5
+introduces:
+- id: algo-greedy
+  title: Жадный выбор
+  summary: На каждом шаге берётся локально лучший вариант. Для монет 1, 5 и 10 это даёт наименьшее
+    число монет.

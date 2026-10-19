@@ -1,0 +1,186 @@
+id: python.backend.be-pydantic
+slug: be-pydantic
+section: backend
+title: Проверка словаря
+order: 3
+weight: 1
+prerequisites:
+- python.backend.be-request
+goal: Проверить обязательные ключи и превратить числовые поля в int.
+tags:
+- словарь
+- поле
+- int
+theory:
+- 'В FastAPI модель Pydantic описывает обязательные поля и их типы. Pydantic здесь не импортируется:
+  те же правила применяются к обычному словарю.'
+- Сначала проверяют, что нужные ключи есть. Если ключа нет, функция возвращает «нет поля»
+  и дальше ничего не считает.
+- Строку с числом превращают в int уже после проверки ключа. Умножение и печать получают число,
+  а не сырой текст.
+examples:
+- title: Цена и количество
+  code: "def load(data):\n    if 'price' not in data or 'qty' not in data:\n        return\
+    \ 'нет поля'\n    return int(data['price']) * int(data['qty'])\nprint(load({'price': '4',\
+    \ 'qty': '3'}))\n"
+  explanation: Оба ключа на месте, строки становятся числами, произведение равно 12.
+- title: Нет количества
+  code: "def load(data):\n    if 'price' not in data or 'qty' not in data:\n        return\
+    \ 'нет поля'\n    return int(data['price']) * int(data['qty'])\nprint(load({'price': '4'}))\n"
+  explanation: Ключа qty нет, расчёт не начинается, функция возвращает нет поля.
+outcomes:
+- проверять обязательные ключи словаря
+- превращать числовые строки в int
+- не считать результат без нужного поля
+- отличать ручную проверку от импорта модели
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем заменён Pydantic
+  difficulty: 1
+  context: neutral
+  prompt: Что в этом уроке делает работу модели Pydantic?
+  options:
+  - id: a
+    text: Проверка обязательных ключей и преобразование строк в int
+  - id: b
+    text: Импорт pydantic и класс модели
+  - id: c
+    text: Отказ от любых проверок
+  answer: a
+  hints:
+  - Библиотека модели здесь не подключается.
+  - Смотрите на ключи словаря.
+  - int вызывают только для найденного поля.
+  solution: a
+  explanation: 'Словарь проверяют вручную: ключи обязательны, числовые строки становятся int.'
+  id: python.backend.be-pydantic.t1
+- type: predict_output
+  title: Произведение
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '12'
+  - id: b
+    text: '43'
+  - id: c
+    text: '4'
+  answer: a
+  hints:
+  - Обе строки превращаются в int.
+  - 4 умножается на 3.
+  - Склейки строк здесь нет.
+  solution: a
+  explanation: int даёт числа 4 и 3, произведение равно 12.
+  code: "def load(data):\n    return int(data['price']) * int(data['qty'])\nprint(load({'price':\
+    \ '4', 'qty': '3'}))\n"
+  id: python.backend.be-pydantic.t2
+- type: code
+  title: Два поля в строке
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку из цены и количества через пробел. Если частей меньше двух, выведите
+    нет поля. Иначе выведите произведение целых чисел.
+  starter_code: ''
+  tests:
+  - stdin: '10 3
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '10
+
+      '
+    expected_stdout: 'нет поля
+
+      '
+  hints:
+  - split режет строку по пробелу.
+  - В словарь кладите price и qty.
+  - int нужен до умножения.
+  solution: "def load(data):\n    if 'price' not in data or 'qty' not in data:\n        return\
+    \ 'нет поля'\n    return int(data['price']) * int(data['qty'])\nparts = input().split()\n\
+    data = {}\nif len(parts) >= 2:\n    data['price'] = parts[0]\n    data['qty'] = parts[1]\n\
+    print(load(data))\n"
+  explanation: Неполная строка не заполняет оба ключа, полная даёт произведение.
+  id: python.backend.be-pydantic.t3
+- type: code
+  title: Имя и количество
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и количество с двух строк. В словаре обязательны name и qty. Выведите
+    имя, двоеточие и целое количество либо нет поля.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: 'ель:4
+
+      '
+  - stdin: '
+
+      4
+
+      '
+    expected_stdout: 'нет поля
+
+      '
+  hints:
+  - Пустое имя не кладите в словарь.
+  - qty превращайте в int.
+  - Между именем и числом стоит двоеточие.
+  solution: "def load(data):\n    if 'name' not in data or 'qty' not in data:\n        return\
+    \ 'нет поля'\n    return data['name'] + ':' + str(int(data['qty']))\nname = input()\n\
+    qty = input()\ndata = {}\nif name != '' and qty != '':\n    data['name'] = name\n    data['qty']\
+    \ = qty\nprint(load(data))\n"
+  explanation: Оба ключа обязательны, количество печатается уже числом в составе строки.
+  id: python.backend.be-pydantic.t4
+- type: code
+  title: Ключ из ввода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя ключа и значение. Соберите словарь из одной пары. Если ключ не price,
+    выведите нет поля, иначе целое значение.
+  starter_code: ''
+  tests:
+  - stdin: 'price
+
+      15
+
+      '
+    expected_stdout: '15
+
+      '
+  - stdin: 'name
+
+      ель
+
+      '
+    expected_stdout: 'нет поля
+
+      '
+  hints:
+  - Словарь строится из прочитанной пары.
+  - Обязательный ключ называется price.
+  - int применяйте к значению этого ключа.
+  solution: "def load(data):\n    if 'price' not in data:\n        return 'нет поля'\n   \
+    \ return int(data['price'])\nkey = input()\nvalue = input()\nprint(load({key: value}))\n"
+  explanation: Чужой ключ не проходит проверку, price превращается в int.
+  id: python.backend.be-pydantic.t5
+introduces:
+- id: be-model-dict
+  title: Проверка словаря
+  summary: Обязательные ключи и преобразование типов без импорта Pydantic.

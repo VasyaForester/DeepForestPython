@@ -1,0 +1,190 @@
+id: python.files.file-encoding
+slug: file-encoding
+section: files
+title: Кодировка UTF-8
+order: 2
+weight: 1
+prerequisites:
+- python.files.file-open
+goal: Понять, что текстовый файл — это байты, прочитанные в выбранной кодировке.
+tags:
+- кодировка
+- utf-8
+- байты
+theory:
+- На диске текст хранится байтами. Кодировка — правило, по которому буквы превращаются в байты
+  и собираются обратно. Одна и та же буква в разных кодировках занимает разные байты.
+- open(..., encoding="utf-8") и пишет, и читает по правилам UTF-8. Если записать слово в UTF-8,
+  а прочитать той же кодировкой, получится исходное слово.
+- У строки «ёлка» четыре буквы, а в UTF-8 у каждой из них по два байта, всего восемь. len(word)
+  считает буквы, len(word.encode("utf-8")) считает байты.
+examples:
+- title: Туда и обратно
+  code: "word = 'ёлка'\nwith open('word.txt', 'w', encoding='utf-8') as handle:\n    handle.write(word)\n\
+    with open('word.txt', encoding='utf-8') as handle:\n    print(handle.read())\n"
+  explanation: Слово записано байтами UTF-8 и прочитано тем же правилом, поэтому на экране
+    снова ёлка.
+- title: Буквы и байты
+  code: 'word = ''ёлка''
+
+    print(len(word))
+
+    print(len(word.encode(''utf-8'')))
+
+    print(word.encode(''utf-8'').decode(''utf-8''))
+
+    '
+  explanation: Четыре буквы занимают восемь байт. decode возвращает ту же строку ёлка.
+outcomes:
+- объяснять, что текст в файле хранится байтами
+- открывать файл с encoding utf-8
+- записывать и читать русское слово без потерь
+- отличать число букв от числа байт
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое кодировка
+  difficulty: 1
+  context: neutral
+  prompt: Чем является кодировка для текстового файла?
+  options:
+  - id: a
+    text: Правилом, как превратить буквы в байты и обратно
+  - id: b
+    text: Именем файла на диске
+  - id: c
+    text: Режимом w или r
+  answer: a
+  hints:
+  - Файл на диске хранит байты.
+  - Имя файла кодировку не задаёт.
+  - Режим говорит, читать или писать.
+  solution: a
+  explanation: UTF-8 — одно из таких правил. open применяет его, когда указан encoding.
+  id: python.files.file-encoding.t1
+- type: predict_output
+  title: Сколько байт
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '4'
+  - id: b
+    text: '8'
+  - id: c
+    text: ёлка
+  answer: b
+  hints:
+  - В слове четыре буквы.
+  - В UTF-8 каждая из этих букв занимает два байта.
+  - Печатается длина байтов, не само слово.
+  solution: b
+  explanation: ё, л, к и а дают восемь байт.
+  code: 'word = ''ёлка''
+
+    print(len(word.encode(''utf-8'')))
+
+    '
+  id: python.files.file-encoding.t2
+- type: code
+  title: Прочитать как UTF-8
+  difficulty: 2
+  context: development
+  prompt: Прочитайте слово, запишите его в word.txt в UTF-8 и выведите строку, прочитанную
+    из файла той же кодировкой.
+  starter_code: ''
+  tests:
+  - stdin: 'ёлка
+
+      '
+    expected_stdout: 'ёлка
+
+      '
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  hints:
+  - Укажите encoding в обоих open.
+  - write сохраняет введённое слово.
+  - Печатайте результат read.
+  solution: "word = input()\nwith open('word.txt', 'w', encoding='utf-8') as handle:\n   \
+    \ handle.write(word)\nwith open('word.txt', encoding='utf-8') as handle:\n    print(handle.read())\n"
+  explanation: Одинаковая кодировка на записи и чтении возвращает то же слово.
+  id: python.files.file-encoding.t3
+- type: code
+  title: Длина в байтах
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте слово, сохраните его в word.txt в UTF-8 и выведите число байт этого слова.
+  starter_code: ''
+  tests:
+  - stdin: 'ёлка
+
+      '
+    expected_stdout: '8
+
+      '
+  - stdin: 'ель
+
+      '
+    expected_stdout: '6
+
+      '
+  hints:
+  - Прочитайте файл обратно.
+  - encode считает байты UTF-8.
+  - ёлка занимает 8 байт, ель — 6.
+  solution: "word = input()\nwith open('word.txt', 'w', encoding='utf-8') as handle:\n   \
+    \ handle.write(word)\nwith open('word.txt', encoding='utf-8') as handle:\n    loaded =\
+    \ handle.read()\nprint(len(loaded.encode('utf-8')))\n"
+  explanation: Длина в байтах берётся уже из строки, восстановленной из файла.
+  id: python.files.file-encoding.t4
+- type: code
+  title: Буквы и байты
+  difficulty: 2
+  context: analytics
+  prompt: 'Прочитайте слово, запишите его в word.txt в UTF-8, прочитайте обратно и выведите
+    два числа: число букв и число байт.'
+  starter_code: ''
+  tests:
+  - stdin: 'ёлка
+
+      '
+    expected_stdout: '4
+
+      8
+
+      '
+  - stdin: 'дуб
+
+      '
+    expected_stdout: '3
+
+      6
+
+      '
+  hints:
+  - Первое число — len строки.
+  - Второе — len от encode.
+  - Оба числа печатайте с новой строки.
+  solution: "word = input()\nwith open('word.txt', 'w', encoding='utf-8') as handle:\n   \
+    \ handle.write(word)\nwith open('word.txt', encoding='utf-8') as handle:\n    loaded =\
+    \ handle.read()\nprint(len(loaded))\nprint(len(loaded.encode('utf-8')))\n"
+  explanation: У ёлка будет 4 и 8, у дуб — 3 и 6.
+  id: python.files.file-encoding.t5
+introduces:
+- id: file-encoding.encoding
+  title: Кодировка
+  summary: Правило перевода букв в байты. encoding="utf-8" заставляет open писать и читать
+    текст в UTF-8.

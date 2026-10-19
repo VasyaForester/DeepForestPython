@@ -1,0 +1,205 @@
+id: python.data.data-columns
+slug: data-columns
+section: data
+title: Новые столбцы
+order: 11
+weight: 1
+prerequisites:
+- python.data.data-filter
+goal: Считать новый столбец из тех, что уже есть в строке.
+tags:
+- столбец
+theory:
+- 'Новый столбец в pandas задают присваиванием: df[''сумма''] = df[''цена''] * df[''число''].
+  Операция идёт по столбцам сразу.'
+- В списке словарей то же самое — записать новый ключ в каждую запись. Исходные ключи при
+  этом остаются.
+- Упражнение добавляет ключ в словари, потому что pandas нет в среде браузера.
+examples:
+- title: Сумма заказа
+  code: "rows = [{\"товар\": \"ель\", \"цена\": 100, \"число\": 3}, {\"товар\": \"сосна\"\
+    , \"цена\": 80, \"число\": 2}]\nfor row in rows:\n    row[\"сумма\"] = row[\"цена\"] *\
+    \ row[\"число\"]\nprint(rows[0][\"сумма\"])\nprint(rows[1][\"сумма\"])\n"
+  explanation: Новый ключ сумма равен 300 и 160.
+- title: Прирост
+  code: 'heights = [12, 9, 15]
+
+    grown = [height + 1 for height in heights]
+
+    print(grown[0], grown[2])
+
+    '
+  explanation: 'Новый ряд на метр выше: показаны 13 и 16.'
+outcomes:
+- добавлять поле, посчитанное из других
+- читать присваивание нового столбца
+- оставлять старые поля на месте
+- суммировать уже новый столбец
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Присваивание столбца
+  difficulty: 1
+  context: neutral
+  prompt: Что делает df['сумма'] = df['цена'] * df['число']?
+  options:
+  - id: a
+    text: Создаёт столбец сумма как произведение двух других
+  - id: b
+    text: Удаляет цену и число
+  - id: c
+    text: Фильтрует строки с нулевой ценой
+  answer: a
+  hints:
+  - Слева новое имя.
+  - Справа выражение по столбцам.
+  - Старые столбцы не стираются.
+  solution: a
+  explanation: Присваивание добавляет столбец, посчитанный из уже известных.
+  id: python.data.data-columns.t1
+- type: predict_output
+  title: Произведение
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '100'
+  - id: b
+    text: '103'
+  - id: c
+    text: '300'
+  answer: c
+  hints:
+  - Новый ключ — произведение.
+  - 100 умножить на 3.
+  - Сложение здесь не используется.
+  solution: c
+  explanation: Сумма заказа равна 300.
+  code: 'row = {"цена": 100, "число": 3}
+
+    row["сумма"] = row["цена"] * row["число"]
+
+    print(row["сумма"])
+
+    '
+  id: python.data.data-columns.t2
+- type: code
+  title: Стоимость строк
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте n и n строк товар цена число. Выведите стоимость каждой строки: цена
+    умножить на число.'
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 100 3
+
+      сосна 80 2
+
+      '
+    expected_stdout: '300
+
+      160
+
+      '
+  - stdin: '1
+
+      дуб 50 1
+
+      '
+    expected_stdout: '50
+
+      '
+  hints:
+  - Умножайте два последних числа.
+  - Имя не печатайте.
+  - Каждая строка ввода даёт одну строку ответа.
+  solution: "n = int(input())\nfor _ in range(n):\n    name, price, count = input().split()\n\
+    \    print(int(price) * int(count))\n"
+  explanation: Произведение — новый столбец каждой записи.
+  id: python.data.data-columns.t3
+- type: code
+  title: Отклонение от десяти
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n высот. Выведите высоту минус 10 для каждой.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '2
+
+      -1
+
+      5
+
+      '
+  - stdin: '1
+
+      10
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Вычитайте 10 из каждого числа.
+  - Отрицательный результат допустим.
+  - Порядок сохраняйте.
+  solution: "n = int(input())\nfor _ in range(n):\n    print(int(input()) - 10)\n"
+  explanation: Разность с постоянной — тоже новый столбец.
+  id: python.data.data-columns.t4
+- type: code
+  title: Сумма нового столбца
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n строк цена число. Посчитайте стоимость каждой строки и выведите
+    сумму этих стоимостей.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      100 3
+
+      80 2
+
+      '
+    expected_stdout: '460
+
+      '
+  - stdin: '1
+
+      5 0
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Сначала произведение строки.
+  - Потом сложите произведения.
+  - Нулевое число даёт нулевую стоимость.
+  solution: "n = int(input())\ntotal = 0\nfor _ in range(n):\n    price, count = input().split()\n\
+    \    total += int(price) * int(count)\nprint(total)\n"
+  explanation: Агрегат считают уже по новому столбцу.
+  id: python.data.data-columns.t5
+introduces:
+- id: data-derived-column
+  title: Вычисляемый столбец
+  summary: Столбец из выражения над другими. В pandas это df['сумма'] = df['цена'] * df['число'].

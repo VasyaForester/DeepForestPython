@@ -1,0 +1,181 @@
+id: python.errors.err-chain
+slug: err-chain
+section: errors
+title: Цепочки исключений
+order: 5
+weight: 1
+prerequisites:
+- python.errors.err-raise
+goal: Поднять новое исключение из старого и проверить __cause__.
+tags:
+- __cause__
+- from
+theory:
+- 'Новую ошибку можно связать со старой: raise AppError("не прочитан") from err. Снаружи видно
+  AppError, а исходный ValueError не теряется.'
+- Старое исключение лежит в атрибуте __cause__. Проверка err.__cause__ is not None показывает,
+  что причина привязана. type(err.__cause__).__name__ даёт имя исходного типа.
+- Без from связь причины не записывается этим способом. Явный from нужен, когда хотят сохранить
+  и итог для пользователя, и исходную ошибку.
+examples:
+- title: Причина на месте
+  code: "class AppError(Exception):\n    pass\ntry:\n    try:\n        raise ValueError('нет\
+    \ файла')\n    except ValueError as err:\n        raise AppError('не прочитан') from err\n\
+    except AppError as err:\n    print(err.__cause__ is not None)\n    print(type(err.__cause__).__name__)\n"
+  explanation: Снаружи пойман AppError. __cause__ указывает на ValueError, поэтому первая
+    печать True.
+- title: Текст обоих
+  code: "class AppError(Exception):\n    pass\ntry:\n    try:\n        raise ValueError('нет\
+    \ файла')\n    except ValueError as err:\n        raise AppError('не прочитан') from err\n\
+    except AppError as err:\n    print(err)\n    print(err.__cause__)\n"
+  explanation: Печатается сообщение нового исключения, затем сообщение причины нет файла.
+outcomes:
+- связывать исключения через raise from
+- читать причину в __cause__
+- проверять, что причина не None
+- печатать тип исходной ошибки
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где лежит причина
+  difficulty: 1
+  context: neutral
+  prompt: Куда from записывает исходное исключение?
+  options:
+  - id: a
+    text: В атрибут __cause__ нового исключения
+  - id: b
+    text: В имя файла
+  - id: c
+    text: В значение None у любого исключения
+  answer: a
+  hints:
+  - from связывает два исключения.
+  - __cause__ читают у нового объекта.
+  - is not None как раз проверяет, что причина есть.
+  solution: a
+  explanation: У пойманного AppError причина доступна как __cause__.
+  id: python.errors.err-chain.t1
+- type: predict_output
+  title: Есть ли причина
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 'False'
+  - id: b
+    text: 'True'
+  - id: c
+    text: None
+  answer: b
+  hints:
+  - from записывает причину.
+  - __cause__ не пустой.
+  - Печатается результат сравнения с None.
+  solution: b
+  explanation: Причина привязана, сравнение даёт True.
+  code: "class AppError(Exception):\n    pass\ntry:\n    try:\n        raise ValueError('нет\
+    \ файла')\n    except ValueError as err:\n        raise AppError('не прочитан') from err\n\
+    except AppError as err:\n    print(err.__cause__ is not None)\n"
+  id: python.errors.err-chain.t2
+- type: code
+  title: Файл или текст
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку. Если это нет, поднимите ValueError и из него AppError через from.
+    Выведите строку либо True, если у AppError есть причина.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'нет
+
+      '
+    expected_stdout: 'True
+
+      '
+  hints:
+  - from пишите у второго raise.
+  - Успешный текст верните из функции.
+  - При ошибке печатайте проверку __cause__.
+  solution: "class AppError(Exception):\n    pass\ndef load(text):\n    try:\n        if text\
+    \ == 'нет':\n            raise ValueError('нет файла')\n        return text\n    except\
+    \ ValueError as err:\n        raise AppError('не прочитан') from err\ntry:\n    print(load(input()))\n\
+    except AppError as err:\n    print(err.__cause__ is not None)\n"
+  explanation: ель печатается как текст. нет даёт True, потому что причина записана.
+  id: python.errors.err-chain.t3
+- type: code
+  title: Имя причины
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте слово нет или другое. Для нет выведите имя типа у __cause__. Иначе выведите
+    ок.
+  starter_code: ''
+  tests:
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'ок
+
+      '
+  - stdin: 'нет
+
+      '
+    expected_stdout: 'ValueError
+
+      '
+  hints:
+  - Причина — исходный ValueError.
+  - Имя берётся у __cause__, не у AppError.
+  - В удачной ветке печатайте ок.
+  solution: "class AppError(Exception):\n    pass\ndef load(text):\n    try:\n        if text\
+    \ == 'нет':\n            raise ValueError('нет файла')\n        return text\n    except\
+    \ ValueError as err:\n        raise AppError('не прочитан') from err\ntry:\n    load(input())\n\
+    \    print('ок')\nexcept AppError as err:\n    print(type(err.__cause__).__name__)\n"
+  explanation: сосна проходит до ок. нет печатает ValueError.
+  id: python.errors.err-chain.t4
+- type: code
+  title: Сообщение причины
+  difficulty: 2
+  context: business
+  prompt: Всегда поднимите ValueError с введённым текстом и оберните его в AppError через
+    from. Выведите сообщение причины.
+  starter_code: ''
+  tests:
+  - stdin: 'нет файла
+
+      '
+    expected_stdout: 'нет файла
+
+      '
+  - stdin: 'пустой журнал
+
+      '
+    expected_stdout: 'пустой журнал
+
+      '
+  hints:
+  - Внутренний raise получает введённый текст.
+  - from сохраняет его.
+  - Печатайте err.__cause__, не новый текст.
+  solution: "class AppError(Exception):\n    pass\ntext = input()\ntry:\n    try:\n      \
+    \  raise ValueError(text)\n    except ValueError as err:\n        raise AppError('не прочитан')\
+    \ from err\nexcept AppError as err:\n    print(err.__cause__)\n"
+  explanation: На экран выходит исходное сообщение, которое положили в ValueError.
+  id: python.errors.err-chain.t5
+introduces:
+- id: err-chain.cause
+  title: __cause__
+  summary: Исходное исключение, записанное конструкцией raise New from old.

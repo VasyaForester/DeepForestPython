@@ -1,0 +1,216 @@
+id: python.files.file-json
+slug: file-json
+section: files
+title: JSON
+order: 5
+weight: 1
+prerequisites:
+- python.files.file-csv
+goal: Превратить словарь в текст JSON и собрать словарь обратно.
+tags:
+- json
+- словарь
+theory:
+- JSON — текст, которым записывают словари и списки. json.dumps принимает словарь и возвращает
+  строку. json.loads принимает такую строку и возвращает словарь.
+- 'Ключи в JSON всегда строки. Число остаётся числом: qty 4 после loads снова int. ensure_ascii=False
+  сохраняет русские буквы как буквы, а не как последовательности \u.'
+- Строку JSON можно записать в файл и прочитать тем же dumps и loads. Пока строку не пропустили
+  через loads, это текст, у него нет ключей.
+examples:
+- title: Словарь в текст
+  code: 'import json
+
+    payload = {''name'': ''ель'', ''qty'': 4}
+
+    text = json.dumps(payload, ensure_ascii=False)
+
+    data = json.loads(text)
+
+    print(data[''name''])
+
+    print(data[''qty''])
+
+    '
+  explanation: dumps собирает строку, loads возвращает словарь. qty снова число 4.
+- title: Файл
+  code: "import json\npayload = {'name': 'сосна', 'qty': 1}\nwith open('stock.json', 'w',\
+    \ encoding='utf-8') as handle:\n    handle.write(json.dumps(payload, ensure_ascii=False))\n\
+    with open('stock.json', encoding='utf-8') as handle:\n    data = json.loads(handle.read())\n\
+    print(data['qty'])\n"
+  explanation: В файле лежит текст JSON. loads делает из него словарь, печатается количество
+    1.
+outcomes:
+- собирать строку JSON через dumps
+- разбирать её через loads
+- сохранять русские буквы через ensure_ascii=False
+- записывать JSON в файл и читать обратно
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: dumps или loads
+  difficulty: 1
+  context: neutral
+  prompt: Какая функция превращает словарь в строку JSON?
+  options:
+  - id: a
+    text: json.dumps
+  - id: b
+    text: json.loads
+  - id: c
+    text: open
+  answer: a
+  hints:
+  - dumps сериализует, loads разбирает.
+  - loads ждёт уже готовую строку.
+  - open только открывает файл.
+  solution: a
+  explanation: dumps возвращает текст. loads потом собирает из него словарь.
+  id: python.files.file-json.t1
+- type: predict_output
+  title: Число из JSON
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: qty
+  - id: b
+    text: '4'
+  - id: c
+    text: '{''qty'': 4}'
+  answer: b
+  hints:
+  - loads возвращает словарь.
+  - Ключ qty хранит число.
+  - Печатается значение, не весь словарь.
+  solution: b
+  explanation: После loads количество снова равно 4.
+  code: 'import json
+
+    text = json.dumps({''qty'': 4})
+
+    data = json.loads(text)
+
+    print(data[''qty''])
+
+    '
+  id: python.files.file-json.t2
+- type: code
+  title: Собрать JSON
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название и целое количество. Соберите словарь, пропустите его через dumps
+    и loads и выведите количество.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: 'сосна
+
+      1
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - qty храните числом.
+  - dumps и loads идут подряд.
+  - Печатайте data['qty'].
+  solution: 'import json
+
+    payload = {''name'': input(), ''qty'': int(input())}
+
+    data = json.loads(json.dumps(payload, ensure_ascii=False))
+
+    print(data[''qty''])
+
+    '
+  explanation: Строка JSON разбирается обратно в словарь с тем же числом.
+  id: python.files.file-json.t3
+- type: code
+  title: Записать stock.json
+  difficulty: 2
+  context: business
+  prompt: Прочитайте название и количество. Запишите JSON в stock.json и выведите название,
+    прочитанное из файла.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'дуб
+
+      2
+
+      '
+    expected_stdout: 'дуб
+
+      '
+  hints:
+  - ensure_ascii=False сохраняет русские буквы.
+  - Файл пишите в UTF-8.
+  - Из файла читайте через loads.
+  solution: "import json\npayload = {'name': input(), 'qty': int(input())}\nwith open('stock.json',\
+    \ 'w', encoding='utf-8') as handle:\n    handle.write(json.dumps(payload, ensure_ascii=False))\n\
+    with open('stock.json', encoding='utf-8') as handle:\n    data = json.loads(handle.read())\n\
+    print(data['name'])\n"
+  explanation: В файле текст, loads возвращает словарь, печатается название.
+  id: python.files.file-json.t4
+- type: code
+  title: Цена в JSON
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте название и цену. Запишите JSON в stock.json и выведите цену, прочитанную
+    из файла.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      120
+
+      '
+    expected_stdout: '120
+
+      '
+  - stdin: 'сосна
+
+      80
+
+      '
+    expected_stdout: '80
+
+      '
+  hints:
+  - Ключ цены — price.
+  - Запишите dumps в файл.
+  - loads вернёт число.
+  solution: "import json\npayload = {'name': input(), 'price': int(input())}\nwith open('stock.json',\
+    \ 'w', encoding='utf-8') as handle:\n    handle.write(json.dumps(payload, ensure_ascii=False))\n\
+    with open('stock.json', encoding='utf-8') as handle:\n    data = json.loads(handle.read())\n\
+    print(data['price'])\n"
+  explanation: Цена проходит через файл и остаётся числом.
+  id: python.files.file-json.t5
+introduces:
+- id: file-json.dumps
+  title: json.dumps
+  summary: Превращает словарь в текст JSON. loads делает из этого текста словарь.

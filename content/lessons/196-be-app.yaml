@@ -1,0 +1,192 @@
+id: python.backend.be-app
+slug: be-app
+section: backend
+title: Приложение и маршруты
+order: 1
+weight: 1
+prerequisites:
+- python.performance.perf-review
+goal: Связать метод и путь с функцией и вернуть строку тела.
+tags:
+- маршрут
+- FastAPI
+- словарь
+theory:
+- 'В FastAPI маршрут пишут декоратором @app.get("/orders"): функция связывается с методом
+  и путём. FastAPI здесь не импортируется, ту же пару хранит словарь, а route(method, path)
+  вызывает функцию и возвращает строку тела.'
+- Обработчик только возвращает текст. Печать делает вызывающий код, поэтому ту же функцию
+  можно проверить без сервера.
+- Если пары метод-путь в словаре нет, route возвращает «нет». Список маршрутов остаётся явным,
+  и неизвестный путь не роняет программу.
+examples:
+- title: Один маршрут
+  code: "def orders():\n    return 'заказы'\nroutes = {('GET', '/orders'): orders}\ndef route(method,\
+    \ path):\n    return routes[(method, path)]()\nprint(route('GET', '/orders'))\n"
+  explanation: Ключ — пара GET и /orders. route вызывает orders и возвращает строку заказы.
+- title: Два маршрута
+  code: "def health():\n    return 'жив'\ndef stock():\n    return 'склад'\nroutes = {('GET',\
+    \ '/health'): health, ('GET', '/stock'): stock}\ndef route(method, path):\n    handler\
+    \ = routes.get((method, path))\n    if handler is None:\n        return 'нет'\n    return\
+    \ handler()\nprint(route('GET', '/health'))\nprint(route('POST', '/health'))\n"
+  explanation: Известная пара возвращает жив. POST на тот же путь в словаре нет, поэтому печатается
+    нет.
+outcomes:
+- хранить маршруты в словаре метод-путь
+- возвращать тело ответа из route
+- вызывать обработчик по паре из запроса
+- отвечать нет на неизвестный маршрут
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Ключ маршрута
+  difficulty: 1
+  context: neutral
+  prompt: Что является ключом словаря маршрутов в этом уроке?
+  options:
+  - id: a
+    text: Пара из метода и пути
+  - id: b
+    text: Только текст тела ответа
+  - id: c
+    text: Имя файла с программой
+  answer: a
+  hints:
+  - Смотрите на кортеж в словаре.
+  - Тело — это то, что вернула функция.
+  - Метод и путь вместе выбирают обработчик.
+  solution: a
+  explanation: Ключ — пара метода и пути, значение — функция.
+  id: python.backend.be-app.t1
+- type: predict_output
+  title: Тело заказа
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: заказы
+  - id: b
+    text: GET
+  - id: c
+    text: /orders
+  answer: a
+  hints:
+  - route вызывает функцию из словаря.
+  - orders возвращает строку.
+  - Имя пути на экран само не выводится.
+  solution: a
+  explanation: Напечатается тело, которое вернул обработчик.
+  code: "def orders():\n    return 'заказы'\nroutes = {('GET', '/orders'): orders}\ndef route(method,\
+    \ path):\n    return routes[(method, path)]()\nprint(route('GET', '/orders'))\n"
+  id: python.backend.be-app.t2
+- type: code
+  title: Путь из ввода
+  difficulty: 2
+  context: development
+  prompt: 'В словаре два маршрута GET: /orders возвращает заказы, /stock возвращает склад.
+    Прочитайте путь и выведите результат route(''GET'', путь).'
+  starter_code: ''
+  tests:
+  - stdin: '/orders
+
+      '
+    expected_stdout: 'заказы
+
+      '
+  - stdin: '/stock
+
+      '
+    expected_stdout: 'склад
+
+      '
+  hints:
+  - Оба обработчика возвращают строку.
+  - Метод в вызове всегда GET.
+  - Печатайте результат route, а не имя функции.
+  solution: "def orders():\n    return 'заказы'\ndef stock():\n    return 'склад'\nroutes\
+    \ = {('GET', '/orders'): orders, ('GET', '/stock'): stock}\ndef route(method, path):\n\
+    \    return routes[(method, path)]()\nprint(route('GET', input()))\n"
+  explanation: Путь выбирает функцию, route возвращает её текст.
+  id: python.backend.be-app.t3
+- type: code
+  title: Метод и путь
+  difficulty: 2
+  context: development
+  prompt: GET /ping возвращает pong, POST /note возвращает заметка. Прочитайте метод и путь
+    с двух строк и выведите route(method, path).
+  starter_code: ''
+  tests:
+  - stdin: 'GET
+
+      /ping
+
+      '
+    expected_stdout: 'pong
+
+      '
+  - stdin: 'POST
+
+      /note
+
+      '
+    expected_stdout: 'заметка
+
+      '
+  hints:
+  - Первая строка — метод, вторая — путь.
+  - Ключ словаря — кортеж из двух строк.
+  - Печатайте строку, которую вернула функция.
+  solution: "def ping():\n    return 'pong'\ndef note():\n    return 'заметка'\nroutes = {('GET',\
+    \ '/ping'): ping, ('POST', '/note'): note}\ndef route(method, path):\n    return routes[(method,\
+    \ path)]()\nprint(route(input(), input()))\n"
+  explanation: Пара из ввода совпадает с ключом, и route отдаёт тело.
+  id: python.backend.be-app.t4
+- type: code
+  title: Неизвестный путь
+  difficulty: 2
+  context: development
+  prompt: GET /item возвращает ель. Для любой другой пары route возвращает нет. Прочитайте
+    метод и путь и выведите ответ.
+  starter_code: ''
+  tests:
+  - stdin: 'GET
+
+      /item
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'POST
+
+      /item
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - get не бросает ошибку, если ключа нет.
+  - Нет обработчика — верните нет.
+  - Известная пара вызывает item.
+  solution: "def item():\n    return 'ель'\nroutes = {('GET', '/item'): item}\ndef route(method,\
+    \ path):\n    handler = routes.get((method, path))\n    if handler is None:\n        return\
+    \ 'нет'\n    return handler()\nprint(route(input(), input()))\n"
+  explanation: Словарь либо отдаёт функцию, либо программа сообщает, что маршрута нет.
+  id: python.backend.be-app.t5
+introduces:
+- id: be-route
+  title: Маршрут
+  summary: Пара метода и пути, связанная с функцией. route находит функцию и возвращает строку
+    тела.
+- id: be-app-get
+  title: Декоратор GET
+  summary: В FastAPI @app.get связывает функцию с путём. В упражнении ту же связь хранит словарь.

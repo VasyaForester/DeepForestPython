@@ -1,0 +1,196 @@
+id: python.http.http-query
+slug: http-query
+section: http
+title: Query и path
+order: 2
+weight: 1
+prerequisites:
+- python.http.http-url
+goal: Отделить путь от query и разобрать пары ключ=значение.
+tags:
+- query
+- путь
+- параметры
+theory:
+- Строка /orders?status=new&page=2 содержит путь /orders и query status=new&page=2. Вопрос
+  отделяет путь от параметров, амперсанд отделяет пары, равно отделяет ключ от значения.
+- 'Так выглядит хвост адреса https://sklad.example/orders?status=new&page=2. urllib не нужен:
+  хватает split по ?, & и =.'
+- Порядок пар сохраняют. Первая пара стоит сразу после вопроса, последняя — в конце строки.
+examples:
+- title: Путь и пары
+  code: "text = '/orders?status=new&page=2'\npath, query = text.split('?', 1)\nprint(path)\n\
+    for pair in query.split('&'):\n    print(pair)\n"
+  explanation: Путь обрывается на вопросе, дальше две пары по амперсанду.
+- title: Первая пара
+  code: 'text = ''/items?q=ель&page=1''
+
+    query = text.split(''?'', 1)[1]
+
+    print(query.split(''&'')[0])
+
+    '
+  explanation: Первая пара после вопроса — q=ель.
+outcomes:
+- отделять путь от query по знаку ?
+- делить пары по &
+- отделять ключ от значения
+- разбирать параметры без urllib
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где query
+  difficulty: 1
+  context: neutral
+  prompt: В адресе https://sklad.example/orders?status=new&page=2 где начинается query?
+  options:
+  - id: a
+    text: После знака ?
+  - id: b
+    text: После схемы https
+  - id: c
+    text: Внутри имени хоста
+  answer: a
+  hints:
+  - Путь стоит до вопроса.
+  - Пары соединяет &.
+  - Хост вопросов не содержит.
+  solution: a
+  explanation: Query — часть адреса после ?.
+  id: python.http.http-query.t1
+- type: predict_output
+  title: Первая пара
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: status=new
+  - id: b
+    text: /orders
+  - id: c
+    text: page=2
+  answer: a
+  hints:
+  - Сначала отрезают путь.
+  - Потом режут по &.
+  - Нулевой кусок — первая пара.
+  solution: a
+  explanation: Первый параметр — status=new.
+  code: 'text = ''/orders?status=new&page=2''
+
+    query = text.split(''?'', 1)[1]
+
+    print(query.split(''&'')[0])
+
+    '
+  id: python.http.http-query.t2
+- type: code
+  title: Только путь
+  difficulty: 2
+  context: development
+  prompt: Прочитайте путь с query и выведите часть до вопроса.
+  starter_code: ''
+  tests:
+  - stdin: '/orders?status=new
+
+      '
+    expected_stdout: '/orders
+
+      '
+  - stdin: '/health?ok=1
+
+      '
+    expected_stdout: '/health
+
+      '
+  hints:
+  - Режьте по ? один раз.
+  - Путь — левая часть.
+  - Query печатать не нужно.
+  solution: 'text = input().strip()
+
+    print(text.split(''?'', 1)[0])
+
+    '
+  explanation: Путь кончается там, где начинается вопрос.
+  id: python.http.http-query.t3
+- type: code
+  title: Первый ключ
+  difficulty: 2
+  context: development
+  prompt: Прочитайте путь с query и выведите ключ первой пары.
+  starter_code: ''
+  tests:
+  - stdin: '/orders?status=new&page=2
+
+      '
+    expected_stdout: 'status
+
+      '
+  - stdin: '/items?q=ель
+
+      '
+    expected_stdout: 'q
+
+      '
+  hints:
+  - Достаньте query после ?.
+  - Возьмите пару до &.
+  - Ключ стоит слева от =.
+  solution: 'text = input().strip()
+
+    query = text.split(''?'', 1)[1]
+
+    pair = query.split(''&'')[0]
+
+    print(pair.split(''='', 1)[0])
+
+    '
+  explanation: Ключ первой пары — текст до равно.
+  id: python.http.http-query.t4
+- type: code
+  title: Последнее значение
+  difficulty: 2
+  context: development
+  prompt: Прочитайте путь с query и выведите значение последней пары.
+  starter_code: ''
+  tests:
+  - stdin: '/orders?status=new&page=2
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '/items?q=ель&page=1
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Последняя пара — хвост после split по &.
+  - Значение — справа от =.
+  - Режьте равно один раз.
+  solution: 'text = input().strip()
+
+    query = text.split(''?'', 1)[1]
+
+    pair = query.split(''&'')[-1]
+
+    print(pair.split(''='', 1)[1])
+
+    '
+  explanation: У последней пары значение стоит после равно.
+  id: python.http.http-query.t5
+introduces:
+- id: http-query
+  title: Query-строка
+  summary: Параметры после ? в адресе. Пары status=new и page=2 соединяет знак &.

@@ -1,0 +1,190 @@
+id: python.advanced.adv-abc
+slug: adv-abc
+section: advanced
+title: Абстрактный класс
+order: 9
+weight: 1
+prerequisites:
+- python.advanced.adv-itertools
+goal: Потребовать метод у наследника через abc.ABC.
+tags:
+- abc
+- протокол
+theory:
+- 'abc.ABC задаёт обязательный метод. @abc.abstractmethod помечает qty: у наследника этот
+  метод должен быть свой.'
+- 'MemoryStore пишет qty и возвращает число. Объект создают уже у наследника. Родителя без
+  qty объектом не делают: ему нечем ответить на запрос количества.'
+- 'В collections.abc лежат готовые протоколы, например для объектов, которые можно обойти.
+  Здесь протокол маленький и свой: один метод qty.'
+examples:
+- title: Память склада
+  code: "import abc\nclass Store(abc.ABC):\n    @abc.abstractmethod\n    def qty(self, name):\n\
+    \        raise NotImplementedError\nclass MemoryStore(Store):\n    def qty(self, name):\n\
+    \        return 4\nprint(MemoryStore().qty('ель'))\n"
+  explanation: Наследник реализовал qty. Вызов для ели возвращает 4.
+- title: Своё число
+  code: "import abc\nclass Store(abc.ABC):\n    @abc.abstractmethod\n    def qty(self, name):\n\
+    \        raise NotImplementedError\nclass MemoryStore(Store):\n    def __init__(self,\
+    \ qty):\n        self._qty = qty\n    def qty(self, name):\n        return self._qty\n\
+    print(MemoryStore(7).qty('сосна'))\n"
+  explanation: Абстрактный метод заменён обычным. Сосна получает число, переданное в MemoryStore.
+outcomes:
+- описывать протокол через abc.ABC
+- помечать обязательный метод
+- реализовывать его в наследнике
+- создавать объект уже у наследника
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем abstractmethod
+  difficulty: 1
+  context: neutral
+  prompt: Зачем qty помечен как абстрактный метод?
+  options:
+  - id: a
+    text: Наследник обязан описать свой qty
+  - id: b
+    text: Метод сам читает файл склада
+  - id: c
+    text: Класс нельзя наследовать
+  answer: a
+  hints:
+  - Пометка стоит на методе родителя.
+  - Рабочее тело пишет наследник.
+  - Наследование как раз нужно.
+  solution: a
+  explanation: Без своего qty наследник не выполняет протокол Store.
+  id: python.advanced.adv-abc.t1
+- type: predict_output
+  title: Количество ели
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '4'
+  - id: b
+    text: ель
+  - id: c
+    text: Store
+  answer: a
+  hints:
+  - Вызывается метод наследника.
+  - Он возвращает 4.
+  - Имя ель только аргумент.
+  solution: a
+  explanation: qty возвращает 4.
+  code: "import abc\nclass Store(abc.ABC):\n    @abc.abstractmethod\n    def qty(self, name):\n\
+    \        raise NotImplementedError\nclass MemoryStore(Store):\n    def qty(self, name):\n\
+    \        return 4\nprint(MemoryStore().qty('ель'))\n"
+  id: python.advanced.adv-abc.t2
+- type: code
+  title: Количество из ввода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число. MemoryStore хранит его и отдаёт из qty для любого имени. Выведите
+    количество ели.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Наследуйте Store.
+  - qty у наследника возвращает _qty.
+  - Объект создавайте у MemoryStore.
+  solution: "import abc\nclass Store(abc.ABC):\n    @abc.abstractmethod\n    def qty(self,\
+    \ name):\n        raise NotImplementedError\nclass MemoryStore(Store):\n    def __init__(self,\
+    \ qty):\n        self._qty = qty\n    def qty(self, name):\n        return self._qty\n\
+    print(MemoryStore(int(input())).qty('ель'))\n"
+  explanation: Введённое число и есть ответ метода.
+  id: python.advanced.adv-abc.t3
+- type: code
+  title: Имя тоже
+  difficulty: 2
+  context: business
+  prompt: Прочитайте название и число. qty возвращает число, label печатает название и число
+    через пробел.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: 'ель 4
+
+      '
+  - stdin: 'сосна
+
+      2
+
+      '
+    expected_stdout: 'сосна 2
+
+      '
+  hints:
+  - Абстрактный метод опишите у Store.
+  - Реализацию дайте наследнику.
+  - Печатайте имя и результат qty.
+  solution: "import abc\nclass Store(abc.ABC):\n    @abc.abstractmethod\n    def qty(self,\
+    \ name):\n        raise NotImplementedError\nclass MemoryStore(Store):\n    def __init__(self,\
+    \ qty):\n        self._qty = qty\n    def qty(self, name):\n        return self._qty\n\
+    name = input()\nstore = MemoryStore(int(input()))\nprint(name, store.qty(name))\n"
+  explanation: ель 4 и сосна 2 печатаются через пробел.
+  id: python.advanced.adv-abc.t4
+- type: code
+  title: Два запроса
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте число. Два вызова qty, для ели и для сосны, возвращают одно и то же число.
+    Выведите оба.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '4
+
+      4
+
+      '
+  - stdin: '9
+
+      '
+    expected_stdout: '9
+
+      9
+
+      '
+  hints:
+  - Один объект обслуживает оба имени.
+  - qty не зависит от имени в этой реализации.
+  - Печатайте два вызова.
+  solution: "import abc\nclass Store(abc.ABC):\n    @abc.abstractmethod\n    def qty(self,\
+    \ name):\n        raise NotImplementedError\nclass MemoryStore(Store):\n    def __init__(self,\
+    \ qty):\n        self._qty = qty\n    def qty(self, name):\n        return self._qty\n\
+    store = MemoryStore(int(input()))\nprint(store.qty('ель'))\nprint(store.qty('сосна'))\n"
+  explanation: Оба запроса печатают введённое число.
+  id: python.advanced.adv-abc.t5
+introduces:
+- id: adv-abc.abc
+  title: abc.ABC
+  summary: Базовый класс протокола. Абстрактный метод наследник обязан описать сам.

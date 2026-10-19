@@ -1,0 +1,172 @@
+id: python.engineering.eng-logs
+slug: eng-logs
+section: engineering
+title: Логи
+order: 6
+weight: 1
+prerequisites:
+- python.engineering.eng-precommit
+goal: Собрать строку из уровня и сообщения.
+tags:
+- лог
+- уровень
+- сообщение
+theory:
+- 'Лог нужен тем, кто смотрит работу программы потом: уровень и короткое сообщение о событии.
+  Это не отладочный print, который забыли убрать.'
+- 'Модуль logging здесь не импортируется. Строку собирают сами: уровень, двоеточие и текст.'
+- Уровень пишут явно, например INFO или ERROR. Сообщение говорит, что случилось, без лишнего
+  дампа всех переменных.
+examples:
+- title: Запуск склада
+  code: "def log(level, message):\n    print(level + ': ' + message)\nlog('INFO', 'склад открыт')\n"
+  explanation: 'Уровень и сообщение склеены в одну строку INFO: склад открыт.'
+- title: Ошибка цены
+  code: "def log(level, message):\n    print(level + ': ' + message)\nlog('ERROR', 'цена пустая')\n"
+  explanation: 'Тот же формат для другого уровня: ERROR: цена пустая.'
+outcomes:
+- собирать строку из уровня и сообщения
+- держать один формат лога
+- не подключать модуль logging
+- писать о событии, а не оставлять случайный отладочный вывод
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем строка лога
+  difficulty: 1
+  context: neutral
+  prompt: Для чего в этом уроке собирают уровень и сообщение?
+  options:
+  - id: a
+    text: Чтобы оставить след о событии для того, кто смотрит работу программы
+  - id: b
+    text: Чтобы заменить все функции print навсегда случайным текстом
+  - id: c
+    text: Чтобы хранить пароль в открытом виде
+  answer: a
+  hints:
+  - В строке есть уровень и смысл события.
+  - Пароль в лог не кладут.
+  - Формат один и тот же для разных событий.
+  solution: a
+  explanation: Лог — запись для эксплуатации, а не забытая отладка.
+  id: python.engineering.eng-logs.t1
+- type: predict_output
+  title: Готовая строка
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 'INFO: склад открыт'
+  - id: b
+    text: INFO
+  - id: c
+    text: склад открыт
+  answer: a
+  hints:
+  - Между уровнем и текстом стоят двоеточие и пробел.
+  - Оба куска попадают в один print.
+  - Уровень не отбрасывается.
+  solution: a
+  explanation: Печатается одна строка из уровня и сообщения.
+  code: "def log(level, message):\n    print(level + ': ' + message)\nlog('INFO', 'склад открыт')\n"
+  id: python.engineering.eng-logs.t2
+- type: code
+  title: Уровень и текст
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте уровень и сообщение с двух строк. Напечатайте их в виде УРОВЕНЬ: сообщение.'
+  starter_code: ''
+  tests:
+  - stdin: 'INFO
+
+      склад открыт
+
+      '
+    expected_stdout: 'INFO: склад открыт
+
+      '
+  - stdin: 'ERROR
+
+      цена пустая
+
+      '
+    expected_stdout: 'ERROR: цена пустая
+
+      '
+  hints:
+  - Между частями поставьте двоеточие и пробел.
+  - Обе строки читайте до склейки.
+  - Один print на событие.
+  solution: "def log(level, message):\n    print(level + ': ' + message)\nlog(input(), input())\n"
+  explanation: Формат фиксирован, меняются только уровень и текст.
+  id: python.engineering.eng-logs.t3
+- type: code
+  title: Только INFO
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте сообщение. Уровень всегда INFO. Напечатайте строку INFO: сообщение.'
+  starter_code: ''
+  tests:
+  - stdin: 'сервер запущен
+
+      '
+    expected_stdout: 'INFO: сервер запущен
+
+      '
+  - stdin: 'заказ записан
+
+      '
+    expected_stdout: 'INFO: заказ записан
+
+      '
+  hints:
+  - Уровень зашит как INFO.
+  - Сообщение берётся из ввода.
+  - Двоеточие не забудьте.
+  solution: "def log(level, message):\n    print(level + ': ' + message)\nlog('INFO', input())\n"
+  explanation: Уровень выбран в коде, текст приходит снаружи.
+  id: python.engineering.eng-logs.t4
+- type: code
+  title: Пустое сообщение
+  difficulty: 2
+  context: development
+  prompt: Прочитайте уровень и сообщение. Если сообщение пустое, напечатайте уровень и фразу
+    пусто. Иначе обычный формат.
+  starter_code: ''
+  tests:
+  - stdin: 'ERROR
+
+
+      '
+    expected_stdout: 'ERROR: пусто
+
+      '
+  - stdin: 'INFO
+
+      склад открыт
+
+      '
+    expected_stdout: 'INFO: склад открыт
+
+      '
+  hints:
+  - Пустую строку замените до склейки.
+  - Формат уровня не меняется.
+  - Не печатайте две строки.
+  solution: "def log(level, message):\n    if message == '':\n        message = 'пусто'\n\
+    \    print(level + ': ' + message)\nlog(input(), input())\n"
+  explanation: Пустое событие всё равно получает уровень и понятный текст.
+  id: python.engineering.eng-logs.t5
+introduces:
+- id: eng-log-line
+  title: Строка лога
+  summary: Уровень и сообщение в одном формате. Её пишут для тех, кто смотрит работу программы.

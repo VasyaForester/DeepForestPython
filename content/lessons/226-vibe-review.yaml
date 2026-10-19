@@ -1,0 +1,168 @@
+id: python.vibe.vibe-review
+slug: vibe-review
+section: vibe
+title: Безопасность и code review
+order: 5
+weight: 2
+prerequisites:
+- python.vibe.vibe-debug
+goal: Отклонить фрагмент, который склеивает SQL.
+tags:
+- ревью
+- SQL
+- проверка
+theory:
+- Чтение кода остаётся за разработчиком. Помощник не снимает ответственность за строку, которую
+  предлагают вставить в программу.
+- Если в строке есть select и плюс, это склейка запроса со значением. Такая строка печатает
+  «опасно». Запрос со знаком вопроса печатает «можно читать».
+- Новых приёмов нет. Нужно отказаться от опасного фрагмента, даже если он уже написан и выглядит
+  законченным.
+examples:
+- title: Склейка
+  code: "line = \"select * from goods where name = ' + name\"\nif 'select' in line.lower()\
+    \ and '+' in line:\n    print('опасно')\nelse:\n    print('можно читать')\n"
+  explanation: Исходная строка со склейкой содержит select и плюс, поэтому опасно.
+- title: Параметр
+  code: "line = 'select * from goods where name = ?'\nif 'select' in line.lower() and '+'\
+    \ in line:\n    print('опасно')\nelse:\n    print('можно читать')\n"
+  explanation: Плюса нет, запрос с вопросом можно читать дальше.
+outcomes:
+- читать предложенный фрагмент самому
+- отмечать склейку select и плюса
+- пропускать запрос с вопросом
+- не перекладывать решение на помощника
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кто отвечает
+  difficulty: 1
+  context: neutral
+  prompt: Кто решает, можно ли оставить предложенный фрагмент?
+  options:
+  - id: a
+    text: 'Разработчик: он читает строку и не принимает склейку SQL'
+  - id: b
+    text: Помощник уже всё проверил, читать не нужно
+  - id: c
+    text: Достаточно сохранить файл
+  answer: a
+  hints:
+  - Готовый текст ещё не значит безопасный.
+  - Склейку select и плюса не принимают.
+  - Сохранение файла проверку не заменяет.
+  solution: a
+  explanation: Ответственность за фрагмент остаётся на том, кто его вставляет.
+  id: python.vibe.vibe-review.t1
+- type: predict_output
+  title: Склеенный запрос
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: опасно
+  - id: b
+    text: можно читать
+  - id: c
+    text: select
+  answer: a
+  hints:
+  - В строке есть select.
+  - В ней же есть плюс.
+  - Такая пара печатает опасно.
+  solution: a
+  explanation: Склейка запроса отмечается как опасная.
+  code: "line = \"select * from goods where name = ' + name\"\nif 'select' in line.lower()\
+    \ and '+' in line:\n    print('опасно')\nelse:\n    print('можно читать')\n"
+  id: python.vibe.vibe-review.t2
+- type: code
+  title: Строка кода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте одну строку. Если в ней одновременно есть select и плюс, выведите опасно,
+    иначе можно читать.
+  starter_code: ''
+  tests:
+  - stdin: 'select * from goods where name = '' + name
+
+      '
+    expected_stdout: 'опасно
+
+      '
+  - stdin: 'select * from goods where name = ?
+
+      '
+    expected_stdout: 'можно читать
+
+      '
+  hints:
+  - Ищите select без учёта регистра.
+  - Плюс ищите в той же строке.
+  - Знак вопроса сам по себе не делает строку опасной.
+  solution: "line = input()\nif 'select' in line.lower() and '+' in line:\n    print('опасно')\n\
+    else:\n    print('можно читать')\n"
+  explanation: Склейка видна по паре select и плюс, параметр с вопросом можно читать.
+  id: python.vibe.vibe-review.t3
+- type: code
+  title: Чужой регистр
+  difficulty: 2
+  context: development
+  prompt: То же правило. SELECT большими буквами тоже считается запросом.
+  starter_code: ''
+  tests:
+  - stdin: 'SELECT price FROM goods WHERE name = '' + name
+
+      '
+    expected_stdout: 'опасно
+
+      '
+  - stdin: 'print(price)
+
+      '
+    expected_stdout: 'можно читать
+
+      '
+  hints:
+  - lower приводит строку к одному регистру.
+  - Обычный print без select можно читать.
+  - Плюс без select не считается склейкой запроса.
+  solution: "line = input()\nif 'select' in line.lower() and '+' in line:\n    print('опасно')\n\
+    else:\n    print('можно читать')\n"
+  explanation: Регистр слова select не прячет склейку.
+  id: python.vibe.vibe-review.t4
+- type: code
+  title: Функция чтения
+  difficulty: 2
+  context: development
+  prompt: Функция review(line) возвращает опасно или можно читать по тому же правилу. Прочитайте
+    строку и напечатайте результат.
+  starter_code: ''
+  tests:
+  - stdin: 'select * from goods where name = '' + name
+
+      '
+    expected_stdout: 'опасно
+
+      '
+  - stdin: 'name = ''ель'' + '' '' + ''120''
+
+      '
+    expected_stdout: 'можно читать
+
+      '
+  hints:
+  - Плюс без select — не SQL-склейка.
+  - return отдаёт слово, print его показывает.
+  - Вопрос в запросе оставьте как можно читать.
+  solution: "def review(line):\n    if 'select' in line.lower() and '+' in line:\n       \
+    \ return 'опасно'\n    return 'можно читать'\nprint(review(input()))\n"
+  explanation: Правило чтения собрано в функции, решение по строке не меняется.
+  id: python.vibe.vibe-review.t5

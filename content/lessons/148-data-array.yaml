@@ -1,0 +1,214 @@
+id: python.data.data-array
+slug: data-array
+section: data
+title: 'Массив: форма и тип'
+order: 3
+weight: 1
+prerequisites:
+- python.data.data-eda
+goal: Видеть число строк, столбцов и тип ячейки у прямоугольной таблицы чисел.
+tags:
+- numpy
+- shape
+- dtype
+theory:
+- Массив NumPy хранит прямоугольник чисел. shape — пара (строки, столбцы), dtype — тип ячейки,
+  например int64.
+- 'Список списков в Python — не массив NumPy: у него нет единого dtype, и форма проверяется
+  вручную. len(grid) даёт строки, len(grid[0]) — столбцы, если все строки одной длины.'
+- Упражнение печатает ту же форму по списку списков, потому что NumPy нет в среде браузера.
+examples:
+- title: Три на два
+  code: 'grid = [[12, 9], [15, 7], [8, 11]]
+
+    print(len(grid))
+
+    print(len(grid[0]))
+
+    '
+  explanation: Три ряда высот, в каждом два замера.
+- title: Тип ячейки
+  code: 'grid = [[1, 2, 3], [4, 5, 6]]
+
+    print(len(grid))
+
+    print(len(grid[0]))
+
+    print(type(grid[0][0]).__name__)
+
+    '
+  explanation: Форма 2 на 3, ячейка имеет тип int.
+outcomes:
+- читать форму как число строк и столбцов
+- отличать shape от числа ячеек
+- проверять тип ячейки
+- хранить прямоугольник списком списков
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое shape
+  difficulty: 1
+  context: neutral
+  prompt: Что означает shape (2, 3) у массива NumPy?
+  options:
+  - id: a
+    text: 2 строки и 3 столбца
+  - id: b
+    text: 3 строки и 2 столбца
+  - id: c
+    text: одно число 6
+  answer: a
+  hints:
+  - Первое число — строки.
+  - Второе — столбцы.
+  - Произведение было бы числом ячеек, не shape.
+  solution: a
+  explanation: shape читается как строки, затем столбцы.
+  id: python.data.data-array.t1
+- type: predict_output
+  title: Форма сетки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 2 3
+  - id: b
+    text: 3 2
+  - id: c
+    text: '6'
+  answer: a
+  hints:
+  - Внешний список — строки.
+  - Внутренний список — столбцы.
+  - Печатаются два числа.
+  solution: a
+  explanation: Две строки и три столбца.
+  code: 'grid = [[1, 2, 3], [4, 5, 6]]
+
+    print(len(grid), len(grid[0]))
+
+    '
+  id: python.data.data-array.t2
+- type: code
+  title: Строки и столбцы
+  difficulty: 2
+  context: development
+  prompt: 'Первая строка: число строк и столбцов. Дальше идут строки целых чисел. Выведите
+    число строк и число столбцов.'
+  starter_code: ''
+  tests:
+  - stdin: '2 3
+
+      1 2 3
+
+      4 5 6
+
+      '
+    expected_stdout: '2
+
+      3
+
+      '
+  - stdin: '1 2
+
+      7 8
+
+      '
+    expected_stdout: '1
+
+      2
+
+      '
+  hints:
+  - Прочитайте размеры.
+  - Соберите список списков.
+  - Столбцы — длина первой строки.
+  solution: "rows, cols = map(int, input().split())\ngrid = []\nfor _ in range(rows):\n  \
+    \  grid.append([int(part) for part in input().split()])\nprint(len(grid))\nprint(len(grid[0]))\n"
+  explanation: Форма читается с краёв списка, без NumPy.
+  id: python.data.data-array.t3
+- type: code
+  title: Сколько ячеек
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте сетку так же: размеры, затем строки. Выведите число ячеек.'
+  starter_code: ''
+  tests:
+  - stdin: '2 3
+
+      10 20 30
+
+      40 50 60
+
+      '
+    expected_stdout: '6
+
+      '
+  - stdin: '3 1
+
+      4
+
+      5
+
+      6
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Ячеек столько, сколько строк умножить на столбцы.
+  - Пустую сетку не дают.
+  - Печатайте одно число.
+  solution: "rows, cols = map(int, input().split())\ngrid = []\nfor _ in range(rows):\n  \
+    \  grid.append([int(part) for part in input().split()])\nprint(len(grid) * len(grid[0]))\n"
+  explanation: Произведение сторон совпадает с числом значений.
+  id: python.data.data-array.t4
+- type: code
+  title: Тип первой ячейки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сетку целых чисел. Выведите имя типа первой ячейки.
+  starter_code: ''
+  tests:
+  - stdin: '2 2
+
+      1 2
+
+      3 4
+
+      '
+    expected_stdout: 'int
+
+      '
+  - stdin: '1 1
+
+      9
+
+      '
+    expected_stdout: 'int
+
+      '
+  hints:
+  - Возьмите grid[0][0].
+  - type(...).__name__ даёт короткое имя.
+  - Все ячейки читаются как int.
+  solution: "rows, cols = map(int, input().split())\ngrid = []\nfor _ in range(rows):\n  \
+    \  grid.append([int(part) for part in input().split()])\nprint(type(grid[0][0]).__name__)\n"
+  explanation: В NumPy это был бы dtype. Здесь тип обычного целого.
+  id: python.data.data-array.t5
+introduces:
+- id: data-shape
+  title: Форма массива
+  summary: Число строк и столбцов. В NumPy это атрибут shape.
+- id: data-dtype
+  title: Тип ячейки
+  summary: Общий тип значений массива. В NumPy это dtype.

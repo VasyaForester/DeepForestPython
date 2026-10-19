@@ -1,0 +1,242 @@
+id: python.sql.sql-case
+slug: sql-case
+section: sql
+title: CASE и NULL
+order: 5
+weight: 1
+prerequisites:
+- python.sql.sql-having
+goal: Отличать отсутствующую высоту через IS NULL и подписывать её в CASE.
+tags:
+- 'NULL'
+- CASE
+- IS NULL
+theory:
+- 'NULL означает, что значения нет. Сравнение height = NULL не находит такие строки: неизвестное
+  не равно неизвестному. Нужен запрос SELECT name FROM trees WHERE height IS NULL.'
+- 'CASE подставляет текст вместо пустоты: CASE WHEN height IS NULL THEN ''нет'' ELSE height
+  END. В таблице ель 12, сосна 20 и липа без высоты.'
+- 'Порог можно вписать в тот же CASE: от 15 и выше — высокий, известная высота ниже — низкий,
+  NULL — нет.'
+examples:
+- title: Пустая высота
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''липа'', null)")
+
+    row = con.execute(''select name from trees where height is null'').fetchone()
+
+    print(row[0])
+
+    '
+  explanation: IS NULL находит липу. Сравнение через знак равно эту строку бы пропустило.
+- title: Подпись вместо пустоты
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''липа'', null)")
+
+    row = con.execute("select case when height is null then ''нет'' else height end from trees").fetchone()
+
+    print(row[0])
+
+    '
+  explanation: CASE заменяет NULL на слово нет.
+outcomes:
+- искать пустоту через IS NULL
+- не использовать сравнение = NULL
+- заменять NULL в выражении CASE
+- подписывать известную высоту по порогу
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Как искать NULL
+  difficulty: 1
+  context: neutral
+  prompt: Какой запрос находит деревья без высоты?
+  options:
+  - id: a
+    text: SELECT name FROM trees WHERE height IS NULL
+  - id: b
+    text: SELECT name FROM trees WHERE height = NULL
+  - id: c
+    text: SELECT name FROM trees WHERE height = 0
+  answer: a
+  hints:
+  - Сравнение = NULL не даёт истину.
+  - 0 был бы настоящей нулевой высотой, не пустотой.
+  - IS NULL как раз проверяет отсутствие.
+  solution: a
+  explanation: Пустоту проверяют через IS NULL.
+  id: python.sql.sql-case.t1
+- type: predict_output
+  title: Сколько найдёт равно
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '0'
+  - id: b
+    text: '1'
+  - id: c
+    text: липа
+  answer: a
+  hints:
+  - В таблице одна пустая высота.
+  - Условие = NULL не истинно.
+  - COUNT поэтому равен нулю.
+  solution: a
+  explanation: height = NULL не находит ни одной строки.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''липа'', null)")
+
+    row = con.execute(''select count(*) from trees where height = null'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-case.t2
+- type: code
+  title: Высота или нет
+  difficulty: 2
+  context: development
+  prompt: В таблице ель 12, сосна 20, липа NULL прочитайте имя и выведите высоту либо нет.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: 'липа
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - None в Python попадёт в SQLite как NULL.
+  - В CASE проверяйте IS NULL.
+  - Имя фильтруйте через ?.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''липа'', None)])
+
+    name = input().strip()
+
+    query = "select case when height is null then ''нет'' else height end from trees where
+    name = ?"
+
+    row = con.execute(query, (name,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: CASE показывает число, если оно есть, и слово нет, если высоты нет.
+  id: python.sql.sql-case.t3
+- type: code
+  title: Сколько пустых
+  difficulty: 2
+  context: development
+  prompt: Прочитайте null или known. Выведите число строк с пустой высотой либо с известной.
+  starter_code: ''
+  tests:
+  - stdin: 'null
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: 'known
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Для пустых используйте IS NULL.
+  - Для известных — IS NOT NULL.
+  - Не пишите = NULL.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('липа', None)])\nmode = input().strip()\nif mode == 'null':\n \
+    \   query = 'select count(*) from trees where height is null'\nelse:\n    query = 'select\
+    \ count(*) from trees where height is not null'\nrow = con.execute(query).fetchone()\n\
+    print(row[0])\n"
+  explanation: IS NOT NULL оставляет ель и сосну, IS NULL оставляет липу.
+  id: python.sql.sql-case.t4
+- type: code
+  title: Подпись высоты
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя. Выведите нет, высокий для высоты от 15 или низкий для известной
+    высоты ниже.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'низкий
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'высокий
+
+      '
+  hints:
+  - Первая ветка CASE ловит NULL.
+  - Потом сравнивайте число с 15.
+  - Иначе остаётся низкий.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''липа'', None)])
+
+    name = input().strip()
+
+    query = "select case when height is null then ''нет'' when height >= 15 then ''высокий''
+    else ''низкий'' end from trees where name = ?"
+
+    row = con.execute(query, (name,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: 'Порядок веток важен: пустоту проверяют раньше сравнения с числом.'
+  id: python.sql.sql-case.t5
+introduces:
+- id: sql-is-null
+  title: IS NULL
+  summary: Проверка отсутствия значения. height = NULL не находит строки, height IS NULL находит.

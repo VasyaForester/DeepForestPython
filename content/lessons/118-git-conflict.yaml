@@ -1,0 +1,220 @@
+id: python.github.git-conflict
+slug: git-conflict
+section: github
+title: Конфликт
+order: 8
+weight: 1
+prerequisites:
+- python.github.git-pr
+goal: Заметить, что две стороны по-разному изменили одно и то же значение.
+tags:
+- конфликт
+- merge
+theory:
+- Конфликт возникает на git merge, когда обе стороны изменили одно и то же место по-разному.
+  Git останавливается и показывает маркеры <<<<<<<. Пока человек не выберет итог, слияние
+  не закончено.
+- 'Песочница не вызывает git и не рисует маркеры в файле. Две новые строки сравнивают как
+  значения одного ключа: если они различаются, печатают конфликт.'
+- Если изменилась только одна сторона, берут её значение. Если обе стороны записали одно и
+  то же, конфликта нет.
+examples:
+- title: Разные цены
+  code: 'ours = ''90''
+
+    theirs = ''80''
+
+    print(''конфликт'' if ours != theirs else ours)
+
+    '
+  explanation: Обе стороны оставили разные цены, поэтому это конфликт.
+- title: Одинаковое имя
+  code: 'ours = ''ель''
+
+    theirs = ''ель''
+
+    print(''тихо'' if ours == theirs else ''конфликт'')
+
+    '
+  explanation: Значения совпали, выбирать нечего.
+outcomes:
+- узнавать конфликт двух разных правок
+- оставлять значение, если изменилась одна сторона
+- не считать одинаковую правку конфликтом
+- понимать маркеры git merge как отметку спорного места
+resources:
+- kind: docs
+  title: Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда конфликт
+  difficulty: 1
+  context: neutral
+  prompt: Когда команда git merge останавливается с маркерами <<<<<<<?
+  options:
+  - id: a
+    text: Обе стороны по-разному изменили одно и то же место
+  - id: b
+    text: В сообщении коммита есть пробел
+  - id: c
+    text: Файл добавили только с одной стороны и вторая его не трогала
+  answer: a
+  hints:
+  - Маркеры появляются в спорном месте.
+  - Одинаковое изменение с обеих сторон конфликтом не является.
+  - Файл, который трогала одна сторона, обычно сливается сам.
+  solution: a
+  explanation: Конфликт — это два разных итога одного и того же места.
+  id: python.github.git-conflict.t1
+- type: predict_output
+  title: Разные значения
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: конфликт
+  - id: b
+    text: '90'
+  - id: c
+    text: '80'
+  answer: a
+  hints:
+  - Строки 90 и 80 не равны.
+  - В этой ветке печатают слово конфликт.
+  - Ни одно из чисел не выбирается автоматически.
+  solution: a
+  explanation: Разные правки одного значения — конфликт.
+  code: 'ours = ''90''
+
+    theirs = ''80''
+
+    print(''конфликт'' if ours != theirs else ours)
+
+    '
+  id: python.github.git-conflict.t2
+- type: code
+  title: Две правки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте ключ, своё значение и чужое. Если значения различаются, выведите конфликт,
+    иначе выведите значение.
+  starter_code: ''
+  tests:
+  - stdin: 'цена
+
+      90
+
+      80
+
+      '
+    expected_stdout: 'конфликт
+
+      '
+  - stdin: 'имя
+
+      ель
+
+      ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  hints:
+  - Ключ читают, чтобы обозначить общее место.
+  - Сравнивайте значения, не ключ.
+  - При равенстве печатайте само значение.
+  solution: "key = input().strip()\nours = input().strip()\ntheirs = input().strip()\nif ours\
+    \ != theirs:\n    print('конфликт')\nelse:\n    print(ours)\n"
+  explanation: Один ключ и два разных текста дают конфликт.
+  id: python.github.git-conflict.t3
+- type: code
+  title: Кто изменил базу
+  difficulty: 2
+  context: development
+  prompt: Прочитайте базу, своё значение и чужое. Если обе стороны ушли от базы и разошлись,
+    выведите конфликт. Если изменилась одна сторона, выведите её значение.
+  starter_code: ''
+  tests:
+  - stdin: '100
+
+      90
+
+      80
+
+      '
+    expected_stdout: 'конфликт
+
+      '
+  - stdin: '100
+
+      90
+
+      100
+
+      '
+    expected_stdout: '90
+
+      '
+  hints:
+  - Конфликт только когда все три строки попарно различны в указанном смысле.
+  - Если чужое равно базе, берите своё.
+  - Если своё равно базе, на экран попадает чужое.
+  solution: "base = input().strip()\nours = input().strip()\ntheirs = input().strip()\nif\
+    \ ours != base and theirs != base and ours != theirs:\n    print('конфликт')\nelif ours\
+    \ != base:\n    print(ours)\nelse:\n    print(theirs)\n"
+  explanation: Правка одной стороны спокойно замещает базу.
+  id: python.github.git-conflict.t4
+- type: code
+  title: Можно ли слить
+  difficulty: 2
+  context: development
+  prompt: Прочитайте ключ, своё значение и чужое. Выведите конфликт или совпало.
+  starter_code: ''
+  tests:
+  - stdin: 'цена
+
+      90
+
+      80
+
+      '
+    expected_stdout: 'конфликт
+
+      '
+  - stdin: 'склад
+
+      север
+
+      север
+
+      '
+    expected_stdout: 'совпало
+
+      '
+  hints:
+  - Снова сравнивайте два значения.
+  - Ключ в текст ответа не входит.
+  - Одинаковые строки — совпало.
+  solution: 'key = input().strip()
+
+    ours = input().strip()
+
+    theirs = input().strip()
+
+    print(''конфликт'' if ours != theirs else ''совпало'')
+
+    '
+  explanation: Совпадение значений одного ключа не требует ручного выбора.
+  id: python.github.git-conflict.t5
+introduces:
+- id: github-conflict
+  title: Конфликт слияния
+  summary: Ситуация git merge, когда обе стороны по-разному изменили одно место. Пока выбор
+    не сделан, слияние не закончено.

@@ -1,0 +1,178 @@
+id: python.functions.fn-keywords
+slug: fn-keywords
+section: functions
+title: Именованные аргументы
+order: 4
+weight: 1
+prerequisites:
+- python.functions.fn-defaults
+goal: Передавать аргументы по имени и не путать порядок.
+tags:
+- именованный аргумент
+theory:
+- 'Аргумент можно подписать именем параметра: label(mark=''ок'', name=''ель''). Тогда порядок
+  в вызове не важен.'
+- Сначала пишут позиционные аргументы, потом именованные. Один параметр нельзя заполнить дважды.
+- Именованный вызов читается лучше, когда параметров несколько и их легко перепутать.
+examples:
+- title: По имени
+  code: "def label(name, mark):\n    print(mark + ': ' + name)\nlabel(mark='ок', name='ель')\n"
+  explanation: mark получил ок, хотя в вызове стоит первым.
+- title: Смешанный вызов
+  code: "def cost(price, count):\n    return price * count\nprint(cost(10, count=4))\n"
+  explanation: Цена передана позицией, количество — именем.
+outcomes:
+- вызывать функцию с именами параметров
+- смешивать позиционные и именованные аргументы
+- не заполнять один параметр дважды
+- читать вызов с несколькими параметрами
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем имя
+  difficulty: 1
+  context: neutral
+  prompt: Зачем передавать аргумент по имени?
+  options:
+  - id: a
+    text: Чтобы не зависеть от порядка и сделать вызов понятнее
+  - id: b
+    text: Чтобы изменить имя параметра
+  - id: c
+    text: Чтобы запретить return
+  answer: a
+  hints:
+  - Смотрите на вызов с name=.
+  - Имя параметра в def не меняется.
+  - Порядок именованных аргументов свободный.
+  solution: a
+  explanation: Имя связывает значение с нужным параметром.
+  id: python.functions.fn-keywords.t1
+- type: predict_output
+  title: Какое имя
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '9'
+  - id: b
+    text: '2'
+  - id: c
+    text: a
+  answer: a
+  hints:
+  - Печатается параметр a.
+  - a передан по имени и равен 9.
+  - Порядок в вызове другой, но имя важнее.
+  solution: a
+  explanation: В a попало 9.
+  code: "def show(a, b):\n    print(a)\nshow(b=2, a=9)\n"
+  id: python.functions.fn-keywords.t2
+- type: code
+  title: Роль
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и роль. Вызовите card(name, role) именованными аргументами и выведите
+    строку имя (роль).
+  starter_code: ''
+  tests:
+  - stdin: 'Mira
+
+      admin
+
+      '
+    expected_stdout: 'Mira (admin)
+
+      '
+  - stdin: 'Лев
+
+      user
+
+      '
+    expected_stdout: 'Лев (user)
+
+      '
+  hints:
+  - Прочитайте две строки.
+  - В вызове подпишите role= и name=.
+  - return собирает строку.
+  solution: "def card(name, role):\n    return name + ' (' + role + ')'\nname = input()\n\
+    role = input()\nprint(card(role=role, name=name))\n"
+  explanation: Именованные аргументы расставляют значения независимо от порядка в вызове.
+  id: python.functions.fn-keywords.t3
+- type: code
+  title: Скидка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте цену и скидку в процентах. Функция pay возвращает цену после скидки целым
+    числом. Второй аргумент передайте по имени.
+  starter_code: ''
+  tests:
+  - stdin: '200
+
+      10
+
+      '
+    expected_stdout: '180
+
+      '
+  - stdin: '50
+
+      0
+
+      '
+    expected_stdout: '50
+
+      '
+  hints:
+  - Второй аргумент передайте по имени.
+  - Скидка 10 оставляет 90 процентов.
+  - Деление // даёт целое.
+  solution: "def pay(price, discount):\n    return price * (100 - discount) // 100\nprice\
+    \ = int(input())\ndiscount = int(input())\nprint(pay(price, discount=discount))\n"
+  explanation: Именованный discount попадает в нужный параметр.
+  id: python.functions.fn-keywords.t4
+- type: code
+  title: Границы
+  difficulty: 2
+  context: development
+  prompt: Прочитайте low и high. Функция inside возвращает True, если 5 лежит между ними включая
+    границы. Границы передайте по имени.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      9
+
+      '
+    expected_stdout: 'True
+
+      '
+  - stdin: '6
+
+      8
+
+      '
+    expected_stdout: 'False
+
+      '
+  hints:
+  - 5 зашито как проверяемое число.
+  - low и high передайте по имени.
+  - Цепочка сравнений уже знакома.
+  solution: "def inside(n, low, high):\n    return low <= n <= high\nlow = int(input())\n\
+    high = int(input())\nprint(inside(5, high=high, low=low))\n"
+  explanation: Имена не дают перепутать границы.
+  id: python.functions.fn-keywords.t5
+introduces:
+- id: keyword-arg
+  title: Именованный аргумент
+  summary: Аргумент вида name=value. Попадает в параметр с этим именем независимо от позиции.

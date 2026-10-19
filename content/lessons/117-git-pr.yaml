@@ -1,0 +1,221 @@
+id: python.github.git-pr
+slug: git-pr
+section: github
+title: Pull request
+order: 7
+weight: 1
+prerequisites:
+- python.github.git-remote
+goal: Показать заголовок и ветку запроса, не сливая его.
+tags:
+- pull request
+- ветка
+theory:
+- Pull request — это ветка плюс описание, которое просят посмотреть. Команда gh pr create
+  --title "Скидка на ель" --head скидка открывает такой запрос. Сама по себе она ничего не
+  сливает.
+- 'Слияние — отдельный шаг после проверки, командой git merge или кнопкой на GitHub. Песочница
+  не вызывает gh и не сливает ветки: из ввода печатают заголовок и имя ветки.'
+- 'На странице запроса видно направление скидка -> main: откуда берут коммиты и куда их предлагают.'
+examples:
+- title: Заголовок и ветка
+  code: 'title = ''Скидка на ель''
+
+    branch = ''скидка''
+
+    print(title)
+
+    print(branch)
+
+    '
+  explanation: Запрос хранит оба поля. Печать не выполняет merge.
+- title: Направление
+  code: 'base = ''main''
+
+    head = ''скидка''
+
+    print(head + '' -> '' + base)
+
+    '
+  explanation: Стрелка показывает ветку запроса и ветку, куда её предлагают.
+outcomes:
+- отличать pull request от merge
+- печатать заголовок и ветку запроса
+- собирать направление голова -> база
+- не вызывать gh из песочницы
+resources:
+- kind: docs
+  title: Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Сливает ли запрос
+  difficulty: 1
+  context: neutral
+  prompt: Что делает команда gh pr create --title "Скидка на ель" --head скидка?
+  options:
+  - id: a
+    text: Открывает запрос на проверку и сама ветку не сливает
+  - id: b
+    text: Сразу выполняет git merge
+  - id: c
+    text: Удаляет ветку main
+  answer: a
+  hints:
+  - create создаёт запрос.
+  - Слияние — отдельное действие после ревью.
+  - main остаётся базой, а не удаляется.
+  solution: a
+  explanation: Pull request — описание предложения, не сам merge.
+  id: python.github.git-pr.t1
+- type: predict_output
+  title: Ещё не слито
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: скидка
+  - id: b
+    text: слито
+  - id: c
+    text: main
+  answer: a
+  hints:
+  - merged равен False.
+  - В этой ветке печатают имя ветки.
+  - Слово слито было бы только при True.
+  solution: a
+  explanation: Пока запрос открыт, на экран попадает ветка, а не факт слияния.
+  code: 'branch = ''скидка''
+
+    merged = False
+
+    print(''слито'' if merged else branch)
+
+    '
+  id: python.github.git-pr.t2
+- type: code
+  title: Заголовок и ветка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте заголовок и имя ветки. Выведите их двумя строками.
+  starter_code: ''
+  tests:
+  - stdin: 'Скидка на ель
+
+      скидка
+
+      '
+    expected_stdout: 'Скидка на ель
+
+      скидка
+
+      '
+  - stdin: 'Таблицы цен
+
+      цены
+
+      '
+    expected_stdout: 'Таблицы цен
+
+      цены
+
+      '
+  hints:
+  - Первая строка — заголовок.
+  - Вторая — ветка.
+  - Ничего не сливайте.
+  solution: 'title = input().strip()
+
+    branch = input().strip()
+
+    print(title)
+
+    print(branch)
+
+    '
+  explanation: Запрос показывает описание и ветку, с которой его открыли.
+  id: python.github.git-pr.t3
+- type: code
+  title: Короткая подпись
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте заголовок и ветку. Выведите одну строку: заголовок, пробел, ветка в
+    скобках.'
+  starter_code: ''
+  tests:
+  - stdin: 'Скидка на ель
+
+      скидка
+
+      '
+    expected_stdout: 'Скидка на ель (скидка)
+
+      '
+  - stdin: 'Таблицы цен
+
+      цены
+
+      '
+    expected_stdout: 'Таблицы цен (цены)
+
+      '
+  hints:
+  - Скобки относятся к ветке.
+  - Пробел стоит перед скобкой.
+  - Порядок полей не меняйте.
+  solution: 'title = input().strip()
+
+    branch = input().strip()
+
+    print(title + '' ('' + branch + '')'')
+
+    '
+  explanation: Подпись собирает оба поля запроса в одну строку.
+  id: python.github.git-pr.t4
+- type: code
+  title: Откуда куда
+  difficulty: 2
+  context: development
+  prompt: Прочитайте базовую ветку и ветку запроса. Выведите направление голова -> база.
+  starter_code: ''
+  tests:
+  - stdin: 'main
+
+      скидка
+
+      '
+    expected_stdout: 'скидка -> main
+
+      '
+  - stdin: 'main
+
+      цены
+
+      '
+    expected_stdout: 'цены -> main
+
+      '
+  hints:
+  - Сначала читается база, потом голова.
+  - В печати голова стоит слева.
+  - Между ними пробел, стрелка и пробел.
+  solution: 'base = input().strip()
+
+    head = input().strip()
+
+    print(head + '' -> '' + base)
+
+    '
+  explanation: Направление запроса — из ветки с изменениями в базовую ветку.
+  id: python.github.git-pr.t5
+introduces:
+- id: github-pull-request
+  title: Pull request
+  summary: Ветка плюс описание для проверки. gh pr create открывает запрос и сам по себе не
+    выполняет merge.

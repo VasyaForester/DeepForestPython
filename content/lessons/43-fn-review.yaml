@@ -1,0 +1,226 @@
+id: python.functions.fn-review
+slug: fn-review
+section: functions
+title: 'Итог: разбить задачу на функции'
+order: 11
+weight: 2
+prerequisites:
+- python.functions.fn-pure
+goal: Разложить журнал цен на две чистые функции и напечатать оба результата.
+tags:
+- итог
+- функция
+theory:
+- 'Новый синтаксис здесь не цель. Урок соединяет прежние идеи: функция принимает данные, считает
+  одно значение и возвращает его. Печать остаётся в основной части программы, а не внутри
+  расчёта.'
+- Сумму цен и число положительных значений считают две отдельные функции. Обе получают один
+  и тот же список и не меняют его. Ноль не считается положительным, отрицательная цена уменьшает
+  сумму и не увеличивает счётчик.
+- Сначала читают, сколько чисел придёт, затем сами числа. После цикла вызывают нужные функции.
+  Сумму и счётчик печатают отдельными строками, в этом порядке.
+examples:
+- title: Четыре цены
+  code: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\ndef positives(prices):\n    count = 0\n    for price in prices:\n     \
+    \   if price > 0:\n            count = count + 1\n    return count\nprices = [10, -2,\
+    \ 8, 4]\nprint(total(prices))\nprint(positives(prices))\n"
+  explanation: 'Сумма 20, положительных три: 10, 8 и 4.'
+- title: Ноль не в счёт
+  code: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\ndef positives(prices):\n    count = 0\n    for price in prices:\n     \
+    \   if price > 0:\n            count = count + 1\n    return count\nprices = [-1, 0, 5]\n\
+    print(total(prices))\nprint(positives(prices))\n"
+  explanation: Сумма 4, положительное только 5.
+outcomes:
+- делить задачу на отдельные функции
+- считать сумму и число положительных раздельно
+- читать количество и затем сами числа
+- печатать результаты после вызовов
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где печатать
+  difficulty: 1
+  context: neutral
+  prompt: Где в такой задаче должна стоять печать?
+  options:
+  - id: a
+    text: Снаружи, после того как функции вернули числа
+  - id: b
+    text: Внутри каждой функции вместо возврата
+  - id: c
+    text: Только в строке документации
+  answer: a
+  hints:
+  - Функции считают и возвращают.
+  - Печать — забота основной программы.
+  - Документация ничего не выводит сама.
+  solution: a
+  explanation: Расчёт возвращает число, основная программа его печатает.
+  id: python.functions.fn-review.t1
+- type: predict_output
+  title: Сумма и счётчик
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: 20 3
+  - id: b
+    text: 10 4
+  - id: c
+    text: 0 0
+  answer: a
+  hints:
+  - Сложите 10, -2, 8 и 4.
+  - 'Положительные: 10, 8 и 4.'
+  - print двух чисел ставит между ними пробел.
+  solution: a
+  explanation: Сумма равна 20, положительных три, одна строка выглядит как 20 3.
+  code: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\ndef positives(prices):\n    count = 0\n    for price in prices:\n     \
+    \   if price > 0:\n            count = count + 1\n    return count\nprices = [10, -2,\
+    \ 8, 4]\nprint(total(prices), positives(prices))\n"
+  id: python.functions.fn-review.t2
+- type: code
+  title: Только сумма
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n целых. Функция total возвращает сумму. Выведите её.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      10
+
+      -2
+
+      8
+
+      4
+
+      '
+    expected_stdout: '20
+
+      '
+  - stdin: '3
+
+      -1
+
+      0
+
+      5
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Сначала прочитайте количество.
+  - Потом ровно столько чисел.
+  - Печатайте возврат total.
+  solution: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\nn = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    print(total(prices))\n"
+  explanation: Функция складывает весь список, включая отрицательные и ноль.
+  id: python.functions.fn-review.t3
+- type: code
+  title: Только положительные
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n целых. Функция positives возвращает, сколько из них строго
+    больше нуля. Выведите это число.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      10
+
+      -2
+
+      8
+
+      4
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '3
+
+      -1
+
+      0
+
+      5
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Ноль не увеличивает счётчик.
+  - Считайте в отдельной функции.
+  - Печатайте одно число.
+  solution: "def positives(prices):\n    count = 0\n    for price in prices:\n        if price\
+    \ > 0:\n            count = count + 1\n    return count\nn = int(input())\nprices = []\n\
+    for _ in range(n):\n    prices.append(int(input()))\nprint(positives(prices))\n"
+  explanation: В счётчик попадают только значения больше нуля.
+  id: python.functions.fn-review.t4
+- type: code
+  title: Оба результата
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n целых. Функция total возвращает сумму, positives — число значений
+    больше нуля. Выведите сумму и счётчик с новой строки.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      10
+
+      -2
+
+      8
+
+      4
+
+      '
+    expected_stdout: '20
+
+      3
+
+      '
+  - stdin: '3
+
+      -1
+
+      0
+
+      5
+
+      '
+    expected_stdout: '4
+
+      1
+
+      '
+  hints:
+  - Две функции, один список.
+  - Сначала сумма.
+  - Потом число положительных.
+  solution: "def total(prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\ndef positives(prices):\n    count = 0\n    for price in prices:\n     \
+    \   if price > 0:\n            count = count + 1\n    return count\nn = int(input())\n\
+    prices = []\nfor _ in range(n):\n    prices.append(int(input()))\nprint(total(prices))\n\
+    print(positives(prices))\n"
+  explanation: Программа читает числа один раз и печатает два возврата.
+  id: python.functions.fn-review.t5

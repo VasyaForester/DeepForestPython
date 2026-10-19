@@ -1,0 +1,178 @@
+id: python.http.http-status
+slug: http-status
+section: http
+title: Коды ответа
+order: 4
+weight: 1
+prerequisites:
+- python.http.http-headers
+goal: Отнести код ответа к успеху, ошибке клиента или ошибке сервера.
+tags:
+- статус
+- '404'
+- '500'
+theory:
+- 'Код 200 значит, что запрос удался. Код 201 тоже успех: ресурс создан. Код 404 значит, что
+  адрес не найден, это ошибка клиента. Код 500 — сбой на стороне сервера.'
+- Класс смотрят по сотне. От 200 до 299 — успех, от 400 до 499 — ошибка клиента, от 500 до
+  599 — ошибка сервера. Строка статуса в ответе выглядит как HTTP/1.1 404 Not Found.
+- В задачах на вход приходит только число. Слова успеха и ошибок фиксированы, чтобы ответ
+  не зависел от формулировки причины.
+examples:
+- title: Успех
+  code: 'code = 200
+
+    print(''успех'' if 200 <= code <= 299 else ''другое'')
+
+    '
+  explanation: 200 попадает в диапазон успешного ответа.
+- title: Не найдено
+  code: 'code = 404
+
+    print(''ошибка клиента'' if 400 <= code <= 499 else ''другое'')
+
+    '
+  explanation: 404 лежит среди четырёхсотых, это ошибка клиента.
+outcomes:
+- узнавать 200 и 201 как успех
+- относить 404 к ошибке клиента
+- относить 500 к ошибке сервера
+- делить коды по диапазонам сотен
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что значит 404
+  difficulty: 1
+  context: neutral
+  prompt: В строке HTTP/1.1 404 Not Found к какому классу относится 404?
+  options:
+  - id: a
+    text: 'Ошибка клиента: адрес не найден'
+  - id: b
+    text: Успех, данные получены
+  - id: c
+    text: Обязательный сбой сервера, который лечится повтором
+  answer: a
+  hints:
+  - 404 начинается с 4.
+  - Успех — это 200 и соседи.
+  - Пятисотые коды относятся к серверу.
+  solution: a
+  explanation: 404 — ошибка клиента, ресурса по этому пути нет.
+  id: python.http.http-status.t1
+- type: predict_output
+  title: Класс 404
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: ошибка клиента
+  - id: b
+    text: ошибка сервера
+  - id: c
+    text: успех
+  answer: a
+  hints:
+  - 404 входит в диапазон 400–499.
+  - До ветки сервера выполнение не дойдёт.
+  - Успех здесь был бы для 2xx.
+  solution: a
+  explanation: Четырёхсотый код — ошибка клиента.
+  code: "code = 404\nif 400 <= code <= 499:\n    print('ошибка клиента')\nelif 500 <= code\
+    \ <= 599:\n    print('ошибка сервера')\nelse:\n    print('успех')\n"
+  id: python.http.http-status.t2
+- type: code
+  title: Класс кода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте код и выведите успех, ошибка клиента или ошибка сервера.
+  starter_code: ''
+  tests:
+  - stdin: '200
+
+      '
+    expected_stdout: 'успех
+
+      '
+  - stdin: '404
+
+      '
+    expected_stdout: 'ошибка клиента
+
+      '
+  hints:
+  - Сравнивайте диапазоны, не одно число.
+  - 404 — четырёхсотый.
+  - 200 — двухсотый.
+  solution: "code = int(input())\nif 200 <= code <= 299:\n    print('успех')\nelif 400 <=\
+    \ code <= 499:\n    print('ошибка клиента')\nelif 500 <= code <= 599:\n    print('ошибка\
+    \ сервера')\nelse:\n    print('другое')\n"
+  explanation: Сотня кода выбирает класс ответа.
+  id: python.http.http-status.t3
+- type: code
+  title: Сервер или успех
+  difficulty: 2
+  context: development
+  prompt: Прочитайте код. Для 500–599 выведите ошибка сервера, для 200–299 — успех, иначе
+    другое.
+  starter_code: ''
+  tests:
+  - stdin: '500
+
+      '
+    expected_stdout: 'ошибка сервера
+
+      '
+  - stdin: '201
+
+      '
+    expected_stdout: 'успех
+
+      '
+  hints:
+  - 500 проверяйте по диапазону.
+  - 201 тоже успех, не только 200.
+  - Чужой класс попадает в другое.
+  solution: "code = int(input())\nif 500 <= code <= 599:\n    print('ошибка сервера')\nelif\
+    \ 200 <= code <= 299:\n    print('успех')\nelse:\n    print('другое')\n"
+  explanation: 201 и 200 оба успешные, 500 — ошибка сервера.
+  id: python.http.http-status.t4
+- type: code
+  title: Короткая причина
+  difficulty: 2
+  context: development
+  prompt: Прочитайте код. Для 200 выведите ok, для 404 — нет ресурса, для 500 — сбой сервера.
+  starter_code: ''
+  tests:
+  - stdin: '200
+
+      '
+    expected_stdout: 'ok
+
+      '
+  - stdin: '404
+
+      '
+    expected_stdout: 'нет ресурса
+
+      '
+  hints:
+  - Здесь нужны точные коды, не диапазоны.
+  - 404 — нет ресурса.
+  - Остальное можно собрать в другое.
+  solution: "code = int(input())\nif code == 200:\n    print('ok')\nelif code == 404:\n  \
+    \  print('нет ресурса')\nelif code == 500:\n    print('сбой сервера')\nelse:\n    print('другое')\n"
+  explanation: У трёх частых кодов есть короткие подписи.
+  id: python.http.http-status.t5
+introduces:
+- id: http-status
+  title: Код ответа
+  summary: Число в строке статуса. 200 — успех, 404 — нет ресурса, 500 — сбой сервера.

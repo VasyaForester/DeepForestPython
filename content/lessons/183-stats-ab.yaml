@@ -1,0 +1,239 @@
+id: python.stats.stats-ab
+slug: stats-ab
+section: stats
+title: A/B
+order: 12
+weight: 1
+prerequisites:
+- python.stats.stats-power
+goal: Сравнить две доли целым умножением крест-накрест.
+tags:
+- a/b
+theory:
+- 'A/B сравнивает два варианта: сколько успехов из скольких показов. Доля A — a / na, доля
+  B — b / nb. Выше доля у того варианта, который чаще доводит до успеха.'
+- Сравнение a / na и b / nb совпадает со сравнением a * nb и b * na. Оба произведения целые,
+  длинная дробь не печатается. Равные произведения — слово «равно».
+- Больше конверсий на крошечной группе ещё не значит устойчивый перевес. Урок только называет,
+  чья доля выше в этих целых числах.
+examples:
+- title: Перевес A
+  code: 'a, na = 3, 10
+
+    b, nb = 1, 10
+
+    left = a * nb
+
+    right = b * na
+
+    print("A" if left > right else "B")
+
+    '
+  explanation: 3*10 больше 1*10. Доля A выше. Это 3 из 10 против 1 из 10.
+- title: Равные доли
+  code: 'a, na = 1, 2
+
+    b, nb = 2, 4
+
+    print("равно" if a * nb == b * na else "A")
+
+    '
+  explanation: '1*4 равно 2*2. Доли совпали: обе одна вторая.'
+outcomes:
+- сравнивать доли двух вариантов
+- умножать крест-накрест вместо деления
+- печатать равно при одинаковых долях
+- не называть перевес маленькой группы окончательным выводом
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Крест-накрест
+  difficulty: 1
+  context: neutral
+  prompt: Почему a * nb сравнивают с b * na?
+  options:
+  - id: a
+    text: Так сравниваются доли a/na и b/nb без дроби
+  - id: b
+    text: Так считается p-value
+  - id: c
+    text: Так находится среднее высоты
+  answer: a
+  hints:
+  - Общий знаменатель na * nb сокращается.
+  - Большее произведение — большая доля.
+  - p здесь не возникает.
+  solution: a
+  explanation: Целые произведения сохраняют порядок долей.
+  id: python.stats.stats-ab.t1
+- type: predict_output
+  title: Кто выше
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: A
+  - id: b
+    text: B
+  - id: c
+    text: равно
+  answer: a
+  hints:
+  - Слева 3 * 10.
+  - Справа 1 * 10.
+  - 30 больше 10.
+  solution: a
+  explanation: Доля A выше.
+  code: 'a, na, b, nb = 3, 10, 1, 10
+
+    print("A" if a * nb > b * na else "B")
+
+    '
+  id: python.stats.stats-ab.t2
+- type: code
+  title: Чья доля выше
+  difficulty: 2
+  context: development
+  prompt: Прочитайте a, na, b, nb — каждое на своей строке. Выведите A, B или равно.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      1
+
+      10
+
+      '
+    expected_stdout: 'A
+
+      '
+  - stdin: '1
+
+      2
+
+      2
+
+      4
+
+      '
+    expected_stdout: 'равно
+
+      '
+  hints:
+  - Умножайте крест-накрест.
+  - Не делите.
+  - Равенство произведений — равно.
+  solution: "a = int(input())\nna = int(input())\nb = int(input())\nnb = int(input())\nleft\
+    \ = a * nb\nright = b * na\nif left > right:\n    print(\"A\")\nelif right > left:\n \
+    \   print(\"B\")\nelse:\n    print(\"равно\")\n"
+  explanation: Победитель — сторона с большей долей в этих целых.
+  id: python.stats.stats-ab.t3
+- type: code
+  title: Два произведения
+  difficulty: 2
+  context: development
+  prompt: Прочитайте a, na, b, nb. Выведите a * nb и b * na на двух строках.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      8
+
+      3
+
+      6
+
+      '
+    expected_stdout: '12
+
+      24
+
+      '
+  - stdin: '3
+
+      10
+
+      1
+
+      10
+
+      '
+    expected_stdout: '30
+
+      10
+
+      '
+  hints:
+  - Первая строка — произведение за A.
+  - Вторая — за B.
+  - Дроби не печатайте.
+  solution: 'a = int(input())
+
+    na = int(input())
+
+    b = int(input())
+
+    nb = int(input())
+
+    print(a * nb)
+
+    print(b * na)
+
+    '
+  explanation: По произведениям уже видно, какая доля больше.
+  id: python.stats.stats-ab.t4
+- type: code
+  title: Складские A и B
+  difficulty: 2
+  context: development
+  prompt: 'Две полки: сколько проданных саженцев и сколько стояло. Четыре целых: продажи A,
+    запас A, продажи B, запас B. Выведите A, B или равно.'
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      8
+
+      3
+
+      6
+
+      '
+    expected_stdout: 'B
+
+      '
+  - stdin: '4
+
+      8
+
+      1
+
+      2
+
+      '
+    expected_stdout: 'равно
+
+      '
+  hints:
+  - Продажи не сравнивайте без запаса.
+  - Крест-накрест учитывает размер полки.
+  - Слова ответа те же.
+  solution: "a = int(input())\nna = int(input())\nb = int(input())\nnb = int(input())\nleft\
+    \ = a * nb\nright = b * na\nif left > right:\n    print(\"A\")\nelif right > left:\n \
+    \   print(\"B\")\nelse:\n    print(\"равно\")\n"
+  explanation: Доля продаж полки сравнивается целыми произведениями.
+  id: python.stats.stats-ab.t5
+introduces:
+- id: stats-ab-rate
+  title: Сравнение долей A/B
+  summary: Какая из долей a/na и b/nb больше. Порядок совпадает с порядком a*nb и b*na.

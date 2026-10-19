@@ -1,0 +1,180 @@
+id: python.oop.oop-review
+slug: oop-review
+section: oop
+title: 'Итог: когда класс не нужен'
+order: 10
+weight: 2
+prerequisites:
+- python.oop.oop-dataclass
+goal: Оставить функцией расчёт, которому нечего хранить между вызовами.
+tags:
+- функция
+- класс
+theory:
+- 'Класс нужен, когда у объекта есть состояние и несколько действий над ним. Заказ помнит
+  позиции, метод добавляет ещё одну: данные живут дольше одного вызова.'
+- Одно умножение цены на количество функцией с двумя параметрами читается короче. Класс с
+  одним методом и без памяти между вызовами ничего не добавляет.
+- Пустой класс и наследник ради одной формулы только удлиняют код. Если после вызова поля
+  никому не нужны, пишут функцию и печатают её результат.
+examples:
+- title: Функция стоимости
+  code: "def total(price, count):\n    return price * count\nprint(total(10, 3))\n"
+  explanation: Два числа пришли аргументами и сразу умножились. Хранить их в объекте незачем.
+- title: Лишний класс
+  code: "class Cost:\n    def __init__(self, price, count):\n        self.price = price\n\
+    \        self.count = count\n    def total(self):\n        return self.price * self.count\n\
+    print(Cost(10, 3).total())\n"
+  explanation: Результат тот же, 30. Класс помнит числа только ради одного умножения, функция
+    делает это короче.
+outcomes:
+- решать формулу функцией
+- не заводить класс без состояния
+- отличать одно действие от объекта с памятью
+- передавать оба числа аргументами
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Функция вместо класса
+  difficulty: 1
+  context: neutral
+  prompt: Нужно один раз перемножить цену и количество. Что уместнее?
+  options:
+  - id: a
+    text: Функция с двумя параметрами
+  - id: b
+    text: Класс с наследником и тремя методами
+  - id: c
+    text: Пустой класс без полей
+  answer: a
+  hints:
+  - Состояние между вызовами не нужно.
+  - Наследник здесь ничего не хранит.
+  - Пустой класс не умеет умножать.
+  solution: a
+  explanation: Одна формула без памяти — функция. Класс оставляют, когда объект должен помнить
+    данные.
+  id: python.oop.oop-review.t1
+- type: predict_output
+  title: Произведение
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '13'
+  - id: b
+    text: '30'
+  - id: c
+    text: total
+  answer: b
+  hints:
+  - Функция умножает аргументы.
+  - 10 * 3 равно 30.
+  - Имя функции не печатается.
+  solution: b
+  explanation: Вызов возвращает 30.
+  code: "def total(price, count):\n    return price * count\nprint(total(10, 3))\n"
+  id: python.oop.oop-review.t2
+- type: code
+  title: Стоимость
+  difficulty: 2
+  context: business
+  prompt: Прочитайте цену и количество. Функция total возвращает произведение. Выведите его.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '8
+
+      2
+
+      '
+    expected_stdout: '16
+
+      '
+  hints:
+  - Опишите функцию, не класс.
+  - Оба значения прочитайте как int.
+  - Печатайте результат вызова.
+  solution: "def total(price, count):\n    return price * count\nprint(total(int(input()),\
+    \ int(input())))\n"
+  explanation: 10 и 3 дают 30. 8 и 2 дают 16.
+  id: python.oop.oop-review.t3
+- type: code
+  title: Хватает
+  difficulty: 2
+  context: development
+  prompt: Прочитайте количество и потребность. Функция enough возвращает да или нет. Выведите
+    ответ.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      3
+
+      '
+    expected_stdout: 'да
+
+      '
+  - stdin: '1
+
+      5
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Сравнение живёт внутри функции.
+  - Класс для двух чисел не нужен.
+  - Верните строку да или нет.
+  solution: "def enough(qty, need):\n    if qty >= need:\n        return 'да'\n    return\
+    \ 'нет'\nprint(enough(int(input()), int(input())))\n"
+  explanation: 4 покрывает 3. 1 не покрывает 5.
+  id: python.oop.oop-review.t4
+- type: code
+  title: Подпись
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте название и цену. Функция label возвращает строку «название цена». Выведите
+    её.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      120
+
+      '
+    expected_stdout: 'ель 120
+
+      '
+  - stdin: 'сосна
+
+      80
+
+      '
+    expected_stdout: 'сосна 80
+
+      '
+  hints:
+  - Склейте строку в return.
+  - Цену переведите в текст.
+  - Не заводите класс ради одной склейки.
+  solution: "def label(name, price):\n    return name + ' ' + str(price)\nprint(label(input(),\
+    \ int(input())))\n"
+  explanation: Функция сразу возвращает подпись, хранить поля негде и незачем.
+  id: python.oop.oop-review.t5

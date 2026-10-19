@@ -1,6 +1,6 @@
 # Deep Forest Python
 
-Интерактивный курс Python внутри Deep Forest Academy. Сейчас опубликованы три раздела: «Старт и основы Python», «Условия и циклы», «Строки и коллекции» — 32 урока. Полная программа — 21 раздел; единственная карта лежит в `content/course.yaml` и описана в `COURSE_DESIGN.md`. `frontend/src/content/manifest.json` собирается из этих файлов и вручную не правится.
+Интерактивный курс Python внутри Deep Forest Academy. Опубликованы все 21 раздел, 236 уроков. Карта лежит в `content/course.yaml` и описана в `COURSE_DESIGN.md`. `frontend/src/content/manifest.json` собирается из этих файлов и вручную не правится.
 
 ## Запуск
 

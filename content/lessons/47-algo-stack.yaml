@@ -1,0 +1,237 @@
+id: python.algorithms.algo-stack
+slug: algo-stack
+section: algorithms
+title: Стек
+order: 4
+weight: 1
+prerequisites:
+- python.algorithms.algo-hash
+goal: Класть цены стопкой и снимать последнюю добавленную.
+tags:
+- стек
+theory:
+- Стек хранит элементы стопкой. Новую цену кладут наверх через append. Снимают тоже сверху,
+  методом pop, и получают именно её.
+- Последняя положенная цена выходит первой. После чисел 10, 20 и 30 первый pop вернёт 30.
+  Пока верхние лежат на месте, до нижних не добраться.
+- 'Пустой стек снимать нельзя: pop завершится ошибкой. Перед снятием проверяют, что список
+  не пуст. Так устроен журнал отмен: последнее действие отменяется первым.'
+examples:
+- title: Снять две верхние
+  code: 'stack = []
+
+    stack.append(10)
+
+    stack.append(20)
+
+    stack.append(30)
+
+    print(stack.pop())
+
+    print(stack.pop())
+
+    '
+  explanation: Сначала уходит 30, затем 20. Десятка остаётся внизу.
+- title: Одна порода сверху
+  code: 'stack = []
+
+    stack.append(''ель'')
+
+    stack.append(''сосна'')
+
+    print(stack.pop())
+
+    print(len(stack))
+
+    '
+  explanation: Сняли сосну, в стеке осталась одна ель.
+outcomes:
+- класть элемент через append
+- снимать верх через pop
+- не вызывать pop у пустого списка
+- получать значения в обратном порядке
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кого снимает pop
+  difficulty: 1
+  context: neutral
+  prompt: Какое значение снимет pop, если последним клали 30?
+  options:
+  - id: a
+    text: 30, то есть последнее добавленное
+  - id: b
+    text: Самое первое добавленное
+  - id: c
+    text: Всегда ноль, независимо от стопки
+  answer: a
+  hints:
+  - pop берёт конец списка.
+  - Конец — это верх стека.
+  - Первое число лежит внизу.
+  solution: a
+  explanation: Со стека снимают то, что положили последним.
+  id: python.algorithms.algo-stack.t1
+- type: predict_output
+  title: Верх стопки
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '30'
+  - id: b
+    text: '10'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - В стеке три числа.
+  - Последним добавили 30.
+  - pop возвращает конец списка.
+  solution: a
+  explanation: Верхнее значение 30 снимается первым.
+  code: 'stack = []
+
+    stack.append(10)
+
+    stack.append(20)
+
+    stack.append(30)
+
+    print(stack.pop())
+
+    '
+  id: python.algorithms.algo-stack.t2
+- type: code
+  title: Снять последнюю цену
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых, положите их в стек. Выведите значение одного pop.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      20
+
+      30
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - Кладите числа через append.
+  - Снимайте один раз.
+  - Печатайте то, что вернул pop.
+  solution: "n = int(input())\nstack = []\nfor _ in range(n):\n    stack.append(int(input()))\n\
+    print(stack.pop())\n"
+  explanation: Наверху оказывается последнее прочитанное число.
+  id: python.algorithms.algo-stack.t3
+- type: code
+  title: Снять всё
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Выведите их в обратном порядке, каждый pop с новой строки.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      20
+
+      30
+
+      '
+    expected_stdout: '30
+
+      20
+
+      10
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      '
+    expected_stdout: '5
+
+      4
+
+      '
+  hints:
+  - Сначала заполните стек.
+  - Пока список не пуст, снимайте верх.
+  - Каждый pop печатайте отдельно.
+  solution: "n = int(input())\nstack = []\nfor _ in range(n):\n    stack.append(int(input()))\n\
+    while stack:\n    print(stack.pop())\n"
+  explanation: Повторный pop разворачивает порядок чтения.
+  id: python.algorithms.algo-stack.t4
+- type: code
+  title: Снять несколько верхних
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых, затем k. Снимите k верхних цен и выведите каждую.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      20
+
+      30
+
+      2
+
+      '
+    expected_stdout: '30
+
+      20
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      1
+
+      '
+    expected_stdout: '5
+
+      '
+  hints:
+  - k читайте после всех цен.
+  - Столько раз вызовите pop.
+  - Не снимайте больше, чем просят.
+  solution: "n = int(input())\nstack = []\nfor _ in range(n):\n    stack.append(int(input()))\n\
+    k = int(input())\nfor _ in range(k):\n    print(stack.pop())\n"
+  explanation: Снимается хвост стека, по одной цене на строку.
+  id: python.algorithms.algo-stack.t5
+introduces:
+- id: algo-stack
+  title: Стек
+  summary: 'Стопка на списке: append кладёт наверх, pop снимает последнее добавленное.'

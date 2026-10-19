@@ -1,0 +1,208 @@
+id: python.files.file-paths
+slug: file-paths
+section: files
+title: Пути
+order: 3
+weight: 1
+prerequisites:
+- python.files.file-encoding
+goal: Собирать и разбирать путь к файлу строковыми методами.
+tags:
+- путь
+- суффикс
+- строка
+theory:
+- 'Путь можно хранить обычной строкой: reports/march/stock.csv. Косая черта / отделяет папку
+  от следующего имени. Складывают такой путь конкатенацией: папка + "/" + имя.'
+- 'Имя файла — последний кусок после /. Его даёт split("/") и индекс -1. Суффикс — часть после
+  последней точки: у stock.csv это csv, его даёт rsplit(".", 1).'
+- pathlib.Path('notes/note.txt') — объект пути из модуля pathlib. Здесь путь остаётся строкой,
+  её режут методы str. Для имени и суффикса объект Path не требуется.
+examples:
+- title: Имя и суффикс
+  code: 'path = ''reports/march/stock.csv''
+
+    name = path.split(''/'')[-1]
+
+    suffix = name.rsplit(''.'', 1)[-1]
+
+    print(name)
+
+    print(suffix)
+
+    '
+  explanation: Последний кусок пути — stock.csv. После последней точки остаётся csv.
+- title: Сборка
+  code: 'folder = ''notes''
+
+    name = ''note.txt''
+
+    path = folder + ''/'' + name
+
+    print(path)
+
+    print(path.split(''/'')[-1])
+
+    '
+  explanation: Косая черта соединяет папку и имя. Разбор последнего куска снова даёт note.txt.
+outcomes:
+- собирать путь строкой через /
+- отделять имя файла от папок
+- получать суффикс методом str
+- узнавать объект pathlib.Path по записи в коде
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое Path
+  difficulty: 1
+  context: neutral
+  prompt: В коде написано path = pathlib.Path('notes/note.txt'). Чем является path?
+  options:
+  - id: a
+    text: Объектом пути из модуля pathlib
+  - id: b
+    text: Уже прочитанным текстом файла
+  - id: c
+    text: Кодировкой UTF-8
+  answer: a
+  hints:
+  - Path пишут через модуль pathlib.
+  - Чтение файла здесь не вызывается.
+  - Кодировку задают аргументом encoding.
+  solution: a
+  explanation: Path описывает путь объектом. Строка notes/note.txt описывает тот же путь без
+    этого модуля.
+  id: python.files.file-paths.t1
+- type: predict_output
+  title: Последний кусок
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: reports
+  - id: b
+    text: stock.csv
+  - id: c
+    text: csv
+  answer: b
+  hints:
+  - split режет по косой черте.
+  - Индекс -1 берёт последний кусок.
+  - csv — это суффикс, не весь последний кусок.
+  solution: b
+  explanation: Последнее имя в пути — stock.csv.
+  code: 'path = ''reports/march/stock.csv''
+
+    print(path.split(''/'')[-1])
+
+    '
+  id: python.files.file-paths.t2
+- type: code
+  title: Склеить путь
+  difficulty: 2
+  context: development
+  prompt: Прочитайте папку и имя файла с двух строк. Выведите путь папка/имя.
+  starter_code: ''
+  tests:
+  - stdin: 'notes
+
+      note.txt
+
+      '
+    expected_stdout: 'notes/note.txt
+
+      '
+  - stdin: 'reports
+
+      stock.csv
+
+      '
+    expected_stdout: 'reports/stock.csv
+
+      '
+  hints:
+  - Между частями поставьте /.
+  - Не используйте обратную косую черту.
+  - Печатайте одну строку.
+  solution: 'folder = input()
+
+    name = input()
+
+    print(folder + ''/'' + name)
+
+    '
+  explanation: Путь собирается как обычная строка.
+  id: python.files.file-paths.t3
+- type: code
+  title: Имя файла
+  difficulty: 2
+  context: business
+  prompt: Прочитайте путь с косыми чертами и выведите только имя файла.
+  starter_code: ''
+  tests:
+  - stdin: 'reports/march/stock.csv
+
+      '
+    expected_stdout: 'stock.csv
+
+      '
+  - stdin: 'notes/note.txt
+
+      '
+    expected_stdout: 'note.txt
+
+      '
+  hints:
+  - Разрежьте строку по /.
+  - Возьмите последний элемент.
+  - Папки печатать не нужно.
+  solution: 'path = input()
+
+    print(path.split(''/'')[-1])
+
+    '
+  explanation: Имя — это последний фрагмент пути.
+  id: python.files.file-paths.t4
+- type: code
+  title: Суффикс
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте имя файла и выведите суффикс без точки.
+  starter_code: ''
+  tests:
+  - stdin: 'stock.csv
+
+      '
+    expected_stdout: 'csv
+
+      '
+  - stdin: 'note.txt
+
+      '
+    expected_stdout: 'txt
+
+      '
+  hints:
+  - Режьте по последней точке.
+  - rsplit с 1 делит строку один раз справа.
+  - Точку в ответ не включайте.
+  solution: 'name = input()
+
+    print(name.rsplit(''.'', 1)[-1])
+
+    '
+  explanation: У stock.csv суффикс csv, у note.txt суффикс txt.
+  id: python.files.file-paths.t5
+introduces:
+- id: file-paths.path-string
+  title: Строка пути
+  summary: Путь вида папка/имя. Имя берётся последним куском split, суффикс — частью после
+    последней точки.

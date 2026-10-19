@@ -1,0 +1,175 @@
+id: python.backend.be-di
+slug: be-di
+section: backend
+title: Зависимости
+order: 5
+weight: 1
+prerequisites:
+- python.backend.be-valid
+goal: Передать в обработчик функцию, которая достаёт данные.
+tags:
+- зависимость
+- функция
+- обработчик
+theory:
+- 'В FastAPI зависимость подключают через Depends: обработчик получает уже добытое значение
+  и сам источник не ищет. Depends здесь не импортируется.'
+- 'В упражнении обработчик принимает функцию-геттер и вызывает её. В проверке подставляют
+  другую функцию с тем же договором: вызвать и получить значение.'
+- Геттер может прочитать строку или взять имя из словаря. Обработчик печатает результат и
+  не знает, откуда он взялся.
+examples:
+- title: Геттер имени
+  code: "def handler(get_user):\n    print(get_user())\ndef current():\n    return 'Мира'\n\
+    handler(current)\n"
+  explanation: В handler передают функцию current. Вызов get_user() возвращает Мира.
+- title: Другой источник
+  code: "def handler(get_price):\n    print(get_price())\ndef from_catalog():\n    return\
+    \ 120\nhandler(from_catalog)\n"
+  explanation: Тот же обработчик печатает то, что вернул новый геттер.
+outcomes:
+- передавать функцию в обработчик
+- вызывать геттер внутри handler
+- подменять источник данных
+- не искать значение в самом обработчике
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Куда передают геттер
+  difficulty: 1
+  context: neutral
+  prompt: Как в этом уроке устроена зависимость?
+  options:
+  - id: a
+    text: Функцию передают в обработчик, и он её вызывает
+  - id: b
+    text: Обработчик сам открывает файл настроек
+  - id: c
+    text: Depends импортируется и запускает сервер
+  answer: a
+  hints:
+  - Смотрите на параметр handler.
+  - Вызов со скобками получает значение.
+  - Библиотека Depends здесь не подключена.
+  solution: a
+  explanation: Зависимость — это функция, которую передали в обработчик.
+  id: python.backend.be-di.t1
+- type: predict_output
+  title: Чьё имя
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: Мира
+  - id: b
+    text: current
+  - id: c
+    text: get_user
+  answer: a
+  hints:
+  - Печатается результат вызова.
+  - current возвращает Мира.
+  - Имя функции на экран не выводится.
+  solution: a
+  explanation: Обработчик печатает значение, которое вернул геттер.
+  code: "def handler(get_user):\n    print(get_user())\ndef current():\n    return 'Мира'\n\
+    handler(current)\n"
+  id: python.backend.be-di.t2
+- type: code
+  title: Имя из ввода
+  difficulty: 2
+  context: development
+  prompt: Напишите handler(get_user), который печатает результат вызова get_user. Геттер читает
+    одну строку. Передайте его в handler.
+  starter_code: ''
+  tests:
+  - stdin: 'Мира
+
+      '
+    expected_stdout: 'Мира
+
+      '
+  - stdin: 'Лев
+
+      '
+    expected_stdout: 'Лев
+
+      '
+  hints:
+  - Геттер — отдельная функция.
+  - handler вызывает аргумент со скобками.
+  - input стоит внутри геттера, не внутри print напрямую.
+  solution: "def handler(get_user):\n    print(get_user())\ndef from_input():\n    return\
+    \ input()\nhandler(from_input)\n"
+  explanation: Источник строки можно подменить, обработчик остаётся тем же.
+  id: python.backend.be-di.t3
+- type: code
+  title: Цена из словаря
+  difficulty: 2
+  context: development
+  prompt: 'Каталог фиксирован: ель 120, сосна 80. Прочитайте имя. Геттер возвращает цену или
+    строку нет. handler печатает результат геттера.'
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '120
+
+      '
+  - stdin: 'пихта
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Геттер замыкает прочитанное имя.
+  - Чужого имени в каталоге нет.
+  - Печатает handler, не сам каталог.
+  solution: "def handler(get_price):\n    print(get_price())\ncatalog = {'ель': 120, 'сосна':\
+    \ 80}\nname = input()\ndef from_catalog():\n    if name not in catalog:\n        return\
+    \ 'нет'\n    return catalog[name]\nhandler(from_catalog)\n"
+  explanation: 'Обработчик не ищет цену сам: он вызывает переданную функцию.'
+  id: python.backend.be-di.t4
+- type: code
+  title: Два геттера
+  difficulty: 2
+  context: development
+  prompt: Прочитайте роль. Если роль admin, передайте в handler геттер, который возвращает
+    можно. Иначе передайте геттер со строкой нельзя. handler печатает результат.
+  starter_code: ''
+  tests:
+  - stdin: 'admin
+
+      '
+    expected_stdout: 'можно
+
+      '
+  - stdin: 'user
+
+      '
+    expected_stdout: 'нельзя
+
+      '
+  hints:
+  - Обе функции возвращают готовую строку.
+  - Выбор геттера зависит от роли.
+  - В handler всегда попадает одна функция.
+  solution: "def handler(get_flag):\n    print(get_flag())\nrole = input()\ndef allow():\n\
+    \    return 'можно'\ndef deny():\n    return 'нельзя'\nif role == 'admin':\n    handler(allow)\n\
+    else:\n    handler(deny)\n"
+  explanation: Разные геттеры подставляются в один и тот же обработчик.
+  id: python.backend.be-di.t5
+introduces:
+- id: be-depends
+  title: Зависимость
+  summary: Функция, которую передают в обработчик. В FastAPI ту же роль играет Depends.

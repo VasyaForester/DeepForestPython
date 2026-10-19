@@ -1,0 +1,188 @@
+id: python.errors.err-fixtures
+slug: err-fixtures
+section: errors
+title: Фикстуры
+order: 9
+weight: 1
+prerequisites:
+- python.errors.err-assert
+goal: Подготовить данные функцией setup и проверить их в тесте.
+tags:
+- фикстура
+- setup
+theory:
+- Фикстура готовит данные для проверки. Функция setup возвращает словарь склада, а тест берёт
+  этот словарь и не собирает поля заново.
+- 'В pytest фикстуру описывают отдельно и передают в тест. Идея та же: один раз задать исходные
+  name и qty и вызывать подготовку из проверки.'
+- Здесь setup — обычная функция. test_stock вызывает её, читает поля и проверяет количество
+  через assert. После проверки печатаются название и количество.
+examples:
+- title: Готовый склад
+  code: "def setup():\n    return {'name': 'ель', 'qty': 4}\ndef test_stock():\n    stock\
+    \ = setup()\n    assert stock['qty'] == 4\n    print(stock['name'])\n    print(stock['qty'])\n\
+    test_stock()\n"
+  explanation: setup отдаёт словарь. Тест проверяет количество и печатает ель и 4.
+- title: Другие данные
+  code: "def setup():\n    return {'name': 'сосна', 'qty': 1}\nstock = setup()\nassert stock['name']\
+    \ == 'сосна'\nprint(stock['qty'])\n"
+  explanation: Та же функция подготовки, другие значения. assert смотрит название, печать
+    показывает 1.
+outcomes:
+- выносить исходные данные в setup
+- возвращать из подготовки словарь
+- проверять поля через assert
+- понимать, что в pytest такую подготовку называют фикстурой
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем setup
+  difficulty: 1
+  context: neutral
+  prompt: Зачем тест вызывает setup()?
+  options:
+  - id: a
+    text: Чтобы получить готовые данные, а не собирать их внутри каждой проверки
+  - id: b
+    text: Чтобы удалить журнал
+  - id: c
+    text: Чтобы отключить assert
+  answer: a
+  hints:
+  - setup возвращает словарь.
+  - Проверка только читает поля.
+  - assert как раз остаётся в тесте.
+  solution: a
+  explanation: Подготовка отделена от проверки. В pytest такую функцию называют фикстурой.
+  id: python.errors.err-fixtures.t1
+- type: predict_output
+  title: Количество из setup
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: '4'
+  - id: c
+    text: setup
+  answer: b
+  hints:
+  - setup возвращает словарь.
+  - Печатается поле qty.
+  - Имя функции на экран не выводится.
+  solution: b
+  explanation: В словаре количество равно 4.
+  code: "def setup():\n    return {'name': 'ель', 'qty': 4}\nstock = setup()\nprint(stock['qty'])\n"
+  id: python.errors.err-fixtures.t2
+- type: code
+  title: Склад из ввода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название и количество. setup возвращает словарь, тест проверяет, что
+    количество больше нуля, и печатает оба поля.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: 'ель
+
+      4
+
+      '
+  - stdin: 'сосна
+
+      1
+
+      '
+    expected_stdout: 'сосна
+
+      1
+
+      '
+  hints:
+  - setup читает две строки.
+  - assert проверяет qty.
+  - Печатайте name и qty с новой строки.
+  solution: "def setup():\n    return {'name': input(), 'qty': int(input())}\ndef test_stock():\n\
+    \    stock = setup()\n    assert stock['qty'] > 0\n    print(stock['name'])\n    print(stock['qty'])\n\
+    test_stock()\n"
+  explanation: Тест получает словарь из setup и выводит введённые поля.
+  id: python.errors.err-fixtures.t3
+- type: code
+  title: Цена заказа
+  difficulty: 2
+  context: business
+  prompt: Прочитайте цену и количество. setup возвращает их в словаре. Выведите total, равный
+    произведению, после assert, что total больше нуля.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '8
+
+      2
+
+      '
+    expected_stdout: '16
+
+      '
+  hints:
+  - Оба числа читает setup.
+  - total считайте в тесте.
+  - assert стоит до print.
+  solution: "def setup():\n    return {'price': int(input()), 'count': int(input())}\ndef\
+    \ test_order():\n    order = setup()\n    total = order['price'] * order['count']\n  \
+    \  assert total > 0\n    print(total)\ntest_order()\n"
+  explanation: 10 и 3 дают 30. 8 и 2 дают 16.
+  id: python.errors.err-fixtures.t4
+- type: code
+  title: Непустой журнал
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте строку журнала. setup кладёт её в словарь по ключу line. Тест проверяет,
+    что строка не пустая, и печатает её.
+  starter_code: ''
+  tests:
+  - stdin: 'ель 2
+
+      '
+    expected_stdout: 'ель 2
+
+      '
+  - stdin: 'сосна 1
+
+      '
+    expected_stdout: 'сосна 1
+
+      '
+  hints:
+  - setup возвращает словарь с одним ключом.
+  - assert сравнивает с пустой строкой.
+  - Печатайте значение line.
+  solution: "def setup():\n    return {'line': input()}\ndef test_line():\n    journal = setup()\n\
+    \    assert journal['line'] != ''\n    print(journal['line'])\ntest_line()\n"
+  explanation: Проверка пропускает непустую строку и печатает её.
+  id: python.errors.err-fixtures.t5
+introduces:
+- id: err-fixtures.fixture
+  title: Фикстура
+  summary: Подготовка данных для проверки. setup возвращает словарь, тест использует его.
+    В pytest фикстуру передают в тест отдельно.

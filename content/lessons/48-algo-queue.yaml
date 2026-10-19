@@ -1,0 +1,233 @@
+id: python.algorithms.algo-queue
+slug: algo-queue
+section: algorithms
+title: Очередь
+order: 5
+weight: 1
+prerequisites:
+- python.algorithms.algo-stack
+goal: Отдавать записи склада в том порядке, в котором они пришли.
+tags:
+- очередь
+- deque
+theory:
+- Очередь отдаёт элементы в порядке прихода. Для неё берут deque из модуля collections. append
+  ставит запись в хвост, popleft снимает голову.
+- 'Снимать голову у обычного списка дорого: остальные элементы сдвигаются. У deque оба конца
+  доступны без этого сдвига. Первая поставка на приёмке уходит первой.'
+- Пустую очередь не снимают. Если положить ель, затем сосну, первый popleft вернёт ель. В
+  очереди после этого останется сосна.
+examples:
+- title: Две поставки
+  code: 'from collections import deque
+
+    queue = deque()
+
+    queue.append(''ель'')
+
+    queue.append(''сосна'')
+
+    print(queue.popleft())
+
+    print(queue.popleft())
+
+    '
+  explanation: 'Сначала выходит ель, затем сосна: порядок прихода сохранён.'
+- title: Одна выдача
+  code: 'from collections import deque
+
+    queue = deque()
+
+    queue.append(10)
+
+    queue.append(20)
+
+    queue.append(30)
+
+    print(queue.popleft())
+
+    print(len(queue))
+
+    '
+  explanation: Сняли 10, в очереди остались две цены.
+outcomes:
+- создавать очередь через deque
+- добавлять элемент в хвост
+- снимать элемент с головы через popleft
+- сохранять порядок прихода
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какой конец снимают
+  difficulty: 1
+  context: neutral
+  prompt: С какого конца deque снимает popleft?
+  options:
+  - id: a
+    text: С головы, где лежит самый ранний элемент
+  - id: b
+    text: С хвоста, как pop у обычного списка
+  - id: c
+    text: Из середины очереди
+  answer: a
+  hints:
+  - append кладёт в хвост.
+  - popleft смотрит на другой конец.
+  - Раньше пришедший стоит ближе к голове.
+  solution: a
+  explanation: popleft забирает элемент, который положили раньше других из оставшихся.
+  id: python.algorithms.algo-queue.t1
+- type: predict_output
+  title: Кто первый
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: сосна
+  - id: c
+    text: пихта
+  answer: a
+  hints:
+  - Первой добавили ель.
+  - popleft берёт голову.
+  - Сосна остаётся в очереди.
+  solution: a
+  explanation: Голова очереди — ель, её и печатают.
+  code: 'from collections import deque
+
+    queue = deque()
+
+    queue.append(''ель'')
+
+    queue.append(''сосна'')
+
+    print(queue.popleft())
+
+    '
+  id: python.algorithms.algo-queue.t2
+- type: code
+  title: Первая поставка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n названий. Поставьте их в очередь и выведите первое снятое с головы.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель
+
+      сосна
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: '1
+
+      пихта
+
+      '
+    expected_stdout: 'пихта
+
+      '
+  hints:
+  - Импортируйте deque.
+  - Кладите названия через append.
+  - Снимите голову один раз.
+  solution: "from collections import deque\nn = int(input())\nqueue = deque()\nfor _ in range(n):\n\
+    \    queue.append(input())\nprint(queue.popleft())\n"
+  explanation: Первым выходит то название, которое прочитали первым.
+  id: python.algorithms.algo-queue.t3
+- type: code
+  title: Вся очередь по порядку
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Выведите их в исходном порядке, снимая очередь с головы.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      20
+
+      30
+
+      '
+    expected_stdout: '10
+
+      20
+
+      30
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      '
+    expected_stdout: '4
+
+      5
+
+      '
+  hints:
+  - Числа кладите в хвост.
+  - Снимайте popleft, пока очередь не пуста.
+  - Каждое число печатайте отдельно.
+  solution: "from collections import deque\nn = int(input())\nqueue = deque()\nfor _ in range(n):\n\
+    \    queue.append(int(input()))\nwhile queue:\n    print(queue.popleft())\n"
+  explanation: Порядок выдачи совпадает с порядком чтения.
+  id: python.algorithms.algo-queue.t4
+- type: code
+  title: Сколько осталось
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n названий. Один раз снимите голову и выведите, сколько элементов
+    осталось.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель
+
+      сосна
+
+      пихта
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      дуб
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Сначала заполните очередь.
+  - Один вызов popleft.
+  - Длину печатайте после снятия.
+  solution: "from collections import deque\nn = int(input())\nqueue = deque()\nfor _ in range(n):\n\
+    \    queue.append(input())\nqueue.popleft()\nprint(len(queue))\n"
+  explanation: После одного снятия длина на единицу меньше n.
+  id: python.algorithms.algo-queue.t5
+introduces:
+- id: algo-deque
+  title: Очередь deque
+  summary: Коллекция с добавлением в хвост и снятием с головы без сдвига остальных элементов.

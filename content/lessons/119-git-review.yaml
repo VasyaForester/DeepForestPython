@@ -1,0 +1,187 @@
+id: python.github.git-review
+slug: git-review
+section: github
+title: 'Итог: code review и Actions'
+order: 9
+weight: 2
+prerequisites:
+- python.github.git-conflict
+goal: Решить, можно ли сливать ветку, по ревью и статусу проверок.
+tags:
+- итог
+- review
+- Actions
+theory:
+- 'Ревью читает разницу: команда git diff и список файлов в pull request. GitHub Actions запускает
+  проверки, например шаг python -m pytest. Зелёная проверка — pass, красная — fail.'
+- 'Сливать имеет смысл, когда ревью одобрено и проверки прошли. Песочница не открывает diff
+  и не запускает Actions: на вход приходит уже готовый статус.'
+- Итог раздела собирает историю, запрос и проверку. Новых команд git здесь нет, есть решение
+  можно сливать или ждать.
+examples:
+- title: Проверка прошла
+  code: 'status = ''pass''
+
+    print(''можно сливать'' if status == ''pass'' else ''ждать'')
+
+    '
+  explanation: Статус pass означает, что проверки Actions успешны.
+- title: Проверка упала
+  code: 'status = ''fail''
+
+    print(''можно сливать'' if status == ''pass'' else ''ждать'')
+
+    '
+  explanation: Любой статус кроме pass оставляет запрос в ожидании.
+outcomes:
+- связывать git diff с ревью
+- читать статус pass или fail
+- ждать, если проверка или ревью не готовы
+- не запускать Actions из песочницы
+resources:
+- kind: docs
+  title: Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что смотрят перед merge
+  difficulty: 1
+  context: neutral
+  prompt: Что проверяют по команде git diff и статусу Actions перед слиянием pull request?
+  options:
+  - id: a
+    text: Содержание разницы и что проверки прошли
+  - id: b
+    text: Только длину сообщения коммита
+  - id: c
+    text: Только имя автора
+  answer: a
+  hints:
+  - git diff показывает, что изменилось.
+  - Actions сообщает pass или fail.
+  - Длина сообщения не заменяет проверку.
+  solution: a
+  explanation: Ревью читает diff, Actions отвечает за автоматические проверки.
+  id: python.github.git-review.t1
+- type: predict_output
+  title: Красная проверка
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: ждать
+  - id: b
+    text: можно сливать
+  - id: c
+    text: pass
+  answer: a
+  hints:
+  - status не равен pass.
+  - В этой ветке печатают ждать.
+  - Само слово pass на экран не попадает.
+  solution: a
+  explanation: Упавшая проверка заставляет ждать, а не сливать.
+  code: 'status = ''fail''
+
+    print(''можно сливать'' if status == ''pass'' else ''ждать'')
+
+    '
+  id: python.github.git-review.t2
+- type: code
+  title: Один статус
+  difficulty: 2
+  context: development
+  prompt: Прочитайте pass или fail. Для pass выведите можно сливать, иначе ждать.
+  starter_code: ''
+  tests:
+  - stdin: 'pass
+
+      '
+    expected_stdout: 'можно сливать
+
+      '
+  - stdin: 'fail
+
+      '
+    expected_stdout: 'ждать
+
+      '
+  hints:
+  - Сравнивайте со строкой pass.
+  - Вторая ветка покрывает fail.
+  - Печатайте русскую фразу целиком.
+  solution: 'status = input().strip()
+
+    print(''можно сливать'' if status == ''pass'' else ''ждать'')
+
+    '
+  explanation: Одной успешной проверки достаточно только в этой узкой задаче.
+  id: python.github.git-review.t3
+- type: code
+  title: Две проверки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте два статуса. Выведите можно сливать, только если оба равны pass.
+  starter_code: ''
+  tests:
+  - stdin: 'pass
+
+      pass
+
+      '
+    expected_stdout: 'можно сливать
+
+      '
+  - stdin: 'pass
+
+      fail
+
+      '
+    expected_stdout: 'ждать
+
+      '
+  hints:
+  - Нужны оба равенства сразу.
+  - and не заменяйте на or.
+  - Один fail уже означает ждать.
+  solution: "first = input().strip()\nsecond = input().strip()\nif first == 'pass' and second\
+    \ == 'pass':\n    print('можно сливать')\nelse:\n    print('ждать')\n"
+  explanation: Набор Actions зелёный только целиком.
+  id: python.github.git-review.t4
+- type: code
+  title: Ревью и проверка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте слово одобрено или правки и статус pass или fail. Сливать можно только
+    при одобрено и pass.
+  starter_code: ''
+  tests:
+  - stdin: 'одобрено
+
+      pass
+
+      '
+    expected_stdout: 'можно сливать
+
+      '
+  - stdin: 'правки
+
+      pass
+
+      '
+    expected_stdout: 'ждать
+
+      '
+  hints:
+  - Проверьте оба условия.
+  - Запрос правок важнее зелёной проверки.
+  - Иначе печатайте ждать.
+  solution: "review = input().strip()\nstatus = input().strip()\nif review == 'одобрено' and\
+    \ status == 'pass':\n    print('можно сливать')\nelse:\n    print('ждать')\n"
+  explanation: Слияние ждёт и человека, и зелёных проверок.
+  id: python.github.git-review.t5

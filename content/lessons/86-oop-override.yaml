@@ -1,0 +1,181 @@
+id: python.oop.oop-override
+slug: oop-override
+section: oop
+title: Переопределение и super()
+order: 6
+weight: 1
+prerequisites:
+- python.oop.oop-inherit
+goal: Заменить метод родителя и вызвать прежнюю версию через super().
+tags:
+- super
+- переопределение
+theory:
+- Переопределение — метод с тем же именем у наследника. Вызов pine.label() выполняет версию
+  Pine, а не версию Tree.
+- 'super().label() вызывает метод родителя из метода наследника. К его результату можно дописать
+  свой кусок: дерево сосна.'
+- То же с __init__. super().__init__(name) записывает поля родителя, а наследник следом ставит
+  своё поле, например kind.
+examples:
+- title: Подпись сосны
+  code: "class Tree:\n    def label(self):\n        return 'дерево'\nclass Pine(Tree):\n \
+    \   def label(self):\n        return super().label() + ' сосна'\nprint(Pine().label())\n"
+  explanation: Версия Pine вызывает родительский текст и добавляет сосна. Получается дерево
+    сосна.
+- title: Поле родителя
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\nclass Pine(Tree):\n\
+    \    def __init__(self, name):\n        super().__init__(name)\n        self.kind = 'хвойное'\n\
+    print(Pine('сосна').name)\nprint(Pine('сосна').kind)\n"
+  explanation: super().__init__ записывает name. kind наследник ставит сам.
+outcomes:
+- заменять метод родителя своим
+- вызывать прежнюю версию через super()
+- дополнять результат родителя
+- вызывать родительский __init__ из своего
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кого вызывает super
+  difficulty: 1
+  context: neutral
+  prompt: Что вызывает super().label() внутри Pine.label?
+  options:
+  - id: a
+    text: Метод label родителя
+  - id: b
+    text: Тот же Pine.label ещё раз
+  - id: c
+    text: Функцию print
+  answer: a
+  hints:
+  - super идёт к родителю.
+  - Повторный вызов своей версии зациклил бы метод.
+  - print здесь ни при чём.
+  solution: a
+  explanation: super().label() возвращает текст родителя, наследник дополняет его.
+  id: python.oop.oop-override.t1
+- type: predict_output
+  title: Составная подпись
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: сосна
+  - id: b
+    text: дерево
+  - id: c
+    text: дерево сосна
+  answer: c
+  hints:
+  - Родитель возвращает дерево.
+  - Наследник дописывает пробел и сосна.
+  - Печатается уже склеенная строка.
+  solution: c
+  explanation: Обе части складываются в дерево сосна.
+  code: "class Tree:\n    def label(self):\n        return 'дерево'\nclass Pine(Tree):\n \
+    \   def label(self):\n        return super().label() + ' сосна'\nprint(Pine().label())\n"
+  id: python.oop.oop-override.t2
+- type: code
+  title: Подпись породы
+  difficulty: 2
+  context: development
+  prompt: Прочитайте породу. Tree.label возвращает дерево. Pine.label добавляет к нему пробел
+    и породу через super(). Выведите результат.
+  starter_code: ''
+  tests:
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'дерево сосна
+
+      '
+  - stdin: 'кедр
+
+      '
+    expected_stdout: 'дерево кедр
+
+      '
+  hints:
+  - super().label() берёт текст родителя.
+  - Имя добавьте после пробела.
+  - Вызовите label у объекта Pine.
+  solution: "class Tree:\n    def label(self):\n        return 'дерево'\nclass Pine(Tree):\n\
+    \    def __init__(self, name):\n        self.name = name\n    def label(self):\n     \
+    \   return super().label() + ' ' + self.name\npine = Pine(input())\nprint(pine.label())\n"
+  explanation: Для сосны получится дерево сосна.
+  id: python.oop.oop-override.t3
+- type: code
+  title: Имя через super
+  difficulty: 2
+  context: business
+  prompt: Прочитайте название. Pine в __init__ вызывает super().__init__(name) и ставит kind
+    равным хвойное. Выведите имя и kind.
+  starter_code: ''
+  tests:
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'сосна
+
+      хвойное
+
+      '
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      хвойное
+
+      '
+  hints:
+  - Поле name записывает родитель.
+  - kind запишите после super.
+  - Печатайте оба поля.
+  solution: "class Tree:\n    def __init__(self, name):\n        self.name = name\nclass Pine(Tree):\n\
+    \    def __init__(self, name):\n        super().__init__(name)\n        self.kind = 'хвойное'\n\
+    pine = Pine(input())\nprint(pine.name)\nprint(pine.kind)\n"
+  explanation: Имя приходит из Tree, пометка хвойное — из Pine.
+  id: python.oop.oop-override.t4
+- type: code
+  title: Высота родителя
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте высоту. Tree хранит её. Pine.label через super собирает строку «дерево»,
+    затем пробел и высоту. Выведите подпись.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      '
+    expected_stdout: 'дерево 12
+
+      '
+  - stdin: '8
+
+      '
+    expected_stdout: 'дерево 8
+
+      '
+  hints:
+  - __init__ родителя сохраняет высоту.
+  - super().label() не принимает высоту.
+  - Число переведите в строку.
+  solution: "class Tree:\n    def __init__(self, height):\n        self.height = height\n\
+    \    def label(self):\n        return 'дерево'\nclass Pine(Tree):\n    def label(self):\n\
+    \        return super().label() + ' ' + str(self.height)\nprint(Pine(int(input())).label())\n"
+  explanation: 12 становится подписью дерево 12.
+  id: python.oop.oop-override.t5
+introduces:
+- id: oop-override.super
+  title: super()
+  summary: Вызов метода родителя из переопределённого метода наследника.

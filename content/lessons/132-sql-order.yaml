@@ -1,0 +1,213 @@
+id: python.sql.sql-order
+slug: sql-order
+section: sql
+title: ORDER BY
+order: 2
+weight: 1
+prerequisites:
+- python.sql.sql-select
+goal: Печатать строки в заданном порядке, а не в порядке вставки.
+tags:
+- ORDER BY
+- ASC
+- DESC
+theory:
+- Запрос SELECT name FROM trees ORDER BY height DESC начинает с самого высокого дерева. ASC
+  идёт от меньшего к большему. ORDER BY name сортирует имена по алфавиту, и этот порядок не
+  обязан совпадать с порядком высот.
+- 'Направление нельзя подставлять из строки как попало: в коде два готовых запроса, а ввод
+  только выбирает, какой выполнить. Так текст SQL остаётся под контролем.'
+- LIMIT 2 после ORDER BY height DESC оставляет две верхние строки уже отсортированного результата.
+examples:
+- title: Сначала высокие
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table trees(name\
+    \ text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель', 12),\
+    \ ('сосна', 20), ('берёза', 30)])\nfor row in con.execute('select name from trees order\
+    \ by height desc'):\n    print(row[0])\n"
+  explanation: DESC ставит берёзу 30 первой, затем сосну и ель.
+- title: По имени
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table trees(name\
+    \ text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель', 12),\
+    \ ('сосна', 20), ('берёза', 30)])\nfor row in con.execute('select name from trees order\
+    \ by name'):\n    print(row[0])\n"
+  explanation: Алфавит даёт берёзу, ель, сосну — не тот порядок, что у высот.
+outcomes:
+- сортировать ORDER BY по возрастанию и убыванию
+- не склеивать направление из пользовательского текста
+- отличать порядок имён от порядка высот
+- брать верхние строки через LIMIT
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Куда смотрит DESC
+  difficulty: 1
+  context: neutral
+  prompt: С какой строки начнётся SELECT name FROM trees ORDER BY height DESC?
+  options:
+  - id: a
+    text: С самой большой высоты
+  - id: b
+    text: С самой маленькой высоты
+  - id: c
+    text: Со строки, вставленной первой, без учёта высоты
+  answer: a
+  hints:
+  - DESC означает по убыванию.
+  - ASC был бы по возрастанию.
+  - Порядок вставки без ORDER BY не обещан.
+  solution: a
+  explanation: DESC ставит наибольшее значение первым.
+  id: python.sql.sql-order.t1
+- type: predict_output
+  title: Самое высокое
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: берёза
+  - id: b
+    text: ель
+  - id: c
+    text: сосна
+  answer: a
+  hints:
+  - DESC сортирует высоты по убыванию.
+  - fetchone берёт первую строку результата.
+  - 30 больше 20 и 12.
+  solution: a
+  explanation: Первой после сортировки оказывается берёза.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    row = con.execute(''select name from trees order by height desc'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-order.t2
+- type: code
+  title: Возрастание или убывание
+  difficulty: 2
+  context: development
+  prompt: В таблице ель 12, сосна 20, берёза 30 прочитайте ASC или DESC и выведите имена по
+    высоте в эту сторону.
+  starter_code: ''
+  tests:
+  - stdin: 'ASC
+
+      '
+    expected_stdout: 'ель
+
+      сосна
+
+      берёза
+
+      '
+  - stdin: 'DESC
+
+      '
+    expected_stdout: 'берёза
+
+      сосна
+
+      ель
+
+      '
+  hints:
+  - Держите два готовых запроса.
+  - Не подставляйте слово из ввода внутрь SQL.
+  - Печатайте все имена.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('берёза', 30)])\ndirection = input().strip()\nif direction == 'DESC':\n\
+    \    query = 'select name from trees order by height desc'\nelse:\n    query = 'select\
+    \ name from trees order by height asc'\nfor row in con.execute(query):\n    print(row[0])\n"
+  explanation: Направление выбирает запрос, а не кусок склеенной строки.
+  id: python.sql.sql-order.t3
+- type: code
+  title: Имя или высота
+  difficulty: 2
+  context: development
+  prompt: Прочитайте name или height. Выведите имена по алфавиту либо по возрастанию высоты.
+  starter_code: ''
+  tests:
+  - stdin: 'height
+
+      '
+    expected_stdout: 'ель
+
+      сосна
+
+      берёза
+
+      '
+  - stdin: 'name
+
+      '
+    expected_stdout: 'берёза
+
+      ель
+
+      сосна
+
+      '
+  hints:
+  - Снова выберите один из двух запросов.
+  - Алфавит и высота здесь расходятся.
+  - Печатайте столбец name.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('берёза', 30)])\ncolumn = input().strip()\nif column == 'name':\n\
+    \    query = 'select name from trees order by name'\nelse:\n    query = 'select name from\
+    \ trees order by height asc'\nfor row in con.execute(query):\n    print(row[0])\n"
+  explanation: Разные ORDER BY дают разный порядок одних и тех же строк.
+  id: python.sql.sql-order.t4
+- type: code
+  title: Первые N
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число N и выведите N самых высоких имён, от высокого к низкому.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: 'берёза
+
+      сосна
+
+      '
+  hints:
+  - Сортируйте по убыванию высоты.
+  - LIMIT получает число через ?.
+  - Не сортируйте после обрезки в Python.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('берёза', 30)])\ncount = int(input())\nfor row in con.execute('select\
+    \ name from trees order by height desc limit ?', (count,)):\n    print(row[0])\n"
+  explanation: LIMIT обрезает уже отсортированный результат.
+  id: python.sql.sql-order.t5
+introduces:
+- id: sql-order-by
+  title: ORDER BY
+  summary: Сортировка результата. ORDER BY height DESC начинает с наибольшей высоты.

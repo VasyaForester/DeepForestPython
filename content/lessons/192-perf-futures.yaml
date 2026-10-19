@@ -1,0 +1,181 @@
+id: python.performance.perf-futures
+slug: perf-futures
+section: performance
+title: Пул задач
+order: 8
+weight: 1
+prerequisites:
+- python.performance.perf-process
+goal: Вызвать список функций по порядку и напечатать результаты.
+tags:
+- пул задач
+theory:
+- 'Пул задач берёт работу из очереди и раздаёт её работникам. У concurrent.futures это executor.submit:
+  заявка уходит в пул и позже отдаёт результат. Модуль здесь не импортируется.'
+- 'Пока пула нет, тот же порядок можно показать прямым вызовом: функции лежат в списке и вызываются
+  одна за другой. Результат каждой печатается сразу.'
+- Настоящий пул имеет смысл, когда вызовы долгие и независимые. Список из двух коротких функций
+  только показывает порядок, а не выигрыш.
+examples:
+- title: Две функции
+  code: "def spruce():\n    return 12\ndef pine():\n    return 9\nfor task in (spruce, pine):\n\
+    \    print(task())\n"
+  explanation: Сначала 12, потом 9. submit не вызывался.
+- title: Сумма ответов
+  code: "def twice(n):\n    return n * 2\ndef plus_ten(n):\n    return n + 10\nprint(twice(5)\
+    \ + plus_ten(5))\n"
+  explanation: 10 и 15 в сумме дают 25. Порядок вызовов фиксирован.
+outcomes:
+- класть функции в список и вызывать по порядку
+- читать executor.submit как заявку в пул
+- собирать итог из результатов
+- не заводить пул ради двух мгновенных функций
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает submit
+  difficulty: 1
+  context: neutral
+  prompt: Что обещает executor.submit?
+  options:
+  - id: a
+    text: Отдаёт задачу пулу и позволяет забрать результат позже
+  - id: b
+    text: Считает среднее столбца
+  - id: c
+    text: Запрещает функции
+  answer: a
+  hints:
+  - submit ставит заявку.
+  - Результат приходит не обязательно на этой же строке.
+  - Пул в этом уроке не импортируется.
+  solution: a
+  explanation: submit — заявка в пул, а не немедленная печать.
+  id: python.performance.perf-futures.t1
+- type: predict_output
+  title: Удвоение
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '5'
+  - id: c
+    text: '25'
+  answer: a
+  hints:
+  - Функция удваивает.
+  - Аргумент 5.
+  - 5 * 2 = 10.
+  solution: a
+  explanation: Результат первой задачи равен 10.
+  code: "def twice(n):\n    return n * 2\nprint(twice(5))\n"
+  id: python.performance.perf-futures.t2
+- type: code
+  title: Два результата
+  difficulty: 2
+  context: development
+  prompt: Прочитайте целое n. Вызовите сначала удвоение, потом прибавление 10. Выведите оба
+    результата.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      '
+    expected_stdout: '10
+
+      15
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: '0
+
+      10
+
+      '
+  hints:
+  - Функции лежат в кортеже по порядку.
+  - Каждая получает одно и то же n.
+  - Печатайте по строке на функцию.
+  solution: "def twice(n):\n    return n * 2\ndef plus_ten(n):\n    return n + 10\nn = int(input())\n\
+    for task in (twice, plus_ten):\n    print(task(n))\n"
+  explanation: Список функций вызван по порядку, как очередь без пула.
+  id: python.performance.perf-futures.t3
+- type: code
+  title: Сумма двух задач
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n. Выведите сумму удвоения и прибавления 10.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      '
+    expected_stdout: '25
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '13
+
+      '
+  hints:
+  - Сначала оба вызова.
+  - Потом сложите.
+  - Одно число.
+  solution: "def twice(n):\n    return n * 2\ndef plus_ten(n):\n    return n + 10\nn = int(input())\n\
+    print(twice(n) + plus_ten(n))\n"
+  explanation: Итог собирается из результатов задач.
+  id: python.performance.perf-futures.t4
+- type: code
+  title: Три задачи
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n. По порядку выведите само n, удвоенное n и n минус 1.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      '
+    expected_stdout: '5
+
+      10
+
+      4
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: '2
+
+      4
+
+      1
+
+      '
+  hints:
+  - Порядок кортежа — порядок печати.
+  - Третья функция уменьшает на 1.
+  - Печатайте три строки.
+  solution: "def same(n):\n    return n\ndef twice(n):\n    return n * 2\ndef cheaper(n):\n\
+    \    return n - 1\nn = int(input())\nfor task in (same, twice, cheaper):\n    print(task(n))\n"
+  explanation: Три заявки остаются тремя строками ответа.
+  id: python.performance.perf-futures.t5
+introduces:
+- id: perf-executor
+  title: Заявка в пул
+  summary: executor.submit отдаёт задачу пулу работников. Здесь тот же порядок показан прямым
+    вызовом функций.

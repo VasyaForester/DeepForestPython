@@ -1,0 +1,176 @@
+id: python.vibe.vibe-debug
+slug: vibe-debug
+section: vibe
+title: Отладка и рефакторинг
+order: 4
+weight: 1
+prerequisites:
+- python.vibe.vibe-check
+goal: Исправить сумму, которая теряла последнее число.
+tags:
+- отладка
+- цикл
+- граница
+theory:
+- Сумма от 1 до n легко теряет последнее число, если цикл идёт до n и не включает его. Гипотезу
+  «остановились на шаг раньше» сначала называют, потом проверяют на маленьком n.
+- Для 4 верная сумма равна 10. Сумма без четвёрки была бы 6. Расхождение показывает место
+  ошибки лучше, чем ещё одно общее объяснение.
+- Помощник может предложить причину, но в ответе цикл уже исправлен. Его прогоняют на примере
+  и не принимают только по тексту гипотезы.
+examples:
+- title: Сумма до четырёх
+  code: "n = 4\ntotal = 0\nfor i in range(1, n + 1):\n    total += i\nprint(total)\n"
+  explanation: В сумму входят 1, 2, 3 и 4, получается 10.
+- title: Сумма до трёх
+  code: "n = 3\ntotal = 0\nfor i in range(1, n + 1):\n    total += i\nprint(total)\n"
+  explanation: Граница включает 3, сумма равна 6.
+outcomes:
+- замечать границу, сдвинутую на единицу
+- проверять гипотезу маленьким примером
+- включать n в сумму
+- не принимать объяснение без запуска
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что проверить
+  difficulty: 1
+  context: neutral
+  prompt: Как поступают с гипотезой об ошибке на единицу?
+  options:
+  - id: a
+    text: Прогоняют маленький пример и сверяют сумму
+  - id: b
+    text: Принимают гипотезу без запуска
+  - id: c
+    text: Удаляют цикл и печатают ноль
+  answer: a
+  hints:
+  - Гипотеза — ещё не исправление.
+  - Для 4 ждут 10, а не 6.
+  - Запуск показывает, включена ли последняя граница.
+  solution: a
+  explanation: Гипотезу проверяют примером, а в код кладут уже исправленный цикл.
+  id: python.vibe.vibe-debug.t1
+- type: predict_output
+  title: Сумма четырёх
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '6'
+  - id: c
+    text: '4'
+  answer: a
+  hints:
+  - range включает n.
+  - Слагаемые 1+2+3+4.
+  - Шестёрка была бы без четвёрки.
+  solution: a
+  explanation: Исправленная граница даёт 10.
+  code: "n = 4\ntotal = 0\nfor i in range(1, n + 1):\n    total += i\nprint(total)\n"
+  id: python.vibe.vibe-debug.t2
+- type: code
+  title: Сумма от 1 до n
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и выведите сумму чисел от 1 до n включительно. Цикл должен дойти до
+    n, а не остановиться на шаг раньше.
+  starter_code: "n = int(input())\ntotal = 0\nfor i in range(1, n):\n    total += i\nprint(total)\n"
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '10
+
+      '
+  - stdin: '3
+
+      '
+    expected_stdout: '6
+
+      '
+  hints:
+  - Верхняя граница range — n + 1.
+  - Накопитель обнулите до цикла.
+  - Для 4 ответ 10, для 3 ответ 6.
+  solution: "n = int(input())\ntotal = 0\nfor i in range(1, n + 1):\n    total += i\nprint(total)\n"
+  explanation: Последнее число входит в сумму.
+  id: python.vibe.vibe-debug.t3
+- type: code
+  title: Сумма ввода
+  difficulty: 2
+  context: development
+  prompt: Первая строка — сколько чисел, дальше сами числа. Сложите все, не теряя последнее.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      2
+
+      3
+
+      '
+    expected_stdout: '6
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - Цикл повторяется ровно count раз.
+  - Каждое число читайте внутри цикла.
+  - Не уменьшайте count на единицу.
+  solution: "count = int(input())\ntotal = 0\nfor _ in range(count):\n    total += int(input())\n\
+    print(total)\n"
+  explanation: Все прочитанные числа попадают в сумму.
+  id: python.vibe.vibe-debug.t4
+- type: code
+  title: Последний индекс
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и выведите последнее число, которое попало бы в сумму от 1 до n. Это
+    само n.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Тот же верх range, что и у исправленной суммы.
+  - last перезаписывается на каждом шаге.
+  - Для единицы ответ 1.
+  solution: "n = int(input())\nlast = 0\nfor i in range(1, n + 1):\n    last = i\nprint(last)\n"
+  explanation: По последнему значению видно, что цикл дошёл до n.
+  id: python.vibe.vibe-debug.t5
+introduces:
+- id: vibe-hypothesis
+  title: Гипотеза об ошибке
+  summary: Короткое предположение, например про границу цикла. Его проверяют запуском, а не
+    принимают на слово.

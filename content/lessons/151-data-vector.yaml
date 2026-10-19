@@ -1,0 +1,246 @@
+id: python.data.data-vector
+slug: data-vector
+section: data
+title: Векторизация
+order: 6
+weight: 1
+prerequisites:
+- python.data.data-broadcast
+goal: Складывать два списка одной длины поэлементно и не называть цикл векторизацией.
+tags:
+- векторизация
+- numpy
+theory:
+- Векторизация — одна операция сразу над всеми элементами. В NumPy a + b для двух массивов
+  одной формы складывает пары без цикла Python.
+- 'Цикл for и списковое включение в Python — не векторизация: шаг на каждый элемент выполняет
+  интерпретатор. Результат чисел может совпасть, способ работы другой.'
+- Упражнение складывает пары через zip, потому что NumPy нет в среде браузера.
+examples:
+- title: Две линейки высот
+  code: 'left = [12, 9, 15]
+
+    right = [1, 3, 0]
+
+    paired = [a + b for a, b in zip(left, right)]
+
+    print(paired[0], paired[1], paired[2])
+
+    '
+  explanation: Пары дают 13, 12 и 15. Это тот же ответ, что у векторной суммы, но посчитан
+    циклом.
+- title: Поэлементная разность
+  code: 'spring = [5, 8, 6]
+
+    winter = [2, 1, 4]
+
+    print(spring[0] - winter[0], spring[1] - winter[1], spring[2] - winter[2])
+
+    '
+  explanation: 'Посадки весны минус зима: 3, 7 и 2.'
+outcomes:
+- складывать ряды по позициям
+- отличать цикл Python от векторизации NumPy
+- вычитать ряды одной длины
+- суммировать произведения пар
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое векторизация
+  difficulty: 1
+  context: neutral
+  prompt: Что из этого является векторизацией NumPy?
+  options:
+  - id: a
+    text: Сложение двух массивов одной формы одной операцией a + b
+  - id: b
+    text: Любой цикл for по списку
+  - id: c
+    text: Чтение одной ячейки по индексу
+  answer: a
+  hints:
+  - Цикл Python выполняет шаг за шагом.
+  - Векторная операция идёт по массиву целиком.
+  - Один индекс — это не вектор.
+  solution: a
+  explanation: Совпадение чисел с циклом не делает цикл векторизацией.
+  id: python.data.data-vector.t1
+- type: predict_output
+  title: Сумма пар
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 13 12
+  - id: b
+    text: 12 9
+  - id: c
+    text: 1 3
+  answer: a
+  hints:
+  - Складываются одинаковые позиции.
+  - 12+1 и 9+3.
+  - Исходные списки не печатаются.
+  solution: a
+  explanation: Поэлементная сумма равна 13 и 12.
+  code: 'left = [12, 9]
+
+    right = [1, 3]
+
+    print(left[0] + right[0], left[1] + right[1])
+
+    '
+  id: python.data.data-vector.t2
+- type: code
+  title: Сумма двух рядов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n чисел первого ряда и n чисел второго. Выведите поэлементные
+    суммы.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      1
+
+      3
+
+      0
+
+      '
+    expected_stdout: '13
+
+      12
+
+      15
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      6
+
+      7
+
+      '
+    expected_stdout: '10
+
+      12
+
+      '
+  hints:
+  - Длины рядов равны.
+  - zip собирает пары.
+  - Печатайте сумму каждой пары.
+  solution: "n = int(input())\nleft = [int(input()) for _ in range(n)]\nright = [int(input())\
+    \ for _ in range(n)]\nfor a, b in zip(left, right):\n    print(a + b)\n"
+  explanation: Каждая строка ответа — сумма одной позиции.
+  id: python.data.data-vector.t3
+- type: code
+  title: Разность рядов
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте два ряда одной длины. Выведите поэлементные разности: первый минус второй.'
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      5
+
+      8
+
+      6
+
+      2
+
+      1
+
+      4
+
+      '
+    expected_stdout: '3
+
+      7
+
+      2
+
+      '
+  - stdin: '1
+
+      10
+
+      3
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - Порядок рядов важен.
+  - Вычитайте второй из первого.
+  - Число строк ответа равно n.
+  solution: "n = int(input())\nleft = [int(input()) for _ in range(n)]\nright = [int(input())\
+    \ for _ in range(n)]\nfor a, b in zip(left, right):\n    print(a - b)\n"
+  explanation: Разность по позиции — тот же приём, что и сумма.
+  id: python.data.data-vector.t4
+- type: code
+  title: Скалярное произведение
+  difficulty: 2
+  context: development
+  prompt: Прочитайте два ряда цен и количеств одной длины. Выведите сумму произведений пар.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      10
+
+      5
+
+      3
+
+      4
+
+      '
+    expected_stdout: '50
+
+      '
+  - stdin: '1
+
+      8
+
+      2
+
+      '
+    expected_stdout: '16
+
+      '
+  hints:
+  - Умножьте пару, затем сложите.
+  - Это не сумма всех чисел подряд.
+  - Одно число в ответе.
+  solution: "n = int(input())\nprices = [int(input()) for _ in range(n)]\ncounts = [int(input())\
+    \ for _ in range(n)]\ntotal = 0\nfor price, count in zip(prices, counts):\n    total +=\
+    \ price * count\nprint(total)\n"
+  explanation: Сумма произведений пар — свёртка двух рядов.
+  id: python.data.data-vector.t5
+introduces:
+- id: data-vector
+  title: Векторизация
+  summary: Операция сразу над всеми элементами. В NumPy это a + b, а не цикл Python.

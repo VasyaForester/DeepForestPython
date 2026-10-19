@@ -1,0 +1,176 @@
+id: python.advanced.adv-gen
+slug: adv-gen
+section: advanced
+title: Генераторы и yield
+order: 2
+weight: 1
+prerequisites:
+- python.advanced.adv-iter
+goal: Отдавать значения функцией с yield, не строя список заранее.
+tags:
+- генератор
+- yield
+theory:
+- Генератор — функция с yield. yield отдаёт значение и запоминает место. Следующий запрос
+  продолжает функцию с этой строки, а не запускает её сначала.
+- Это генератор, а не списковое включение. Запись в квадратных скобках с for сразу строит
+  весь список. yield отдаёт элементы по одному, пока их спрашивают, и весь ряд в памяти заранее
+  не держит.
+- list вокруг вызова генератора забирает все значения и собирает обычный список. Пока список
+  не попросили, функция стоит на паузе после yield.
+examples:
+- title: Отсчёт генератором
+  code: "def countdown(start):\n    while start > 0:\n        yield start\n        start -=\
+    \ 1\nprint(list(countdown(3)))\n"
+  explanation: 'Это генератор: yield отдаёт 3, потом 2, потом 1. list забирает их в обычный
+    список. Квадратные скобки со for здесь не используются.'
+- title: Первое значение
+  code: "def countdown(start):\n    while start > 0:\n        yield start\n        start -=\
+    \ 1\nprint(next(countdown(4)))\n"
+  explanation: next берёт только первый yield. Функция ещё не дошла до конца, на экране 4.
+outcomes:
+- писать функцию с yield
+- отличать генератор от спискового включения
+- забирать значения через list или sum
+- продолжать функцию с места прошлого yield
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем генератор не является
+  difficulty: 1
+  context: neutral
+  prompt: Чем функция с yield отличается от спискового включения?
+  options:
+  - id: a
+    text: Отдаёт значения по одному и не строит весь список сразу
+  - id: b
+    text: Сразу создаёт список в квадратных скобках
+  - id: c
+    text: Удаляет цикл while
+  answer: a
+  hints:
+  - yield ставит функцию на паузу.
+  - Квадратные скобки со for строят список целиком.
+  - Цикл внутри генератора остаётся.
+  solution: a
+  explanation: Это генератор. Списковое включение собрало бы все числа сразу, yield этого
+    не делает.
+  id: python.advanced.adv-gen.t1
+- type: predict_output
+  title: Список из генератора
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '[3, 2, 1]'
+  - id: b
+    text: '[1, 2, 3]'
+  - id: c
+    text: '3'
+  answer: a
+  hints:
+  - Первый yield отдаёт start.
+  - Потом start уменьшается.
+  - list забирает значения до конца функции.
+  solution: a
+  explanation: Генератор отдаёт 3, 2 и 1. Это не готовый список в квадратных скобках.
+  code: "def countdown(start):\n    while start > 0:\n        yield start\n        start -=\
+    \ 1\nprint(list(countdown(3)))\n"
+  id: python.advanced.adv-gen.t2
+- type: code
+  title: Числа до нуля
+  difficulty: 2
+  context: development
+  prompt: Прочитайте положительное целое. Генератор countdown отдаёт его и меньшие числа до
+    1. Выведите список.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '[3, 2, 1]
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '[1]
+
+      '
+  hints:
+  - Внутри функции стоит yield, не список.
+  - while уменьшает start.
+  - list только собирает уже отданные значения.
+  solution: "def countdown(start):\n    while start > 0:\n        yield start\n        start\
+    \ -= 1\nprint(list(countdown(int(input()))))\n"
+  explanation: 3 даёт [3, 2, 1]. 1 даёт [1].
+  id: python.advanced.adv-gen.t3
+- type: code
+  title: Сумма генератора
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте положительное целое и выведите сумму значений генератора от этого числа
+    до 1.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '6
+
+      '
+  - stdin: '4
+
+      '
+    expected_stdout: '10
+
+      '
+  hints:
+  - sum забирает yield по одному.
+  - Не собирайте числа в квадратных скобках.
+  - 3 + 2 + 1 равно 6.
+  solution: "def countdown(start):\n    while start > 0:\n        yield start\n        start\
+    \ -= 1\nprint(sum(countdown(int(input()))))\n"
+  explanation: От 3 сумма 6. От 4 сумма 10.
+  id: python.advanced.adv-gen.t4
+- type: code
+  title: Только чётные
+  difficulty: 2
+  context: business
+  prompt: Прочитайте положительное целое. Генератор отдаёт чётные числа от него вниз до 2
+    или самого числа, если оно чётное. Выведите их через пробел.
+  starter_code: ''
+  tests:
+  - stdin: '6
+
+      '
+    expected_stdout: '6 4 2
+
+      '
+  - stdin: '5
+
+      '
+    expected_stdout: '4 2
+
+      '
+  hints:
+  - yield стоит только для чётных.
+  - Нечётное число само в выдачу не попадает.
+  - join печатает уже отданные значения.
+  solution: "def evens(start):\n    while start >= 2:\n        if start % 2 == 0:\n      \
+    \      yield start\n        start -= 1\nprint(' '.join(str(item) for item in evens(int(input()))))\n"
+  explanation: 6 даёт 6 4 2. 5 даёт 4 2.
+  id: python.advanced.adv-gen.t5
+introduces:
+- id: adv-gen.yield
+  title: yield
+  summary: 'Отдаёт значение из генератора и ставит функцию на паузу. Это не списковое включение:
+    список целиком сразу не строится.'

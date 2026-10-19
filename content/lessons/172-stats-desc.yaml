@@ -1,0 +1,234 @@
+id: python.stats.stats-desc
+slug: stats-desc
+section: stats
+title: Описательная статистика
+order: 1
+weight: 1
+prerequisites:
+- python.viz.viz-review
+goal: Считать среднее как сумму, делённую на число значений.
+tags:
+- среднее
+theory:
+- Описательная статистика сжимает столбец в несколько чисел. Среднее — сумма значений, делённая
+  на их количество. Для высот 12, 9 и 15 сумма 36, среднее 12.
+- 'Среднее сдвигает один большой замер на всех. Его не путают с медианой и с самым частым
+  значением. Модуль statistics здесь не вызывается: формула считается напрямую.'
+- Если сумма делится на число строк нацело, ответ печатают целым. Так результат не зависит
+  от лишних знаков дроби.
+examples:
+- title: Средняя высота
+  code: 'heights = [12, 9, 15]
+
+    print(sum(heights) // len(heights))
+
+    '
+  explanation: 36 делится на 3. Среднее равно 12.
+- title: Средняя цена
+  code: 'prices = [10, 20, 30, 40]
+
+    print(sum(prices) // len(prices))
+
+    '
+  explanation: Сумма 100, четыре цены, среднее 25.
+outcomes:
+- считать среднее как сумму делить на длину
+- не подменять среднее медианой
+- печатать целое, когда деление точное
+- обходиться без модуля statistics
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое среднее
+  difficulty: 1
+  context: neutral
+  prompt: Как получить среднее арифметическое?
+  options:
+  - id: a
+    text: Поделить сумму значений на их количество
+  - id: b
+    text: Взять середину упорядоченного ряда
+  - id: c
+    text: Взять самое частое значение
+  answer: a
+  hints:
+  - Сумма и длина — две части формулы.
+  - Середина ряда — медиана.
+  - Частота — другое число.
+  solution: a
+  explanation: Среднее — это sum / len, а не медиана.
+  id: python.stats.stats-desc.t1
+- type: predict_output
+  title: Среднее трёх
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '12'
+  - id: b
+    text: '15'
+  - id: c
+    text: '36'
+  answer: a
+  hints:
+  - Сумма равна 36.
+  - Делитель — 3.
+  - 36 // 3 = 12.
+  solution: a
+  explanation: Средняя высота равна 12.
+  code: 'heights = [12, 9, 15]
+
+    print(sum(heights) // len(heights))
+
+    '
+  id: python.stats.stats-desc.t2
+- type: code
+  title: Среднее высот
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n высот. Сумма делится на n нацело. Выведите среднее целым числом.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '4
+
+      2
+
+      2
+
+      2
+
+      2
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Сложите все высоты.
+  - Поделите на n нацело.
+  - Модуль statistics не нужен.
+  solution: 'n = int(input())
+
+    heights = [int(input()) for _ in range(n)]
+
+    print(sum(heights) // len(heights))
+
+    '
+  explanation: Среднее посчитано формулой сумма делить на длину.
+  id: python.stats.stats-desc.t3
+- type: code
+  title: Сумма и число
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. Выведите сумму и количество на двух строках.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      20
+
+      30
+
+      '
+    expected_stdout: '60
+
+      3
+
+      '
+  - stdin: '1
+
+      8
+
+      '
+    expected_stdout: '8
+
+      1
+
+      '
+  hints:
+  - Сначала сумма.
+  - Потом длина списка.
+  - Среднее из этих двух чисел уже можно получить.
+  solution: 'n = int(input())
+
+    prices = [int(input()) for _ in range(n)]
+
+    print(sum(prices))
+
+    print(len(prices))
+
+    '
+  explanation: Пара чисел показывает, из чего собрано среднее.
+  id: python.stats.stats-desc.t4
+- type: code
+  title: Среднее посадок
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n суточных посадок. Сумма делится на n. Выведите среднее.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      1
+
+      2
+
+      3
+
+      4
+
+      5
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '2
+
+      0
+
+      6
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Делитель равен n.
+  - Ноль в данных допустим.
+  - Ответ — одно целое.
+  solution: 'n = int(input())
+
+    counts = [int(input()) for _ in range(n)]
+
+    print(sum(counts) // n)
+
+    '
+  explanation: Та же формула работает для любого столбца с целой суммой.
+  id: python.stats.stats-desc.t5
+introduces:
+- id: stats-mean
+  title: Среднее
+  summary: Сумма значений, делённая на их количество.

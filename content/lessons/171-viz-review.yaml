@@ -1,0 +1,205 @@
+id: python.viz.viz-review
+slug: viz-review
+section: viz
+title: 'Итог: выбрать тип графика'
+order: 9
+weight: 2
+prerequisites:
+- python.viz.viz-time
+goal: Выбирать гистограмму, линию или столбцы под вопрос, а не под привычку.
+tags:
+- выбор графика
+theory:
+- Тип графика выбирают по вопросу. Распределение одной величины — гистограмма, plt.hist. Ход
+  по времени — линия, plt.plot. Сравнение категорий — столбцы, plt.bar.
+- 'Красивый не тот тип путает ответ: линия из пород делает вид, будто у пород есть порядок
+  времени. Столбцы дней прячут ход ряда.'
+- Упражнение называет тип словами, потому что matplotlib нет в среде браузера.
+examples:
+- title: Слово в тип
+  code: 'kind = "распределение"
+
+    names = {"распределение": "гистограмма", "тренд": "линейный", "категории": "столбцы"}
+
+    print(names[kind])
+
+    '
+  explanation: Вопрос про распределение ведёт к гистограмме.
+- title: Тренд
+  code: 'kind = "тренд"
+
+    names = {"распределение": "гистограмма", "тренд": "линейный", "категории": "столбцы"}
+
+    print(names[kind])
+
+    '
+  explanation: Ход по времени просят показать линией.
+outcomes:
+- выбирать гистограмму для распределения
+- выбирать линию для хода по времени
+- выбирать столбцы для категорий
+- не подменять вопрос более привычной картинкой
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: График распределения
+  difficulty: 1
+  context: neutral
+  prompt: Нужно показать, как высоты разложены по корзинам, а не ход по дням и не сравнение
+    пород. Какой график выбрать?
+  options:
+  - id: a
+    text: Гистограмму
+  - id: b
+    text: Линейный график по дням
+  - id: c
+    text: Столбцы пород
+  answer: a
+  hints:
+  - Одна величина и корзины — распределение.
+  - Дни были бы рядом, если бы вопрос был про ход.
+  - Породы сравнивают столбцами.
+  solution: a
+  explanation: Распределение показывает гистограмма.
+  id: python.viz.viz-review.t1
+- type: predict_output
+  title: Тип для тренда
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: гистограмма
+  - id: b
+    text: линейный
+  - id: c
+    text: столбцы
+  answer: b
+  hints:
+  - Ключ — тренд.
+  - Тренд рисуют линией.
+  - Столбцы отвечают категориям.
+  solution: b
+  explanation: Для тренда выбран линейный график.
+  code: 'names = {"распределение": "гистограмма", "тренд": "линейный", "категории": "столбцы"}
+
+    print(names["тренд"])
+
+    '
+  id: python.viz.viz-review.t2
+- type: code
+  title: Одно слово
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте слово: распределение, тренд или категории. Выведите гистограмма, линейный
+    или столбцы.'
+  starter_code: ''
+  tests:
+  - stdin: 'распределение
+
+      '
+    expected_stdout: 'гистограмма
+
+      '
+  - stdin: 'категории
+
+      '
+    expected_stdout: 'столбцы
+
+      '
+  hints:
+  - Ключи словаря совпадают со словами ввода.
+  - Печатайте значение, не ключ.
+  - Лишних слов в ответе нет.
+  solution: 'names = {"распределение": "гистограмма", "тренд": "линейный", "категории": "столбцы"}
+
+    print(names[input().strip()])
+
+    '
+  explanation: Слово вопроса переводится в тип графика.
+  id: python.viz.viz-review.t3
+- type: code
+  title: Несколько вопросов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n таких слов. Для каждого выведите тип графика.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      тренд
+
+      категории
+
+      '
+    expected_stdout: 'линейный
+
+      столбцы
+
+      '
+  - stdin: '1
+
+      распределение
+
+      '
+    expected_stdout: 'гистограмма
+
+      '
+  hints:
+  - Один вход — одна строка ответа.
+  - Словарь тот же.
+  - Порядок сохраняйте.
+  solution: "names = {\"распределение\": \"гистограмма\", \"тренд\": \"линейный\", \"категории\"\
+    : \"столбцы\"}\nn = int(input())\nfor _ in range(n):\n    print(names[input().strip()])\n"
+  explanation: Каждый вопрос выбирает свой тип.
+  id: python.viz.viz-review.t4
+- type: code
+  title: Три проверки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте три слова по одному на строке. Выведите три типа графиков.
+  starter_code: ''
+  tests:
+  - stdin: 'распределение
+
+      тренд
+
+      категории
+
+      '
+    expected_stdout: 'гистограмма
+
+      линейный
+
+      столбцы
+
+      '
+  - stdin: 'категории
+
+      категории
+
+      тренд
+
+      '
+    expected_stdout: 'столбцы
+
+      столбцы
+
+      линейный
+
+      '
+  hints:
+  - Строк всегда три.
+  - Повторы допустимы.
+  - Печатайте тип, не исходное слово.
+  solution: "names = {\"распределение\": \"гистограмма\", \"тренд\": \"линейный\", \"категории\"\
+    : \"столбцы\"}\nfor _ in range(3):\n    print(names[input().strip()])\n"
+  explanation: Один и тот же словарь закрывает все три вопроса урока.
+  id: python.viz.viz-review.t5

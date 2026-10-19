@@ -1,0 +1,173 @@
+id: python.backend.be-async
+slug: be-async
+section: backend
+title: Асинхронный обработчик
+order: 6
+weight: 1
+prerequisites:
+- python.backend.be-di
+goal: Вызвать переданную функцию fetch и напечатать результат.
+tags:
+- async
+- fetch
+- обработчик
+theory:
+- 'В FastAPI async def нужен, когда обработчик ждёт сеть или диск: на время ожидания worker
+  может взять другой запрос. Счёт на процессоре от слова async быстрее не идёт.'
+- asyncio здесь не запускается. Обработчик вызывает переданную функцию fetch и печатает то,
+  что она вернула.
+- 'В проверке fetch — обычная функция с готовым ответом. Договор тот же: обработчик не ходит
+  за данными сам, он печатает результат fetch.'
+examples:
+- title: Готовый ответ
+  code: "def handler(fetch):\n    print(fetch())\ndef fetch_orders():\n    return '3 заказа'\n\
+    handler(fetch_orders)\n"
+  explanation: handler вызывает fetch и печатает строку 3 заказа.
+- title: Другой fetch
+  code: "def handler(fetch):\n    print(fetch())\ndef fetch_stock():\n    return 'склад'\n\
+    handler(fetch_stock)\n"
+  explanation: Тот же handler печатает то, что вернула другая функция.
+outcomes:
+- отличать ожидание ввода-вывода от счёта
+- передавать fetch в обработчик
+- печатать результат fetch
+- не запускать цикл событий в этом упражнении
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Скорость счёта
+  difficulty: 1
+  context: neutral
+  prompt: Что меняет async у обработчика, который ждёт сеть?
+  options:
+  - id: a
+    text: Ожидание ввода-вывода не занимает worker, но чистый счёт на процессоре быстрее не
+      становится
+  - id: b
+    text: Любой цикл по числам выполняется быстрее
+  - id: c
+    text: Программа начинает проверять типы полей
+  answer: a
+  hints:
+  - async связан с ожиданием, не с арифметикой.
+  - Цикл сложения остаётся циклом.
+  - Здесь asyncio даже не запускается.
+  solution: a
+  explanation: async помогает ждать сеть и диск, а не ускоряет работу процессора.
+  id: python.backend.be-async.t1
+- type: predict_output
+  title: Что вернул fetch
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: fetch
+  - id: c
+    text: None
+  answer: a
+  hints:
+  - print получает результат вызова.
+  - fetch_orders возвращает 3.
+  - Имя функции не печатается.
+  solution: a
+  explanation: На экран попадает строка, которую вернул fetch.
+  code: "def handler(fetch):\n    print(fetch())\ndef fetch_orders():\n    return '3'\nhandler(fetch_orders)\n"
+  id: python.backend.be-async.t2
+- type: code
+  title: Строка из fetch
+  difficulty: 2
+  context: development
+  prompt: handler(fetch) вызывает fetch и печатает результат. Напишите fetch, который читает
+    одну строку, и передайте его в handler.
+  starter_code: ''
+  tests:
+  - stdin: '3 заказа
+
+      '
+    expected_stdout: '3 заказа
+
+      '
+  - stdin: 'склад
+
+      '
+    expected_stdout: 'склад
+
+      '
+  hints:
+  - fetch возвращает строку, а не печатает её сам.
+  - handler делает один вызов.
+  - input стоит внутри fetch.
+  solution: "def handler(fetch):\n    print(fetch())\ndef fetch_line():\n    return input()\n\
+    handler(fetch_line)\n"
+  explanation: Обработчик печатает то, что добыл переданный fetch.
+  id: python.backend.be-async.t3
+- type: code
+  title: Число заказов
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте целое число. fetch возвращает текст вида заказов: N. handler печатает
+    эту строку.'
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: 'заказов: 3
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: 'заказов: 0
+
+      '
+  hints:
+  - Число превратите в строку.
+  - Текст собирает fetch.
+  - Печатает handler.
+  solution: "def handler(fetch):\n    print(fetch())\nn = int(input())\ndef fetch_count():\n\
+    \    return 'заказов: ' + str(n)\nhandler(fetch_count)\n"
+  explanation: fetch готовит фразу, handler только показывает её.
+  id: python.backend.be-async.t4
+- type: code
+  title: Два источника
+  difficulty: 2
+  context: development
+  prompt: Прочитайте слово. Если это склад, fetch возвращает склад. Иначе fetch возвращает
+    заказы. handler печатает результат.
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      '
+    expected_stdout: 'склад
+
+      '
+  - stdin: 'витрина
+
+      '
+    expected_stdout: 'заказы
+
+      '
+  hints:
+  - Выбор текста делает fetch.
+  - handler не смотрит на kind.
+  - Оба варианта — обычные строки.
+  solution: "def handler(fetch):\n    print(fetch())\nkind = input()\ndef fetch_kind():\n\
+    \    if kind == 'склад':\n        return 'склад'\n    return 'заказы'\nhandler(fetch_kind)\n"
+  explanation: Подмена fetch меняет ответ, обработчик остаётся одним.
+  id: python.backend.be-async.t5
+introduces:
+- id: be-async-handler
+  title: Асинхронный обработчик
+  summary: async def в FastAPI ждёт сеть или диск. Счёт на процессоре он не ускоряет.

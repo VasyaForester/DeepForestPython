@@ -1,0 +1,203 @@
+id: python.http.http-headers
+slug: http-headers
+section: http
+title: Заголовки и тело
+order: 3
+weight: 1
+prerequisites:
+- python.http.http-query
+goal: Сложить строки заголовков в словарь и отделить их от тела.
+tags:
+- заголовки
+- тело
+- Host
+theory:
+- 'Заголовок — строка вида Host: shop.example. До двоеточия с пробелом ключ, после — значение.
+  Заголовок Accept: application/json говорит, какой ответ ждут.'
+- В настоящем запросе пустая строка отделяет заголовки от тела. Здесь числом задают, сколько
+  строк являются заголовками, а следующая строка — тело.
+- Словарь удобен, потому что дальше значение достают по имени, а не по номеру строки. Регистр
+  в задачах уже канонический, как в примере Host.
+examples:
+- title: Два заголовка
+  code: "lines = ['Host: shop.example', 'Accept: application/json']\nheaders = {}\nfor line\
+    \ in lines:\n    key, value = line.split(': ', 1)\n    headers[key] = value\nprint(headers['Host'])\n"
+  explanation: Ключ Host получает значение shop.example.
+- title: Тип содержимого
+  code: 'key, value = ''Content-Type: text/plain''.split('': '', 1)
+
+    print(value)
+
+    '
+  explanation: 'После '': '' остаётся text/plain.'
+outcomes:
+- 'разбирать строку Key: value'
+- складывать заголовки в словарь
+- доставать заголовок по имени
+- отделять тело от заголовков
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где значение
+  difficulty: 1
+  context: neutral
+  prompt: 'В строке Host: shop.example что стоит справа от двоеточия и пробела?'
+  options:
+  - id: a
+    text: Значение заголовка
+  - id: b
+    text: Метод GET
+  - id: c
+    text: Тело ответа
+  answer: a
+  hints:
+  - Слева имя заголовка.
+  - Тело идёт после пустой строки, не в этой же.
+  - GET — метод стартовой строки, не заголовок Host.
+  solution: a
+  explanation: Значение заголовка Host — shop.example.
+  id: python.http.http-headers.t1
+- type: predict_output
+  title: Хост из словаря
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: shop.example
+  - id: b
+    text: Host
+  - id: c
+    text: Accept
+  answer: a
+  hints:
+  - 'Строка режется по '': ''.'
+  - В словарь кладут оба куска.
+  - Печатается значение.
+  solution: a
+  explanation: По ключу Host лежит shop.example.
+  code: 'headers = {}
+
+    key, value = ''Host: shop.example''.split('': '', 1)
+
+    headers[key] = value
+
+    print(headers[''Host''])
+
+    '
+  id: python.http.http-headers.t2
+- type: code
+  title: Одно значение
+  difficulty: 2
+  context: development
+  prompt: Прочитайте одну строку заголовка и выведите значение.
+  starter_code: ''
+  tests:
+  - stdin: 'Host: shop.example
+
+      '
+    expected_stdout: 'shop.example
+
+      '
+  - stdin: 'Accept: application/json
+
+      '
+    expected_stdout: 'application/json
+
+      '
+  hints:
+  - Режьте по двоеточию и пробелу.
+  - Печатайте правую часть.
+  - Имя заголовка не нужно.
+  solution: 'key, value = input().strip().split('': '', 1)
+
+    print(value)
+
+    '
+  explanation: 'Значение — всё, что после '': ''.'
+  id: python.http.http-headers.t3
+- type: code
+  title: Нужный заголовок
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число строк, сами заголовки и имя ключа. Выведите значение этого ключа.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      Host: shop.example
+
+      Accept: application/json
+
+      Accept
+
+      '
+    expected_stdout: 'application/json
+
+      '
+  - stdin: '1
+
+      Content-Type: text/plain
+
+      Content-Type
+
+      '
+    expected_stdout: 'text/plain
+
+      '
+  hints:
+  - Сложите пары в словарь.
+  - Последняя строка — какой ключ нужен.
+  - Двоеточие в строке заголовка одно, с пробелом.
+  solution: "count = int(input())\nheaders = {}\nfor _ in range(count):\n    key, value =\
+    \ input().strip().split(': ', 1)\n    headers[key] = value\nprint(headers[input().strip()])\n"
+  explanation: После разбора заголовок достают по имени.
+  id: python.http.http-headers.t4
+- type: code
+  title: Тело после заголовков
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число заголовков, сами заголовки и ещё одну строку тела. Выведите тело.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      Host: shop.example
+
+      заказ=ель
+
+      '
+    expected_stdout: 'заказ=ель
+
+      '
+  - stdin: '2
+
+      Host: shop.example
+
+      Accept: application/json
+
+      текст отчёта
+
+      '
+    expected_stdout: 'текст отчёта
+
+      '
+  hints:
+  - Заголовки нужно прочитать и не печатать.
+  - Следующая строка — тело.
+  - Выведите её как есть.
+  solution: "count = int(input())\nfor _ in range(count):\n    input()\nprint(input().strip())\n"
+  explanation: Тело начинается после блока заголовков.
+  id: python.http.http-headers.t5
+introduces:
+- id: http-header
+  title: HTTP-заголовок
+  summary: 'Строка вида Host: shop.example. Имя и значение разделяет двоеточие с пробелом,
+    тело идёт отдельно.'

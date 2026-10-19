@@ -1,0 +1,173 @@
+id: python.errors.err-try
+slug: err-try
+section: errors
+title: try и except
+order: 2
+weight: 1
+prerequisites:
+- python.errors.err-traceback
+goal: Поймать ValueError и продолжить программу.
+tags:
+- try
+- except
+theory:
+- try ставит вокруг кода, который может упасть. Если внутри поднялось исключение, выполнение
+  try обрывается и ищется подходящий except.
+- except ValueError ловит только ValueError. Другой тип через этот блок не пройдёт. После
+  except программа идёт дальше, а не останавливается.
+- int("нет") поднимает ValueError. В except печатают ошибка. Если строка была числом, except
+  не выполняется и печатается само число.
+examples:
+- title: Число прошло
+  code: "def price(text):\n    return int(text)\ntry:\n    print(price('12'))\nexcept ValueError:\n\
+    \    print('ошибка')\n"
+  explanation: 12 превращается в число, исключения нет, печатается 12.
+- title: Текст не число
+  code: "def price(text):\n    return int(text)\ntry:\n    print(price('нет'))\nexcept ValueError:\n\
+    \    print('ошибка')\n"
+  explanation: int не смог прочитать нет и поднял ValueError. except печатает ошибка.
+outcomes:
+- оборачивать опасный вызов в try
+- ловить ValueError через except
+- продолжать программу после пойманной ошибки
+- отличать успешный результат от ветки ошибки
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кого ловит except
+  difficulty: 1
+  context: neutral
+  prompt: Какое исключение поймает except ValueError?
+  options:
+  - id: a
+    text: Только ValueError
+  - id: b
+    text: Любую ошибку, включая SyntaxError в другой строке
+  - id: c
+    text: Только удачное int
+  answer: a
+  hints:
+  - В except указан конкретный тип.
+  - Удачный int в except не заходит.
+  - Другой тип этот блок не ловит.
+  solution: a
+  explanation: except ValueError срабатывает, когда подняли именно ValueError.
+  id: python.errors.err-try.t1
+- type: predict_output
+  title: Плохая цена
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '-1'
+  - id: b
+    text: ошибка
+  - id: c
+    text: цена
+  answer: b
+  hints:
+  - n меньше нуля.
+  - raise выходит из try.
+  - except печатает ошибка.
+  solution: b
+  explanation: Отрицательная цена ловится, на экран идёт ошибка.
+  code: "def price(n):\n    if n < 0:\n        raise ValueError('цена')\n    return n\ntry:\n\
+    \    print(price(-1))\nexcept ValueError:\n    print('ошибка')\n"
+  id: python.errors.err-try.t2
+- type: code
+  title: Число или ошибка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку. Если это целое число, выведите его. Если нет, выведите ошибка.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: 'нет
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  hints:
+  - int стоит внутри try.
+  - except ловит ValueError.
+  - При успехе печатайте само число.
+  solution: "try:\n    print(int(input()))\nexcept ValueError:\n    print('ошибка')\n"
+  explanation: 12 проходит, нет ловится как ValueError.
+  id: python.errors.err-try.t3
+- type: code
+  title: Положительная цена
+  difficulty: 2
+  context: business
+  prompt: Прочитайте целое число. Функция price возвращает его, а для отрицательного поднимает
+    ValueError. Выведите число или ошибка.
+  starter_code: ''
+  tests:
+  - stdin: '8
+
+      '
+    expected_stdout: '8
+
+      '
+  - stdin: '-3
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  hints:
+  - Проверку знака сделайте в price.
+  - raise стоит до return.
+  - except печатает ошибка.
+  solution: "def price(n):\n    if n < 0:\n        raise ValueError('цена')\n    return n\n\
+    try:\n    print(price(int(input())))\nexcept ValueError:\n    print('ошибка')\n"
+  explanation: 8 возвращается и печатается. -3 поднимает ValueError.
+  id: python.errors.err-try.t4
+- type: code
+  title: Пустая строка
+  difficulty: 2
+  context: security
+  prompt: Прочитайте строку. Пустая строка и нечисловой текст дают ошибка. Иначе выведите
+    целое число.
+  starter_code: ''
+  tests:
+  - stdin: '15
+
+      '
+    expected_stdout: '15
+
+      '
+  - stdin: '
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  hints:
+  - Пустую строку отвергайте до int.
+  - int тоже может поднять ValueError.
+  - Оба случая печатают ошибка.
+  solution: "def price(text):\n    if text == '':\n        raise ValueError('пусто')\n   \
+    \ return int(text)\ntry:\n    print(price(input()))\nexcept ValueError:\n    print('ошибка')\n"
+  explanation: 15 печатается числом. Пустой ввод ловится в except.
+  id: python.errors.err-try.t5
+introduces:
+- id: err-try.try
+  title: try
+  summary: Блок кода, в котором ждут исключение. При ошибке выполнение переходит в except.
+- id: err-try.except
+  title: except
+  summary: Ветка для пойманного типа. except ValueError не останавливает программу.

@@ -1,0 +1,183 @@
+id: python.cli.cli-venv
+slug: cli-venv
+section: cli
+title: venv
+order: 6
+weight: 1
+prerequisites:
+- python.cli.cli-versions
+goal: Выбрать путь к интерпретатору внутри виртуального окружения.
+tags:
+- venv
+- окружение
+- python -m venv
+theory:
+- Команда python -m venv .venv создаёт папку с отдельным интерпретатором и местом для пакетов.
+  На Linux и macOS это .venv/bin/python, на Windows — .venv/Scripts/python.exe.
+- 'Окружение нужно, чтобы пакеты одного проекта не затирали пакеты другого и системный Python.
+  Песочница не создаёт настоящий .venv: программа только выбирает строку пути.'
+- Пока оболочка не активировала окружение, команда python может означать системный интерпретатор.
+  Явный путь .venv/bin/python не оставляет сомнений, какой Python запущен.
+examples:
+- title: Путь Linux
+  code: 'print(''.venv/bin/python'')
+
+    '
+  explanation: В окружении на Linux интерпретатор лежит в bin.
+- title: Выбор пути
+  code: 'mode = ''проект''
+
+    print(''.venv/bin/python'' if mode == ''проект'' else ''python'')
+
+    '
+  explanation: Для проекта печатается путь внутри .venv, не системное имя python.
+outcomes:
+- объяснять, зачем проекту venv
+- выбирать путь интерпретатора внутри .venv
+- собирать команду python -m venv
+- не создавать окружение из песочницы
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем venv
+  difficulty: 1
+  context: neutral
+  prompt: Зачем выполняют python -m venv .venv, а не ставят пакеты в системный Python?
+  options:
+  - id: a
+    text: Чтобы зависимости проекта жили отдельно от других проектов
+  - id: b
+    text: Чтобы удалить сам язык Python
+  - id: c
+    text: Чтобы записать пароль в исходник
+  answer: a
+  hints:
+  - У каждого проекта свои версии пакетов.
+  - Интерпретатор в .venv — копия или ссылка, не удаление системы.
+  - Пароли в код не кладут.
+  solution: a
+  explanation: venv изолирует пакеты проекта.
+  id: python.cli.cli-venv.t1
+- type: predict_output
+  title: Какой Python
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: .venv/bin/python
+  - id: b
+    text: python
+  - id: c
+    text: pip
+  answer: a
+  hints:
+  - mode равен проект.
+  - В этой ветке печатают путь внутри .venv.
+  - pip здесь не выбирают.
+  solution: a
+  explanation: Для проекта берётся интерпретатор окружения.
+  code: 'mode = ''проект''
+
+    print(''.venv/bin/python'' if mode == ''проект'' else ''python'')
+
+    '
+  id: python.cli.cli-venv.t2
+- type: code
+  title: Путь по системе
+  difficulty: 2
+  context: development
+  prompt: Прочитайте windows или linux и выведите путь к Python внутри .venv.
+  starter_code: ''
+  tests:
+  - stdin: 'linux
+
+      '
+    expected_stdout: '.venv/bin/python
+
+      '
+  - stdin: 'windows
+
+      '
+    expected_stdout: '.venv/Scripts/python.exe
+
+      '
+  hints:
+  - Для windows путь содержит Scripts и python.exe.
+  - Для linux путь содержит bin/python.
+  - Папка окружения называется .venv.
+  solution: "system = input().strip()\nif system == 'windows':\n    print('.venv/Scripts/python.exe')\n\
+    else:\n    print('.venv/bin/python')\n"
+  explanation: Раскладка папки .venv зависит от системы.
+  id: python.cli.cli-venv.t3
+- type: code
+  title: Команда создания
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя проекта и выведите команду python -m venv с папкой имя/.venv.
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      '
+    expected_stdout: 'python -m venv склад/.venv
+
+      '
+  - stdin: 'отчёт
+
+      '
+    expected_stdout: 'python -m venv отчёт/.venv
+
+      '
+  hints:
+  - Команда начинается с python -m venv.
+  - Дальше идёт папка проекта и /.venv.
+  - Пробел один, перед путём.
+  solution: 'name = input().strip()
+
+    print(''python -m venv '' + name + ''/.venv'')
+
+    '
+  explanation: Окружение создают отдельно для каждого проекта.
+  id: python.cli.cli-venv.t4
+- type: code
+  title: Системный или свой
+  difficulty: 2
+  context: development
+  prompt: Прочитайте venv или system. Для venv выведите .venv/bin/python, иначе python.
+  starter_code: ''
+  tests:
+  - stdin: 'venv
+
+      '
+    expected_stdout: '.venv/bin/python
+
+      '
+  - stdin: 'system
+
+      '
+    expected_stdout: 'python
+
+      '
+  hints:
+  - Сравните строку с venv.
+  - Вторая ветка — короткое имя python.
+  - Печатайте один путь.
+  solution: 'mode = input().strip()
+
+    print(''.venv/bin/python'' if mode == ''venv'' else ''python'')
+
+    '
+  explanation: Явный путь к .venv не путается с системным python.
+  id: python.cli.cli-venv.t5
+introduces:
+- id: cli-venv
+  title: Виртуальное окружение
+  summary: Папка .venv со своим Python и пакетами. Создаётся командой python -m venv .venv.

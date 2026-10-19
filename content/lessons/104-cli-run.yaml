@@ -1,0 +1,193 @@
+id: python.cli.cli-run
+slug: cli-run
+section: cli
+title: Запуск Python
+order: 3
+weight: 1
+prerequisites:
+- python.cli.cli-paths
+goal: Найти имя скрипта и аргументы в строке запуска.
+tags:
+- python
+- скрипт
+- аргументы
+theory:
+- 'Файл запускают командой python отчёт.py. Слова после имени файла попадают в программу как
+  аргументы: python склад.py 10 передаёт число 10.'
+- 'Песочница не запускает второй интерпретатор и не читает настоящий sys.argv. Строку команды
+  читают из ввода и режут split: имя скрипта — второе слово, после python.'
+- Число аргументов скрипта — это сколько слов осталось после имени файла. Если их нет, аргументов
+  ноль.
+examples:
+- title: Имя файла
+  code: 'words = ''python отчёт.py''.split()
+
+    print(words[1])
+
+    '
+  explanation: Второе слово команды python отчёт.py — имя файла.
+- title: Аргумент после скрипта
+  code: 'words = ''python склад.py 10''.split()
+
+    print(words[1])
+
+    print(len(words) - 2)
+
+    '
+  explanation: склад.py — скрипт, после него один аргумент, поэтому длина минус два равна
+    1.
+outcomes:
+- находить имя файла в команде python
+- считать аргументы после имени скрипта
+- отличать интерпретатор от файла
+- разбирать чужую строку запуска, не читая sys.argv
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где скрипт
+  difficulty: 1
+  context: neutral
+  prompt: В команде python склад.py 10 какое слово является файлом программы?
+  options:
+  - id: a
+    text: склад.py
+  - id: b
+    text: python
+  - id: c
+    text: '10'
+  answer: a
+  hints:
+  - python — имя интерпретатора.
+  - Аргумент 10 стоит после файла.
+  - Файл обычно оканчивается на .py.
+  solution: a
+  explanation: Интерпретатору передают файл вторым словом.
+  id: python.cli.cli-run.t1
+- type: predict_output
+  title: Второе слово
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: склад.py
+  - id: b
+    text: python
+  - id: c
+    text: '10'
+  answer: a
+  hints:
+  - Индекс 1 — второе слово.
+  - python стоит на нулевой позиции.
+  - 10 — уже аргумент скрипта.
+  solution: a
+  explanation: Имя скрипта в этой команде — склад.py.
+  code: 'words = ''python склад.py 10''.split()
+
+    print(words[1])
+
+    '
+  id: python.cli.cli-run.t2
+- type: code
+  title: Имя скрипта
+  difficulty: 2
+  context: development
+  prompt: Прочитайте команду вида python файл.py и выведите имя файла.
+  starter_code: ''
+  tests:
+  - stdin: 'python отчёт.py
+
+      '
+    expected_stdout: 'отчёт.py
+
+      '
+  - stdin: 'python склад.py 10
+
+      '
+    expected_stdout: 'склад.py
+
+      '
+  hints:
+  - Разрежьте строку.
+  - Файл — второе слово.
+  - Интерпретатор python печатать не нужно.
+  solution: 'words = input().split()
+
+    print(words[1])
+
+    '
+  explanation: После python стоит имя скрипта.
+  id: python.cli.cli-run.t3
+- type: code
+  title: Сколько аргументов скрипта
+  difficulty: 2
+  context: development
+  prompt: Прочитайте команду python файл.py и выведите, сколько слов идёт после имени файла.
+  starter_code: ''
+  tests:
+  - stdin: 'python склад.py 10
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: 'python отчёт.py
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Вычтите python и имя файла.
+  - Если слов всего два, аргументов нет.
+  - Печатайте число.
+  solution: 'words = input().split()
+
+    print(len(words) - 2)
+
+    '
+  explanation: Аргументы скрипта начинаются с третьего слова команды.
+  id: python.cli.cli-run.t4
+- type: code
+  title: Скрипт и аргумент
+  difficulty: 2
+  context: development
+  prompt: Прочитайте команду. Выведите имя файла и первый аргумент. Если аргумента нет, второй
+    строкой выведите нет.
+  starter_code: ''
+  tests:
+  - stdin: 'python склад.py 10
+
+      '
+    expected_stdout: 'склад.py
+
+      10
+
+      '
+  - stdin: 'python отчёт.py
+
+      '
+    expected_stdout: 'отчёт.py
+
+      нет
+
+      '
+  hints:
+  - Имя файла всегда второе.
+  - Аргумент есть, если слов больше двух.
+  - Иначе печатайте нет.
+  solution: "words = input().split()\nprint(words[1])\nif len(words) > 2:\n    print(words[2])\n\
+    else:\n    print('нет')\n"
+  explanation: Команда либо несёт первый аргумент, либо скрипт запущен без него.
+  id: python.cli.cli-run.t5
+introduces:
+- id: cli-argv
+  title: Аргументы запуска
+  summary: Слова команды после имени скрипта. В python склад.py 10 аргумент — 10.

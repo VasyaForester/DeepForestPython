@@ -1,0 +1,209 @@
+id: python.data.data-group
+slug: data-group
+section: data
+title: Группировка
+order: 13
+weight: 1
+prerequisites:
+- python.data.data-na
+goal: Складывать значения по имени группы.
+tags:
+- groupby
+- agg
+theory:
+- Группировка собирает строки с одинаковым ключом. В pandas df.groupby('порода')['высота'].sum()
+  даёт сумму высот каждой породы.
+- 'agg — это правило свёртки: sum, count, min. Одна группировка может посчитать несколько
+  правил, но смысл тот же: сначала ключ, потом расчёт внутри группы.'
+- Упражнение копит суммы в словаре, потому что pandas нет в среде браузера.
+examples:
+- title: Суммы пород
+  code: "rows = [{\"порода\": \"ель\", \"высота\": 12}, {\"порода\": \"сосна\", \"высота\"\
+    : 9}, {\"порода\": \"ель\", \"высота\": 15}]\ngroups = {}\nfor row in rows:\n    groups.setdefault(row[\"\
+    порода\"], []).append(row[\"высота\"])\nprint(sum(groups[\"ель\"]))\nprint(len(groups[\"\
+    сосна\"]))\n"
+  explanation: У ели две высоты, сумма 27. У сосны одна запись.
+- title: Число чеков
+  code: "sales = [(\"север\", 3), (\"юг\", 1), (\"север\", 2)]\ncounts = {}\nfor park, count\
+    \ in sales:\n    counts[park] = counts.get(park, 0) + count\nprint(counts[\"север\"])\n\
+    print(counts[\"юг\"])\n"
+  explanation: Север сложил 3 и 2. Юг остался с 1.
+outcomes:
+- собирать строки по ключу
+- суммировать значения внутри группы
+- считать число групп
+- читать groupby и agg как ключ плюс свёртку
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: groupby и agg
+  difficulty: 1
+  context: neutral
+  prompt: Что делает df.groupby('порода')['высота'].sum()?
+  options:
+  - id: a
+    text: Суммирует высоту отдельно внутри каждой породы
+  - id: b
+    text: Сортирует породы по алфавиту и удаляет высоты
+  - id: c
+    text: Оставляет только первую строку таблицы
+  answer: a
+  hints:
+  - groupby режет таблицу по ключу.
+  - sum — правило свёртки, его и называют agg.
+  - Первая строка здесь не особая.
+  solution: a
+  explanation: Сначала группы, затем сумма внутри каждой.
+  id: python.data.data-group.t1
+- type: predict_output
+  title: Сумма ели
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '12'
+  - id: b
+    text: '15'
+  - id: c
+    text: '24'
+  answer: b
+  hints:
+  - В сумму входят только ели.
+  - 12 и 3.
+  - Сосна не прибавляется.
+  solution: b
+  explanation: Сумма группы ель равна 15.
+  code: "rows = [(\"ель\", 12), (\"сосна\", 9), (\"ель\", 3)]\ntotal = 0\nfor name, height\
+    \ in rows:\n    if name == \"ель\":\n        total += height\nprint(total)\n"
+  id: python.data.data-group.t2
+- type: code
+  title: Сумма одной группы
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, n строк порода высота и имя группы. Выведите сумму высот этой породы.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 12
+
+      сосна 9
+
+      ель 15
+
+      ель
+
+      '
+    expected_stdout: '27
+
+      '
+  - stdin: '2
+
+      дуб 4
+
+      дуб 6
+
+      дуб
+
+      '
+    expected_stdout: '10
+
+      '
+  hints:
+  - Копите сумму по имени.
+  - Имя запроса читается последним.
+  - Чужая порода в эту сумму не входит.
+  solution: "n = int(input())\ngroups = {}\nfor _ in range(n):\n    name, height = input().split()\n\
+    \    groups[name] = groups.get(name, 0) + int(height)\ntarget = input().strip()\nprint(groups[target])\n"
+  explanation: Запрос в конце выбирает одну группу из словаря.
+  id: python.data.data-group.t3
+- type: code
+  title: Сколько групп
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n строк порода высота. Выведите число разных пород.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 12
+
+      сосна 9
+
+      ель 15
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      дуб 4
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Множество хранит уникальные имена.
+  - Высота на число групп не влияет.
+  - Печатайте длину множества.
+  solution: "n = int(input())\nnames = set()\nfor _ in range(n):\n    name, height = input().split()\n\
+    \    names.add(name)\nprint(len(names))\n"
+  explanation: Число ключей groupby — это число групп.
+  id: python.data.data-group.t4
+- type: code
+  title: Все суммы по алфавиту
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n строк порода высота. Выведите каждую породу и её сумму высот. Породы
+    идут по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 12
+
+      сосна 9
+
+      ель 15
+
+      '
+    expected_stdout: 'ель 27
+
+      сосна 9
+
+      '
+  - stdin: '2
+
+      юг 1
+
+      север 4
+
+      '
+    expected_stdout: 'север 4
+
+      юг 1
+
+      '
+  hints:
+  - Суммируйте в словаре.
+  - sorted задаёт порядок ключей.
+  - Печатайте имя и сумму.
+  solution: "n = int(input())\ngroups = {}\nfor _ in range(n):\n    name, height = input().split()\n\
+    \    groups[name] = groups.get(name, 0) + int(height)\nfor name in sorted(groups):\n \
+    \   print(name, groups[name])\n"
+  explanation: Полная сводка groupby — строка на каждый ключ.
+  id: python.data.data-group.t5
+introduces:
+- id: data-groupby
+  title: Группировка
+  summary: Разбиение строк по ключу и свёртка внутри группы. В pandas это groupby и agg.

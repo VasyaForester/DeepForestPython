@@ -1,0 +1,250 @@
+id: python.backend.be-db
+slug: be-db
+section: backend
+title: База рядом с маршрутом
+order: 7
+weight: 1
+prerequisites:
+- python.backend.be-async
+goal: Записать строку в sqlite3 в памяти и напечатать её обратно.
+tags:
+- sqlite3
+- таблица
+- запрос
+theory:
+- 'Рядом с маршрутом данные можно держать в sqlite3. Соединение :memory: живёт до конца программы
+  и не создаёт файл.'
+- Таблица создаётся в коде урока. Вставка передаёт значения отдельно от текста запроса, затем
+  select читает ту же строку.
+- Программа печатает поля выбранной строки. Так видно, что запись действительно попала в таблицу,
+  а не осталась только в переменной.
+examples:
+- title: Одна позиция
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table goods(name text, price integer)'')
+
+    con.execute(''insert into goods(name, price) values (?, ?)'', (''ель'', 120))
+
+    row = con.execute(''select name, price from goods'').fetchone()
+
+    print(row[0])
+
+    print(row[1])
+
+    '
+  explanation: Вставка кладёт ель и 120, select возвращает ту же пару.
+- title: Две строки
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table goods(name text, price integer)'')
+
+    con.execute(''insert into goods(name, price) values (?, ?)'', (''ель'', 120))
+
+    con.execute(''insert into goods(name, price) values (?, ?)'', (''сосна'', 80))
+
+    print(con.execute(''select count(*) from goods'').fetchone()[0])
+
+    '
+  explanation: В таблице две строки, count возвращает 2.
+outcomes:
+- открывать sqlite3 в памяти
+- создавать таблицу и вставлять строку
+- читать строку через select
+- печатать поля, полученные из базы
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где лежит база
+  difficulty: 1
+  context: neutral
+  prompt: Куда попадает соединение sqlite3.connect(':memory:')?
+  options:
+  - id: a
+    text: В память на время работы программы
+  - id: b
+    text: В файл goods.db рядом со скриптом
+  - id: c
+    text: В таблицу только после отдельного сервера
+  answer: a
+  hints:
+  - 'Имя :memory: не похоже на путь к файлу.'
+  - После завершения процесса этой базы уже нет.
+  - execute пишет в это соединение.
+  solution: a
+  explanation: База в памяти существует, пока работает программа.
+  id: python.backend.be-db.t1
+- type: predict_output
+  title: Что прочитали
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: goods
+  - id: c
+    text: None
+  answer: a
+  hints:
+  - insert записывает ель.
+  - fetchone возвращает кортеж.
+  - Печатается первый элемент кортежа.
+  solution: a
+  explanation: Из таблицы читается имя ель.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table goods(name text)'')
+
+    con.execute(''insert into goods(name) values (?)'', (''ель'',))
+
+    row = con.execute(''select name from goods'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.backend.be-db.t2
+- type: code
+  title: Вставка из ввода
+  difficulty: 2
+  context: development
+  prompt: Создайте в памяти таблицу goods(name text, price integer). Прочитайте имя и целую
+    цену, вставьте строку и выведите имя и цену из select.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      120
+
+      '
+    expected_stdout: 'ель
+
+      120
+
+      '
+  - stdin: 'сосна
+
+      80
+
+      '
+    expected_stdout: 'сосна
+
+      80
+
+      '
+  hints:
+  - Сначала create table.
+  - В insert передайте кортеж из двух значений.
+  - fetchone даёт одну строку таблицы.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table goods(name text, price integer)'')
+
+    name = input()
+
+    price = int(input())
+
+    con.execute(''insert into goods(name, price) values (?, ?)'', (name, price))
+
+    row = con.execute(''select name, price from goods'').fetchone()
+
+    print(row[0])
+
+    print(row[1])
+
+    '
+  explanation: Прочитанные поля проходят через таблицу и печатаются из неё.
+  id: python.backend.be-db.t3
+- type: code
+  title: Сколько строк
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число N, затем N пар имя и цена. Вставьте все строки в goods и выведите
+    count.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель
+
+      120
+
+      сосна
+
+      80
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      пихта
+
+      40
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Цикл повторяется N раз.
+  - Каждая пара — две строки ввода.
+  - count(*) считает строки таблицы.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ goods(name text, price integer)')\ncount = int(input())\nfor _ in range(count):\n  \
+    \  name = input()\n    price = int(input())\n    con.execute('insert into goods(name,\
+    \ price) values (?, ?)', (name, price))\nprint(con.execute('select count(*) from goods').fetchone()[0])\n"
+  explanation: Число напечатанное в конце совпадает с числом вставок.
+  id: python.backend.be-db.t4
+- type: code
+  title: Выбор по имени
+  difficulty: 2
+  context: development
+  prompt: В таблице уже есть ель 120 и сосна 80. Прочитайте имя и выведите его цену. Если
+    имени нет, выведите нет.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '120
+
+      '
+  - stdin: 'пихта
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Условие where сравнивает имя.
+  - fetchone возвращает None, если строки нет.
+  - Цену берите из первого поля кортежа.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ goods(name text, price integer)')\ncon.execute('insert into goods(name, price) values\
+    \ (?, ?)', ('ель', 120))\ncon.execute('insert into goods(name, price) values (?, ?)',\
+    \ ('сосна', 80))\nname = input()\nrow = con.execute('select price from goods where name\
+    \ = ?', (name,)).fetchone()\nif row is None:\n    print('нет')\nelse:\n    print(row[0])\n"
+  explanation: Запрос по имени либо находит цену, либо сообщает, что записи нет.
+  id: python.backend.be-db.t5
+introduces:
+- id: be-sqlite-route
+  title: База у маршрута
+  summary: 'Таблица sqlite3 в памяти рядом с обработчиком: insert записывает, select читает.'

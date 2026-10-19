@@ -1,0 +1,239 @@
+id: python.data.data-na
+slug: data-na
+section: data
+title: Пропуски
+order: 12
+weight: 1
+prerequisites:
+- python.data.data-columns
+goal: Замечать пропуск и либо выбрасывать его, либо заполнять.
+tags:
+- пропуски
+- fillna
+theory:
+- Пропуск в таблице — пустое значение. В pandas его часто видно как NaN. dropna выбрасывает
+  строки с пропуском, fillna подставляет запасное число.
+- 'В обычном Python пропуск здесь записывают как None или как пустую строку. Ноль — это измерение,
+  а не пропуск: его нельзя тихо выбросить.'
+- Упражнение отличает знак «-» от числа и считает по спискам, потому что pandas нет в среде
+  браузера.
+examples:
+- title: Выбросить пропуски
+  code: 'heights = [12, None, 9, None]
+
+    clean = [height for height in heights if height is not None]
+
+    print(len(clean))
+
+    print(sum(clean))
+
+    '
+  explanation: Два пропуска выброшены. Остались 12 и 9, сумма 21.
+- title: Заполнить нулём
+  code: 'prices = ["120", "", "80"]
+
+    filled = [int(price) if price else 0 for price in prices]
+
+    print(sum(filled))
+
+    '
+  explanation: Пустая строка стала 0. Сумма 200.
+outcomes:
+- отличать пропуск от нуля
+- выбрасывать пропуски перед суммой
+- заполнять пропуск заданным числом
+- понимать dropna и fillna
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: fillna
+  difficulty: 1
+  context: neutral
+  prompt: Что делает df['высота'].fillna(0) в pandas?
+  options:
+  - id: a
+    text: Подставляет 0 вместо пропусков и оставляет известные высоты
+  - id: b
+    text: Удаляет столбец высота
+  - id: c
+    text: Меняет все высоты на 0
+  answer: a
+  hints:
+  - fillna заполняет пропуск.
+  - Известные числа не трогает.
+  - 0 здесь запасное значение, не новый столбец.
+  solution: a
+  explanation: Заполнение сохраняет длину столбца.
+  id: python.data.data-na.t1
+- type: predict_output
+  title: Сумма без пропусков
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '21'
+  - id: b
+    text: '12'
+  - id: c
+    text: '3'
+  answer: a
+  hints:
+  - None не входит в сумму.
+  - Остаются 12 и 9.
+  - Длина списка — не ответ.
+  solution: a
+  explanation: Сумма известных высот равна 21.
+  code: 'heights = [12, None, 9]
+
+    clean = [height for height in heights if height is not None]
+
+    print(sum(clean))
+
+    '
+  id: python.data.data-na.t2
+- type: code
+  title: Выбросить прочерк
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n токенов. Прочерк «-» — пропуск. Выведите число оставшихся значений
+    и их сумму.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      12
+
+      -
+
+      9
+
+      -
+
+      '
+    expected_stdout: '2
+
+      21
+
+      '
+  - stdin: '2
+
+      5
+
+      7
+
+      '
+    expected_stdout: '2
+
+      12
+
+      '
+  hints:
+  - Прочерк не превращайте в int.
+  - Считайте только числа.
+  - Печатайте количество и сумму.
+  solution: "n = int(input())\nvalues = []\nfor _ in range(n):\n    token = input().strip()\n\
+    \    if token != \"-\":\n        values.append(int(token))\nprint(len(values))\nprint(sum(values))\n"
+  explanation: 'Это dropna: пропуски не входят в расчёт.'
+  id: python.data.data-na.t3
+- type: code
+  title: Заполнить числом
+  difficulty: 2
+  context: development
+  prompt: Первая строка — чем заполнять прочерк, вторая — n, дальше токены. Прочерк замените
+    этим числом и выведите сумму.
+  starter_code: ''
+  tests:
+  - stdin: '0
+
+      4
+
+      12
+
+      -
+
+      9
+
+      -
+
+      '
+    expected_stdout: '21
+
+      '
+  - stdin: '5
+
+      2
+
+      -
+
+      3
+
+      '
+    expected_stdout: '8
+
+      '
+  hints:
+  - Запасное число читается первым.
+  - Известные токены прибавляйте как есть.
+  - Прочерк заменяйте, а не пропускайте.
+  solution: "fill = int(input())\nn = int(input())\ntotal = 0\nfor _ in range(n):\n    token\
+    \ = input().strip()\n    total += fill if token == \"-\" else int(token)\nprint(total)\n"
+  explanation: 'Длина ряда не меняется: пропуск стал числом.'
+  id: python.data.data-na.t4
+- type: code
+  title: Заполнить минимумом
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n токенов. Хотя бы одно число есть. Замените каждый прочерк минимумом
+    известных чисел и выведите сумму.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      12
+
+      -
+
+      9
+
+      -
+
+      '
+    expected_stdout: '39
+
+      '
+  - stdin: '3
+
+      4
+
+      4
+
+      -
+
+      '
+    expected_stdout: '12
+
+      '
+  hints:
+  - Сначала соберите известные числа.
+  - Минимум станет заменой.
+  - Суммируйте уже полный ряд.
+  solution: "n = int(input())\ntokens = [input().strip() for _ in range(n)]\nknown = [int(token)\
+    \ for token in tokens if token != \"-\"]\nfill = min(known)\ntotal = 0\nfor token in tokens:\n\
+    \    total += fill if token == \"-\" else int(token)\nprint(total)\n"
+  explanation: Заполнение минимумом не выдумывает число вне наблюдаемого края.
+  id: python.data.data-na.t5
+introduces:
+- id: data-missing
+  title: Пропуск
+  summary: 'Пустое значение в столбце: None, пустая строка или NaN в pandas.'
+- id: data-fillna
+  title: Заполнение пропуска
+  summary: Подстановка запасного значения вместо пустого. В pandas это fillna.

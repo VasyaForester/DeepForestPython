@@ -1,0 +1,179 @@
+id: python.errors.err-logging
+slug: err-logging
+section: errors
+title: Журнал
+order: 6
+weight: 1
+prerequisites:
+- python.errors.err-chain
+goal: Записать событие строкой уровня и текста без модуля logging.
+tags:
+- журнал
+- уровень
+theory:
+- 'Событие удобно печатать одной строкой: уровень и текст. Функция log(level, text) выводит
+  LEVEL и текст через пробел, уровень приводит к верхнему регистру.'
+- INFO оставляют для обычного хода, ERROR — для сбоя. log("info", "склад открыт") печатает
+  INFO склад открыт. log("error", "нет файла") печатает ERROR нет файла.
+- 'В стандартной библиотеке ту же роль выполняет модуль logging: у него есть уровни и вывод
+  в журнал. Здесь журнал — сама функция log, она только печатает строку.'
+examples:
+- title: Два уровня
+  code: "def log(level, text):\n    print(level.upper() + ' ' + text)\nlog('info', 'склад\
+    \ открыт')\nlog('error', 'нет файла')\n"
+  explanation: upper делает INFO и ERROR. Текст остаётся как передали.
+- title: Один вызов
+  code: "def log(level, text):\n    print(level.upper() + ' ' + text)\nlog('warning', 'мало\
+    \ ели')\n"
+  explanation: Уровень warning становится WARNING, дальше через пробел текст мало ели.
+outcomes:
+- печатать уровень и текст одной функцией
+- приводить уровень к верхнему регистру
+- различать INFO и ERROR
+- понимать, что модуль logging ведёт такой журнал
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем занимается logging
+  difficulty: 1
+  context: neutral
+  prompt: Для чего в стандартной библиотеке модуль logging?
+  options:
+  - id: a
+    text: Чтобы записывать события с уровнем, а не разбрасывать случайные print
+  - id: b
+    text: Чтобы считать квадратный корень
+  - id: c
+    text: Чтобы открывать CSV
+  answer: a
+  hints:
+  - У события есть уровень.
+  - Корень считает math.
+  - CSV пишет другой модуль.
+  solution: a
+  explanation: 'logging ведёт журнал уровней. Функция log на этом уроке печатает ту же пару:
+    уровень и текст.'
+  id: python.errors.err-logging.t1
+- type: predict_output
+  title: Строка журнала
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: error нет файла
+  - id: b
+    text: ERROR нет файла
+  - id: c
+    text: нет файла
+  answer: b
+  hints:
+  - upper поднимает регистр уровня.
+  - Между уровнем и текстом пробел.
+  - Текст ошибки не отбрасывается.
+  solution: b
+  explanation: Получается ERROR нет файла.
+  code: "def log(level, text):\n    print(level.upper() + ' ' + text)\nlog('error', 'нет файла')\n"
+  id: python.errors.err-logging.t2
+- type: code
+  title: Строка из ввода
+  difficulty: 2
+  context: development
+  prompt: Прочитайте уровень и текст с двух строк. Функция log печатает уровень в верхнем
+    регистре и текст.
+  starter_code: ''
+  tests:
+  - stdin: 'info
+
+      склад открыт
+
+      '
+    expected_stdout: 'INFO склад открыт
+
+      '
+  - stdin: 'error
+
+      нет файла
+
+      '
+    expected_stdout: 'ERROR нет файла
+
+      '
+  hints:
+  - Сначала уровень, потом текст.
+  - upper только у уровня.
+  - Между ними один пробел.
+  solution: "def log(level, text):\n    print(level.upper() + ' ' + text)\nlog(input(), input())\n"
+  explanation: info становится INFO, error становится ERROR.
+  id: python.errors.err-logging.t3
+- type: code
+  title: Успех или сбой
+  difficulty: 2
+  context: business
+  prompt: Прочитайте целое число. Если оно больше нуля, запишите INFO ok. Иначе запишите ERROR
+    мало.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: 'INFO ok
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: 'ERROR мало
+
+      '
+  hints:
+  - Сравните число с нулём.
+  - У положительного уровень info.
+  - У остальных уровень error.
+  solution: "def log(level, text):\n    print(level.upper() + ' ' + text)\nif int(input())\
+    \ > 0:\n    log('info', 'ok')\nelse:\n    log('error', 'мало')\n"
+  explanation: 4 даёт INFO ok. 0 даёт ERROR мало.
+  id: python.errors.err-logging.t4
+- type: code
+  title: Имя в журнале
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте уровень и название. Выведите строку журнала вида LEVEL название принято.
+  starter_code: ''
+  tests:
+  - stdin: 'info
+
+      ель
+
+      '
+    expected_stdout: 'INFO ель принято
+
+      '
+  - stdin: 'error
+
+      сосна
+
+      '
+    expected_stdout: 'ERROR сосна принято
+
+      '
+  hints:
+  - Второй аргумент соберите из названия.
+  - Слово принято добавьте в текст.
+  - Уровень по-прежнему в верхнем регистре.
+  solution: "def log(level, text):\n    print(level.upper() + ' ' + text)\nlog(input(), input()\
+    \ + ' принято')\n"
+  explanation: Для ели выйдет INFO ель принято.
+  id: python.errors.err-logging.t5
+introduces:
+- id: err-logging.log
+  title: Журнал
+  summary: Строка из уровня и текста. Модуль logging делает это в библиотеке, функция log
+    печатает ту же пару.

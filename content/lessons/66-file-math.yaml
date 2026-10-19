@@ -1,0 +1,201 @@
+id: python.files.file-math
+slug: file-math
+section: files
+title: math
+order: 8
+weight: 1
+prerequisites:
+- python.files.file-re
+goal: Считать корень и целую часть вниз средствами math.
+tags:
+- math
+- корень
+theory:
+- 'Модуль math содержит математические функции. math.sqrt возвращает квадратный корень как
+  дробное число: корень из 9 равен 3.0, не целое 3.'
+- math.floor отбрасывает дробную часть вниз, к меньшему целому. floor от корня из 20 равен
+  4, потому что корень около 4.47.
+- Корень из суммы квадратов катетов — длина гипотенузы. floor от неё убирает дробную часть,
+  если результат нужен целым.
+examples:
+- title: Корень и floor
+  code: 'import math
+
+    print(math.sqrt(9))
+
+    print(math.floor(math.sqrt(20)))
+
+    '
+  explanation: Корень из 9 печатается как 3.0. Корень из 20 чуть больше 4, floor даёт 4.
+- title: Гипотенуза
+  code: 'import math
+
+    print(math.floor(math.sqrt(3 * 3 + 4 * 4)))
+
+    '
+  explanation: 3²+4²=25, корень 5.0, floor оставляет 5.
+outcomes:
+- вызывать math.sqrt
+- округлять вниз через math.floor
+- помнить, что sqrt возвращает float
+- считать целую длину гипотенузы
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что возвращает sqrt
+  difficulty: 1
+  context: neutral
+  prompt: Чему равен math.sqrt(9) по типу результата?
+  options:
+  - id: a
+    text: Дробному 3.0
+  - id: b
+    text: Целому 3 без дробной части
+  - id: c
+    text: Строке 9
+  answer: a
+  hints:
+  - sqrt возвращает float.
+  - Целую часть вниз даёт floor.
+  - В строку число само не превращается.
+  solution: a
+  explanation: Даже у точного корня результат sqrt — float, поэтому печать показывает 3.0.
+  id: python.files.file-math.t1
+- type: predict_output
+  title: floor корня
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '4.47'
+  - id: b
+    text: '4'
+  - id: c
+    text: '20'
+  answer: b
+  hints:
+  - Корень из 20 больше 4 и меньше 5.
+  - floor идёт вниз.
+  - Само число 20 не печатается.
+  solution: b
+  explanation: floor(4.47...) равен 4.
+  code: 'import math
+
+    print(math.floor(math.sqrt(20)))
+
+    '
+  id: python.files.file-math.t2
+- type: code
+  title: Целый корень
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте целое число и выведите math.floor от его квадратного корня.
+  starter_code: ''
+  tests:
+  - stdin: '20
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '9
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Импортируйте math.
+  - sqrt от введённого числа.
+  - Снаружи floor.
+  solution: 'import math
+
+    print(math.floor(math.sqrt(int(input()))))
+
+    '
+  explanation: Для 20 ответ 4, для 9 ответ 3.
+  id: python.files.file-math.t3
+- type: code
+  title: Целая часть
+  difficulty: 2
+  context: development
+  prompt: Прочитайте дробное число и выведите его целую часть вниз.
+  starter_code: ''
+  tests:
+  - stdin: '3.9
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '4.0
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - float принимает дробное.
+  - floor отбрасывает хвост вниз.
+  - 4.0 остаётся 4.
+  solution: 'import math
+
+    print(math.floor(float(input())))
+
+    '
+  explanation: 3.9 становится 3, 4.0 становится 4.
+  id: python.files.file-math.t4
+- type: code
+  title: Гипотенуза
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте два катета, целые числа с двух строк. Выведите floor от корня суммы их
+    квадратов.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      4
+
+      '
+    expected_stdout: '5
+
+      '
+  - stdin: '6
+
+      8
+
+      '
+    expected_stdout: '10
+
+      '
+  hints:
+  - Возведите каждый катет в квадрат умножением.
+  - Сложите и возьмите sqrt.
+  - Заверните результат во floor.
+  solution: 'import math
+
+    a = int(input())
+
+    b = int(input())
+
+    print(math.floor(math.sqrt(a * a + b * b)))
+
+    '
+  explanation: 3 и 4 дают 5. 6 и 8 дают 10.
+  id: python.files.file-math.t5
+introduces:
+- id: file-math.sqrt
+  title: math.sqrt
+  summary: Квадратный корень. Результат — float, даже если корень целый.
+- id: file-math.floor
+  title: math.floor
+  summary: Целая часть вниз. floor(4.47) равен 4.

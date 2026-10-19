@@ -1,0 +1,265 @@
+id: python.viz.viz-box
+slug: viz-box
+section: viz
+title: Коробка с усами
+order: 6
+weight: 1
+prerequisites:
+- python.viz.viz-hist
+goal: Печатать минимум, медиану и максимум ряда нечётной длины.
+tags:
+- ящик с усами
+theory:
+- Ящик с усами, plt.boxplot, показывает середину ряда и края. Линия внутри ящика — медиана.
+  Сам ящик строится по квартилям, усы тянутся к краям, если их не отсекли как выбросы.
+- Медиана делит упорядоченный ряд пополам. При нечётном числе значений это средний элемент,
+  а не среднее арифметическое. Ряд 3, 7, 9, 12, 15 имеет медиану 9.
+- Упражнение печатает минимум, медиану и максимум, потому что matplotlib нет в среде браузера.
+  Квартили здесь не подменяются другими формулами.
+examples:
+- title: Пять высот
+  code: 'heights = [9, 3, 12, 7, 15]
+
+    ordered = sorted(heights)
+
+    print(ordered[0])
+
+    print(ordered[len(ordered) // 2])
+
+    print(ordered[-1])
+
+    '
+  explanation: Упорядоченный ряд 3, 7, 9, 12, 15. Медиана — 9.
+- title: Три цены
+  code: 'prices = [40, 10, 20]
+
+    ordered = sorted(prices)
+
+    print(ordered[1])
+
+    '
+  explanation: Середина упорядоченных цен 10, 20, 40 — это 20.
+outcomes:
+- отличать медиану от среднего
+- брать медиану из середины нечётного ряда
+- читать линию внутри ящика
+- печатать минимум и максимум как края
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что внутри ящика
+  difficulty: 1
+  context: neutral
+  prompt: Что отмечает линия внутри ящика plt.boxplot?
+  options:
+  - id: a
+    text: Медиану
+  - id: b
+    text: Среднее арифметическое
+  - id: c
+    text: Число наблюдений
+  answer: a
+  hints:
+  - Медиана делит упорядоченный ряд.
+  - Среднее может лежать в другом месте.
+  - Число наблюдений на ящик не рисуют линией.
+  solution: a
+  explanation: Линия в ящике — медиана, а не сумма, делённая на длину.
+  id: python.viz.viz-box.t1
+- type: predict_output
+  title: Медиана трёх
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '10'
+  - id: b
+    text: '20'
+  - id: c
+    text: '40'
+  answer: b
+  hints:
+  - Сначала ряд упорядочивают.
+  - Середина из трёх — второй элемент.
+  - 10, 20, 40.
+  solution: b
+  explanation: Медиана равна 20.
+  code: 'prices = [40, 10, 20]
+
+    ordered = sorted(prices)
+
+    print(ordered[len(ordered) // 2])
+
+    '
+  id: python.viz.viz-box.t2
+- type: code
+  title: Три отметки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте нечётное n и n высот. Выведите минимум, медиану и максимум.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      9
+
+      3
+
+      12
+
+      7
+
+      15
+
+      '
+    expected_stdout: '3
+
+      9
+
+      15
+
+      '
+  - stdin: '3
+
+      40
+
+      10
+
+      20
+
+      '
+    expected_stdout: '10
+
+      20
+
+      40
+
+      '
+  hints:
+  - Отсортируйте ряд.
+  - Медиана стоит по индексу n // 2.
+  - Края — первый и последний.
+  solution: 'n = int(input())
+
+    ordered = sorted(int(input()) for _ in range(n))
+
+    print(ordered[0])
+
+    print(ordered[n // 2])
+
+    print(ordered[-1])
+
+    '
+  explanation: Три числа — текстовый конспект ящика для нечётного ряда.
+  id: python.viz.viz-box.t3
+- type: code
+  title: Только медиана
+  difficulty: 2
+  context: development
+  prompt: Прочитайте нечётное n и n цен. Выведите медиану.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      2
+
+      8
+
+      4
+
+      1
+
+      9
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      6
+
+      '
+    expected_stdout: '6
+
+      '
+  hints:
+  - Сортировка обязательна.
+  - При одном числе медиана равна ему.
+  - Среднее не считайте.
+  solution: 'n = int(input())
+
+    ordered = sorted(int(input()) for _ in range(n))
+
+    print(ordered[n // 2])
+
+    '
+  explanation: Медиана берётся из середины упорядоченного ряда.
+  id: python.viz.viz-box.t4
+- type: code
+  title: Минимум и максимум
+  difficulty: 2
+  context: development
+  prompt: Прочитайте нечётное n и n посадок. Выведите минимум и максимум — края усов в этом
+    упрощении.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      4
+
+      9
+
+      1
+
+      '
+    expected_stdout: '1
+
+      9
+
+      '
+  - stdin: '5
+
+      8
+
+      2
+
+      2
+
+      2
+
+      11
+
+      '
+    expected_stdout: '2
+
+      11
+
+      '
+  hints:
+  - Края не требуют медианы.
+  - Повторы не мешают.
+  - Печатайте два числа.
+  solution: 'n = int(input())
+
+    values = [int(input()) for _ in range(n)]
+
+    print(min(values))
+
+    print(max(values))
+
+    '
+  explanation: Усы в этом уроке доходят до минимума и максимума.
+  id: python.viz.viz-box.t5
+introduces:
+- id: viz-boxplot
+  title: Ящик с усами
+  summary: Сводка середины и краёв ряда. В matplotlib это plt.boxplot, линия в ящике — медиана.

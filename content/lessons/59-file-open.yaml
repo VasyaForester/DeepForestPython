@@ -1,0 +1,185 @@
+id: python.files.file-open
+slug: file-open
+section: files
+title: with и open
+order: 1
+weight: 1
+prerequisites:
+- python.algorithms.algo-review
+goal: Записать текст в файл и прочитать его обратно через with.
+tags:
+- with
+- open
+- файл
+theory:
+- open открывает файл по имени. Режим «w» создаёт файл заново и открывает его для записи,
+  режим «r» — для чтения. write записывает строку, read возвращает весь текст как одну строку.
+- 'Конструкция with open(...) as note сама закрывает файл, когда блок заканчивается. Отдельный
+  close не нужен: файл закроется и при обычном выходе из блока, и если внутри блока произойдёт
+  ошибка.'
+- Имя note.txt означает файл в текущей папке. Аргумент encoding="utf-8" задаёт, как сохранить
+  буквы. После выхода из with тот же файл можно открыть снова и прочитать только что записанный
+  текст.
+examples:
+- title: Запись и чтение
+  code: "with open('note.txt', 'w', encoding='utf-8') as note:\n    note.write('ель 4')\n\
+    with open('note.txt', encoding='utf-8') as note:\n    print(note.read())\n"
+  explanation: write кладёт в файл текст ель 4. Второй with читает его целиком, print показывает
+    ту же строку.
+- title: Две строки
+  code: "with open('note.txt', 'w', encoding='utf-8') as note:\n    note.write('сосна\\n')\n\
+    \    note.write('дуб\\n')\nwith open('note.txt', encoding='utf-8') as note:\n    print(note.read().splitlines()[1])\n"
+  explanation: В файле две строки. splitlines даёт список, индекс 1 — это дуб.
+outcomes:
+- открывать файл через with
+- записывать текст методом write
+- читать файл методом read
+- закрывать файл выходом из блока with
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем with
+  difficulty: 1
+  context: neutral
+  prompt: Что делает with open(...) as note?
+  options:
+  - id: a
+    text: Открывает файл и закрывает его в конце блока
+  - id: b
+    text: Удаляет файл сразу после write
+  - id: c
+    text: Превращает текст в число
+  answer: a
+  hints:
+  - with связан с открытием и закрытием.
+  - write как раз сохраняет текст.
+  - Числа из текста само не делает.
+  solution: a
+  explanation: Блок with гарантирует закрытие файла.
+  id: python.files.file-open.t1
+- type: predict_output
+  title: Что прочитали
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: note.txt
+  - id: b
+    text: ель
+  - id: c
+    text: пустая строка
+  answer: b
+  hints:
+  - write записал ель.
+  - Второй with читает файл.
+  - print показывает текст, а не имя файла.
+  solution: b
+  explanation: В файле лежит ель, read возвращает эту строку.
+  code: "with open('note.txt', 'w', encoding='utf-8') as note:\n    note.write('ель')\nwith\
+    \ open('note.txt', encoding='utf-8') as note:\n    print(note.read())\n"
+  id: python.files.file-open.t2
+- type: code
+  title: Сохранить строку
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку, запишите её в note.txt и выведите текст, прочитанный из файла.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  hints:
+  - Сначала прочитайте строку.
+  - Режим w создаёт файл заново.
+  - Печатайте то, что вернул read.
+  solution: "text = input()\nwith open('note.txt', 'w', encoding='utf-8') as note:\n    note.write(text)\n\
+    with open('note.txt', encoding='utf-8') as note:\n    print(note.read())\n"
+  explanation: Файл хранит введённую строку, второй with достаёт её обратно.
+  id: python.files.file-open.t3
+- type: code
+  title: Две записи
+  difficulty: 2
+  context: business
+  prompt: Прочитайте две строки. Запишите каждую с переводом строки в note.txt и выведите
+    вторую строку из файла.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      сосна
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  - stdin: 'дуб
+
+      кедр
+
+      '
+    expected_stdout: 'кедр
+
+      '
+  hints:
+  - Запишите обе строки.
+  - Между ними нужен перевод строки.
+  - Индекс 1 — вторая строка.
+  solution: "first = input()\nsecond = input()\nwith open('note.txt', 'w', encoding='utf-8')\
+    \ as note:\n    note.write(first + '\\n')\n    note.write(second + '\\n')\nwith open('note.txt',\
+    \ encoding='utf-8') as note:\n    print(note.read().splitlines()[1])\n"
+  explanation: splitlines убирает переводы строк, вторая строка файла печатается отдельно.
+  id: python.files.file-open.t4
+- type: code
+  title: Длина текста
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте строку, сохраните её в note.txt и выведите число символов, прочитанных
+    из файла.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: '5
+
+      '
+  hints:
+  - Запишите введённый текст без лишнего перевода строки.
+  - Прочитайте файл заново.
+  - len считает символы.
+  solution: "text = input()\nwith open('note.txt', 'w', encoding='utf-8') as note:\n    note.write(text)\n\
+    with open('note.txt', encoding='utf-8') as note:\n    print(len(note.read()))\n"
+  explanation: 'Длина берётся из текста в файле: у ель три буквы, у сосна пять.'
+  id: python.files.file-open.t5
+introduces:
+- id: file-open.with
+  title: with и файл
+  summary: Открывает файл и закрывает его в конце блока, в том числе если внутри блока произошла
+    ошибка.
+- id: file-open.open
+  title: open
+  summary: Открывает файл по имени. Режим w перезаписывает файл, read возвращает записанный
+    текст.

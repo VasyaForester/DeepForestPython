@@ -1,0 +1,200 @@
+id: python.http.http-errors
+slug: http-errors
+section: http
+title: Ошибки клиента
+order: 7
+weight: 1
+prerequisites:
+- python.http.http-timeout
+goal: Не повторять 404 и отличать его от ответа сервера 5xx.
+tags:
+- '404'
+- 5xx
+- повтор
+theory:
+- 'Код 404 означает, что путь неверен: повтор того же httpx.get("https://sklad.example/missing")
+  снова вернёт 404. Четырёхсотые коды не лечат повтором.'
+- 'Код 503 и другие 5xx могут быть временным сбоем, их иногда повторяют. Песочница не делает
+  настоящих запросов: решение принимается по числу кода.'
+- Если в серии ответов встретился 4xx, повторы пора прекратить. Успех 200 тоже останавливает
+  серию, но уже удачно.
+examples:
+- title: Не повторять 404
+  code: 'code = 404
+
+    print(''не повторять'' if 400 <= code <= 499 else ''повторить'')
+
+    '
+  explanation: 404 входит в ошибки клиента, повтор того же адреса бесполезен.
+- title: Можно повторить 503
+  code: 'code = 503
+
+    print(''повторить'' if 500 <= code <= 599 else ''не повторять'')
+
+    '
+  explanation: 503 — ответ сервера, временный сбой имеет смысл повторить.
+outcomes:
+- не повторять 404 и другие 4xx
+- допускать повтор для 5xx
+- останавливать серию на ошибке клиента
+- ограничивать число повторов серверной ошибки
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Почему не 404
+  difficulty: 1
+  context: neutral
+  prompt: Почему один и тот же вызов httpx.get("https://sklad.example/missing") не повторяют
+    после 404?
+  options:
+  - id: a
+    text: Путь не найден, повтор пришлёт тот же 404
+  - id: b
+    text: 404 всегда означает временный сбой сервера
+  - id: c
+    text: 404 значит, что ответ ещё в пути
+  answer: a
+  hints:
+  - 404 — ошибка клиента.
+  - Адрес от повтора сам не появится.
+  - Временные сбои чаще выглядят как 503.
+  solution: a
+  explanation: Повтор не чинит неверный путь.
+  id: python.http.http-errors.t1
+- type: predict_output
+  title: Решение для 404
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: не повторять
+  - id: b
+    text: повторить
+  - id: c
+    text: успех
+  answer: a
+  hints:
+  - 404 лежит между 400 и 499.
+  - Условие истинно.
+  - Слово успех в этом выражении не используется.
+  solution: a
+  explanation: Четырёхсотый код не повторяют.
+  code: 'code = 404
+
+    print(''не повторять'' if 400 <= code <= 499 else ''повторить'')
+
+    '
+  id: python.http.http-errors.t2
+- type: code
+  title: Повторять ли
+  difficulty: 2
+  context: development
+  prompt: Прочитайте код. Для 4xx выведите не повторять, для 5xx — повторить, иначе готово.
+  starter_code: ''
+  tests:
+  - stdin: '404
+
+      '
+    expected_stdout: 'не повторять
+
+      '
+  - stdin: '503
+
+      '
+    expected_stdout: 'повторить
+
+      '
+  hints:
+  - Сначала проверьте четырёхсотые.
+  - Потом пятисотые.
+  - 200 попал бы в готово.
+  solution: "code = int(input())\nif 400 <= code <= 499:\n    print('не повторять')\nelif\
+    \ 500 <= code <= 599:\n    print('повторить')\nelse:\n    print('готово')\n"
+  explanation: Класс кода решает, есть ли смысл в повторе.
+  id: python.http.http-errors.t3
+- type: code
+  title: Серия ответов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число кодов и сами коды. На 4xx сразу выведите не повторять. На 200 выведите
+    200. Коды 5xx пропускайте, пока не встретится иной исход.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      503
+
+      503
+
+      200
+
+      '
+    expected_stdout: '200
+
+      '
+  - stdin: '2
+
+      503
+
+      404
+
+      '
+    expected_stdout: 'не повторять
+
+      '
+  hints:
+  - 5xx не заканчивает цикл.
+  - 4xx заканчивает его отказом.
+  - Первый код вне этих классов печатайте числом.
+  solution: "count = int(input())\ndecision = 'готово'\nfor _ in range(count):\n    code =\
+    \ int(input())\n    if 400 <= code <= 499:\n        decision = 'не повторять'\n      \
+    \  break\n    if 500 <= code <= 599:\n        continue\n    decision = str(code)\n   \
+    \ break\nprint(decision)\n"
+  explanation: Серия может пережить 503 и обязана остановиться на 404.
+  id: python.http.http-errors.t4
+- type: code
+  title: Попытка и стоп
+  difficulty: 2
+  context: development
+  prompt: Прочитайте код и номер попытки. На 4xx выведите стоп. На 5xx при попытке меньше
+    3 выведите ещё раз, иначе стоп. Иначе готово.
+  starter_code: ''
+  tests:
+  - stdin: '503
+
+      1
+
+      '
+    expected_stdout: 'ещё раз
+
+      '
+  - stdin: '404
+
+      1
+
+      '
+    expected_stdout: 'стоп
+
+      '
+  hints:
+  - 404 проверяйте раньше лимита попыток.
+  - 503 на первой попытке ещё можно повторить.
+  - Четвёртая попытка пятисотого уже была бы стоп.
+  solution: "code = int(input())\nattempt = int(input())\nif 400 <= code <= 499:\n    print('стоп')\n\
+    elif 500 <= code <= 599 and attempt < 3:\n    print('ещё раз')\nelif 500 <= code <= 599:\n\
+    \    print('стоп')\nelse:\n    print('готово')\n"
+  explanation: Ошибка клиента останавливает повторы сразу, ошибка сервера — только после лимита.
+  id: python.http.http-errors.t5
+introduces:
+- id: http-client-error
+  title: Ошибка клиента 4xx
+  summary: 'Код вроде 404: запрос составлен неверно или путь не найден. Повтор того же запроса
+    не помогает.'

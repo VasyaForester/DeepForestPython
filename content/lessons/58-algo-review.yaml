@@ -1,0 +1,199 @@
+id: python.algorithms.algo-review
+slug: algo-review
+section: algorithms
+title: 'Итог: динамическое программирование'
+order: 15
+weight: 2
+prerequisites:
+- python.algorithms.algo-greedy
+goal: Заполнить таблицу ответов и выбрать структуру под вопрос журнала.
+tags:
+- итог
+- динамическое программирование
+theory:
+- 'Новый синтаксис здесь не цель. Урок собирает прежние идеи: список как таблица, цикл по
+  уже готовым клеткам и выбор структуры под вопрос. Динамическое программирование заполняет
+  клетку из меньших ответов, а не начинает перебор сначала.'
+- Числа, где каждый следующий член равен сумме двух предыдущих, держат в списке. Нулевая клетка
+  равна 0, первая равна 1. Дальше клетка складывает две предыдущие, и на индексе 6 получается
+  8.
+- 'Маленький набор предметов смотрит на вес и цену и решает, лучше ли взять предмет при данном
+  остатке вместимости. Цикл по вместимости идёт с конца, чтобы один предмет не взяли дважды.
+  Структуру выбирают по вопросу: стек для отмены, очередь для раннего заказа, словарь для
+  остатка по имени, таблица для таких ответов.'
+examples:
+- title: Шестой член
+  code: "n = 6\ntable = [0, 1]\nfor i in range(2, n + 1):\n    table.append(table[i - 1] +\
+    \ table[i - 2])\nprint(table[n])\n"
+  explanation: Клетки 0, 1, 1, 2, 3, 5, 8. На индексе 6 стоит 8.
+- title: Два предмета
+  code: "items = [(1, 2), (2, 3)]\ncap = 2\ntable = [0] * (cap + 1)\nfor weight, value in\
+    \ items:\n    w = cap\n    while w >= weight:\n        if table[w - weight] + value >\
+    \ table[w]:\n            table[w] = table[w - weight] + value\n        w = w - 1\nprint(table[cap])\n"
+  explanation: Вмещается либо цена 2, либо цена 3. Таблица оставляет 3.
+outcomes:
+- заполнять таблицу от меньших ответов к большим
+- считать член последовательности по двум предыдущим
+- выбирать лучшую укладку по весу и цене
+- подбирать стек, очередь, словарь или таблицу под вопрос
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какая структура
+  difficulty: 1
+  context: neutral
+  prompt: Последнее действие журнала нужно отменить первым. Какая структура подходит?
+  options:
+  - id: a
+    text: Стек
+  - id: b
+    text: Очередь
+  - id: c
+    text: Таблица уже посчитанных сумм
+  answer: a
+  hints:
+  - Отмена забирает последнее действие.
+  - Очередь отдаёт раннее, не позднее.
+  - Таблица хранит ответы по индексу, а не порядок действий.
+  solution: a
+  explanation: Стек как раз снимает то, что положили последним.
+  id: python.algorithms.algo-review.t1
+- type: predict_output
+  title: Клетка шесть
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '8'
+  - id: b
+    text: '6'
+  - id: c
+    text: '13'
+  answer: a
+  hints:
+  - Клетки начинаются с 0 и 1.
+  - Каждая новая равна сумме двух предыдущих.
+  - На индексе 6 стоит 8.
+  solution: a
+  explanation: Таблица до индекса 6 заканчивается числом 8.
+  code: "n = 6\ntable = [0, 1]\nfor i in range(2, n + 1):\n    table.append(table[i - 1] +\
+    \ table[i - 2])\nprint(table[n])\n"
+  id: python.algorithms.algo-review.t2
+- type: code
+  title: Член последовательности
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n не меньше 0. Нулевая клетка 0, первая 1, каждая следующая — сумма двух
+    предыдущих. Выведите клетку n.
+  starter_code: ''
+  tests:
+  - stdin: '6
+
+      '
+    expected_stdout: '8
+
+      '
+  - stdin: '3
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Отдельно обработайте n равное 0.
+  - Список растите до индекса n.
+  - Печатайте table[n].
+  solution: "n = int(input())\nif n == 0:\n    print(0)\nelse:\n    table = [0, 1]\n    for\
+    \ i in range(2, n + 1):\n        table.append(table[i - 1] + table[i - 2])\n    print(table[n])\n"
+  explanation: Ответ берётся из готовой клетки, а не из повторного разбора с нуля.
+  id: python.algorithms.algo-review.t3
+- type: code
+  title: Лучшая укладка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте вместимость, затем n, затем n пар вес и цена. Каждый предмет можно взять
+    не больше одного раза. Выведите наибольшую сумму цен, которая помещается.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      2
+
+      1
+
+      2
+
+      2
+
+      3
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '5
+
+      1
+
+      4
+
+      5
+
+      '
+    expected_stdout: '5
+
+      '
+  hints:
+  - Идите по вместимости с конца к весу предмета.
+  - Берите вариант только если он больше текущего.
+  - Предмет тяжелее вместимости не помещается.
+  solution: "cap = int(input())\nn = int(input())\nitems = []\nfor _ in range(n):\n    weight\
+    \ = int(input())\n    value = int(input())\n    items.append((weight, value))\ntable =\
+    \ []\nfor _ in range(cap + 1):\n    table.append(0)\nfor weight, value in items:\n   \
+    \ w = cap\n    while w >= weight:\n        if table[w - weight] + value > table[w]:\n\
+    \            table[w] = table[w - weight] + value\n        w = w - 1\nprint(table[cap])\n"
+  explanation: Обратный проход не даёт взять один и тот же предмет дважды.
+  id: python.algorithms.algo-review.t4
+- type: code
+  title: Монеты таблицей
+  difficulty: 2
+  context: development
+  prompt: Прочитайте сумму. Монеты 1, 5 и 10. Заполните таблицу наименьшего числа монет для
+    каждой суммы от 0 до прочитанной. Выведите ответ для этой суммы.
+  starter_code: ''
+  tests:
+  - stdin: '28
+
+      '
+    expected_stdout: '6
+
+      '
+  - stdin: '8
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Клетка 0 равна 0.
+  - Для суммы i смотрите i-1, и при возможности i-5 и i-10.
+  - Берите минимум среди этих вариантов.
+  solution: "amount = int(input())\ntable = [0]\nfor i in range(1, amount + 1):\n    best\
+    \ = table[i - 1] + 1\n    if i >= 5 and table[i - 5] + 1 < best:\n        best = table[i\
+    \ - 5] + 1\n    if i >= 10 and table[i - 10] + 1 < best:\n        best = table[i - 10]\
+    \ + 1\n    table.append(best)\nprint(table[amount])\n"
+  explanation: Каждая клетка опирается на уже посчитанные меньшие суммы.
+  id: python.algorithms.algo-review.t5
+introduces:
+- id: algo-dp
+  title: Динамическое программирование
+  summary: Клетка таблицы строится из уже посчитанных меньших ответов, без повторного полного
+    перебора.

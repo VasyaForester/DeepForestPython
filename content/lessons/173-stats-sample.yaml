@@ -1,0 +1,299 @@
+id: python.stats.stats-sample
+slug: stats-sample
+section: stats
+title: Выборка и генеральная совокупность
+order: 2
+weight: 1
+prerequisites:
+- python.stats.stats-desc
+goal: Различать все объекты и те, которые попали в замер.
+tags:
+- выборка
+theory:
+- Генеральная совокупность — все объекты вопроса, например все деревья парка. Выборка — те,
+  которые измерили. Среднее выборки может не совпасть со средним парка.
+- Маленькая выборка легко пропускает крайние деревья. Поэтому размер выборки пишут рядом с
+  выводом. Перенос числа с трёх елей на весь парк — отдельное решение, не свойство среднего.
+- Упражнение печатает оба размера и оба средних целыми. Модуль statistics не используется.
+examples:
+- title: Парк и замер
+  code: 'population = [12, 9, 15, 8, 10, 12]
+
+    sample = population[:3]
+
+    print(len(population))
+
+    print(len(sample))
+
+    '
+  explanation: В парке 6 деревьев, в выборке первые 3.
+- title: Два средних
+  code: 'population = [12, 9, 15, 8, 10, 12]
+
+    sample = population[:3]
+
+    print(sum(population) // len(population))
+
+    print(sum(sample) // len(sample))
+
+    '
+  explanation: Среднее парка 11, среднее трёх первых высот 12.
+outcomes:
+- отличать совокупность от выборки
+- писать размер выборки рядом с выводом
+- считать среднее только по измеренным
+- не переносить среднее выборки на весь парк без оговорки
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем опасна выборка
+  difficulty: 1
+  context: neutral
+  prompt: Почему среднее трёх деревьев может не описать весь парк?
+  options:
+  - id: a
+    text: В выборку могли не попасть другие высоты
+  - id: b
+    text: Среднее всегда равно максимуму
+  - id: c
+    text: Размер выборки не влияет на вывод
+  answer: a
+  hints:
+  - Выборка — часть совокупности.
+  - Три дерева не обязаны быть типичными.
+  - Размер выборки как раз важен.
+  solution: a
+  explanation: Неизмеренные деревья могут сдвинуть среднее парка.
+  id: python.stats.stats-sample.t1
+- type: predict_output
+  title: Размеры
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 4 2
+  - id: b
+    text: 2 4
+  - id: c
+    text: 4 4
+  answer: a
+  hints:
+  - Сначала длина всей совокупности.
+  - Срез из двух — выборка.
+  - Печатаются два размера.
+  solution: a
+  explanation: Совокупность из 4, выборка из 2.
+  code: 'population = [4, 4, 4, 8]
+
+    sample = population[:2]
+
+    print(len(population), len(sample))
+
+    '
+  id: python.stats.stats-sample.t2
+- type: code
+  title: Два размера
+  difficulty: 2
+  context: development
+  prompt: Прочитайте N и N высот парка, затем n. Выборка — первые n высот. Выведите N и n.
+  starter_code: ''
+  tests:
+  - stdin: '6
+
+      12
+
+      9
+
+      15
+
+      8
+
+      10
+
+      12
+
+      3
+
+      '
+    expected_stdout: '6
+
+      3
+
+      '
+  - stdin: '4
+
+      4
+
+      4
+
+      4
+
+      4
+
+      2
+
+      '
+    expected_stdout: '4
+
+      2
+
+      '
+  hints:
+  - N читается до высот.
+  - n не больше N.
+  - Печатайте две длины.
+  solution: 'total = int(input())
+
+    population = [int(input()) for _ in range(total)]
+
+    sample_size = int(input())
+
+    sample = population[:sample_size]
+
+    print(len(population))
+
+    print(len(sample))
+
+    '
+  explanation: Рядом стоят размер парка и размер замера.
+  id: python.stats.stats-sample.t3
+- type: code
+  title: Среднее выборки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте парк и n так же. Сумма первых n высот делится на n. Выведите среднее
+    выборки.
+  starter_code: ''
+  tests:
+  - stdin: '6
+
+      12
+
+      9
+
+      15
+
+      8
+
+      10
+
+      12
+
+      3
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '4
+
+      4
+
+      4
+
+      4
+
+      4
+
+      2
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Берёте только первые n.
+  - Делите сумму выборки на n.
+  - Остальной парк в это среднее не входит.
+  solution: 'total = int(input())
+
+    population = [int(input()) for _ in range(total)]
+
+    sample_size = int(input())
+
+    sample = population[:sample_size]
+
+    print(sum(sample) // len(sample))
+
+    '
+  explanation: Среднее выборки считается только по измеренным строкам.
+  id: python.stats.stats-sample.t4
+- type: code
+  title: Оба средних
+  difficulty: 2
+  context: development
+  prompt: Прочитайте парк и n. Обе суммы делятся на свои длины. Выведите среднее парка и среднее
+    выборки.
+  starter_code: ''
+  tests:
+  - stdin: '6
+
+      12
+
+      9
+
+      15
+
+      8
+
+      10
+
+      12
+
+      3
+
+      '
+    expected_stdout: '11
+
+      12
+
+      '
+  - stdin: '4
+
+      4
+
+      4
+
+      4
+
+      4
+
+      4
+
+      '
+    expected_stdout: '4
+
+      4
+
+      '
+  hints:
+  - Сначала среднее всех высот.
+  - Потом среднее первых n.
+  - Совпадение двух чисел тоже допустимо.
+  solution: 'total = int(input())
+
+    population = [int(input()) for _ in range(total)]
+
+    sample_size = int(input())
+
+    sample = population[:sample_size]
+
+    print(sum(population) // len(population))
+
+    print(sum(sample) // len(sample))
+
+    '
+  explanation: Расхождение двух средних показывает, что выборка — не весь парк.
+  id: python.stats.stats-sample.t5
+introduces:
+- id: stats-sample-size
+  title: Выборка
+  summary: Измеренная часть совокупности. Её среднее может отличаться от среднего всех объектов.

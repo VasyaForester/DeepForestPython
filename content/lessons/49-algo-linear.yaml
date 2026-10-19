@@ -1,0 +1,219 @@
+id: python.algorithms.algo-linear
+slug: algo-linear
+section: algorithms
+title: Линейный поиск
+order: 6
+weight: 1
+prerequisites:
+- python.algorithms.algo-queue
+goal: Найти индекс цены в списке или вернуть -1.
+tags:
+- поиск
+- индекс
+theory:
+- Линейный поиск сравнивает искомое значение с элементами списка по порядку, с начала. Список
+  не обязан быть отсортирован. Как только значение совпало, функция возвращает его индекс.
+- 'Если список кончился без совпадения, возвращают -1. Ноль для отказа не годится: нулевой
+  индекс принадлежит первому элементу. Вызывающий код отличает находку от промаха по этому
+  ответу.'
+- В худшем случае сравнений столько, сколько элементов. На коротком журнале это приемлемо.
+  Функция возвращает число, а печать остаётся снаружи.
+examples:
+- title: Индекс сосны
+  code: "def find(items, target):\n    for i in range(len(items)):\n        if items[i] ==\
+    \ target:\n            return i\n    return -1\nprint(find(['ель', 'сосна', 'пихта'],\
+    \ 'сосна'))\n"
+  explanation: Сосна стоит на индексе 1, его и возвращают.
+- title: Цены нет
+  code: "def find(items, target):\n    for i in range(len(items)):\n        if items[i] ==\
+    \ target:\n            return i\n    return -1\nprint(find([10, 20, 30], 5))\n"
+  explanation: Пятёрки в списке нет, функция возвращает -1.
+outcomes:
+- просматривать список с начала
+- возвращать индекс первого совпадения
+- возвращать -1, если значения нет
+- не использовать ноль как признак промаха
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем обозначить промах
+  difficulty: 1
+  context: neutral
+  prompt: Что вернуть, если искомого значения в списке нет?
+  options:
+  - id: a
+    text: Число -1
+  - id: b
+    text: Индекс 0
+  - id: c
+    text: Длину списка как будто это позиция
+  answer: a
+  hints:
+  - Ноль уже занят первым элементом.
+  - Промах надо отличить от любой позиции.
+  - Условились возвращать -1.
+  solution: a
+  explanation: Минус один означает, что значение не нашли.
+  id: python.algorithms.algo-linear.t1
+- type: predict_output
+  title: Где сосна
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '1'
+  - id: b
+    text: '-1'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - Счёт индекса начинается с нуля.
+  - Ель стоит на нуле.
+  - Сосна — следующий элемент.
+  solution: a
+  explanation: Сосна находится на индексе 1.
+  code: "def find(items, target):\n    for i in range(len(items)):\n        if items[i] ==\
+    \ target:\n            return i\n    return -1\nprint(find(['ель', 'сосна', 'пихта'],\
+    \ 'сосна'))\n"
+  id: python.algorithms.algo-linear.t2
+- type: code
+  title: Индекс цены
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n целых, затем искомую цену. Верните её индекс или -1 и выведите
+    это число.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      20
+
+      30
+
+      20
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      9
+
+      '
+    expected_stdout: '-1
+
+      '
+  hints:
+  - Идите по индексам с нуля.
+  - На совпадении сразу верните индекс.
+  - После цикла верните -1.
+  solution: "def find(items, target):\n    for i in range(len(items)):\n        if items[i]\
+    \ == target:\n            return i\n    return -1\nn = int(input())\nitems = []\nfor _\
+    \ in range(n):\n    items.append(int(input()))\ntarget = int(input())\nprint(find(items,\
+    \ target))\n"
+  explanation: Функция возвращает позицию первого совпадения или -1.
+  id: python.algorithms.algo-linear.t3
+- type: code
+  title: Индекс породы
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n названий, затем искомое название. Выведите индекс или -1.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель
+
+      сосна
+
+      пихта
+
+      пихта
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      дуб
+
+      ель
+
+      '
+    expected_stdout: '-1
+
+      '
+  hints:
+  - Названия оставляйте строками.
+  - Сравнивайте их целиком.
+  - Искомое читайте последним.
+  solution: "def find(items, target):\n    for i in range(len(items)):\n        if items[i]\
+    \ == target:\n            return i\n    return -1\nn = int(input())\nitems = []\nfor _\
+    \ in range(n):\n    items.append(input())\ntarget = input()\nprint(find(items, target))\n"
+  explanation: Поиск по строкам устроен так же, как по числам.
+  id: python.algorithms.algo-linear.t4
+- type: code
+  title: Первая цена выше порога
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n цен, затем порог. Выведите индекс первой цены строго больше
+    порога или -1.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      5
+
+      9
+
+      4
+
+      6
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: '2
+
+      1
+
+      2
+
+      10
+
+      '
+    expected_stdout: '-1
+
+      '
+  hints:
+  - Сравнение строгое.
+  - Верните индекс, не саму цену.
+  - Если больше порога никого нет, верните -1.
+  solution: "def find_above(items, limit):\n    for i in range(len(items)):\n        if items[i]\
+    \ > limit:\n            return i\n    return -1\nn = int(input())\nitems = []\nfor _ in\
+    \ range(n):\n    items.append(int(input()))\nlimit = int(input())\nprint(find_above(items,\
+    \ limit))\n"
+  explanation: Цикл останавливается на первом подходящем индексе.
+  id: python.algorithms.algo-linear.t5
+introduces:
+- id: algo-linear
+  title: Линейный поиск
+  summary: Просмотр списка с начала до искомого значения. Если его нет, возвращают -1.

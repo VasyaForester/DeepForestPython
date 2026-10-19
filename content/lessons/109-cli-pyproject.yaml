@@ -1,0 +1,208 @@
+id: python.cli.cli-pyproject
+slug: cli-pyproject
+section: cli
+title: pyproject.toml и переменные окружения
+order: 8
+weight: 1
+prerequisites:
+- python.cli.cli-pip
+goal: Собрать словарь настроек из строк KEY=VALUE, не читая настоящее окружение.
+tags:
+- pyproject.toml
+- окружение
+- секрет
+theory:
+- 'Файл pyproject.toml описывает проект: имя, версию и зависимости. Секрет вроде адреса базы
+  туда не кладут и в исходник не вписывают. Его передают переменной окружения.'
+- 'В оболочке это export DATABASE_URL=sqlite:///склад.db или в Windows set DATABASE_URL=sqlite:///склад.db.
+  Песочница не читает настоящее окружение: строки KEY=VALUE приходят из ввода и складываются
+  в словарь.'
+- Режут по первому знаку =, чтобы значение само могло содержать равно. Ключ слева, значение
+  справа.
+examples:
+- title: Две настройки
+  code: "rows = ['DATABASE_URL=sqlite:///склад.db', 'APP_NAME=Склад']\nenv = {}\nfor row in\
+    \ rows:\n    key, value = row.split('=', 1)\n    env[key] = value\nprint(env['APP_NAME'])\n"
+  explanation: Каждая строка становится парой в словаре. По ключу APP_NAME лежит Склад.
+- title: Один ключ
+  code: 'key, value = ''TOKEN=demo-token''.split(''='', 1)
+
+    print(key)
+
+    '
+  explanation: Слева от первого равно — имя переменной. demo-token здесь учебное значение,
+    не настоящий секрет.
+outcomes:
+- понимать роль pyproject.toml
+- не хранить секреты в коде и в файле проекта
+- разбирать строки KEY=VALUE
+- складывать настройки в словарь, не читая настоящее окружение
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Куда деть секрет
+  difficulty: 1
+  context: neutral
+  prompt: Куда положить DATABASE_URL, если проект уже описан в pyproject.toml?
+  options:
+  - id: a
+    text: В переменную окружения, не в файл проекта и не в исходник
+  - id: b
+    text: В pyproject.toml, чтобы секрет попал в git
+  - id: c
+    text: В имя функции print
+  answer: a
+  hints:
+  - pyproject.toml описывает проект, а не пароли.
+  - Секрет в репозитории прочитают все, у кого есть код.
+  - Переменную окружения задают в оболочке.
+  solution: a
+  explanation: Секрет живёт в окружении, описание проекта — в pyproject.toml.
+  id: python.cli.cli-pyproject.t1
+- type: predict_output
+  title: Значение по ключу
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: Склад
+  - id: b
+    text: APP_NAME
+  - id: c
+    text: TOKEN
+  answer: a
+  hints:
+  - Ключ и значение режутся по первому =.
+  - В словарь кладут оба.
+  - Печатается значение, не ключ.
+  solution: a
+  explanation: По ключу APP_NAME хранится Склад.
+  code: 'env = {}
+
+    key, value = ''APP_NAME=Склад''.split(''='', 1)
+
+    env[key] = value
+
+    print(env[''APP_NAME''])
+
+    '
+  id: python.cli.cli-pyproject.t2
+- type: code
+  title: Достать значение
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку KEY=VALUE и выведите значение.
+  starter_code: ''
+  tests:
+  - stdin: 'APP_NAME=Склад
+
+      '
+    expected_stdout: 'Склад
+
+      '
+  - stdin: 'DATABASE_URL=sqlite:///склад.db
+
+      '
+    expected_stdout: 'sqlite:///склад.db
+
+      '
+  hints:
+  - Режьте с ограничением 1, по первому равно.
+  - Печатайте правую часть.
+  - Ключ не нужен на экране.
+  solution: 'key, value = input().strip().split(''='', 1)
+
+    print(value)
+
+    '
+  explanation: Значение переменной — всё, что стоит после первого =.
+  id: python.cli.cli-pyproject.t3
+- type: code
+  title: Две строки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте две строки KEY=VALUE и выведите оба значения через пробел.
+  starter_code: ''
+  tests:
+  - stdin: 'APP_NAME=Склад
+
+      PORT=8000
+
+      '
+    expected_stdout: 'Склад 8000
+
+      '
+  - stdin: 'SERVICE=отчёт
+
+      PORT=9000
+
+      '
+    expected_stdout: 'отчёт 9000
+
+      '
+  hints:
+  - Прочитайте ровно две строки.
+  - У каждой возьмите значение.
+  - Склейте их пробелом.
+  solution: 'first_key, first = input().strip().split(''='', 1)
+
+    second_key, second = input().strip().split(''='', 1)
+
+    print(first + '' '' + second)
+
+    '
+  explanation: Порядок значений совпадает с порядком строк.
+  id: python.cli.cli-pyproject.t4
+- type: code
+  title: Словарь настроек
+  difficulty: 2
+  context: development
+  prompt: Сначала прочитайте число строк, затем сами строки KEY=VALUE, затем имя ключа. Выведите
+    его значение.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      APP_NAME=Склад
+
+      PORT=8000
+
+      PORT
+
+      '
+    expected_stdout: '8000
+
+      '
+  - stdin: '1
+
+      TOKEN=demo-token
+
+      TOKEN
+
+      '
+    expected_stdout: 'demo-token
+
+      '
+  hints:
+  - Соберите словарь в цикле.
+  - Последняя строка — какой ключ нужен.
+  - demo-token — учебная строка, не настоящий секрет.
+  solution: "count = int(input())\nenv = {}\nfor _ in range(count):\n    key, value = input().strip().split('=',\
+    \ 1)\n    env[key] = value\nwant = input().strip()\nprint(env[want])\n"
+  explanation: После разбора строк значение достают из словаря по ключу.
+  id: python.cli.cli-pyproject.t5
+introduces:
+- id: cli-pyproject
+  title: pyproject.toml
+  summary: 'Файл описания проекта: имя, версия, зависимости. Секреты в нём не хранят.'
+- id: cli-env
+  title: Переменная окружения
+  summary: Пара KEY=VALUE, которую процесс получает от оболочки, а не из исходника.

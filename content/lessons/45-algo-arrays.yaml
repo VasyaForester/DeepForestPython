@@ -1,0 +1,229 @@
+id: python.algorithms.algo-arrays
+slug: algo-arrays
+section: algorithms
+title: Массив и список
+order: 2
+weight: 1
+prerequisites:
+- python.algorithms.algo-complexity
+goal: Сравнить добавление в конец списка и вставку в начало.
+tags:
+- список
+- вставка
+theory:
+- Список хранит цены в порядке добавления. Метод append кладёт элемент в конец и обычно не
+  двигает остальные. Для журнала, который растёт хвостом, это дешёвая операция.
+- Метод insert с позицией 0 вставляет значение в начало. Каждый уже лежащий элемент сдвигается
+  на одну позицию. Чем длиннее список, тем больше работы на одну такую вставку, поэтому частые
+  вставки в начало проигрывают append.
+- Разницу видно по готовому списку или по счётчику сдвигов. Серия append для чисел 1, 2 и
+  3 даёт список 1, 2, 3. Те же числа через вставку в начало выстраиваются как 3, 2, 1.
+examples:
+- title: Хвост журнала
+  code: 'prices = []
+
+    prices.append(1)
+
+    prices.append(2)
+
+    prices.append(3)
+
+    print(prices)
+
+    '
+  explanation: Каждое число встало в конец, порядок сохранился.
+- title: Вставка в начало
+  code: 'prices = []
+
+    prices.insert(0, 1)
+
+    prices.insert(0, 2)
+
+    prices.insert(0, 3)
+
+    print(prices)
+
+    '
+  explanation: Каждое новое число становится первым, старые сдвигаются вправо.
+outcomes:
+- добавлять элемент в конец через append
+- вставлять элемент в начало через insert
+- видеть, что вставка сдвигает хвост
+- считать цену вставки длиной списка
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Почему начало дороже
+  difficulty: 1
+  context: neutral
+  prompt: Почему вставка в начало списка дороже добавления в конец?
+  options:
+  - id: a
+    text: Приходится сдвигать уже лежащие элементы
+  - id: b
+    text: Добавление в конец запрещено для чисел
+  - id: c
+    text: Вставка в начало не меняет список
+  answer: a
+  hints:
+  - Конец обычно свободен.
+  - Начало занято первым элементом.
+  - Его сдвиг тянет за собой остальных.
+  solution: a
+  explanation: insert в позицию 0 двигает весь хвост списка.
+  id: python.algorithms.algo-arrays.t1
+- type: predict_output
+  title: Порядок после вставок
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '[3, 2, 1]'
+  - id: b
+    text: '[1, 2, 3]'
+  - id: c
+    text: '[]'
+  answer: a
+  hints:
+  - Первым вставили 1.
+  - Потом 2 оказалась левее.
+  - Последняя вставка ставит 3 в начало.
+  solution: a
+  explanation: Три вставки в начало разворачивают порядок, печатается [3, 2, 1].
+  code: 'prices = []
+
+    prices.insert(0, 1)
+
+    prices.insert(0, 2)
+
+    prices.insert(0, 3)
+
+    print(prices)
+
+    '
+  id: python.algorithms.algo-arrays.t2
+- type: code
+  title: Собрать хвостом
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Соберите список через append и выведите его.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      2
+
+      3
+
+      '
+    expected_stdout: '[1, 2, 3]
+
+      '
+  - stdin: '1
+
+      9
+
+      '
+    expected_stdout: '[9]
+
+      '
+  hints:
+  - Начните с пустого списка.
+  - Кладите каждое число в конец.
+  - Печатайте сам список.
+  solution: "n = int(input())\nprices = []\nfor _ in range(n):\n    prices.append(int(input()))\n\
+    print(prices)\n"
+  explanation: append сохраняет порядок чтения.
+  id: python.algorithms.algo-arrays.t3
+- type: code
+  title: Собрать с головы
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n целых. Каждое число вставляйте в позицию 0. Выведите итоговый список.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      2
+
+      3
+
+      '
+    expected_stdout: '[3, 2, 1]
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      '
+    expected_stdout: '[5, 4]
+
+      '
+  hints:
+  - Позиция вставки равна 0.
+  - Новое число становится первым.
+  - Порядок на печати обратный.
+  solution: "n = int(input())\nprices = []\nfor _ in range(n):\n    prices.insert(0, int(input()))\n\
+    print(prices)\n"
+  explanation: Каждая вставка в начало сдвигает уже прочитанные числа.
+  id: python.algorithms.algo-arrays.t4
+- type: code
+  title: Сколько сдвигов
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте n и n целых. Перед каждой вставкой в начало прибавляйте к счётчику текущую
+    длину списка: столько элементов придётся сдвинуть. Выведите счётчик.'
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      1
+
+      2
+
+      3
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - До первой вставки длина нулевая.
+  - Счётчик копите до insert.
+  - Печатайте только число сдвигов.
+  solution: "n = int(input())\nprices = []\nshifts = 0\nfor _ in range(n):\n    shifts = shifts\
+    \ + len(prices)\n    prices.insert(0, int(input()))\nprint(shifts)\n"
+  explanation: Сдвигов 0, затем 1, затем 2, в сумме 3 для трёх чисел.
+  id: python.algorithms.algo-arrays.t5
+introduces:
+- id: algo-append
+  title: Добавление в конец
+  summary: append кладёт элемент в хвост списка и обычно не сдвигает остальные.
+- id: algo-insert-front
+  title: Вставка в начало
+  summary: insert в позицию 0 сдвигает уже лежащие элементы. На длинном списке это дорого.

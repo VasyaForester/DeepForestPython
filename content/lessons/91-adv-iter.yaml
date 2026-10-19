@@ -1,0 +1,186 @@
+id: python.advanced.adv-iter
+slug: adv-iter
+section: advanced
+title: Протокол итерации
+order: 1
+weight: 1
+prerequisites:
+- python.oop.oop-review
+goal: Отдавать элементы по одному через __iter__ и __next__.
+tags:
+- итератор
+- __iter__
+- __next__
+theory:
+- 'Цикл for спрашивает у объекта итератор методом __iter__. Итератор умеет __next__: каждый
+  вызов возвращает следующий элемент.'
+- Когда элементы кончились, __next__ поднимает StopIteration. list и for ловят это сами и
+  заканчивают обход. В обычном коде StopIteration не печатают.
+- Countdown хранит текущее число и в __iter__ возвращает себя. __next__ отдаёт число и уменьшает
+  его, пока число больше нуля. list(Countdown(3)) собирает 3, 2 и 1.
+examples:
+- title: Три шага
+  code: "class Countdown:\n    def __init__(self, start):\n        self.current = start\n\
+    \    def __iter__(self):\n        return self\n    def __next__(self):\n        if self.current\
+    \ <= 0:\n            raise StopIteration\n        value = self.current\n        self.current\
+    \ -= 1\n        return value\nprint(list(Countdown(3)))\n"
+  explanation: __next__ отдаёт 3, потом 2, потом 1. Следующий вызов поднимает StopIteration,
+    и list останавливается.
+- title: Первый элемент
+  code: "class Countdown:\n    def __init__(self, start):\n        self.current = start\n\
+    \    def __iter__(self):\n        return self\n    def __next__(self):\n        if self.current\
+    \ <= 0:\n            raise StopIteration\n        value = self.current\n        self.current\
+    \ -= 1\n        return value\nprint(next(iter(Countdown(4))))\n"
+  explanation: iter вызывает __iter__, next вызывает __next__ один раз. Первое число — 4.
+outcomes:
+- возвращать итератор из __iter__
+- отдавать следующий элемент из __next__
+- останавливать обход через StopIteration
+- собирать такие объекты в list
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда обход кончается
+  difficulty: 1
+  context: neutral
+  prompt: Что должен сделать __next__, когда элементов больше нет?
+  options:
+  - id: a
+    text: Поднять StopIteration
+  - id: b
+    text: Вернуть None и продолжать
+  - id: c
+    text: Вернуть пустой список
+  answer: a
+  hints:
+  - for и list ждут именно StopIteration.
+  - None был бы обычным значением.
+  - Пустой список — тоже значение, не сигнал конца.
+  solution: a
+  explanation: StopIteration говорит обходу остановиться. Сам список его не показывает.
+  id: python.advanced.adv-iter.t1
+- type: predict_output
+  title: Список отсчёта
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '[1, 2, 3]'
+  - id: b
+    text: '[3, 2, 1]'
+  - id: c
+    text: '3'
+  answer: b
+  hints:
+  - Первый __next__ возвращает 3.
+  - Дальше число уменьшается.
+  - list собирает значения до StopIteration.
+  solution: b
+  explanation: Получается список 3, 2, 1.
+  code: "class Countdown:\n    def __init__(self, start):\n        self.current = start\n\
+    \    def __iter__(self):\n        return self\n    def __next__(self):\n        if self.current\
+    \ <= 0:\n            raise StopIteration\n        value = self.current\n        self.current\
+    \ -= 1\n        return value\nprint(list(Countdown(3)))\n"
+  id: python.advanced.adv-iter.t2
+- type: code
+  title: Отсчёт
+  difficulty: 2
+  context: development
+  prompt: Прочитайте положительное целое. Выведите список Countdown от этого числа до 1.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '[3, 2, 1]
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '[1]
+
+      '
+  hints:
+  - __iter__ возвращает self.
+  - __next__ уменьшает current.
+  - list собирает значения сам.
+  solution: "class Countdown:\n    def __init__(self, start):\n        self.current = start\n\
+    \    def __iter__(self):\n        return self\n    def __next__(self):\n        if self.current\
+    \ <= 0:\n            raise StopIteration\n        value = self.current\n        self.current\
+    \ -= 1\n        return value\nprint(list(Countdown(int(input()))))\n"
+  explanation: 3 даёт [3, 2, 1]. 1 даёт [1].
+  id: python.advanced.adv-iter.t3
+- type: code
+  title: Сумма шагов
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте положительное целое и выведите сумму чисел отсчёта от него до 1.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '6
+
+      '
+  - stdin: '4
+
+      '
+    expected_stdout: '10
+
+      '
+  hints:
+  - sum умеет брать итератор.
+  - 3 + 2 + 1 равно 6.
+  - Для 4 добавится ещё само 4.
+  solution: "class Countdown:\n    def __init__(self, start):\n        self.current = start\n\
+    \    def __iter__(self):\n        return self\n    def __next__(self):\n        if self.current\
+    \ <= 0:\n            raise StopIteration\n        value = self.current\n        self.current\
+    \ -= 1\n        return value\nprint(sum(Countdown(int(input()))))\n"
+  explanation: Отсчёт от 3 даёт 6. Отсчёт от 4 даёт 10.
+  id: python.advanced.adv-iter.t4
+- type: code
+  title: Строка отсчёта
+  difficulty: 2
+  context: business
+  prompt: Прочитайте положительное целое и выведите числа отсчёта через пробел.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: '3 2 1
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: '2 1
+
+      '
+  hints:
+  - join склеивает уже строковые числа.
+  - Порядок задаёт __next__.
+  - Пробел между числами один.
+  solution: "class Countdown:\n    def __init__(self, start):\n        self.current = start\n\
+    \    def __iter__(self):\n        return self\n    def __next__(self):\n        if self.current\
+    \ <= 0:\n            raise StopIteration\n        value = self.current\n        self.current\
+    \ -= 1\n        return value\nprint(' '.join(str(item) for item in Countdown(int(input()))))\n"
+  explanation: 3 печатается как 3 2 1. 2 печатается как 2 1.
+  id: python.advanced.adv-iter.t5
+introduces:
+- id: adv-iter.iter
+  title: __iter__
+  summary: Возвращает итератор. Цикл for получает его перед обходом.
+- id: adv-iter.next
+  title: __next__
+  summary: Возвращает следующий элемент. В конце поднимает StopIteration.

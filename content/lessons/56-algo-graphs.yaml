@@ -1,0 +1,220 @@
+id: python.algorithms.algo-graphs
+slug: algo-graphs
+section: algorithms
+title: Графы
+order: 13
+weight: 1
+prerequisites:
+- python.algorithms.algo-dfs
+goal: Превратить список дорог в словарь соседей и посчитать их.
+tags:
+- граф
+theory:
+- 'Граф состоит из вершин и рёбер. Список рёбер хранит пары вроде склада с лесом и леса с
+  елью. Для обхода удобнее словарь: у каждой вершины свой список соседей.'
+- Ненаправленное ребро добавляют с обеих сторон. Пустой список создают до первой вставки,
+  иначе ключа ещё нет. После сборки число соседей — это длина списка у выбранного имени.
+- В простом журнале дорог каждое ребро приходит один раз. Повтор той же пары добавил бы соседа
+  дважды, и длина выросла бы зря. Печатают длину списка соседей, это и есть ответ.
+examples:
+- title: Две дороги
+  code: "edges = [('склад', 'лес'), ('лес', 'ель')]\ngraph = {}\nfor a, b in edges:\n    if\
+    \ a not in graph:\n        graph[a] = []\n    if b not in graph:\n        graph[b] = []\n\
+    \    graph[a].append(b)\n    graph[b].append(a)\nprint(len(graph['лес']))\n"
+  explanation: 'У леса два соседа: склад и ель.'
+- title: Одна дорога
+  code: "edges = [('склад', 'лес')]\ngraph = {}\nfor a, b in edges:\n    if a not in graph:\n\
+    \        graph[a] = []\n    if b not in graph:\n        graph[b] = []\n    graph[a].append(b)\n\
+    \    graph[b].append(a)\nprint(len(graph['склад']))\n"
+  explanation: У склада один сосед, длина списка равна 1.
+outcomes:
+- переводить список рёбер в словарь
+- добавлять ненаправленное ребро с обеих сторон
+- создавать пустой список до первой вставки
+- считать соседей длиной списка
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем две стороны
+  difficulty: 1
+  context: neutral
+  prompt: Зачем по ребру без направления соседа добавляют с обеих сторон?
+  options:
+  - id: a
+    text: Чтобы из каждой вершины был виден переход к другой
+  - id: b
+    text: Чтобы удалить обе вершины из журнала
+  - id: c
+    text: Чтобы словарь превратился в один плоский список
+  answer: a
+  hints:
+  - Дорога склад—лес годится в обе стороны.
+  - Список склада должен содержать лес.
+  - Список леса должен содержать склад.
+  solution: a
+  explanation: Ненаправленное ребро видно из обоих концов.
+  id: python.algorithms.algo-graphs.t1
+- type: predict_output
+  title: Соседи леса
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '1'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - Лес встречается в обоих рёбрах.
+  - Каждое ребро добавляет ему соседа.
+  - Склада и ели две штуки.
+  solution: a
+  explanation: У леса два соседа, длина равна 2.
+  code: "edges = [('склад', 'лес'), ('лес', 'ель')]\ngraph = {}\nfor a, b in edges:\n    if\
+    \ a not in graph:\n        graph[a] = []\n    if b not in graph:\n        graph[b] = []\n\
+    \    graph[a].append(b)\n    graph[b].append(a)\nprint(len(graph['лес']))\n"
+  id: python.algorithms.algo-graphs.t2
+- type: code
+  title: Число соседей
+  difficulty: 2
+  context: development
+  prompt: Прочитайте m, затем m рёбер как две строки на ребро, затем имя вершины. Дороги двусторонние.
+    Выведите число соседей этой вершины.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      склад
+
+      лес
+
+      лес
+
+      ель
+
+      лес
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      склад
+
+      лес
+
+      склад
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Пустой список создайте до добавления.
+  - Ребро пишите в оба конца.
+  - Ответ — длина списка.
+  solution: "m = int(input())\ngraph = {}\nfor _ in range(m):\n    a = input()\n    b = input()\n\
+    \    if a not in graph:\n        graph[a] = []\n    if b not in graph:\n        graph[b]\
+    \ = []\n    graph[a].append(b)\n    graph[b].append(a)\nname = input()\nprint(len(graph[name]))\n"
+  explanation: Каждая дорога увеличивает степень обоих концов.
+  id: python.algorithms.algo-graphs.t3
+- type: code
+  title: Имена соседей
+  difficulty: 2
+  context: development
+  prompt: Прочитайте m, затем m двусторонних рёбер, затем имя. Выведите соседей через пробел
+    в порядке добавления.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      склад
+
+      лес
+
+      лес
+
+      ель
+
+      лес
+
+      '
+    expected_stdout: 'склад ель
+
+      '
+  - stdin: '1
+
+      склад
+
+      цех
+
+      склад
+
+      '
+    expected_stdout: 'цех
+
+      '
+  hints:
+  - Порядок append и есть порядок печати.
+  - Не сортируйте имена.
+  - Между именами один пробел.
+  solution: "m = int(input())\ngraph = {}\nfor _ in range(m):\n    a = input()\n    b = input()\n\
+    \    if a not in graph:\n        graph[a] = []\n    if b not in graph:\n        graph[b]\
+    \ = []\n    graph[a].append(b)\n    graph[b].append(a)\nname = input()\nprint(' '.join(graph[name]))\n"
+  explanation: Список смежности хранит соседей в порядке чтения рёбер.
+  id: python.algorithms.algo-graphs.t4
+- type: code
+  title: Сколько вершин
+  difficulty: 2
+  context: development
+  prompt: Прочитайте m и m двусторонних рёбер. Выведите, сколько различных вершин встретилось.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      склад
+
+      лес
+
+      лес
+
+      ель
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '1
+
+      склад
+
+      лес
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Ключ создаётся при первом упоминании.
+  - Повтор имени новый ключ не добавляет.
+  - Печатайте число ключей.
+  solution: "m = int(input())\ngraph = {}\nfor _ in range(m):\n    a = input()\n    b = input()\n\
+    \    if a not in graph:\n        graph[a] = []\n    if b not in graph:\n        graph[b]\
+    \ = []\n    graph[a].append(b)\n    graph[b].append(a)\nprint(len(graph))\n"
+  explanation: Число вершин равно числу ключей словаря смежности.
+  id: python.algorithms.algo-graphs.t5
+introduces:
+- id: algo-graph
+  title: Граф
+  summary: Вершины и рёбра. Список рёбер переводят в словарь смежности.

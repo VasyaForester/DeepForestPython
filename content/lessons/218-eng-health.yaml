@@ -1,0 +1,239 @@
+id: python.engineering.eng-health
+slug: eng-health
+section: engineering
+title: Миграции, health, метрики
+order: 10
+weight: 1
+prerequisites:
+- python.engineering.eng-ci
+goal: Хранить версию схемы и отвечать жив, если запрос выполнился.
+tags:
+- схема
+- health
+- sqlite3
+theory:
+- 'Миграции меняют схему по шагам. Alembic в уроке не запускается: номер версии лежит в таблице
+  schema_version или в pragma user_version.'
+- Проверка здоровья выполняет простой запрос. Если он проходит, программа печатает «жив».
+  Счётчик метрик в теории — это число таких проверок, не отдельный сервер графиков.
+- Один запрос не заменяет миграцию. Он только показывает, что соединение и таблица на месте.
+examples:
+- title: Версия пользователя
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''pragma user_version = 2'')
+
+    print(con.execute(''pragma user_version'').fetchone()[0])
+
+    '
+  explanation: pragma сохраняет номер 2 и тут же отдаёт его обратно.
+- title: Живая таблица
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table ping(ok integer)'')
+
+    con.execute(''select ok from ping'')
+
+    metrics = {''checks'': 1}
+
+    print(''жив'')
+
+    print(metrics[''checks''])
+
+    '
+  explanation: Запрос к таблице прошёл, печатаются жив и счётчик 1.
+outcomes:
+- хранить номер схемы в таблице
+- читать версию обратно
+- печатать жив после успешного запроса
+- считать проверку отдельным числом
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое жив
+  difficulty: 1
+  context: neutral
+  prompt: Когда программа печатает жив?
+  options:
+  - id: a
+    text: Когда простой запрос к базе выполнился
+  - id: b
+    text: Когда номер версии равен нулю
+  - id: c
+    text: Когда счётчик метрик ещё не создан
+  answer: a
+  hints:
+  - Смотрите на select, а не на номер.
+  - Ошибка запроса жив не печатает.
+  - Счётчик только считает проверки.
+  solution: a
+  explanation: Здоровье здесь — успешный запрос, а не красивый номер версии.
+  id: python.engineering.eng-health.t1
+- type: predict_output
+  title: Номер схемы
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: schema_version
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - В таблицу записано 3.
+  - select читает поле version.
+  - Имя таблицы не печатается.
+  solution: a
+  explanation: Из schema_version читается номер 3.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table schema_version(version integer)'')
+
+    con.execute(''insert into schema_version(version) values (3)'')
+
+    print(con.execute(''select version from schema_version'').fetchone()[0])
+
+    '
+  id: python.engineering.eng-health.t2
+- type: code
+  title: Таблица версии
+  difficulty: 2
+  context: development
+  prompt: Создайте в памяти таблицу schema_version(version integer). Прочитайте целое число,
+    запишите его и выведите значение из select.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: '4
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Одна колонка version.
+  - Вставка принимает число из ввода.
+  - Печатайте поле из fetchone.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table schema_version(version integer)'')
+
+    version = int(input())
+
+    con.execute(''insert into schema_version(version) values (?)'', (version,))
+
+    print(con.execute(''select version from schema_version'').fetchone()[0])
+
+    '
+  explanation: Номер схемы хранится в таблице и читается обратно.
+  id: python.engineering.eng-health.t3
+- type: code
+  title: Проверка жив
+  difficulty: 2
+  context: development
+  prompt: Прочитайте режим. Если это up, создайте таблицу ping(ok integer). Затем выполните
+    select ok from ping. При успехе выведите жив, при ошибке — нет.
+  starter_code: ''
+  tests:
+  - stdin: 'up
+
+      '
+    expected_stdout: 'жив
+
+      '
+  - stdin: 'down
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Таблицу создавайте только для up.
+  - Ошибку sqlite3 ловите вокруг select.
+  - Пустая таблица всё равно отвечает на select.
+  solution: "import sqlite3\nmode = input()\ncon = sqlite3.connect(':memory:')\nif mode ==\
+    \ 'up':\n    con.execute('create table ping(ok integer)')\ntry:\n    con.execute('select\
+    \ ok from ping')\n    print('жив')\nexcept sqlite3.Error:\n    print('нет')\n"
+  explanation: Запрос либо проходит, либо программа честно печатает нет.
+  id: python.engineering.eng-health.t4
+- type: code
+  title: Версия и счётчик
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте номер версии, запишите его в schema_version и выведите две строки: номер
+    и затем 1 как счётчик проверки.'
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      '
+    expected_stdout: '2
+
+      1
+
+      '
+  - stdin: '7
+
+      '
+    expected_stdout: '7
+
+      1
+
+      '
+  hints:
+  - Сначала запись версии.
+  - Счётчик увеличьте после успешного чтения.
+  - 'Две строки: номер и 1.'
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table schema_version(version integer)'')
+
+    version = int(input())
+
+    con.execute(''insert into schema_version(version) values (?)'', (version,))
+
+    row = con.execute(''select version from schema_version'').fetchone()
+
+    metrics = {''checks'': 0}
+
+    metrics[''checks''] += 1
+
+    print(row[0])
+
+    print(metrics[''checks''])
+
+    '
+  explanation: Версия схемы и простой счётчик проверки стоят рядом.
+  id: python.engineering.eng-health.t5
+introduces:
+- id: eng-schema-version
+  title: Версия схемы
+  summary: Номер в таблице schema_version или в pragma user_version. Alembic здесь не запускается.
+- id: eng-healthcheck
+  title: Проверка здоровья
+  summary: Короткий запрос. Если он выполнился, программа печатает жив.

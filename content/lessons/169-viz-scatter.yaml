@@ -1,0 +1,234 @@
+id: python.viz.viz-scatter
+slug: viz-scatter
+section: viz
+title: Точки
+order: 7
+weight: 1
+prerequisites:
+- python.viz.viz-box
+goal: Считать точки, которые лежат выше прямой y = x.
+tags:
+- точки
+theory:
+- Точечный график ставит точку на каждую пару чисел. В matplotlib это plt.scatter(xs, ys).
+  Одна ось — не причина второй, пока этого не сказали отдельно.
+- Прямая y = x делит облако на две части. Точка выше неё имеет y больше x. Точка на прямой
+  в этот счёт не входит.
+- Упражнение печатает число таких точек, потому что matplotlib нет в среде браузера.
+examples:
+- title: Выше прямой
+  code: 'points = [(1, 4), (5, 2), (3, 3), (2, 8)]
+
+    above = sum(1 for x, y in points if y > x)
+
+    print(above)
+
+    '
+  explanation: Выше прямой лежат (1, 4) и (2, 8). Точка (3, 3) на прямой.
+- title: Сколько пар
+  code: 'points = [(0, 1), (4, 1)]
+
+    print(len(points))
+
+    '
+  explanation: На графике было бы две точки, независимо от того, какая выше.
+outcomes:
+- ставить точку по паре чисел
+- выбирать scatter для связи двух величин
+- считать точки выше прямой y = x
+- не называть ось причиной без отдельного довода
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Вызов scatter
+  difficulty: 1
+  context: neutral
+  prompt: Что рисует plt.scatter(xs, ys)?
+  options:
+  - id: a
+    text: Точку на каждую пару чисел
+  - id: b
+    text: Линию только по X
+  - id: c
+    text: Корзины одного столбца
+  answer: a
+  hints:
+  - Каждая пара даёт одну точку.
+  - Линию по порядку рисует plot.
+  - Корзины — это hist.
+  solution: a
+  explanation: Точки показывают пары, а не ход одного ряда.
+  id: python.viz.viz-scatter.t1
+- type: predict_output
+  title: Число точек выше
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '1'
+  - id: b
+    text: '2'
+  - id: c
+    text: '3'
+  answer: a
+  hints:
+  - Сравнивается y с x.
+  - (1, 4) выше.
+  - (3, 3) не строго выше.
+  solution: a
+  explanation: Строго выше прямой только одна точка.
+  code: 'points = [(1, 4), (5, 2), (3, 3)]
+
+    print(sum(1 for x, y in points if y > x))
+
+    '
+  id: python.viz.viz-scatter.t2
+- type: code
+  title: Точки выше прямой
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте n, затем n пар: строка x и строка y. Выведите, сколько точек имеют y
+    больше x.'
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      1
+
+      4
+
+      5
+
+      2
+
+      3
+
+      3
+
+      2
+
+      8
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      4
+
+      4
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Строгое сравнение отбрасывает прямую.
+  - Каждая пара — две строки.
+  - Считайте точки, не сумму координат.
+  solution: "n = int(input())\nabove = 0\nfor _ in range(n):\n    x = int(input())\n    y\
+    \ = int(input())\n    if y > x:\n        above += 1\nprint(above)\n"
+  explanation: Счётчик заменяет взгляд на облако выше прямой.
+  id: python.viz.viz-scatter.t3
+- type: code
+  title: Сколько точек
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n пар x y. Выведите число точек.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      0
+
+      1
+
+      4
+
+      1
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      3
+
+      3
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Каждая точка занимает две строки.
+  - Координаты на число точек не влияют.
+  - Ответ равен n.
+  solution: "n = int(input())\nfor _ in range(n):\n    input()\n    input()\nprint(n)\n"
+  explanation: Число точек — размер облака.
+  id: python.viz.viz-scatter.t4
+- type: code
+  title: Точки не выше
+  difficulty: 2
+  context: development
+  prompt: Прочитайте пары x y. Выведите, сколько точек имеют y не больше x.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      1
+
+      4
+
+      5
+
+      2
+
+      3
+
+      3
+
+      2
+
+      8
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      1
+
+      1
+
+      2
+
+      0
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Сюда входят точка на прямой и точки ниже.
+  - Это дополнение к строгому y > x.
+  - Одно число в ответе.
+  solution: "n = int(input())\ncount = 0\nfor _ in range(n):\n    x = int(input())\n    y\
+    \ = int(input())\n    if y <= x:\n        count += 1\nprint(count)\n"
+  explanation: Нижняя часть облака включает саму прямую.
+  id: python.viz.viz-scatter.t5
+introduces:
+- id: viz-scatter
+  title: Точечный график
+  summary: Точка на каждую пару. В matplotlib это plt.scatter.

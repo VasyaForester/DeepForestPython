@@ -1,0 +1,220 @@
+id: python.sql.sql-cte
+slug: sql-cte
+section: sql
+title: CTE
+order: 9
+weight: 1
+prerequisites:
+- python.sql.sql-union
+goal: Назвать промежуточный результат и отобрать из него строки.
+tags:
+- CTE
+- WITH
+theory:
+- CTE — именованный подзапрос перед основным SELECT. WITH tall AS (SELECT name, height FROM
+  trees WHERE height >= 20) SELECT name FROM tall берёт только высокие деревья и уже из них
+  печатает имена.
+- 'Второй шаг может группировать: WITH sums AS (SELECT city, SUM(amount) AS total FROM orders
+  GROUP BY city) SELECT city FROM sums WHERE total >= 20. Основной запрос видит столбец total,
+  а не сырые заказы.'
+- 'Две CTE можно записать через запятую. Порог по-прежнему передают знаком ?, данные те же:
+  ель 12, сосна 20, берёза 30 и заказы Москвы и Казани.'
+examples:
+- title: Высокие через WITH
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table trees(name\
+    \ text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель', 12),\
+    \ ('сосна', 20), ('берёза', 30)])\nfor row in con.execute('with tall as (select name from\
+    \ trees where height >= 20) select name from tall order by name'):\n    print(row[0])\n"
+  explanation: CTE tall прячет фильтр, внешний запрос только печатает берёзу и сосну.
+- title: Суммы городов
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table orders(city\
+    \ text, amount int)')\ncon.executemany('insert into orders values (?, ?)', [('Москва',\
+    \ 10), ('Москва', 15), ('Казань', 16)])\nfor row in con.execute('with sums as (select\
+    \ city, sum(amount) as total from orders group by city) select city from sums where total\
+    \ >= 20 order by city'):\n    print(row[0])\n"
+  explanation: В sums у Москвы 25, порог 20 оставляет её одну.
+outcomes:
+- называть промежуточную выборку через WITH
+- фильтровать уже посчитанные суммы
+- связывать две CTE
+- оставлять основной SELECT коротким
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем WITH
+  difficulty: 1
+  context: neutral
+  prompt: Что делает WITH tall AS (...) SELECT name FROM tall?
+  options:
+  - id: a
+    text: Даёт имя промежуточной выборке, из которой читает основной запрос
+  - id: b
+    text: Удаляет таблицу trees
+  - id: c
+    text: Включает автокоммит
+  answer: a
+  hints:
+  - tall существует только на время запроса.
+  - Основной SELECT читает это имя как таблицу.
+  - Данные trees на диске от этого не пропадают.
+  solution: a
+  explanation: CTE называет промежуточный результат.
+  id: python.sql.sql-cte.t1
+- type: predict_output
+  title: Сколько высоких
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '3'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - 12 не проходит порог.
+  - 20 и 30 проходят.
+  - Длина списка — число строк CTE.
+  solution: a
+  explanation: В tall попадают сосна и берёза.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    rows = list(con.execute(''with tall as (select name from trees where height >= 20) select
+    name from tall''))
+
+    print(len(rows))
+
+    '
+  id: python.sql.sql-cte.t2
+- type: code
+  title: Имена выше порога
+  difficulty: 2
+  context: development
+  prompt: Прочитайте порог. Через CTE выведите имена с высотой не меньше порога, по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '20
+
+      '
+    expected_stdout: 'берёза
+
+      сосна
+
+      '
+  - stdin: '30
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  hints:
+  - WITH стоит перед основным SELECT.
+  - Знак ? лежит внутри CTE.
+  - Снаружи сортируйте по имени.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('берёза', 30)])\nlimit = int(input())\nquery = 'with tall as (select\
+    \ name from trees where height >= ?) select name from tall order by name'\nfor row in\
+    \ con.execute(query, (limit,)):\n    print(row[0])\n"
+  explanation: Основной запрос не повторяет условие, он читает уже отфильтрованное имя tall.
+  id: python.sql.sql-cte.t3
+- type: code
+  title: Города с суммой
+  difficulty: 2
+  context: development
+  prompt: Заказы Москвы 10 и 15, Казани 7, 8 и 1. Прочитайте порог суммы и через CTE выведите
+    города, по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '20
+
+      '
+    expected_stdout: 'Москва
+
+      '
+  - stdin: '10
+
+      '
+    expected_stdout: 'Казань
+
+      Москва
+
+      '
+  hints:
+  - В CTE посчитайте SUM и назовите столбец total.
+  - Порог сравнивайте уже с total.
+  - ORDER BY стоит во внешнем запросе.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ orders(city text, amount int)')\ncon.executemany('insert into orders values (?, ?)',\
+    \ [('Москва', 10), ('Москва', 15), ('Казань', 7), ('Казань', 8), ('Казань', 1)])\nlimit\
+    \ = int(input())\nquery = 'with sums as (select city, sum(amount) as total from orders\
+    \ group by city) select city from sums where total >= ? order by city'\nfor row in con.execute(query,\
+    \ (limit,)):\n    print(row[0])\n"
+  explanation: Группировка спрятана в CTE, фильтр суммы остаётся снаружи.
+  id: python.sql.sql-cte.t4
+- type: code
+  title: Два шага
+  difficulty: 2
+  context: development
+  prompt: Прочитайте порог и выведите, сколько деревьев его проходит. Сначала CTE base со
+    всеми строками, затем tall из base.
+  starter_code: ''
+  tests:
+  - stdin: '20
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Две CTE разделяет запятая.
+  - Вторая читает первую.
+  - Снаружи остаётся COUNT.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    limit = int(input())
+
+    query = ''with base as (select name, height from trees), tall as (select name from base
+    where height >= ?) select count(*) from tall''
+
+    row = con.execute(query, (limit,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Цепочка CTE дробит запрос на понятные шаги.
+  id: python.sql.sql-cte.t5
+introduces:
+- id: sql-cte
+  title: CTE
+  summary: 'Именованный подзапрос: WITH tall AS (...) SELECT ... FROM tall. Действует на время
+    одного запроса.'

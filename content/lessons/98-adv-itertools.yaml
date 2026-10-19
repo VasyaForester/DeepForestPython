@@ -1,0 +1,205 @@
+id: python.advanced.adv-itertools
+slug: adv-itertools
+section: advanced
+title: itertools
+order: 8
+weight: 1
+prerequisites:
+- python.advanced.adv-functools
+goal: Взять начало последовательности и соединить две последовательности.
+tags:
+- itertools
+- islice
+- chain
+theory:
+- itertools работает с последовательностями по элементам. islice(items, 2) берёт первые два
+  элемента и не трогает хвост.
+- 'islice не строит срез списка сам по себе: он отдаёт элементы по одному. list вокруг него
+  собирает обычный список уже взятых элементов.'
+- chain соединяет последовательности подряд. chain(["ель"], ["сосна", "дуб"]) отдаёт ель,
+  затем сосну, затем дуб, без вложенных списков.
+examples:
+- title: Первые два
+  code: 'import itertools
+
+    print(list(itertools.islice([''ель'', ''сосна'', ''дуб'', ''кедр''], 2)))
+
+    '
+  explanation: islice останавливается после двух элементов. В списке ель и сосна, дуб и кедр
+    не вошли.
+- title: Соединение
+  code: 'import itertools
+
+    print(list(itertools.chain([''ель''], [''сосна'', ''дуб''])))
+
+    '
+  explanation: chain идёт по первому списку, потом по второму. Получается один плоский список
+    из трёх пород.
+outcomes:
+- брать начало через itertools.islice
+- собирать взятые элементы в список
+- соединять последовательности через chain
+- не путать взятый кусок со всей строкой
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что берёт islice
+  difficulty: 1
+  context: neutral
+  prompt: Что делает itertools.islice(items, 2)?
+  options:
+  - id: a
+    text: Отдаёт первые два элемента
+  - id: b
+    text: Переворачивает всю последовательность
+  - id: c
+    text: Удаляет элементы из исходного списка
+  answer: a
+  hints:
+  - Второй аргумент — сколько взять.
+  - Хвост не читается.
+  - Исходный список islice не чистит.
+  solution: a
+  explanation: Берутся только первые элементы. Остальные в результат не попадают.
+  id: python.advanced.adv-itertools.t1
+- type: predict_output
+  title: Пара пород
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '[''ель'', ''сосна'']'
+  - id: b
+    text: '[''дуб'']'
+  - id: c
+    text: '[''сосна'', ''дуб'']'
+  answer: a
+  hints:
+  - Отсчёт идёт с начала.
+  - Берутся два элемента.
+  - дуб третий и в срез не входит.
+  solution: a
+  explanation: Первые два элемента — ель и сосна.
+  code: 'import itertools
+
+    print(list(itertools.islice([''ель'', ''сосна'', ''дуб''], 2)))
+
+    '
+  id: python.advanced.adv-itertools.t2
+- type: code
+  title: Первые слова
+  difficulty: 2
+  context: development
+  prompt: Прочитайте слова через пробел и число. Выведите через пробел столько первых слов.
+  starter_code: ''
+  tests:
+  - stdin: 'ель сосна дуб кедр
+
+      2
+
+      '
+    expected_stdout: 'ель сосна
+
+      '
+  - stdin: 'дуб ель
+
+      1
+
+      '
+    expected_stdout: 'дуб
+
+      '
+  hints:
+  - Сначала список слов.
+  - islice берёт первые n.
+  - join склеивает их через пробел.
+  solution: 'import itertools
+
+    print('' ''.join(itertools.islice(input().split(), int(input()))))
+
+    '
+  explanation: Два первых слова — ель сосна. Одно первое слово второй строки — дуб.
+  id: python.advanced.adv-itertools.t3
+- type: code
+  title: Соединить ряды
+  difficulty: 2
+  context: business
+  prompt: Прочитайте две строки слов. Выведите все слова первой, затем все слова второй, через
+    пробел.
+  starter_code: ''
+  tests:
+  - stdin: 'ель сосна
+
+      дуб
+
+      '
+    expected_stdout: 'ель сосна дуб
+
+      '
+  - stdin: 'кедр
+
+      бук ель
+
+      '
+    expected_stdout: 'кедр бук ель
+
+      '
+  hints:
+  - chain принимает две последовательности.
+  - split режет каждую строку.
+  - Порядок строк сохраняется.
+  solution: 'import itertools
+
+    print('' ''.join(itertools.chain(input().split(), input().split())))
+
+    '
+  explanation: Сначала ель сосна, потом дуб. Во втором наборе кедр, затем бук и ель.
+  id: python.advanced.adv-itertools.t4
+- type: code
+  title: Сколько взяли
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте слова и число. Возьмите первые слова через islice и выведите, сколько
+    их получилось.
+  starter_code: ''
+  tests:
+  - stdin: 'ель сосна дуб
+
+      2
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: 'кедр бук
+
+      1
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - list собирает взятые элементы.
+  - len считает уже взятое.
+  - Берите ровно столько, сколько просят.
+  solution: 'import itertools
+
+    print(len(list(itertools.islice(input().split(), int(input())))))
+
+    '
+  explanation: Из трёх пород берут 2. Из двух пород берут 1.
+  id: python.advanced.adv-itertools.t5
+introduces:
+- id: adv-itertools.islice
+  title: itertools.islice
+  summary: Отдаёт первые n элементов последовательности. chain соединяет несколько последовательностей
+    подряд.

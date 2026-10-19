@@ -1,0 +1,213 @@
+id: python.algorithms.algo-bfs
+slug: algo-bfs
+section: algorithms
+title: Обход в ширину
+order: 11
+weight: 1
+prerequisites:
+- python.algorithms.algo-trees
+goal: Обойти граф складов слоями от стартовой вершины.
+tags:
+- обход
+- очередь
+theory:
+- 'Обход в ширину идёт слоями от старта. Граф задают словарём: ключ — вершина, значение —
+  список соседей. Сначала посещают старт, потом его соседей, потом соседей этих соседей.'
+- Очередь помнит, кого открыть следующим. popleft достаёт вершину, а в хвост кладут ещё не
+  виденных соседей. Множество seen не пускает в вершину второй раз, если дороги ведут туда
+  и обратно.
+- Вершину печатают при первом посещении. Для старта «лес» с соседями ель и сосна порядок будет
+  «лес ель сосна». Сосед попадает в вывод в том порядке, в каком стоит в списке.
+examples:
+- title: Склад и цех
+  code: "from collections import deque\ngraph = {'склад': ['лес', 'цех'], 'лес': ['ель'],\
+    \ 'цех': [], 'ель': []}\nseen = {'склад'}\nqueue = deque(['склад'])\norder = []\nwhile\
+    \ queue:\n    node = queue.popleft()\n    order.append(node)\n    for nxt in graph[node]:\n\
+    \        if nxt not in seen:\n            seen.add(nxt)\n            queue.append(nxt)\n\
+    print(' '.join(order))\n"
+  explanation: Сначала склад, затем оба его соседа, и только потом ель.
+- title: Лес и две породы
+  code: "from collections import deque\ngraph = {'лес': ['ель', 'сосна'], 'ель': [], 'сосна':\
+    \ []}\nseen = {'лес'}\nqueue = deque(['лес'])\norder = []\nwhile queue:\n    node = queue.popleft()\n\
+    \    order.append(node)\n    for nxt in graph[node]:\n        if nxt not in seen:\n  \
+    \          seen.add(nxt)\n            queue.append(nxt)\nprint(' '.join(order))\n"
+  explanation: 'Старт лес, затем соседи в записанном порядке: ель и сосна.'
+outcomes:
+- задавать граф словарём списков
+- обходить вершины очередью
+- не посещать вершину дважды
+- печатать порядок первого посещения
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Порядок слоёв
+  difficulty: 1
+  context: neutral
+  prompt: В каком порядке обход в ширину берёт вершины?
+  options:
+  - id: a
+    text: Сначала ближние к старту, слой за слоем
+  - id: b
+    text: Сразу до конца первой ветки, и только потом к соседу
+  - id: c
+    text: В алфавитном порядке имён, как бы их ни соединили
+  answer: a
+  hints:
+  - Очередь сначала отдаёт старт.
+  - Его соседей кладут следом.
+  - Соседи соседей ждут в хвосте.
+  solution: a
+  explanation: Ближний слой заканчивается раньше, чем начинается следующий.
+  id: python.algorithms.algo-bfs.t1
+- type: predict_output
+  title: Порядок от леса
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: лес ель сосна
+  - id: b
+    text: ель сосна лес
+  - id: c
+    text: сосна
+  answer: a
+  hints:
+  - Старт кладут в порядок первым.
+  - Соседи идут как в списке.
+  - Между именами один пробел.
+  solution: a
+  explanation: 'Порядок посещения: лес, затем ель, затем сосна.'
+  code: "from collections import deque\ngraph = {'лес': ['ель', 'сосна'], 'ель': [], 'сосна':\
+    \ []}\nseen = {'лес'}\nqueue = deque(['лес'])\norder = []\nwhile queue:\n    node = queue.popleft()\n\
+    \    order.append(node)\n    for nxt in graph[node]:\n        if nxt not in seen:\n  \
+    \          seen.add(nxt)\n            queue.append(nxt)\nprint(' '.join(order))\n"
+  id: python.algorithms.algo-bfs.t2
+- type: code
+  title: Старт и два соседа
+  difficulty: 2
+  context: development
+  prompt: Прочитайте старт и двух соседей. У соседей своих связей нет. Выведите порядок обхода
+    в ширину через пробел.
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      лес
+
+      цех
+
+      '
+    expected_stdout: 'склад лес цех
+
+      '
+  - stdin: 'лес
+
+      ель
+
+      сосна
+
+      '
+    expected_stdout: 'лес ель сосна
+
+      '
+  hints:
+  - Очередь начинайте со старта.
+  - Соседей кладите в том порядке, как прочитали.
+  - Печатайте имена через пробел.
+  solution: "from collections import deque\nstart = input()\na = input()\nb = input()\ngraph\
+    \ = {start: [a, b], a: [], b: []}\nseen = {start}\nqueue = deque([start])\norder = []\n\
+    while queue:\n    node = queue.popleft()\n    order.append(node)\n    for nxt in graph[node]:\n\
+    \        if nxt not in seen:\n            seen.add(nxt)\n            queue.append(nxt)\n\
+    print(' '.join(order))\n"
+  explanation: Сначала старт, потом первый сосед, потом второй.
+  id: python.algorithms.algo-bfs.t3
+- type: code
+  title: Цепочка из трёх
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте три вершины цепочки: от первой ребро ко второй, от второй к третьей.
+    Выведите порядок обхода в ширину от первой.'
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      лес
+
+      ель
+
+      '
+    expected_stdout: 'склад лес ель
+
+      '
+  - stdin: 'цех
+
+      двор
+
+      ворота
+
+      '
+    expected_stdout: 'цех двор ворота
+
+      '
+  hints:
+  - У каждой вершины не больше одного соседа.
+  - Отмечайте вершину до помещения в очередь.
+  - Порядок совпадёт с чтением.
+  solution: "from collections import deque\na = input()\nb = input()\nc = input()\ngraph =\
+    \ {a: [b], b: [c], c: []}\nseen = {a}\nqueue = deque([a])\norder = []\nwhile queue:\n\
+    \    node = queue.popleft()\n    order.append(node)\n    for nxt in graph[node]:\n   \
+    \     if nxt not in seen:\n            seen.add(nxt)\n            queue.append(nxt)\n\
+    print(' '.join(order))\n"
+  explanation: Цепочка обходится от начала к концу без повторов.
+  id: python.algorithms.algo-bfs.t4
+- type: code
+  title: Сколько дошли
+  difficulty: 2
+  context: development
+  prompt: Прочитайте старт, другую вершину и 1 или 0. Если пришла 1, от старта есть ребро
+    к другой вершине, иначе связи нет. Выведите, сколько вершин посетит обход от старта.
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      лес
+
+      1
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: 'склад
+
+      лес
+
+      0
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Без ребра в очередь попадает только старт.
+  - С ребром добавьте соседа один раз.
+  - Печатайте длину порядка.
+  solution: "from collections import deque\nstart = input()\nneigh = input()\nlink = int(input())\n\
+    graph = {start: []}\nif link == 1:\n    graph[start].append(neigh)\n    graph[neigh] =\
+    \ []\nseen = {start}\nqueue = deque([start])\norder = []\nwhile queue:\n    node = queue.popleft()\n\
+    \    order.append(node)\n    for nxt in graph[node]:\n        if nxt not in seen:\n  \
+    \          seen.add(nxt)\n            queue.append(nxt)\nprint(len(order))\n"
+  explanation: Изолированная вершина в обход от старта не входит.
+  id: python.algorithms.algo-bfs.t5
+introduces:
+- id: algo-bfs
+  title: Обход в ширину
+  summary: Посещение графа слоями от старта. Очередь держит вершины, которые откроют следующими.

@@ -1,0 +1,175 @@
+id: python.functions.fn-return
+slug: fn-return
+section: functions
+title: Функция и return
+order: 1
+weight: 1
+prerequisites:
+- python.collections.review
+goal: Вынести вычисление в функцию и вернуть результат.
+tags:
+- def
+- return
+- функция
+theory:
+- Функция начинается со слова def, имени и скобок. После двоеточия идёт блок с отступом. return
+  отдаёт значение и сразу заканчивает функцию.
+- Код после return в этой функции уже не выполняется. Если return нет, функция завершается
+  со значением None.
+- Вызов подставляет аргументы в параметры и получает то, что вернулось. Печать внутри функции
+  и возврат значения — разные действия.
+examples:
+- title: Сумма
+  code: "def add(a, b):\n    return a + b\nprint(add(2, 3))\n"
+  explanation: return отдаёт 5, print показывает это число.
+- title: None
+  code: "def greet():\n    print('привет')\nprint(greet())\n"
+  explanation: Внутри функции печатается привет. Сам вызов возвращает None, и его печатает
+    второй print.
+outcomes:
+- описывать функцию через def
+- возвращать значение через return
+- отличать return от print
+- вызывать функцию и печатать результат
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает return
+  difficulty: 1
+  context: neutral
+  prompt: Что происходит в момент return?
+  options:
+  - id: a
+    text: Функция отдаёт значение и завершается
+  - id: b
+    text: Функция печатает значение и продолжается
+  - id: c
+    text: Функция удаляет переменные
+  answer: a
+  hints:
+  - return заканчивает функцию.
+  - Печать делает print.
+  - Значение уходит к вызывающему коду.
+  solution: a
+  explanation: return и завершает функцию, и передаёт значение.
+  id: python.functions.fn-return.t1
+- type: predict_output
+  title: Вызов без return
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано последним?
+  options:
+  - id: a
+    text: None
+  - id: b
+    text: ping
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - Сначала сработает print внутри функции.
+  - У ping нет return.
+  - Последняя строка печатает результат вызова.
+  solution: a
+  explanation: Внутри печатается ping, затем print показывает None.
+  code: "def ping():\n    print('ping')\nprint(ping())\n"
+  id: python.functions.fn-return.t2
+- type: code
+  title: Удвоить
+  difficulty: 2
+  context: development
+  prompt: Прочитайте целое число и выведите его удвоенным. Удвоение сделайте в функции double.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '8
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Сначала опишите функцию.
+  - Прочитанное значение преобразуйте в int.
+  - Печатайте результат вызова, а не само имя функции.
+  solution: "def double(n):\n    return n * 2\nprint(double(int(input())))\n"
+  explanation: double возвращает произведение, print показывает его.
+  id: python.functions.fn-return.t3
+- type: code
+  title: Разница
+  difficulty: 2
+  context: development
+  prompt: Прочитайте два целых числа и выведите их разность через функцию sub.
+  starter_code: ''
+  tests:
+  - stdin: '9
+
+      4
+
+      '
+    expected_stdout: '5
+
+      '
+  - stdin: '3
+
+      10
+
+      '
+    expected_stdout: '-7
+
+      '
+  hints:
+  - Параметры идут в том же порядке, что и чтение.
+  - return отдаёт разность.
+  - Печатайте вызов sub.
+  solution: "def sub(a, b):\n    return a - b\na = int(input())\nb = int(input())\nprint(sub(a,\
+    \ b))\n"
+  explanation: Функция возвращает a - b, программа только печатает результат.
+  id: python.functions.fn-return.t4
+- type: code
+  title: Допуск
+  difficulty: 2
+  context: development
+  prompt: Прочитайте целое число. Функция access возвращает строку ok, если число не больше
+    3, иначе deny. Выведите результат.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      '
+    expected_stdout: 'ok
+
+      '
+  - stdin: '4
+
+      '
+    expected_stdout: 'deny
+
+      '
+  hints:
+  - В функции две ветки return.
+  - Сравнение уже знакомо.
+  - Печатайте строку, которую вернула функция.
+  solution: "def access(tries):\n    if tries <= 3:\n        return 'ok'\n    return 'deny'\n\
+    print(access(int(input())))\n"
+  explanation: Один return срабатывает и сразу заканчивает функцию.
+  id: python.functions.fn-return.t5
+introduces:
+- id: def
+  title: def
+  summary: Начинает описание функции. После имени и скобок ставится двоеточие.
+- id: return
+  title: return
+  summary: Отдаёт значение и завершает функцию. Без return функция возвращает None.

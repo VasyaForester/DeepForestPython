@@ -1,0 +1,237 @@
+id: python.stats.stats-test
+slug: stats-test
+section: stats
+title: Проверка гипотез
+order: 7
+weight: 1
+prerequisites:
+- python.stats.stats-corr
+goal: Сравнить среднее с порогом и не называть это t-тестом.
+tags:
+- гипотеза
+theory:
+- 'Проверка гипотез начинается с нулевой гипотезы: утверждения, которое готовы оставить, если
+  данные не удивят. Например, средняя высота не выше 10.'
+- Настоящий тест задаёт, какие выборки правдоподобны при этой гипотезе, и заранее выбирает
+  границу редкости. Порог «среднее строго больше числа» такой границы не строит.
+- 'В уроке правило-замена: если сумма строго больше порог * n, печатают «отклонить», иначе
+  «не хватает данных». Это не t-тест. Модуль statistics не используется.'
+examples:
+- title: Выше десяти
+  code: "heights = [12, 9, 15]\nthreshold = 10\nif sum(heights) > threshold * len(heights):\n\
+    \    print(\"отклонить\")\nelse:\n    print(\"не хватает данных\")\n"
+  explanation: Сумма 36 больше 30. Правило печатает «отклонить». Это всё ещё порог, не t-тест.
+- title: Ровно порог
+  code: "heights = [3, 3, 3]\nthreshold = 3\nif sum(heights) > threshold * len(heights):\n\
+    \    print(\"отклонить\")\nelse:\n    print(\"не хватает данных\")\n"
+  explanation: Сумма равна порог * n. Строгого превышения нет.
+outcomes:
+- называть нулевую гипотезу до расчёта
+- отличать пороговое правило от t-теста
+- сравнивать сумму с порог * n
+- не отклонять гипотезу при равенстве порогу
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что нужно настоящему тесту
+  difficulty: 1
+  context: neutral
+  prompt: Чего не хватает правилу «среднее выше порога», чтобы стать настоящим тестом?
+  options:
+  - id: a
+    text: Модели распределения и заранее названной нулевой гипотезы
+  - id: b
+    text: Более крупного среднего само по себе
+  - id: c
+    text: Обязательного рисунка гистограммы
+  answer: a
+  hints:
+  - Порог не описывает, какие выборки редки.
+  - Нулевую гипотезу называют до данных.
+  - Рисунок сам по себе тест не заменяет.
+  solution: a
+  explanation: Без модели и нулевой гипотезы сравнение с порогом остаётся заменой.
+  id: python.stats.stats-test.t1
+- type: predict_output
+  title: Слово правила
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: отклонить
+  - id: b
+    text: не хватает данных
+  - id: c
+    text: '36'
+  answer: a
+  hints:
+  - Сравнивается сумма с порог * n.
+  - 36 больше 30.
+  - Печатается слово, не сумма.
+  solution: a
+  explanation: Правило срабатывает и печатает «отклонить».
+  code: 'total = 36
+
+    threshold = 10
+
+    n = 3
+
+    print("отклонить" if total > threshold * n else "не хватает данных")
+
+    '
+  id: python.stats.stats-test.t2
+- type: code
+  title: Порог высот
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, n высот и порог. Если сумма строго больше порог * n, выведите отклонить,
+    иначе не хватает данных.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      10
+
+      '
+    expected_stdout: 'отклонить
+
+      '
+  - stdin: '3
+
+      3
+
+      3
+
+      3
+
+      3
+
+      '
+    expected_stdout: 'не хватает данных
+
+      '
+  hints:
+  - Сравнивайте сумму, чтобы не делить.
+  - Равенство не отклоняет.
+  - Два возможных ответа заданы словами.
+  solution: "n = int(input())\ntotal = sum(int(input()) for _ in range(n))\nthreshold = int(input())\n\
+    if total > threshold * n:\n    print(\"отклонить\")\nelse:\n    print(\"не хватает данных\"\
+    )\n"
+  explanation: Целое сравнение заменяет среднее > порог и не является t-тестом.
+  id: python.stats.stats-test.t3
+- type: code
+  title: Порог цен
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, n цен и порог. Примените то же строгое правило и выведите одно из
+    двух слов.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      30
+
+      50
+
+      20
+
+      '
+    expected_stdout: 'отклонить
+
+      '
+  - stdin: '2
+
+      10
+
+      10
+
+      15
+
+      '
+    expected_stdout: 'не хватает данных
+
+      '
+  hints:
+  - Порог последний.
+  - Строгое неравенство.
+  - Слова не сокращайте.
+  solution: 'n = int(input())
+
+    total = sum(int(input()) for _ in range(n))
+
+    threshold = int(input())
+
+    print("отклонить" if total > threshold * n else "не хватает данных")
+
+    '
+  explanation: То же правило переносится на цены и остаётся заменой теста.
+  id: python.stats.stats-test.t4
+- type: code
+  title: Порог посадок
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, n суточных посадок и порог. Выведите отклонить или не хватает данных
+    по тому же правилу.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      1
+
+      1
+
+      1
+
+      1
+
+      1
+
+      '
+    expected_stdout: 'не хватает данных
+
+      '
+  - stdin: '1
+
+      8
+
+      0
+
+      '
+    expected_stdout: 'отклонить
+
+      '
+  hints:
+  - Единицы не превышают порог 1.
+  - Одно большое число может превысить.
+  - Печатайте ровно одно слово-фразу.
+  solution: 'n = int(input())
+
+    total = sum(int(input()) for _ in range(n))
+
+    threshold = int(input())
+
+    print("отклонить" if total > threshold * n else "не хватает данных")
+
+    '
+  explanation: Мало данных для правила — это не статистическая ошибка II рода, а несработавший
+    порог.
+  id: python.stats.stats-test.t5
+introduces:
+- id: stats-null
+  title: Нулевая гипотеза
+  summary: Утверждение, которое оставляют, если данные не показали заранее оговорённой редкости.
+    Порог урока его только изображает.

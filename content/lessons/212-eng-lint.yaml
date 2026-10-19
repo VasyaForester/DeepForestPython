@@ -1,0 +1,173 @@
+id: python.engineering.eng-lint
+slug: eng-lint
+section: engineering
+title: Линтер и форматтер
+order: 4
+weight: 1
+prerequisites:
+- python.engineering.eng-types
+goal: Отметить слишком длинную строку или плохое имя.
+tags:
+- линтер
+- имя
+- длина
+theory:
+- 'Линтер и форматтер, например ruff и black, смотрят стиль до ревью. В этом уроке они не
+  запускаются: правило написано обычной функцией.'
+- Функция получает одну строку кода. Если в ней больше 40 символов или имя короче двух букв,
+  она печатает «замечание».
+- Имя — первое слово строки. Короткая нормальная строка с нормальным именем печатает ок. Замечание
+  не чинит код, оно только показывает находку.
+examples:
+- title: Короткое имя
+  code: "def inspect(line):\n    name = line.split()[0]\n    if len(line) > 40 or len(name)\
+    \ < 2:\n        print('замечание')\n    else:\n        print('ок')\ninspect('a = 1')\n"
+  explanation: Имя a короче двух букв, печатается замечание.
+- title: Нормальная строка
+  code: "def inspect(line):\n    name = line.split()[0]\n    if len(line) > 40 or len(name)\
+    \ < 2:\n        print('замечание')\n    else:\n        print('ок')\ninspect('price = 10')\n"
+  explanation: Имя price длиннее одной буквы, вся строка короче порога, печатается ок.
+outcomes:
+- отмечать строку длиннее 40 символов
+- отмечать имя короче двух букв
+- печатать замечание или ок
+- держать правило стиля в обычной функции
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кто ищет стиль
+  difficulty: 1
+  context: neutral
+  prompt: Что в этом уроке заменяет запуск ruff или black?
+  options:
+  - id: a
+    text: Функция, которая сама смотрит длину строки и имя
+  - id: b
+    text: Импорт ruff и правка файла на диске
+  - id: c
+    text: Отказ от любых правил стиля
+  answer: a
+  hints:
+  - Библиотеки стиля здесь не импортируются.
+  - Правило записано в inspect.
+  - Она печатает замечание или ок.
+  solution: a
+  explanation: Проверку стиля в упражнении делает обычная функция.
+  id: python.engineering.eng-lint.t1
+- type: predict_output
+  title: Однобуквенное имя
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: замечание
+  - id: b
+    text: ок
+  - id: c
+    text: a
+  answer: a
+  hints:
+  - Первое слово — a.
+  - В нём одна буква.
+  - Длина всей строки здесь ни при чём.
+  solution: a
+  explanation: Короткое имя даёт замечание.
+  code: "def inspect(line):\n    name = line.split()[0]\n    if len(line) > 40 or len(name)\
+    \ < 2:\n        print('замечание')\n    else:\n        print('ок')\ninspect('a = 1')\n"
+  id: python.engineering.eng-lint.t2
+- type: code
+  title: Длина или имя
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку. Если она длиннее 40 символов или первое слово короче двух букв,
+    выведите замечание, иначе ок.
+  starter_code: ''
+  tests:
+  - stdin: 'a = 1
+
+      '
+    expected_stdout: 'замечание
+
+      '
+  - stdin: 'price = 10
+
+      '
+    expected_stdout: 'ок
+
+      '
+  hints:
+  - split берёт имя до пробела.
+  - 'Порог длины строгий: больше 40.'
+  - Печатайте одно слово.
+  solution: "def inspect(line):\n    name = line.split()[0]\n    if len(line) > 40 or len(name)\
+    \ < 2:\n        print('замечание')\n    else:\n        print('ок')\ninspect(input())\n"
+  explanation: Оба правила живут в одной функции.
+  id: python.engineering.eng-lint.t3
+- type: code
+  title: Длинная строка
+  difficulty: 2
+  context: development
+  prompt: То же правило. Одна из строк короткая и с нормальным именем, другая длиннее 40 символов.
+    Выведите замечание или ок.
+  starter_code: ''
+  tests:
+  - stdin: 'price = 10
+
+      '
+    expected_stdout: 'ок
+
+      '
+  - stdin: 'price = 123456789012345678901234567890123
+
+      '
+    expected_stdout: 'замечание
+
+      '
+  hints:
+  - Считайте len всей строки, не только имени.
+  - 41 символ уже замечание.
+  - Имя price само по себе годится.
+  solution: "def inspect(line):\n    name = line.split()[0]\n    if len(line) > 40 or len(name)\
+    \ < 2:\n        print('замечание')\n    else:\n        print('ок')\ninspect(input())\n"
+  explanation: Длинная строка отмечается, даже если имя нормальное.
+  id: python.engineering.eng-lint.t4
+- type: code
+  title: Два плохих случая
+  difficulty: 2
+  context: development
+  prompt: То же правило. Прочитайте строку и отметьте либо однобуквенное имя, либо длину больше
+    40.
+  starter_code: ''
+  tests:
+  - stdin: 'b = 2
+
+      '
+    expected_stdout: 'замечание
+
+      '
+  - stdin: 'total = 1234567890123456789012345678901234
+
+      '
+    expected_stdout: 'замечание
+
+      '
+  hints:
+  - b — плохое имя.
+  - Вторая строка длинная при нормальном имени.
+  - Условие соединено через or.
+  solution: "def inspect(line):\n    name = line.split()[0]\n    if len(line) > 40 or len(name)\
+    \ < 2:\n        print('замечание')\n    else:\n        print('ок')\ninspect(input())\n"
+  explanation: Достаточно одного нарушения, чтобы напечатать замечание.
+  id: python.engineering.eng-lint.t5
+introduces:
+- id: eng-lint-rule
+  title: Правило стиля
+  summary: Проверка длины строки и имени. В проекте её делают ruff и black, здесь — функция.

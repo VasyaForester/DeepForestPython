@@ -1,0 +1,176 @@
+id: python.functions.fn-params
+slug: fn-params
+section: functions
+title: Параметры
+order: 2
+weight: 1
+prerequisites:
+- python.functions.fn-return
+goal: Передавать в функцию данные и не зависеть от внешних имён.
+tags:
+- параметр
+- аргумент
+theory:
+- Параметр — имя в скобках при описании функции. Аргумент — значение, которое подставляют
+  при вызове.
+- Функция должна пользоваться параметрами, а не надеяться на переменные снаружи. Тогда её
+  можно вызвать с разными данными.
+- Позиция аргумента совпадает с позицией параметра. Первый аргумент попадает в первый параметр.
+examples:
+- title: Два параметра
+  code: "def line(name, count):\n    print(name)\n    print(count)\nline('ель', 4)\n"
+  explanation: name получает строку, count получает 4.
+- title: Другой вызов
+  code: "def area(w, h):\n    return w * h\nprint(area(3, 5))\n"
+  explanation: Те же параметры принимают другую пару чисел.
+outcomes:
+- отличать параметр от аргумента
+- передавать несколько значений
+- не читать input внутри функции без нужды
+- вызывать функцию с разными данными
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Имя и значение
+  difficulty: 1
+  context: neutral
+  prompt: Чем параметр отличается от аргумента?
+  options:
+  - id: a
+    text: Параметр — имя в описании, аргумент — значение при вызове
+  - id: b
+    text: Это одно и то же
+  - id: c
+    text: Аргумент пишут только в return
+  answer: a
+  hints:
+  - Смотрите на скобки def и на скобки вызова.
+  - Имя и значение не одно и то же.
+  - Аргумент передают при вызове.
+  solution: a
+  explanation: Параметр принимает аргумент.
+  id: python.functions.fn-params.t1
+- type: predict_output
+  title: Порядок
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается первым?
+  options:
+  - id: a
+    text: сосна
+  - id: b
+    text: ель
+  - id: c
+    text: a
+  answer: a
+  hints:
+  - Печатается первый параметр.
+  - Первый аргумент — сосна.
+  - Имя параметра на экран не выводится.
+  solution: a
+  explanation: В a попадает сосна.
+  code: "def show(a, b):\n    print(a)\nshow('сосна', 'ель')\n"
+  id: python.functions.fn-params.t2
+- type: code
+  title: Приветствие
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и выведите строку вида Привет, Mira. Сборку строки сделайте в функции
+    hello.
+  starter_code: ''
+  tests:
+  - stdin: 'Mira
+
+      '
+    expected_stdout: 'Привет, Mira
+
+      '
+  - stdin: 'Лев
+
+      '
+    expected_stdout: 'Привет, Лев
+
+      '
+  hints:
+  - Параметр один.
+  - input уже строка.
+  - Печатайте результат hello.
+  solution: "def hello(name):\n    return 'Привет, ' + name\nprint(hello(input()))\n"
+  explanation: Функция получает имя и возвращает готовую фразу.
+  id: python.functions.fn-params.t3
+- type: code
+  title: Стоимость
+  difficulty: 2
+  context: development
+  prompt: Прочитайте цену и количество. Функция cost возвращает произведение. Выведите его.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      '
+    expected_stdout: '30
+
+      '
+  - stdin: '5
+
+      5
+
+      '
+    expected_stdout: '25
+
+      '
+  hints:
+  - Два параметра.
+  - Оба значения — int.
+  - return отдаёт произведение.
+  solution: "def cost(price, count):\n    return price * count\nprint(cost(int(input()), int(input())))\n"
+  explanation: Аргументы попадают в price и count по порядку.
+  id: python.functions.fn-params.t4
+- type: code
+  title: Три числа
+  difficulty: 2
+  context: development
+  prompt: Прочитайте три целых числа и выведите наибольшее. Сравнение спрячьте в функцию best.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      9
+
+      4
+
+      '
+    expected_stdout: '9
+
+      '
+  - stdin: '7
+
+      7
+
+      2
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - У функции три параметра.
+  - max уже умеет выбрать наибольшее.
+  - Читайте три строки.
+  solution: "def best(a, b, c):\n    return max(a, b, c)\nprint(best(int(input()), int(input()),\
+    \ int(input())))\n"
+  explanation: max сравнивает три параметра, print показывает результат.
+  id: python.functions.fn-params.t5
+introduces:
+- id: parameter
+  title: Параметр
+  summary: Имя в скобках def. При вызове получает очередной аргумент.

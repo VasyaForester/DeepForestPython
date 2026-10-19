@@ -1,0 +1,173 @@
+id: python.engineering.eng-deps
+slug: eng-deps
+section: engineering
+title: Уязвимости зависимостей
+order: 11
+weight: 1
+prerequisites:
+- python.engineering.eng-health
+goal: По имени пакета сказать, нужно ли его заменить.
+tags:
+- зависимость
+- версия
+- пакет
+theory:
+- Версии зависимостей фиксируют, а советы по уязвимостям читают, а не откладывают. Пакет с
+  известной проблемой в проекте не оставляют.
+- 'В упражнении нет выхода в сеть. Есть словарь плохих имён: dusty-http и old-xml. Если введённое
+  имя есть в нём, программа печатает «заменить», иначе «ок».'
+- 'Имена учебные. Смысл правила тот же: сверять зависимость со списком и не надеяться, что
+  «и так работает».'
+examples:
+- title: Плохой пакет
+  code: "bad = {'dusty-http': True, 'old-xml': True}\nname = 'old-xml'\nif name in bad:\n\
+    \    print('заменить')\nelse:\n    print('ок')\n"
+  explanation: old-xml есть в словаре, печатается заменить.
+- title: Обычное имя
+  code: "bad = {'dusty-http': True, 'old-xml': True}\nname = 'warehouse'\nif name in bad:\n\
+    \    print('заменить')\nelse:\n    print('ок')\n"
+  explanation: warehouse в списке нет, печатается ок.
+outcomes:
+- сверять имя пакета со списком
+- печатать заменить для плохого имени
+- печатать ок для остальных
+- фиксировать версии и читать советы по уязвимостям
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делать с плохим пакетом
+  difficulty: 1
+  context: neutral
+  prompt: Что означает слово заменить в этом уроке?
+  options:
+  - id: a
+    text: Имя есть в списке проблемных пакетов, его не оставляют как есть
+  - id: b
+    text: Пакет нужно удалить из Python навсегда
+  - id: c
+    text: Версии лучше не фиксировать
+  answer: a
+  hints:
+  - Словарь хранит плохие имена.
+  - ок значит, что имени в списке нет.
+  - Фиксировать версии как раз нужно, это не отказ от них.
+  solution: a
+  explanation: Совпадение со списком требует замены, а не продолжения работы как ни в чём
+    не бывало.
+  id: python.engineering.eng-deps.t1
+- type: predict_output
+  title: Имя вне списка
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ок
+  - id: b
+    text: заменить
+  - id: c
+    text: warehouse
+  answer: a
+  hints:
+  - warehouse нет среди ключей.
+  - Ветка else печатает ок.
+  - Само имя на экран не выводится.
+  solution: a
+  explanation: Чистое имя получает ок.
+  code: "bad = {'dusty-http': True, 'old-xml': True}\nname = 'warehouse'\nif name in bad:\n\
+    \    print('заменить')\nelse:\n    print('ок')\n"
+  id: python.engineering.eng-deps.t2
+- type: code
+  title: Имя пакета
+  difficulty: 2
+  context: development
+  prompt: 'Плохие пакеты: dusty-http и old-xml. Прочитайте имя и выведите заменить или ок.'
+  starter_code: ''
+  tests:
+  - stdin: 'old-xml
+
+      '
+    expected_stdout: 'заменить
+
+      '
+  - stdin: 'warehouse
+
+      '
+    expected_stdout: 'ок
+
+      '
+  hints:
+  - Сравнивайте имя целиком.
+  - Дефис входит в имя.
+  - Печатайте одно слово.
+  solution: "bad = {'dusty-http': True, 'old-xml': True}\nname = input()\nif name in bad:\n\
+    \    print('заменить')\nelse:\n    print('ок')\n"
+  explanation: Решение зависит только от присутствия имени в словаре.
+  id: python.engineering.eng-deps.t3
+- type: code
+  title: Второй плохой
+  difficulty: 2
+  context: development
+  prompt: Тот же словарь. Прочитайте имя dusty-http или любое другое и выведите заменить либо
+    ок.
+  starter_code: ''
+  tests:
+  - stdin: 'dusty-http
+
+      '
+    expected_stdout: 'заменить
+
+      '
+  - stdin: 'local-tools
+
+      '
+    expected_stdout: 'ок
+
+      '
+  hints:
+  - Оба плохих имени равноправны.
+  - 'Регистр важен: имя как в словаре.'
+  - Незнакомое имя — ок.
+  solution: "bad = {'dusty-http': True, 'old-xml': True}\nname = input()\nif name in bad:\n\
+    \    print('заменить')\nelse:\n    print('ок')\n"
+  explanation: Список короткий, но проверка для каждого имени одна и та же.
+  id: python.engineering.eng-deps.t4
+- type: code
+  title: Функция сверки
+  difficulty: 2
+  context: development
+  prompt: Функция advise(name) возвращает заменить или ок для словаря dusty-http и old-xml.
+    Прочитайте имя и напечатайте результат.
+  starter_code: ''
+  tests:
+  - stdin: 'warehouse
+
+      '
+    expected_stdout: 'ок
+
+      '
+  - stdin: 'old-xml
+
+      '
+    expected_stdout: 'заменить
+
+      '
+  hints:
+  - Словарь внутри функции.
+  - return отдаёт слово.
+  - print снаружи один.
+  solution: "def advise(name):\n    bad = {'dusty-http': True, 'old-xml': True}\n    if name\
+    \ in bad:\n        return 'заменить'\n    return 'ок'\nprint(advise(input()))\n"
+  explanation: Сверка со списком собрана в одном месте.
+  id: python.engineering.eng-deps.t5
+introduces:
+- id: eng-advisory
+  title: Совет по пакету
+  summary: Имя из списка проблемных нужно заменить. Версии при этом фиксируют.

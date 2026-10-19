@@ -1,0 +1,203 @@
+id: python.cli.cli-paths
+slug: cli-paths
+section: cli
+title: Пути в командной строке
+order: 2
+weight: 1
+prerequisites:
+- python.cli.cli-terminal
+goal: Различать относительный и абсолютный путь как строки.
+tags:
+- путь
+- абсолютный
+- относительный
+theory:
+- 'Абсолютный путь начинает отсчёт от корня диска: /home/mira/заметки или C:/Users/Mira/заметки.
+  Относительный путь считается от текущей папки: заметки/отчёт.txt. Команда cd заметки использует
+  относительный путь, cd /home/mira/заметки — абсолютный.'
+- 'Песочница не меняет текущую папку и не вызывает pathlib. Путь здесь — обычная строка: абсолютный
+  начинается с / или имеет двоеточие диска вторым символом.'
+- Имя файла — последний кусок после /. Склейка папки и имени — это папка, слэш и имя, без
+  лишнего слэша в конце папки.
+examples:
+- title: Относительный путь
+  code: 'path = ''заметки/отчёт.txt''
+
+    absolute = path.startswith(''/'') or (len(path) > 1 and path[1] == '':'')
+
+    print(''абсолютный'' if absolute else ''относительный'')
+
+    '
+  explanation: Строка не начинается с корня и не содержит диск, значит путь относительный.
+- title: Диск Windows
+  code: 'path = ''C:/Users/Mira/заметки''
+
+    absolute = path.startswith(''/'') or (len(path) > 1 and path[1] == '':'')
+
+    print(''абсолютный'' if absolute else ''относительный'')
+
+    '
+  explanation: Второй символ — двоеточие диска C, поэтому путь абсолютный.
+outcomes:
+- отличать абсолютный путь от относительного
+- собирать путь из папки и имени
+- доставать последний компонент строки пути
+- не подключать pathlib там, где хватает строк
+resources:
+- kind: docs
+  title: Command line and environment
+  url: https://docs.python.org/3/using/cmdline.html
+- kind: youtube
+  title: CS50P — Lecture 0
+  url: https://www.youtube.com/watch?v=eWRfhZUzrAc
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какой путь
+  difficulty: 1
+  context: neutral
+  prompt: Путь заметки/отчёт.txt в команде cd заметки/отчёт.txt — какой?
+  options:
+  - id: a
+    text: 'Относительный: он начинается от текущей папки'
+  - id: b
+    text: 'Абсолютный: в нём есть слэш'
+  - id: c
+    text: Это имя команды cd
+  answer: a
+  hints:
+  - Абсолютный путь начинается с / или с диска.
+  - Слэш внутри ещё не делает путь абсолютным.
+  - cd — команда, путь стоит следом.
+  solution: a
+  explanation: Нет корня и нет диска, путь относительный.
+  id: python.cli.cli-paths.t1
+- type: predict_output
+  title: Проверка корня
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: абсолютный
+  - id: b
+    text: относительный
+  - id: c
+    text: отчёт.txt
+  answer: a
+  hints:
+  - Строка начинается с /.
+  - Имя файла здесь не печатается.
+  - Относительный путь так не начинается.
+  solution: a
+  explanation: Ведущий слэш означает абсолютный путь.
+  code: 'path = ''/home/mira/отчёт.txt''
+
+    print(''абсолютный'' if path.startswith(''/'') else ''относительный'')
+
+    '
+  id: python.cli.cli-paths.t2
+- type: code
+  title: Тип пути
+  difficulty: 2
+  context: development
+  prompt: Прочитайте путь и выведите абсолютный или относительный. Абсолютный начинается с
+    / или с диска вроде C:.
+  starter_code: ''
+  tests:
+  - stdin: '/home/mira/заметки
+
+      '
+    expected_stdout: 'абсолютный
+
+      '
+  - stdin: 'заметки/отчёт.txt
+
+      '
+    expected_stdout: 'относительный
+
+      '
+  hints:
+  - Проверьте startswith для /.
+  - Диск — это двоеточие на второй позиции.
+  - Печатайте одно слово.
+  solution: 'path = input().strip()
+
+    absolute = path.startswith(''/'') or (len(path) > 1 and path[1] == '':'')
+
+    print(''абсолютный'' if absolute else ''относительный'')
+
+    '
+  explanation: Корень или буква диска отличают абсолютный путь от относительного.
+  id: python.cli.cli-paths.t3
+- type: code
+  title: Склеить путь
+  difficulty: 2
+  context: development
+  prompt: Прочитайте папку и имя файла. Выведите путь через один слэш.
+  starter_code: ''
+  tests:
+  - stdin: 'заметки
+
+      отчёт.txt
+
+      '
+    expected_stdout: 'заметки/отчёт.txt
+
+      '
+  - stdin: 'C:/Users/Mira
+
+      данные.csv
+
+      '
+    expected_stdout: 'C:/Users/Mira/данные.csv
+
+      '
+  hints:
+  - Читайте две строки.
+  - Между ними поставьте /.
+  - Не добавляйте пробел.
+  solution: 'folder = input().strip()
+
+    name = input().strip()
+
+    print(folder + ''/'' + name)
+
+    '
+  explanation: Путь собирается как папка, слэш и имя файла.
+  id: python.cli.cli-paths.t4
+- type: code
+  title: Имя в конце
+  difficulty: 2
+  context: development
+  prompt: Прочитайте путь и выведите только последний компонент после /.
+  starter_code: ''
+  tests:
+  - stdin: 'заметки/отчёт.txt
+
+      '
+    expected_stdout: 'отчёт.txt
+
+      '
+  - stdin: '/home/mira/данные.csv
+
+      '
+    expected_stdout: 'данные.csv
+
+      '
+  hints:
+  - Разрежьте путь по /.
+  - Последний элемент списка — имя.
+  - Ведущий слэш даёт пустой первый кусок, его берите не надо.
+  solution: 'print(input().strip().split(''/'')[-1])
+
+    '
+  explanation: Имя файла или папки — последний фрагмент пути.
+  id: python.cli.cli-paths.t5
+introduces:
+- id: cli-relative-path
+  title: Относительный путь
+  summary: Путь от текущей папки, например заметки/отчёт.txt.
+- id: cli-absolute-path
+  title: Абсолютный путь
+  summary: Путь от корня или диска, например /home/mira/заметки или C:/Users/Mira/заметки.

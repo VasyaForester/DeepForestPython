@@ -1,0 +1,184 @@
+id: python.backend.be-valid
+slug: be-valid
+section: backend
+title: Валидация
+order: 4
+weight: 1
+prerequisites:
+- python.backend.be-pydantic
+goal: Отклонить пустое имя или отрицательную цену.
+tags:
+- валидация
+- имя
+- цена
+theory:
+- После разбора полей проверяют смысл данных. Пустое имя и цена меньше нуля в расчёт не идут.
+- Функция печатает «ошибка» или «ок». Это ответ проверки, а не текст исключения и не статус
+  HTTP.
+- 'Ноль как цена допустим: запрет стоит только на отрицательные. Пустое имя отвергается даже
+  при нормальной цене.'
+examples:
+- title: Нормальная позиция
+  code: "def check(name, price):\n    if name == '' or price < 0:\n        print('ошибка')\n\
+    \    else:\n        print('ок')\ncheck('ель', 120)\n"
+  explanation: Имя не пустое и цена не отрицательная, поэтому печатается ок.
+- title: Отрицательная цена
+  code: "def check(name, price):\n    if name == '' or price < 0:\n        print('ошибка')\n\
+    \    else:\n        print('ок')\ncheck('ель', -2)\n"
+  explanation: Цена меньше нуля, срабатывает ветка ошибка.
+outcomes:
+- отклонять пустое имя
+- отклонять отрицательную цену
+- оставлять нулевую цену допустимой
+- печатать ошибка или ок
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что отклонять
+  difficulty: 1
+  context: neutral
+  prompt: Какие данные в этом уроке считаются ошибочными?
+  options:
+  - id: a
+    text: Пустое имя или цена меньше нуля
+  - id: b
+    text: Любая цена, включая ноль
+  - id: c
+    text: Только имя длиннее двух букв
+  answer: a
+  hints:
+  - Ноль не меньше нуля.
+  - Пустая строка — плохое имя.
+  - Отрицательная цена тоже не проходит.
+  solution: a
+  explanation: Ошибка — это пустое имя или отрицательная цена.
+  id: python.backend.be-valid.t1
+- type: predict_output
+  title: Знак цены
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ошибка
+  - id: b
+    text: ок
+  - id: c
+    text: ель
+  answer: a
+  hints:
+  - Цена сравнивается с нулём.
+  - Минус два меньше нуля.
+  - Имя при этом не печатается.
+  solution: a
+  explanation: Отрицательная цена даёт ошибка.
+  code: "def check(name, price):\n    if name == '' or price < 0:\n        print('ошибка')\n\
+    \    else:\n        print('ок')\ncheck('ель', -2)\n"
+  id: python.backend.be-valid.t2
+- type: code
+  title: Имя и цена
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и целую цену. Если имя пустое или цена отрицательная, выведите ошибка,
+    иначе ок.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      10
+
+      '
+    expected_stdout: 'ок
+
+      '
+  - stdin: '
+
+      10
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  hints:
+  - Сначала прочитайте обе строки.
+  - Пустая строка — это пустое имя.
+  - Сравнение цены строго меньше нуля.
+  solution: "def check(name, price):\n    if name == '' or price < 0:\n        print('ошибка')\n\
+    \    else:\n        print('ок')\ncheck(input(), int(input()))\n"
+  explanation: Одна функция решает, проходят ли имя и цена вместе.
+  id: python.backend.be-valid.t3
+- type: code
+  title: Только цена
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и цену. Имя в этих данных непустое. Выведите ошибка, если цена отрицательная,
+    иначе ок.
+  starter_code: ''
+  tests:
+  - stdin: 'сосна
+
+      -1
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  - stdin: 'сосна
+
+      0
+
+      '
+    expected_stdout: 'ок
+
+      '
+  hints:
+  - Ноль допустим.
+  - Минус один уже ошибка.
+  - Печатайте одно слово.
+  solution: "def check(name, price):\n    if name == '' or price < 0:\n        print('ошибка')\n\
+    \    else:\n        print('ок')\ncheck(input(), int(input()))\n"
+  explanation: Граница проходит по знаку цены, ноль остаётся допустимым.
+  id: python.backend.be-valid.t4
+- type: code
+  title: Пустое имя при нуле
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и цену. Цена может быть нулём. Пустое имя всё равно даёт ошибка,
+    заполненное имя и ноль дают ок.
+  starter_code: ''
+  tests:
+  - stdin: '
+
+      0
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  - stdin: 'пихта
+
+      0
+
+      '
+    expected_stdout: 'ок
+
+      '
+  hints:
+  - Ноль не делает цену отрицательной.
+  - Пустое имя проверяйте отдельно.
+  - Оба условия связаны через or.
+  solution: "def check(name, price):\n    if name == '' or price < 0:\n        print('ошибка')\n\
+    \    else:\n        print('ок')\ncheck(input(), int(input()))\n"
+  explanation: Пустое имя отклоняется даже при допустимой цене.
+  id: python.backend.be-valid.t5
+introduces:
+- id: be-validate
+  title: Проверка смысла
+  summary: 'Правило про данные: пустое имя и отрицательная цена печатают ошибка.'

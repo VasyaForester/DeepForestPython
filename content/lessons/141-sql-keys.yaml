@@ -1,0 +1,228 @@
+id: python.sql.sql-keys
+slug: sql-keys
+section: sql
+title: Индексы и ключи
+order: 11
+weight: 1
+prerequisites:
+- python.sql.sql-window
+goal: Найти строку по первичному ключу и не вставить дубликат.
+tags:
+- PRIMARY KEY
+- FOREIGN KEY
+- sqlite_master
+theory:
+- 'PRIMARY KEY делает значение уникальным и удобным для поиска: SELECT name FROM species WHERE
+  id = 1 возвращает одну ель. Повторная вставка того же id не проходит.'
+- 'FOREIGN KEY связывает заметку с деревом: species_id ссылается на species(id). В SQLite
+  проверка включается командой PRAGMA foreign_keys = ON, иначе ссылка может не контролироваться.'
+- Имена созданных таблиц лежат в sqlite_master. Задачи ниже либо ищут строку по ключу, либо
+  сообщают отказ на повтор, либо проверяют, есть ли таблица в sqlite_master.
+examples:
+- title: Чужая ссылка
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('pragma foreign_keys\
+    \ = on')\ncon.execute('create table species(id integer primary key, name text)')\ncon.execute('create\
+    \ table notes(id integer primary key, species_id integer references species(id), note\
+    \ text)')\ncon.execute(\"insert into species values (1, 'ель')\")\ntry:\n    con.execute(\"\
+    insert into notes values (1, 9, 'полив')\")\n    print('записано')\nexcept sqlite3.IntegrityError:\n\
+    \    print('отказ')\n"
+  explanation: При включённых внешних ключах ссылка на несуществующий id 9 получает отказ.
+- title: Поиск по ключу
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer primary key, name text)'')
+
+    con.execute("insert into species values (1, ''ель'')")
+
+    row = con.execute(''select name from species where id = 1'').fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Первичный ключ 1 сразу указывает на строку ели.
+outcomes:
+- объявлять PRIMARY KEY
+- искать строку по ключу
+- получать отказ на повтор ключа
+- проверять имя таблицы в sqlite_master
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем первичный ключ
+  difficulty: 1
+  context: neutral
+  prompt: Что гарантирует id INTEGER PRIMARY KEY в CREATE TABLE species(id INTEGER PRIMARY
+    KEY, name TEXT)?
+  options:
+  - id: a
+    text: У каждого id не больше одной строки, по нему строку ищут
+  - id: b
+    text: Что имя дерева можно повторять сколько угодно и id тоже
+  - id: c
+    text: Что таблица не попадёт в sqlite_master
+  answer: a
+  hints:
+  - Повтор того же id вызывает ошибку.
+  - Поиск WHERE id = 1 рассчитан на одну строку.
+  - sqlite_master как раз видит созданные таблицы.
+  solution: a
+  explanation: Первичный ключ уникален и служит адресом строки.
+  id: python.sql.sql-keys.t1
+- type: predict_output
+  title: Кто под номером 1
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: '1'
+  - id: c
+    text: нет
+  answer: a
+  hints:
+  - Вставлена одна строка с id 1.
+  - WHERE сравнивает первичный ключ.
+  - Печатается имя, не номер.
+  solution: a
+  explanation: Ключ 1 указывает на ель.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer primary key, name text)'')
+
+    con.execute("insert into species values (1, ''ель'')")
+
+    row = con.execute(''select name from species where id = 1'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-keys.t2
+- type: code
+  title: Найти по id
+  difficulty: 2
+  context: development
+  prompt: В таблице species есть 1 ель и 2 сосна. Прочитайте id и выведите имя.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: '2
+
+      '
+    expected_stdout: 'сосна
+
+      '
+  hints:
+  - Объявите id первичным ключом.
+  - Ищите через ?.
+  - Печатайте name.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer primary key, name text)'')
+
+    con.executemany(''insert into species values (?, ?)'', [(1, ''ель''), (2, ''сосна'')])
+
+    species_id = int(input())
+
+    row = con.execute(''select name from species where id = ?'', (species_id,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Поиск по первичному ключу возвращает одну строку.
+  id: python.sql.sql-keys.t3
+- type: code
+  title: Повтор ключа
+  difficulty: 2
+  context: development
+  prompt: В таблице уже есть id 1. Прочитайте id для новой строки дуб. Если ключ занят, выведите
+    отказ, иначе записано.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      '
+    expected_stdout: 'отказ
+
+      '
+  - stdin: '3
+
+      '
+    expected_stdout: 'записано
+
+      '
+  hints:
+  - Ловите sqlite3.IntegrityError.
+  - Повтор id 1 — отказ.
+  - Новый id 3 записывается.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ species(id integer primary key, name text)')\ncon.execute(\"insert into species values\
+    \ (1, 'ель')\")\nspecies_id = int(input())\ntry:\n    con.execute('insert into species\
+    \ values (?, ?)', (species_id, 'дуб'))\n    print('записано')\nexcept sqlite3.IntegrityError:\n\
+    \    print('отказ')\n"
+  explanation: Первичный ключ не даёт хранить две строки с одним id.
+  id: python.sql.sql-keys.t4
+- type: code
+  title: Есть ли таблица
+  difficulty: 2
+  context: development
+  prompt: Создайте species с первичным ключом. Прочитайте имя и выведите есть, если оно есть
+    в sqlite_master среди таблиц, иначе нет.
+  starter_code: ''
+  tests:
+  - stdin: 'species
+
+      '
+    expected_stdout: 'есть
+
+      '
+  - stdin: 'orders
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Смотрите sqlite_master, не список Python.
+  - Тип записи — table.
+  - Чужое имя даёт нет.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table species(id integer primary key, name text)'')
+
+    name = input().strip()
+
+    row = con.execute("select count(*) from sqlite_master where type = ''table'' and name
+    = ?", (name,)).fetchone()
+
+    print(''есть'' if row[0] else ''нет'')
+
+    '
+  explanation: Служебная таблица sqlite_master помнит созданные таблицы.
+  id: python.sql.sql-keys.t5
+introduces:
+- id: sql-primary-key
+  title: Первичный ключ
+  summary: Уникальный адрес строки, например id INTEGER PRIMARY KEY. Повтор того же id не
+    вставляется.

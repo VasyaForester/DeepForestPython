@@ -1,0 +1,181 @@
+id: python.backend.be-review
+slug: be-review
+section: backend
+title: 'Итог: тест маршрута и Flask'
+order: 13
+weight: 2
+prerequisites:
+- python.backend.be-openapi
+goal: Проверить, что маршрут возвращает 200, и не учить второй каркас.
+tags:
+- итог
+- тест
+- Flask
+theory:
+- Новых приёмов в уроке нет. Маленькая проверка вызывает маршрут, сравнивает статус с 200
+  и печатает «прошёл».
+- 'Flask в этом курсе — один урок для сравнения: там тоже связывают путь и функцию. Это не
+  второй каркас, который нужно пройти так же подробно.'
+- Flask здесь не импортируется. Проверка смотрит на нашу функцию и число 200, как тест смотрел
+  бы на статус ответа.
+examples:
+- title: Статус 200
+  code: "def route():\n    return 200\nstatus = route()\nassert status == 200\nprint('прошёл')\n"
+  explanation: Функция вернула 200, сравнение прошло, печатается прошёл.
+- title: Тело и статус
+  code: "def route():\n    return 200, 'заказы'\nstatus, body = route()\nassert status ==\
+    \ 200\nassert body == 'заказы'\nprint('прошёл')\n"
+  explanation: Проверяются и код, и тело. Оба совпали, поэтому прошёл.
+outcomes:
+- проверять статус маршрута
+- печатать прошёл при коде 200
+- сравнивать и тело ответа
+- не принимать Flask за второй основной каркас
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Место Flask
+  difficulty: 1
+  context: neutral
+  prompt: Какую роль Flask играет в этом курсе?
+  options:
+  - id: a
+    text: Один сравнительный урок, а не второй каркас для подробного изучения
+  - id: b
+    text: Второй основной каркас, его нужно пройти так же подробно
+  - id: c
+    text: Замена проверки статуса 200
+  answer: a
+  hints:
+  - Сравнение не означает второй полный курс.
+  - Проверка статуса остаётся на нашей функции.
+  - Один урок не равен целому разделу.
+  solution: a
+  explanation: Flask здесь только для сравнения, не как второй каркас.
+  id: python.backend.be-review.t1
+- type: predict_output
+  title: Итог проверки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: прошёл
+  - id: b
+    text: сломано
+  - id: c
+    text: '200'
+  answer: a
+  hints:
+  - route возвращает 200.
+  - Условие как раз сравнивает с 200.
+  - Число само не печатается.
+  solution: a
+  explanation: Статус совпал, печатается прошёл.
+  code: "def route():\n    return 200\nstatus = route()\nif status == 200:\n    print('прошёл')\n\
+    else:\n    print('сломано')\n"
+  id: python.backend.be-review.t2
+- type: code
+  title: Два пути со статусом 200
+  difficulty: 2
+  context: development
+  prompt: GET /health и GET /orders оба возвращают 200. Прочитайте метод и путь, возьмите
+    статус из словаря, проверьте, что он равен 200, и выведите прошёл.
+  starter_code: ''
+  tests:
+  - stdin: 'GET
+
+      /health
+
+      '
+    expected_stdout: 'прошёл
+
+      '
+  - stdin: 'GET
+
+      /orders
+
+      '
+    expected_stdout: 'прошёл
+
+      '
+  hints:
+  - Ключ — пара метода и пути.
+  - assert сравнивает статус с 200.
+  - После успешной проверки печатайте прошёл.
+  solution: 'routes = {(''GET'', ''/health''): 200, (''GET'', ''/orders''): 200}
+
+    status = routes[(input(), input())]
+
+    assert status == 200
+
+    print(''прошёл'')
+
+    '
+  explanation: Оба известных маршрута проходят одну и ту же проверку статуса.
+  id: python.backend.be-review.t3
+- type: code
+  title: Тело не пустое
+  difficulty: 2
+  context: development
+  prompt: GET /orders возвращает заказы, GET /stock возвращает склад. Прочитайте путь, получите
+    тело через route и, если оно не пустое, выведите прошёл.
+  starter_code: ''
+  tests:
+  - stdin: '/orders
+
+      '
+    expected_stdout: 'прошёл
+
+      '
+  - stdin: '/stock
+
+      '
+    expected_stdout: 'прошёл
+
+      '
+  hints:
+  - route возвращает строку тела.
+  - Пустая строка проверку бы не прошла.
+  - Печатайте слово прошёл, не само тело.
+  solution: "def orders():\n    return 'заказы'\ndef stock():\n    return 'склад'\nroutes\
+    \ = {('GET', '/orders'): orders, ('GET', '/stock'): stock}\ndef route(method, path):\n\
+    \    return routes[(method, path)]()\nbody = route('GET', input())\nassert body != ''\n\
+    print('прошёл')\n"
+  explanation: Проверка убеждается, что маршрут отдал непустое тело.
+  id: python.backend.be-review.t4
+- type: code
+  title: Статус из функции
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя. Функция status_of возвращает 200 для ель и сосна. Сравните результат
+    с 200 и выведите прошёл.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'прошёл
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'прошёл
+
+      '
+  hints:
+  - Словарь хранит статусы известных имён.
+  - Сравнение с 200 решает слово на экране.
+  - Оба учебных имени дают 200.
+  solution: "def status_of(name):\n    known = {'ель': 200, 'сосна': 200}\n    return known[name]\n\
+    status = status_of(input())\nif status != 200:\n    print('сломано')\nelse:\n    print('прошёл')\n"
+  explanation: Проверка смотрит на число, которое вернула функция маршрута.
+  id: python.backend.be-review.t5

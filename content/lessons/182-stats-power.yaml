@@ -1,0 +1,218 @@
+id: python.stats.stats-power
+slug: stats-power
+section: stats
+title: Мощность
+order: 11
+weight: 1
+prerequisites:
+- python.stats.stats-effect
+goal: Сравнивать размер выборки с заданным минимумом как замену расчёта мощности.
+tags:
+- мощность
+theory:
+- Мощность — вероятность заметить эффект заданного размера, если он есть. Ей нужны размер
+  эффекта, разброс, граница ошибки I рода и n. Одно сравнение n с числом этого не заменяет.
+- Мало наблюдений часто не отличает сдвиг от шума. Поэтому до сбора данных прикидывают, хватит
+  ли n. Настоящая прикидка — расчёт мощности, а не круглое число из головы.
+- 'Упражнение — явная замена: если n меньше заданного минимума, печатают «мало данных», иначе
+  «достаточно». Мощность так не вычисляют. Модуль statistics не используется.'
+examples:
+- title: Мало деревьев
+  code: 'n = 3
+
+    minimum = 10
+
+    print("мало данных" if n < minimum else "достаточно")
+
+    '
+  explanation: 3 меньше 10. Это сравнение с минимумом, не формула мощности.
+- title: Хватает по правилу
+  code: 'n = 12
+
+    minimum = 10
+
+    print("мало данных" if n < minimum else "достаточно")
+
+    '
+  explanation: 12 не меньше 10, правило печатает «достаточно».
+outcomes:
+- помнить, что мощность зависит от n и размера эффекта
+- не выдавать сравнение с минимумом за расчёт мощности
+- помечать слишком маленькое n
+- считать, сколько наблюдений не хватает до заданного минимума
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Не формула мощности
+  difficulty: 1
+  context: neutral
+  prompt: Чем правило «n меньше минимума» отличается от расчёта мощности?
+  options:
+  - id: a
+    text: Оно сравнивает n с заданным числом и не считает вероятность заметить эффект
+  - id: b
+    text: Оно и есть формула мощности
+  - id: c
+    text: Оно вычисляет p-value
+  answer: a
+  hints:
+  - В коде нет ни эффекта, ни разброса.
+  - Мощность — вероятность, а не порог n.
+  - p здесь не считается.
+  solution: a
+  explanation: Замена полезна как напоминание про n и не притворяется расчётом.
+  id: python.stats.stats-power.t1
+- type: predict_output
+  title: Три против десяти
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: мало данных
+  - id: b
+    text: достаточно
+  - id: c
+    text: '10'
+  answer: a
+  hints:
+  - Сравнение строгое.
+  - 3 < 10.
+  - Печатается фраза.
+  solution: a
+  explanation: Правило считает, что данных мало.
+  code: 'n = 3
+
+    minimum = 10
+
+    print("мало данных" if n < minimum else "достаточно")
+
+    '
+  id: python.stats.stats-power.t2
+- type: code
+  title: Хватает ли n
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и минимум. Если n меньше минимума, выведите мало данных, иначе достаточно.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      '
+    expected_stdout: 'мало данных
+
+      '
+  - stdin: '10
+
+      10
+
+      '
+    expected_stdout: 'достаточно
+
+      '
+  hints:
+  - Равенство минимуму уже достаточно для этого правила.
+  - Фразы не меняйте.
+  - Мощность не считайте.
+  solution: 'n = int(input())
+
+    minimum = int(input())
+
+    print("мало данных" if n < minimum else "достаточно")
+
+    '
+  explanation: Порог n задан снаружи и только сравнивается.
+  id: python.stats.stats-power.t3
+- type: code
+  title: Несколько планов
+  difficulty: 2
+  context: development
+  prompt: Прочитайте минимум, затем k и k размеров выборки. Для каждого выведите мало данных
+    или достаточно.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      2
+
+      3
+
+      12
+
+      '
+    expected_stdout: 'мало данных
+
+      достаточно
+
+      '
+  - stdin: '5
+
+      1
+
+      5
+
+      '
+    expected_stdout: 'достаточно
+
+      '
+  hints:
+  - Минимум общий.
+  - Каждое n на своей строке ответа.
+  - Равенство проходит.
+  solution: "minimum = int(input())\nk = int(input())\nfor _ in range(k):\n    n = int(input())\n\
+    \    print(\"мало данных\" if n < minimum else \"достаточно\")\n"
+  explanation: Один и тот же заменитель применяют к нескольким планам сбора.
+  id: python.stats.stats-power.t4
+- type: code
+  title: Сколько не хватает
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и минимум. Выведите, сколько наблюдений не хватает до минимума. Если
+    n уже не меньше, выведите 0.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      '
+    expected_stdout: '7
+
+      '
+  - stdin: '12
+
+      10
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Нехватка равна minimum - n.
+  - Отрицательную нехватку замените нулём.
+  - Это всё ещё не мощность.
+  solution: 'n = int(input())
+
+    minimum = int(input())
+
+    need = minimum - n
+
+    print(need if need > 0 else 0)
+
+    '
+  explanation: Число нехватки показывает дыру в n, а не вероятность обнаружить эффект.
+  id: python.stats.stats-power.t5
+introduces:
+- id: stats-power-n
+  title: Замена расчёта мощности
+  summary: Сравнение n с заданным минимумом. Настоящая мощность — вероятность заметить эффект
+    заданного размера.

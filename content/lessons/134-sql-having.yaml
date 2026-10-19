@@ -1,0 +1,206 @@
+id: python.sql.sql-having
+slug: sql-having
+section: sql
+title: HAVING
+order: 4
+weight: 1
+prerequisites:
+- python.sql.sql-group
+goal: Оставить только те группы, которые проходят порог.
+tags:
+- HAVING
+- GROUP BY
+theory:
+- 'WHERE отбрасывает строки до группировки. HAVING фильтрует уже готовые группы: SELECT city
+  FROM orders GROUP BY city HAVING COUNT(*) >= 3 оставляет города, где заказов не меньше трёх.'
+- 'Данные те же: Москва 10 и 15, Казань 7, 8 и 1. Условие по SUM(amount) смотрит на сумму
+  группы, а не на один заказ.'
+- Города в ответе печатают по алфавиту через ORDER BY city, чтобы вывод не зависел от планировщика.
+examples:
+- title: Не меньше трёх
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table orders(city\
+    \ text, amount int)')\ncon.executemany('insert into orders values (?, ?)', [('Москва',\
+    \ 10), ('Москва', 15), ('Казань', 7), ('Казань', 8), ('Казань', 1)])\nfor row in con.execute('select\
+    \ city from orders group by city having count(*) >= 3 order by city'):\n    print(row[0])\n"
+  explanation: Только у Казани три заказа, Москва с двумя не проходит HAVING.
+- title: Сумма от 20
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table orders(city\
+    \ text, amount int)')\ncon.executemany('insert into orders values (?, ?)', [('Москва',\
+    \ 10), ('Москва', 15), ('Казань', 7), ('Казань', 8), ('Казань', 1)])\nfor row in con.execute('select\
+    \ city from orders group by city having sum(amount) >= 20 order by city'):\n    print(row[0])\n"
+  explanation: Сумма 25 есть только у Москвы, Казань с 16 не проходит.
+outcomes:
+- отличать HAVING от WHERE
+- фильтровать группы по COUNT
+- фильтровать группы по SUM
+- требовать от группы два условия сразу
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: WHERE или HAVING
+  difficulty: 1
+  context: neutral
+  prompt: Чем HAVING отличается в запросе SELECT city FROM orders GROUP BY city HAVING COUNT(*)
+    >= 3?
+  options:
+  - id: a
+    text: Фильтрует уже собранные группы
+  - id: b
+    text: Фильтрует отдельные заказы до группировки
+  - id: c
+    text: Заменяет ORDER BY
+  answer: a
+  hints:
+  - WHERE работал бы по строкам заказов.
+  - COUNT(*) существует только у группы.
+  - Сортировка — отдельная конструкция.
+  solution: a
+  explanation: HAVING оставляет группы, которые прошли условие по агрегату.
+  id: python.sql.sql-having.t1
+- type: predict_output
+  title: Город с тремя заказами
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: Казань
+  - id: b
+    text: Москва
+  - id: c
+    text: пусто
+  answer: a
+  hints:
+  - У Москвы два заказа.
+  - У Казани три.
+  - HAVING отбрасывает группу, не прошедшую порог.
+  solution: a
+  explanation: Порог в три заказа проходит только Казань.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table orders(city text, amount int)'')
+
+    con.executemany(''insert into orders values (?, ?)'', [(''Москва'', 10), (''Москва'',
+    15), (''Казань'', 7), (''Казань'', 8), (''Казань'', 1)])
+
+    row = con.execute(''select city from orders group by city having count(*) >= 3'').fetchone()
+
+    print(row[0])
+
+    '
+  id: python.sql.sql-having.t2
+- type: code
+  title: Порог по числу
+  difficulty: 2
+  context: development
+  prompt: Прочитайте минимальное число заказов и выведите города, у которых заказов не меньше
+    порога, по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      '
+    expected_stdout: 'Казань
+
+      Москва
+
+      '
+  - stdin: '3
+
+      '
+    expected_stdout: 'Казань
+
+      '
+  hints:
+  - HAVING стоит после GROUP BY.
+  - Порог передайте через ?.
+  - ORDER BY city упорядочит Казань и Москву.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ orders(city text, amount int)')\ncon.executemany('insert into orders values (?, ?)',\
+    \ [('Москва', 10), ('Москва', 15), ('Казань', 7), ('Казань', 8), ('Казань', 1)])\nneed\
+    \ = int(input())\nquery = 'select city from orders group by city having count(*) >= ?\
+    \ order by city'\nfor row in con.execute(query, (need,)):\n    print(row[0])\n"
+  explanation: Группа проходит, если COUNT(*) не меньше порога.
+  id: python.sql.sql-having.t3
+- type: code
+  title: Порог по сумме
+  difficulty: 2
+  context: development
+  prompt: Прочитайте минимальную сумму и выведите города с суммой не меньше неё, по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '20
+
+      '
+    expected_stdout: 'Москва
+
+      '
+  - stdin: '10
+
+      '
+    expected_stdout: 'Казань
+
+      Москва
+
+      '
+  hints:
+  - В HAVING используйте SUM(amount).
+  - Не сравнивайте один заказ с порогом всей группы.
+  - Печатайте города по порядку.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ orders(city text, amount int)')\ncon.executemany('insert into orders values (?, ?)',\
+    \ [('Москва', 10), ('Москва', 15), ('Казань', 7), ('Казань', 8), ('Казань', 1)])\nneed\
+    \ = int(input())\nquery = 'select city from orders group by city having sum(amount) >=\
+    \ ? order by city'\nfor row in con.execute(query, (need,)):\n    print(row[0])\n"
+  explanation: Сумма группы сравнивается с порогом уже после свёртки.
+  id: python.sql.sql-having.t4
+- type: code
+  title: Оба порога
+  difficulty: 2
+  context: development
+  prompt: Прочитайте минимальное число заказов и минимальную сумму. Выведите города, которые
+    проходят оба условия, по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      '
+    expected_stdout: 'Казань
+
+      '
+  - stdin: '2
+
+      20
+
+      '
+    expected_stdout: 'Москва
+
+      '
+  hints:
+  - В HAVING два сравнения через and.
+  - Порядок ? совпадает с порядком чтения.
+  - Город должен пройти оба порога сразу.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ orders(city text, amount int)')\ncon.executemany('insert into orders values (?, ?)',\
+    \ [('Москва', 10), ('Москва', 15), ('Казань', 7), ('Казань', 8), ('Казань', 1)])\nneed_count\
+    \ = int(input())\nneed_sum = int(input())\nquery = 'select city from orders group by city\
+    \ having count(*) >= ? and sum(amount) >= ? order by city'\nfor row in con.execute(query,\
+    \ (need_count, need_sum)):\n    print(row[0])\n"
+  explanation: Один HAVING может требовать и число заказов, и сумму.
+  id: python.sql.sql-having.t5
+introduces:
+- id: sql-having
+  title: HAVING
+  summary: Условие для уже собранной группы. HAVING COUNT(*) >= 3 оставляет города с тремя
+    и более заказами.

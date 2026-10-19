@@ -1,0 +1,239 @@
+id: python.sql.sql-explain
+slug: sql-explain
+section: sql
+title: EXPLAIN
+order: 14
+weight: 1
+prerequisites:
+- python.sql.sql-tx
+goal: Увидеть, что у запроса есть план, и напечатать выбранное имя.
+tags:
+- EXPLAIN
+- план
+theory:
+- 'Команда EXPLAIN QUERY PLAN SELECT name FROM trees WHERE name = ''ель'' показывает, как
+  SQLite собирается искать строку: полным проходом SCAN или точечным SEARCH. Это не сами данные.'
+- Точный текст плана зависит от версии SQLite, поэтому в проверяемых задачах печатают выбранное
+  имя, а не слово SCAN или SEARCH. В примере достаточно убедиться, что план не пустой, и напечатать
+  есть план.
+- Смысл плана в том, чтобы заметить лишний проход по большой таблице. Пока таблица из трёх
+  строк, важнее верно написать сам SELECT.
+examples:
+- title: План не пустой
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''ель'', 12)")
+
+    plan = list(con.execute("explain query plan select name from trees where name = ''ель''"))
+
+    print(''есть план'' if plan else ''пусто'')
+
+    '
+  explanation: EXPLAIN QUERY PLAN возвращает хотя бы одну строку описания. Её точный текст
+    не проверяют.
+- title: Само имя
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''ель'', 12)")
+
+    row = con.execute("select name from trees where name = ''ель''").fetchone()
+
+    print(row[0])
+
+    '
+  explanation: Обычный SELECT возвращает данные. План к этой печати не примешивается.
+outcomes:
+- отличать план EXPLAIN QUERY PLAN от данных
+- не проверять точный текст SCAN или SEARCH
+- печатать выбранное имя
+- считать строки того же условия
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что показывает EXPLAIN
+  difficulty: 1
+  context: neutral
+  prompt: Что возвращает EXPLAIN QUERY PLAN SELECT name FROM trees WHERE name = 'ель'?
+  options:
+  - id: a
+    text: Описание способа поиска, а не само имя ель
+  - id: b
+    text: Всегда только слово SEARCH, на любой версии
+  - id: c
+    text: Список пользователей базы
+  answer: a
+  hints:
+  - План — это шаги выполнения.
+  - Текст шага бывает SCAN или SEARCH и зависит от версии.
+  - Имя дерева возвращает обычный SELECT.
+  solution: a
+  explanation: EXPLAIN описывает план, данные приходят отдельным запросом.
+  id: python.sql.sql-explain.t1
+- type: predict_output
+  title: Есть ли план
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: есть план
+  - id: b
+    text: пусто
+  - id: c
+    text: ель
+  answer: a
+  hints:
+  - Запрос плана возвращает строки описания.
+  - Пустой список был бы отсутствием плана.
+  - Имя ель этим оператором не выбирают.
+  solution: a
+  explanation: Непустой план печатается устойчивой фразой есть план.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.execute("insert into trees values (''ель'', 12)")
+
+    plan = list(con.execute("explain query plan select name from trees where name = ''ель''"))
+
+    print(''есть план'' if plan else ''пусто'')
+
+    '
+  id: python.sql.sql-explain.t2
+- type: code
+  title: Найти имя
+  difficulty: 2
+  context: development
+  prompt: В таблице ель 12, сосна 20, берёза 30 прочитайте имя. Если строка есть, выведите
+    имя, иначе нет. План запроса в ответ не включайте.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'дуб
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - Выполняйте обычный SELECT.
+  - fetchone даёт None, если строки нет.
+  - Не печатайте текст EXPLAIN.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    name = input().strip()
+
+    row = con.execute(''select name from trees where name = ?'', (name,)).fetchone()
+
+    print(row[0] if row else ''нет'')
+
+    '
+  explanation: Проверка смотрит выбранное имя, а не формулировку планировщика.
+  id: python.sql.sql-explain.t3
+- type: code
+  title: Имена выше порога
+  difficulty: 2
+  context: development
+  prompt: Прочитайте порог и выведите имена деревьев строго выше него по алфавиту. Это данные
+    запроса, не его план.
+  starter_code: ''
+  tests:
+  - stdin: '15
+
+      '
+    expected_stdout: 'берёза
+
+      сосна
+
+      '
+  - stdin: '25
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  hints:
+  - Фильтр height остаётся в WHERE.
+  - ORDER BY name держит порядок.
+  - EXPLAIN в это решение не вставляйте.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text, height int)')\ncon.executemany('insert into trees values (?, ?)', [('ель',\
+    \ 12), ('сосна', 20), ('берёза', 30)])\nlimit = int(input())\nfor row in con.execute('select\
+    \ name from trees where height > ? order by name', (limit,)):\n    print(row[0])\n"
+  explanation: На экран попадают имена, которые SELECT реально вернул.
+  id: python.sql.sql-explain.t4
+- type: code
+  title: Сколько отобрано
+  difficulty: 2
+  context: development
+  prompt: Прочитайте порог и выведите, сколько деревьев строго выше него.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '20
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Считайте строки тем же условием.
+  - Порог передайте через ?.
+  - Число стабильно и не зависит от текста плана.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text, height int)'')
+
+    con.executemany(''insert into trees values (?, ?)'', [(''ель'', 12), (''сосна'', 20),
+    (''берёза'', 30)])
+
+    limit = int(input())
+
+    row = con.execute(''select count(*) from trees where height > ?'', (limit,)).fetchone()
+
+    print(row[0])
+
+    '
+  explanation: COUNT даёт размер результата, который объяснял бы план.
+  id: python.sql.sql-explain.t5
+introduces:
+- id: sql-explain
+  title: EXPLAIN QUERY PLAN
+  summary: Команда, которая показывает шаги выполнения запроса, а не сами строки. Текст шага
+    зависит от версии SQLite.

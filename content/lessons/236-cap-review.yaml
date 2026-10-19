@@ -1,0 +1,251 @@
+id: python.capstone.cap-review
+slug: cap-review
+section: capstone
+title: Защита и диплом
+order: 10
+weight: 2
+prerequisites:
+- python.capstone.cap-ship
+goal: Собрать заметку из решения, границы и проверки.
+tags:
+- защита
+- граница
+- проверка
+theory:
+- 'На защите объясняют одно решение: почему журнал режется на разбор, отбор и отчёт, а не
+  пишется одной простынёй.'
+- Рядом называют границу. Сюда не входят битая строка, отрицательное значение, имя с точкой
+  с запятой и путь с двумя точками.
+- 'Третья часть — проверка: какой пример показывает, что сумма сходится. Новых приёмов нет,
+  программа печатает три строки заметки из трёх введённых фраз.'
+examples:
+- title: Три строки
+  code: 'decision = ''фильтр по знаку''
+
+    limit = ''без битых строк''
+
+    check = ''сумма положительных''
+
+    print(''решение: '' + decision)
+
+    print(''граница: '' + limit)
+
+    print(''проверка: '' + check)
+
+    '
+  explanation: Заметка состоит из решения, границы и проверки, каждая со своей подписью.
+- title: Другие фразы
+  code: 'decision = ''параметр в запросе''
+
+    limit = ''путь без двух точек''
+
+    check = ''пример на 4''
+
+    print(''решение: '' + decision)
+
+    print(''граница: '' + limit)
+
+    print(''проверка: '' + check)
+
+    '
+  explanation: Подписи те же, текст фраз другой.
+outcomes:
+- называть принятое решение
+- называть границу программы
+- называть проверку примером
+- печатать заметку из трёх строк
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Из чего заметка
+  difficulty: 1
+  context: neutral
+  prompt: Какие три части называют на защите?
+  options:
+  - id: a
+    text: Решение, граница и проверка
+  - id: b
+    text: Только сумма журнала
+  - id: c
+    text: Название, автор и дата
+  answer: a
+  hints:
+  - Сумма — часть проверки, не вся заметка.
+  - Граница говорит, что программа не делает.
+  - Решение объясняет, как устроены слои.
+  solution: a
+  explanation: Защита держится на решении, границе и проверке.
+  id: python.capstone.cap-review.t1
+- type: predict_output
+  title: Первая подпись
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано первым?
+  options:
+  - id: a
+    text: 'решение: фильтр по знаку'
+  - id: b
+    text: 'граница: без битых строк'
+  - id: c
+    text: 'проверка: сумма положительных'
+  answer: a
+  hints:
+  - Первый print — решение.
+  - Двоеточие и пробел стоят после подписи.
+  - Граница печатается второй.
+  solution: a
+  explanation: Заметка начинается со строки решения.
+  code: 'decision = ''фильтр по знаку''
+
+    limit = ''без битых строк''
+
+    check = ''сумма положительных''
+
+    print(''решение: '' + decision)
+
+    print(''граница: '' + limit)
+
+    print(''проверка: '' + check)
+
+    '
+  id: python.capstone.cap-review.t2
+- type: code
+  title: Три фразы
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте три строки: решение, граница и проверка. Напечатайте их с подписями
+    решение, граница и проверка.'
+  starter_code: ''
+  tests:
+  - stdin: 'фильтр по знаку
+
+      без битых строк
+
+      сумма положительных
+
+      '
+    expected_stdout: 'решение: фильтр по знаку
+
+      граница: без битых строк
+
+      проверка: сумма положительных
+
+      '
+  - stdin: 'параметр в запросе
+
+      путь без двух точек
+
+      пример на 4
+
+      '
+    expected_stdout: 'решение: параметр в запросе
+
+      граница: путь без двух точек
+
+      проверка: пример на 4
+
+      '
+  hints:
+  - Подпись и фраза на одной строке.
+  - 'Порядок чтения: решение, граница, проверка.'
+  - Двоеточие и пробел не теряйте.
+  solution: 'print(''решение: '' + input())
+
+    print(''граница: '' + input())
+
+    print(''проверка: '' + input())
+
+    '
+  explanation: Три введённые фразы становятся заметкой к защите.
+  id: python.capstone.cap-review.t3
+- type: code
+  title: Пустая фраза
+  difficulty: 2
+  context: development
+  prompt: Прочитайте те же три строки. Если хотя бы одна пустая, выведите одну строку уточните.
+    Иначе напечатайте заметку из трёх строк.
+  starter_code: ''
+  tests:
+  - stdin: 'фильтр по знаку
+
+      без битых строк
+
+      сумма положительных
+
+      '
+    expected_stdout: 'решение: фильтр по знаку
+
+      граница: без битых строк
+
+      проверка: сумма положительных
+
+      '
+  - stdin: '
+
+      без битых строк
+
+      сумма положительных
+
+      '
+    expected_stdout: 'уточните
+
+      '
+  hints:
+  - Пустую строку проверяйте до печати.
+  - Полный набор даёт три строки.
+  - Подписи не меняйте.
+  solution: "decision = input()\nlimit = input()\ncheck = input()\nif decision == '' or limit\
+    \ == '' or check == '':\n    print('уточните')\nelse:\n    print('решение: ' + decision)\n\
+    \    print('граница: ' + limit)\n    print('проверка: ' + check)\n"
+  explanation: Без одной из трёх частей заметку не собирают.
+  id: python.capstone.cap-review.t4
+- type: code
+  title: Функция заметки
+  difficulty: 2
+  context: development
+  prompt: note(decision, limit, check) печатает три строки. Прочитайте фразы и вызовите её.
+  starter_code: ''
+  tests:
+  - stdin: 'слои разбор и отчёт
+
+      имя без точки с запятой
+
+      сверка суммы
+
+      '
+    expected_stdout: 'решение: слои разбор и отчёт
+
+      граница: имя без точки с запятой
+
+      проверка: сверка суммы
+
+      '
+  - stdin: 'отбор положительных
+
+      путь без двух точек
+
+      пример 2 и 3 дают 5
+
+      '
+    expected_stdout: 'решение: отбор положительных
+
+      граница: путь без двух точек
+
+      проверка: пример 2 и 3 дают 5
+
+      '
+  hints:
+  - Вся печать внутри note.
+  - Аргументы идут в порядке подписей.
+  - Каждая фраза — отдельный input.
+  solution: "def note(decision, limit, check):\n    print('решение: ' + decision)\n    print('граница:\
+    \ ' + limit)\n    print('проверка: ' + check)\nnote(input(), input(), input())\n"
+  explanation: Текст защиты собран в одной функции из трёх готовых фраз.
+  id: python.capstone.cap-review.t5

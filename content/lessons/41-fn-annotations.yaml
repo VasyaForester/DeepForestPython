@@ -1,0 +1,188 @@
+id: python.functions.fn-annotations
+slug: fn-annotations
+section: functions
+title: Аннотации типов
+order: 9
+weight: 1
+prerequisites:
+- python.functions.fn-docstring
+goal: Пометить параметры и результат типами и не ждать, что Python их проверит.
+tags:
+- аннотация
+theory:
+- 'После параметра через двоеточие пишут ожидаемый тип, например price: int. Стрелка в заголовке
+  задаёт тип результата, например -> int. Это аннотация, пометка для человека и для отдельных
+  инструментов.'
+- Python эти пометки при вызове не проверяет. Туда, где написано int, можно передать строку,
+  и остановки из-за надписи не будет. Ошибка появится только если сама операция не умеет работать
+  с таким значением.
+- Словарь пометок лежит в атрибуте __annotations__. Ключ return хранит тип результата. Надпись
+  int не заменяет вызов int от прочитанной строки, когда из журнала пришёл текст.
+examples:
+- title: Произведение с пометками
+  code: "def cost(price: int, count: int) -> int:\n    return price * count\nprint(cost(12,\
+    \ 4))\n"
+  explanation: Аннотации не мешают обычному умножению, печатается 48.
+- title: Имя типа результата
+  code: "def cost(price: int, count: int) -> int:\n    return price * count\nprint(cost.__annotations__['return'].__name__)\n"
+  explanation: В словаре аннотаций под ключом return лежит int, печатается его имя.
+outcomes:
+- помечать параметры и результат
+- не ждать проверки типов от Python
+- читать словарь __annotations__
+- по-прежнему явно преобразовывать ввод
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Проверяет ли Python пометку
+  difficulty: 1
+  context: neutral
+  prompt: Что делает Python с аннотацией в момент вызова?
+  options:
+  - id: a
+    text: Ничего не проверяет и выполняет функцию как обычно
+  - id: b
+    text: Сразу приводит аргумент к указанному типу
+  - id: c
+    text: Останавливает вызов, если тип не совпал
+  answer: a
+  hints:
+  - Аннотация — это пометка, не команда.
+  - Преобразование делает явный вызов int.
+  - Ошибка возможна только на самой операции.
+  solution: a
+  explanation: Интерпретатор не сверяет аргументы с аннотациями.
+  id: python.functions.fn-annotations.t1
+- type: predict_output
+  title: Строка вместо int
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: int
+  - id: c
+    text: None
+  answer: a
+  hints:
+  - В заголовке написано int.
+  - В вызов передана строка.
+  - Функция просто возвращает аргумент.
+  solution: a
+  explanation: Аннотация не мешает вернуть строку, печатается ель.
+  code: "def label(name: int) -> int:\n    return name\nprint(label('ель'))\n"
+  id: python.functions.fn-annotations.t2
+- type: code
+  title: Стоимость партии
+  difficulty: 2
+  context: development
+  prompt: 'Функция cost(price: int, count: int) -> int возвращает произведение. Прочитайте
+    цену и количество как целые. Выведите произведение.'
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      4
+
+      '
+    expected_stdout: '48
+
+      '
+  - stdin: '5
+
+      0
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Поставьте аннотации в заголовке.
+  - input по-прежнему нужно превратить в int.
+  - Печатайте результат вызова.
+  solution: "def cost(price: int, count: int) -> int:\n    return price * count\nprice = int(input())\n\
+    count = int(input())\nprint(cost(price, count))\n"
+  explanation: Пометки типов не заменяют чтение и умножение.
+  id: python.functions.fn-annotations.t3
+- type: code
+  title: Имя результата и число
+  difficulty: 2
+  context: development
+  prompt: Та же функция cost. Прочитайте цену и количество. Выведите имя типа из __annotations__
+    по ключу return, затем само произведение.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      4
+
+      '
+    expected_stdout: 'int
+
+      48
+
+      '
+  - stdin: '5
+
+      1
+
+      '
+    expected_stdout: 'int
+
+      5
+
+      '
+  hints:
+  - Ключ return лежит в __annotations__.
+  - У типа есть __name__.
+  - Вторая строка — произведение.
+  solution: "def cost(price: int, count: int) -> int:\n    return price * count\nprice = int(input())\n\
+    count = int(input())\nprint(cost.__annotations__['return'].__name__)\nprint(cost(price,\
+    \ count))\n"
+  explanation: Сначала печатается слово int, затем посчитанная стоимость.
+  id: python.functions.fn-annotations.t4
+- type: code
+  title: Подпись со строками
+  difficulty: 2
+  context: development
+  prompt: 'Функция label(place: str, item: str) -> str возвращает место: предмет. Прочитайте
+    две строки и выведите результат. Аннотации не проверяют типы сами.'
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      ель
+
+      '
+    expected_stdout: 'склад: ель
+
+      '
+  - stdin: 'лес
+
+      сосна
+
+      '
+    expected_stdout: 'лес: сосна
+
+      '
+  hints:
+  - Оба параметра помечены str.
+  - input уже строка.
+  - Между частями двоеточие и пробел.
+  solution: "def label(place: str, item: str) -> str:\n    return place + ': ' + item\nprint(label(input(),\
+    \ input()))\n"
+  explanation: Функция склеивает строки, аннотации только описывают намерение.
+  id: python.functions.fn-annotations.t5
+introduces:
+- id: fn-annotation
+  title: Аннотация
+  summary: Пометка типа у параметра или результата. При вызове Python её не проверяет.

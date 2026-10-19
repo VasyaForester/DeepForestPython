@@ -1,0 +1,191 @@
+id: python.oop.oop-state
+slug: oop-state
+section: oop
+title: Состояние
+order: 2
+weight: 1
+prerequisites:
+- python.oop.oop-class
+goal: Хранить данные объекта в полях self.
+tags:
+- self
+- поле
+theory:
+- Состояние объекта — его поля. __init__ вызывается в момент Tree(name, height) и получает
+  новый объект как self, а остальные аргументы следом.
+- self.name = name записывает значение в поле этого объекта. У другого объекта своё поле name.
+  Снаружи поле читают как tree.name, без self.
+- 'Поле можно изменить после создания: stock.qty = stock.qty + 1. Объект тот же, число в нём
+  другое. Пока поле не записали, читать его нельзя.'
+examples:
+- title: Имя и высота
+  code: "class Tree:\n    def __init__(self, name, height):\n        self.name = name\n  \
+    \      self.height = height\ntree = Tree('ель', 12)\nprint(tree.name)\nprint(tree.height)\n"
+  explanation: __init__ записал оба аргумента в поля. Печатаются ель и 12.
+- title: Два склада
+  code: "class Stock:\n    def __init__(self, qty):\n        self.qty = qty\nfirst = Stock(4)\n\
+    second = Stock(1)\nfirst.qty = first.qty + 1\nprint(first.qty)\nprint(second.qty)\n"
+  explanation: Плюс один меняет только first. У second по-прежнему 1.
+outcomes:
+- принимать объект как self
+- записывать поля в __init__
+- читать поле через точку снаружи
+- менять поле у уже созданного объекта
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Кто такой self
+  difficulty: 1
+  context: neutral
+  prompt: Что такое self в __init__?
+  options:
+  - id: a
+    text: Объект, который сейчас создают
+  - id: b
+    text: Имя класса строкой
+  - id: c
+    text: Список всех ранее созданных объектов
+  answer: a
+  hints:
+  - self приходит первым параметром.
+  - В него записывают поля через точку.
+  - Имя класса self не хранит.
+  solution: a
+  explanation: self — тот самый объект. self.name остаётся у него и после выхода из __init__.
+  id: python.oop.oop-state.t1
+- type: predict_output
+  title: Какое имя
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: name
+  - id: b
+    text: ель
+  - id: c
+    text: Tree
+  answer: b
+  hints:
+  - В name передана строка ель.
+  - Поле читают через точку.
+  - Имя класса на экран не выводится.
+  solution: b
+  explanation: В поле name лежит ель.
+  code: "class Tree:\n    def __init__(self, name):\n        self.name = name\nprint(Tree('ель').name)\n"
+  id: python.oop.oop-state.t2
+- type: code
+  title: Порода и высота
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название и высоту. Создайте Tree и выведите оба поля.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      12
+
+      '
+    expected_stdout: 'ель
+
+      12
+
+      '
+  - stdin: 'сосна
+
+      8
+
+      '
+    expected_stdout: 'сосна
+
+      8
+
+      '
+  hints:
+  - __init__ принимает self, name и height.
+  - height сохраните числом.
+  - Печатайте поля, не параметры.
+  solution: "class Tree:\n    def __init__(self, name, height):\n        self.name = name\n\
+    \        self.height = height\ntree = Tree(input(), int(input()))\nprint(tree.name)\n\
+    print(tree.height)\n"
+  explanation: Поля хранят введённые название и высоту.
+  id: python.oop.oop-state.t3
+- type: code
+  title: Два имени
+  difficulty: 2
+  context: business
+  prompt: Прочитайте два названия. Создайте два объекта Tree и выведите имя первого, затем
+    имя второго.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      сосна
+
+      '
+    expected_stdout: 'ель
+
+      сосна
+
+      '
+  - stdin: 'дуб
+
+      кедр
+
+      '
+    expected_stdout: 'дуб
+
+      кедр
+
+      '
+  hints:
+  - Каждому объекту свой аргумент.
+  - Поле читается у конкретного объекта.
+  - Порядок печати — порядок создания.
+  solution: "class Tree:\n    def __init__(self, name):\n        self.name = name\nfirst =\
+    \ Tree(input())\nsecond = Tree(input())\nprint(first.name)\nprint(second.name)\n"
+  explanation: У каждого объекта своё поле name.
+  id: python.oop.oop-state.t4
+- type: code
+  title: Приход на склад
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте начальное количество и приход. Создайте Stock и прибавьте приход к полю
+    qty. Выведите новое количество.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      1
+
+      '
+    expected_stdout: '5
+
+      '
+  - stdin: '0
+
+      3
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Начальное значение пишите в __init__.
+  - Потом измените stock.qty.
+  - Печатайте уже новое поле.
+  solution: "class Stock:\n    def __init__(self, qty):\n        self.qty = qty\nstock = Stock(int(input()))\n\
+    stock.qty = stock.qty + int(input())\nprint(stock.qty)\n"
+  explanation: 4 плюс 1 даёт 5. 0 плюс 3 даёт 3.
+  id: python.oop.oop-state.t5
+introduces:
+- id: oop-state.self
+  title: self
+  summary: Объект внутри метода. self.field хранит значение, которое остаётся у этого объекта.

@@ -1,0 +1,198 @@
+id: python.performance.perf-time
+slug: perf-time
+section: performance
+title: Измерение
+order: 1
+weight: 1
+prerequisites:
+- python.stats.stats-review
+goal: Считать шаги цикла, а не секунды на конкретной машине.
+tags:
+- измерение
+theory:
+- Секунды зависят от машины, нагрузки и того, что ещё открыто. Один и тот же цикл на двух
+  компьютерах даст разное время. Модуль time здесь не вызывается.
+- 'Счётчик шагов считает работу: сколько раз тело цикла выполнилось. Его можно сравнить у
+  двух алгоритмов на одних данных, и ответ не прыгает от запуска к запуску.'
+- Счётчик не заменяет профилировщик, когда узкое место внутри одной строки. Он честно отвечает
+  на вопрос, сколько раз дошли до этого места.
+examples:
+- title: Четыре шага
+  code: "steps = 0\nfor height in [12, 9, 15, 8]:\n    steps += 1\nprint(steps)\n"
+  explanation: Четыре высоты — четыре шага. Секунды не измерялись.
+- title: Шаг и сумма
+  code: "steps = 0\ntotal = 0\nfor height in [12, 9, 15]:\n    steps += 1\n    total += height\n\
+    print(steps)\nprint(total)\n"
+  explanation: Счётчик равен 3, сумма высот 36. Это разные вопросы.
+outcomes:
+- считать шаги цикла отдельной переменной
+- не измерять секунды ради сравнения алгоритмов
+- отличать счётчик от суммы
+- ставить счётчик туда, где работа действительно делается
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем счётчик
+  difficulty: 1
+  context: neutral
+  prompt: Почему в этом уроке считают шаги, а не секунды?
+  options:
+  - id: a
+    text: Число шагов не зависит от скорости машины
+  - id: b
+    text: Секунды всегда целые и одинаковые
+  - id: c
+    text: Счётчик заменяет чтение данных
+  answer: a
+  hints:
+  - Время плавает от запуска к запуску.
+  - Шаги задаются циклом.
+  - Данные по-прежнему нужно читать.
+  solution: a
+  explanation: Счётчик измеряет объём работы, а не часы компьютера.
+  id: python.performance.perf-time.t1
+- type: predict_output
+  title: Число шагов
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: '12'
+  - id: c
+    text: '1'
+  answer: a
+  hints:
+  - Плюс один на каждую высоту.
+  - В списке три числа.
+  - Сумма высот не печатается.
+  solution: a
+  explanation: Цикл делает 3 шага.
+  code: "steps = 0\nfor height in [4, 7, 1]:\n    steps += 1\nprint(steps)\n"
+  id: python.performance.perf-time.t2
+- type: code
+  title: Счётчик цикла
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n высот. Прибавляйте 1 к счётчику на каждую высоту и выведите счётчик.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Счётчик начинается с нуля.
+  - Высоту прочитайте, даже если не печатаете.
+  - Ответ равен n.
+  solution: "n = int(input())\nsteps = 0\nfor _ in range(n):\n    steps += 1\n    int(input())\n\
+    print(steps)\n"
+  explanation: Каждая высота — один шаг цикла.
+  id: python.performance.perf-time.t3
+- type: code
+  title: Только положительные
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n посадок. Увеличивайте счётчик только если посадка больше нуля.
+    Выведите счётчик.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      0
+
+      4
+
+      5
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      1
+
+      1
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Ноль не увеличивает счётчик.
+  - Отрицательных чисел нет.
+  - Печатайте один счётчик.
+  solution: "n = int(input())\nsteps = 0\nfor _ in range(n):\n    if int(input()) > 0:\n \
+    \       steps += 1\nprint(steps)\n"
+  explanation: Счётчик можно ставить внутрь условия, и он перестаёт совпадать с n.
+  id: python.performance.perf-time.t4
+- type: code
+  title: Шаги и сумма
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. Выведите число шагов цикла и сумму цен.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '3
+
+      36
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '1
+
+      7
+
+      '
+  hints:
+  - Шаг и сумма обновляются в одном проходе.
+  - Сначала печатайте шаги.
+  - Сумма — отдельная строка.
+  solution: "n = int(input())\nsteps = 0\ntotal = 0\nfor _ in range(n):\n    steps += 1\n\
+    \    total += int(input())\nprint(steps)\nprint(total)\n"
+  explanation: Два числа разделяют объём работы и результат расчёта.
+  id: python.performance.perf-time.t5
+introduces:
+- id: perf-step-counter
+  title: Счётчик шагов
+  summary: Переменная, которая растёт на один каждый проход нужного места. Она не измеряет
+    секунды.

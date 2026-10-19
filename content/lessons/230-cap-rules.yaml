@@ -1,0 +1,206 @@
+id: python.capstone.cap-rules
+slug: cap-rules
+section: capstone
+title: Правила
+order: 4
+weight: 1
+prerequisites:
+- python.capstone.cap-parse
+goal: Оставить значения больше нуля и напечатать их сумму.
+tags:
+- правило
+- сумма
+- отбор
+theory:
+- В журнал попадают разные числа, но в сумму идут только значения больше нуля. Ноль и минус
+  остаются за бортом.
+- Строка по-прежнему «имя значение» или «имя значение статус». Для правила нужно второе поле,
+  уже как целое.
+- 'Программа печатает одну сумму. Имена на этом шаге не выводятся: правило отвечает на вопрос,
+  сколько набралось.'
+examples:
+- title: Три значения
+  code: 'rows = [(''ель'', 2), (''сосна'', 0), (''пихта'', 5)]
+
+    print(sum(value for name, value in rows if value > 0))
+
+    '
+  explanation: Ноль отброшен, 2 и 5 дают 7.
+- title: Только минус
+  code: 'rows = [(''ель'', -3), (''сосна'', 0)]
+
+    print(sum(value for name, value in rows if value > 0))
+
+    '
+  explanation: Положительных нет, сумма равна 0.
+outcomes:
+- оставлять значения больше нуля
+- отбрасывать ноль и минус
+- складывать отобранные числа
+- печатать одну сумму
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что входит в сумму
+  difficulty: 1
+  context: neutral
+  prompt: Какие значения журнала складывают?
+  options:
+  - id: a
+    text: Только больше нуля
+  - id: b
+    text: Все, включая отрицательные
+  - id: c
+    text: Только равные нулю
+  answer: a
+  hints:
+  - Ноль не больше нуля.
+  - Минус в сумму не кладут.
+  - Порог строгий.
+  solution: a
+  explanation: В сумме остаются только положительные значения.
+  id: python.capstone.cap-rules.t1
+- type: predict_output
+  title: Сумма трёх
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '7'
+  - id: b
+    text: '2'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - Ноль отброшен.
+  - Остаются 2 и 5.
+  - Имена не печатаются.
+  solution: a
+  explanation: Сумма положительных равна 7.
+  code: 'rows = [(''ель'', 2), (''сосна'', 0), (''пихта'', 5)]
+
+    print(sum(value for name, value in rows if value > 0))
+
+    '
+  id: python.capstone.cap-rules.t2
+- type: code
+  title: Сумма журнала
+  difficulty: 2
+  context: development
+  prompt: Первая строка — количество записей, дальше «имя значение» или «имя значение статус».
+    Сложите значения больше нуля и выведите сумму.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 2
+
+      сосна 0
+
+      пихта 5
+
+      '
+    expected_stdout: '7
+
+      '
+  - stdin: '2
+
+      ель -3
+
+      сосна 4 ok
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Берите второе поле.
+  - Статус не мешает split.
+  - Ноль и минус не прибавляйте.
+  solution: "count = int(input())\ntotal = 0\nfor _ in range(count):\n    parts = input().split()\n\
+    \    value = int(parts[1])\n    if value > 0:\n        total += value\nprint(total)\n"
+  explanation: Правило знака оставляет в сумме только положительные числа.
+  id: python.capstone.cap-rules.t3
+- type: code
+  title: Нет положительных
+  difficulty: 2
+  context: development
+  prompt: Тот же ввод. Если положительных нет, сумма 0.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель -1
+
+      сосна 0
+
+      '
+    expected_stdout: '0
+
+      '
+  - stdin: '1
+
+      пихта 8
+
+      '
+    expected_stdout: '8
+
+      '
+  hints:
+  - Начальная сумма — ноль.
+  - Одно положительное число и есть ответ.
+  - Не печатайте имена.
+  solution: "count = int(input())\ntotal = 0\nfor _ in range(count):\n    parts = input().split()\n\
+    \    value = int(parts[1])\n    if value > 0:\n        total += value\nprint(total)\n"
+  explanation: Пустой отбор честно даёт нулевую сумму.
+  id: python.capstone.cap-rules.t4
+- type: code
+  title: Функция правила
+  difficulty: 2
+  context: development
+  prompt: keep_value(value) возвращает True для числа больше нуля. Прочитайте записи и напечатайте
+    сумму прошедших.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 1
+
+      сосна 2
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '2
+
+      ель 1
+
+      сосна -4
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Сравнение живёт в keep_value.
+  - Складывайте только True.
+  - Статус в третьем поле игнорируйте.
+  solution: "def keep_value(value):\n    return value > 0\ncount = int(input())\ntotal = 0\n\
+    for _ in range(count):\n    parts = input().split()\n    value = int(parts[1])\n    if\
+    \ keep_value(value):\n        total += value\nprint(total)\n"
+  explanation: Правило отделено от цикла, цикл только накапливает.
+  id: python.capstone.cap-rules.t5
+introduces:
+- id: cap-keep-positive
+  title: Положительное значение
+  summary: В сумму журнала входит только число больше нуля.

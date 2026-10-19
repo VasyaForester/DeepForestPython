@@ -1,0 +1,221 @@
+id: python.data.data-pivot
+slug: data-pivot
+section: data
+title: Сводка
+order: 15
+weight: 1
+prerequisites:
+- python.data.data-merge
+goal: Считать сочетания двух ключей.
+tags:
+- pivot
+theory:
+- Сводная таблица раскладывает один показатель по двум ключам. pandas делает это через pivot_table,
+  а число строк в клетке — через aggfunc='count'.
+- 'Клетка сводки — пара вроде парк и порода. Это не фильтр одной строки и не groupby по одному
+  ключу: ключей два сразу.'
+- Упражнение считает пары словарём, потому что pandas нет в среде браузера. Отдельная библиотека
+  сводных таблиц не нужна.
+examples:
+- title: Пары парк-порода
+  code: "rows = [{\"парк\": \"север\", \"порода\": \"ель\"}, {\"парк\": \"север\", \"порода\"\
+    : \"ель\"}, {\"парк\": \"юг\", \"порода\": \"сосна\"}]\ncounts = {}\nfor row in rows:\n\
+    \    key = (row[\"парк\"], row[\"порода\"])\n    counts[key] = counts.get(key, 0) + 1\n\
+    print(counts[(\"север\", \"ель\")])\nprint(counts[(\"юг\", \"сосна\")])\n"
+  explanation: На севере две ели. На юге одна сосна.
+- title: Нулевая клетка
+  code: 'counts = {("север", "ель"): 2}
+
+    print(counts.get(("юг", "ель"), 0))
+
+    '
+  explanation: Такой пары не было, поэтому запасное значение 0.
+outcomes:
+- считать сочетания двух ключей
+- читать pivot_table как раскладку по двум осям
+- отдавать 0 для невстреченной пары
+- выбирать самую частую клетку
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: pivot_table
+  difficulty: 1
+  context: neutral
+  prompt: Что считает pd.pivot_table с aggfunc='count' по двум столбцам?
+  options:
+  - id: a
+    text: Число строк для каждого сочетания двух ключей
+  - id: b
+    text: Сумму всех чисел одной строкой
+  - id: c
+    text: Только уникальные значения первого столбца
+  answer: a
+  hints:
+  - Два ключа задают клетку.
+  - count считает строки в клетке.
+  - Один столбец был бы обычной группировкой.
+  solution: a
+  explanation: Сводка раскладывает счёт по паре ключей.
+  id: python.data.data-pivot.t1
+- type: predict_output
+  title: Две ели
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '1'
+  - id: b
+    text: '2'
+  - id: c
+    text: '3'
+  answer: b
+  hints:
+  - Нужны оба условия сразу.
+  - Южная сосна не входит.
+  - Северных елей две.
+  solution: b
+  explanation: В клетке север-ель стоит 2.
+  code: 'rows = [("север", "ель"), ("север", "ель"), ("юг", "сосна")]
+
+    print(sum(1 for park, kind in rows if park == "север" and kind == "ель"))
+
+    '
+  id: python.data.data-pivot.t2
+- type: code
+  title: Клетка сводки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, n строк парк порода и ещё одну пару. Выведите, сколько раз встретилась
+    эта пара.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      север ель
+
+      север ель
+
+      юг сосна
+
+      север сосна
+
+      север ель
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      юг дуб
+
+      север дуб
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Ключ — пара из двух слов.
+  - Неизвестная пара даёт 0.
+  - Запрос читается после всех строк.
+  solution: "n = int(input())\ncounts = {}\nfor _ in range(n):\n    park, kind = input().split()\n\
+    \    key = (park, kind)\n    counts[key] = counts.get(key, 0) + 1\npark, kind = input().split()\n\
+    print(counts.get((park, kind), 0))\n"
+  explanation: Одна клетка сводки — счёт одной пары.
+  id: python.data.data-pivot.t3
+- type: code
+  title: Все клетки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n строк парк порода. Выведите каждую встреченную пару и её счёт.
+    Пары сортируйте по парку, затем по породе.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      север ель
+
+      север ель
+
+      юг сосна
+
+      север сосна
+
+      '
+    expected_stdout: 'север ель 2
+
+      север сосна 1
+
+      юг сосна 1
+
+      '
+  - stdin: '1
+
+      юг дуб
+
+      '
+    expected_stdout: 'юг дуб 1
+
+      '
+  hints:
+  - Считайте пары в словаре.
+  - sorted упорядочит кортежи.
+  - Печатайте три поля.
+  solution: "n = int(input())\ncounts = {}\nfor _ in range(n):\n    park, kind = input().split()\n\
+    \    key = (park, kind)\n    counts[key] = counts.get(key, 0) + 1\nfor park, kind in sorted(counts):\n\
+    \    print(park, kind, counts[(park, kind)])\n"
+  explanation: Полная сводка — список клеток, а не одна сумма.
+  id: python.data.data-pivot.t4
+- type: code
+  title: Самая частая пара
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n строк парк порода. Выведите пару с наибольшим счётом и сам счёт.
+    При равенстве берите пару, которая раньше по алфавиту.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      север ель
+
+      север ель
+
+      юг сосна
+
+      '
+    expected_stdout: 'север ель 2
+
+      '
+  - stdin: '2
+
+      юг дуб
+
+      север дуб
+
+      '
+    expected_stdout: 'север дуб 1
+
+      '
+  hints:
+  - Сначала посчитайте все пары.
+  - При равенстве не заменяйте уже выбранную, если идёте по алфавиту.
+  - Печатайте оба ключа и счёт.
+  solution: "n = int(input())\ncounts = {}\nfor _ in range(n):\n    park, kind = input().split()\n\
+    \    key = (park, kind)\n    counts[key] = counts.get(key, 0) + 1\nbest = None\nbest_count\
+    \ = -1\nfor key in sorted(counts):\n    if counts[key] > best_count:\n        best = key\n\
+    \        best_count = counts[key]\nprint(best[0], best[1], best_count)\n"
+  explanation: Максимум ищут уже по клеткам сводки.
+  id: python.data.data-pivot.t5
+introduces:
+- id: data-pivot-count
+  title: Сводка по двум ключам
+  summary: Таблица частот для пары полей. В pandas её строит pivot_table.

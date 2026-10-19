@@ -1,0 +1,196 @@
+id: python.errors.err-traceback
+slug: err-traceback
+section: errors
+title: Traceback
+order: 1
+weight: 1
+prerequisites:
+- python.files.file-review
+goal: Прочитать трассу ошибки и назвать тип исключения.
+tags:
+- traceback
+- ValueError
+theory:
+- 'Когда программа падает, Python печатает traceback. Читают его снизу: последняя строка называет
+  тип и сообщение, например ValueError: цена.'
+- Выше указаны файл, номер строки и функция. Строка с raise внутри price — место, где исключение
+  создали. Строка с print(price(-1)) — место, откуда price вызвали.
+- 'У объекта исключения есть тип. err = ValueError("x") ещё не роняет программу: print(type(err).__name__)
+  печатает ValueError. В трассе то же имя стоит в последней строке.'
+examples:
+- title: Имя типа
+  code: 'err = ValueError(''цена'')
+
+    print(type(err).__name__)
+
+    print(err)
+
+    '
+  explanation: Объект создан, но не брошен. Печатаются имя типа ValueError и текст цена.
+- title: Функция бросает
+  code: "def price(n):\n    if n < 0:\n        raise ValueError('цена')\n    return n\ntry:\n\
+    \    price(-1)\nexcept ValueError as err:\n    print(type(err).__name__)\n"
+  explanation: price(-1) поднимает ValueError. except ловит его и печатает имя типа.
+outcomes:
+- читать последнюю строку traceback
+- находить файл и строку, где подняли исключение
+- отличать тип исключения от его сообщения
+- печатать имя типа через type(err).__name__
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где ошибка
+  difficulty: 1
+  context: neutral
+  prompt: "Traceback (most recent call last):\n  File \"shop.py\", line 5, in <module>\n \
+    \   print(price(-1))\n  File \"shop.py\", line 3, in price\n    raise ValueError(\"цена\"\
+    )\nValueError: цена\nГде подняли исключение?"
+  options:
+  - id: a
+    text: В функции price, на строке с raise
+  - id: b
+    text: 'В print: он сам создаёт ValueError'
+  - id: c
+    text: До запуска, в имени файла shop.py
+  answer: a
+  hints:
+  - Последняя строка называет тип.
+  - Над ней виден raise.
+  - print только вызвал price.
+  solution: a
+  explanation: Исключение поднято в price. Вызов со строки 5 только дошёл до этой функции.
+  id: python.errors.err-traceback.t1
+- type: predict_output
+  title: Имя в трассе
+  difficulty: 1
+  context: neutral
+  prompt: 'Последняя строка трассы была ValueError: цена. Что напечатает программа?'
+  options:
+  - id: a
+    text: цена
+  - id: b
+    text: ValueError
+  - id: c
+    text: TypeError
+  answer: b
+  hints:
+  - Сообщение и тип — разные части строки.
+  - type(err).__name__ берёт тип.
+  - Здесь создан ValueError.
+  solution: b
+  explanation: И трасса, и печать типа дают имя ValueError.
+  code: 'err = ValueError(''цена'')
+
+    print(type(err).__name__)
+
+    '
+  id: python.errors.err-traceback.t2
+- type: code
+  title: Тип по слову
+  difficulty: 2
+  context: development
+  prompt: Прочитайте value или type. Создайте ValueError либо TypeError с текстом x и выведите
+    имя типа.
+  starter_code: ''
+  tests:
+  - stdin: 'value
+
+      '
+    expected_stdout: 'ValueError
+
+      '
+  - stdin: 'type
+
+      '
+    expected_stdout: 'TypeError
+
+      '
+  hints:
+  - Сравните введённое слово.
+  - ValueError и TypeError — разные типы.
+  - Печатайте __name__.
+  solution: "kind = input()\nif kind == 'value':\n    err = ValueError('x')\nelse:\n    err\
+    \ = TypeError('x')\nprint(type(err).__name__)\n"
+  explanation: value даёт ValueError, type даёт TypeError.
+  id: python.errors.err-traceback.t3
+- type: code
+  title: Текст исключения
+  difficulty: 2
+  context: business
+  prompt: Прочитайте сообщение, положите его в ValueError и выведите имя типа, затем само
+    сообщение.
+  starter_code: ''
+  tests:
+  - stdin: 'цена
+
+      '
+    expected_stdout: 'ValueError
+
+      цена
+
+      '
+  - stdin: 'пусто
+
+      '
+    expected_stdout: 'ValueError
+
+      пусто
+
+      '
+  hints:
+  - ValueError принимает строку.
+  - Сначала имя типа.
+  - Потом print(err) показывает сообщение.
+  solution: 'err = ValueError(input())
+
+    print(type(err).__name__)
+
+    print(err)
+
+    '
+  explanation: Тип один и тот же, сообщение повторяет ввод.
+  id: python.errors.err-traceback.t4
+- type: code
+  title: Исключение из функции
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте сообщение. Функция bad возвращает объект ValueError с этим текстом. Выведите
+    имя его типа и длину сообщения.
+  starter_code: ''
+  tests:
+  - stdin: 'цена
+
+      '
+    expected_stdout: 'ValueError
+
+      4
+
+      '
+  - stdin: 'пусто
+
+      '
+    expected_stdout: 'ValueError
+
+      5
+
+      '
+  hints:
+  - Функция возвращает объект, а не роняет программу.
+  - str(err) — текст сообщения.
+  - len считает символы.
+  solution: "def bad(text):\n    return ValueError(text)\nerr = bad(input())\nprint(type(err).__name__)\n\
+    print(len(str(err)))\n"
+  explanation: У цена длина 4, у пусто длина 5. Тип в обоих случаях ValueError.
+  id: python.errors.err-traceback.t5
+introduces:
+- id: err-traceback.traceback
+  title: Traceback
+  summary: Трасса падения. Последняя строка — тип и сообщение, выше — файл, номер строки и
+    цепочка вызовов.

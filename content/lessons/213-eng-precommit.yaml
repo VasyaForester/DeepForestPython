@@ -1,0 +1,184 @@
+id: python.engineering.eng-precommit
+slug: eng-precommit
+section: engineering
+title: pre-commit
+order: 5
+weight: 1
+prerequisites:
+- python.engineering.eng-lint
+goal: Разрешить коммит только если линтер и тесты в порядке.
+tags:
+- pre-commit
+- коммит
+- проверка
+theory:
+- Хуки pre-commit запускаются перед коммитом. Если проверка не прошла, коммит не создаётся.
+- 'В упражнении нет установки хуков. Есть два статуса: lint и test. Слово «коммит» печатается
+  только когда оба равны ok.'
+- 'Любой другой статус печатает стоп. Так видно правило: одна зелёная проверка не отменяет
+  вторую.'
+examples:
+- title: Обе проверки
+  code: "lint = 'ok'\ntest = 'ok'\nif lint == 'ok' and test == 'ok':\n    print('коммит')\n\
+    else:\n    print('стоп')\n"
+  explanation: Оба статуса ok, печатается коммит.
+- title: Тест не прошёл
+  code: "lint = 'ok'\ntest = 'fail'\nif lint == 'ok' and test == 'ok':\n    print('коммит')\n\
+    else:\n    print('стоп')\n"
+  explanation: Линтер зелёный, тест нет, срабатывает стоп.
+outcomes:
+- читать статусы lint и test
+- разрешать коммит при двух ok
+- останавливаться, если проверка не прошла
+- помнить, что хук срабатывает до коммита
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда коммит
+  difficulty: 1
+  context: neutral
+  prompt: Когда программа печатает коммит?
+  options:
+  - id: a
+    text: Только если и lint, и test равны ok
+  - id: b
+    text: Если хотя бы одна проверка равна ok
+  - id: c
+    text: Всегда после чтения двух строк
+  answer: a
+  hints:
+  - Условие соединено через and.
+  - Одного ok мало.
+  - fail в любом из двух даёт стоп.
+  solution: a
+  explanation: Коммит разрешён только при двух ok.
+  id: python.engineering.eng-precommit.t1
+- type: predict_output
+  title: Один провал
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: стоп
+  - id: b
+    text: коммит
+  - id: c
+    text: fail
+  answer: a
+  hints:
+  - test не равен ok.
+  - and требует оба равенства.
+  - Слово fail само не печатается.
+  solution: a
+  explanation: Провал теста останавливает коммит.
+  code: "lint = 'ok'\ntest = 'fail'\nif lint == 'ok' and test == 'ok':\n    print('коммит')\n\
+    else:\n    print('стоп')\n"
+  id: python.engineering.eng-precommit.t2
+- type: code
+  title: Два статуса
+  difficulty: 2
+  context: development
+  prompt: Прочитайте статус lint и статус test. Выведите коммит, только если оба равны ok,
+    иначе стоп.
+  starter_code: ''
+  tests:
+  - stdin: 'ok
+
+      ok
+
+      '
+    expected_stdout: 'коммит
+
+      '
+  - stdin: 'ok
+
+      fail
+
+      '
+    expected_stdout: 'стоп
+
+      '
+  hints:
+  - Читайте две строки.
+  - Сравнивайте каждую с ok.
+  - and не заменяйте на or.
+  solution: "lint = input()\ntest = input()\nif lint == 'ok' and test == 'ok':\n    print('коммит')\n\
+    else:\n    print('стоп')\n"
+  explanation: Хук в модели урока пропускает коммит только после двух успешных проверок.
+  id: python.engineering.eng-precommit.t3
+- type: code
+  title: Линтер красный
+  difficulty: 2
+  context: development
+  prompt: Те же два статуса. В одном наборе lint не ok, во втором оба ok. Выведите стоп или
+    коммит.
+  starter_code: ''
+  tests:
+  - stdin: 'fail
+
+      ok
+
+      '
+    expected_stdout: 'стоп
+
+      '
+  - stdin: 'ok
+
+      ok
+
+      '
+    expected_stdout: 'коммит
+
+      '
+  hints:
+  - Провал линтера не лечится зелёным тестом.
+  - 'Порядок строк: сначала lint.'
+  - Печатайте одно слово.
+  solution: "lint = input()\ntest = input()\nif lint == 'ok' and test == 'ok':\n    print('коммит')\n\
+    else:\n    print('стоп')\n"
+  explanation: Красный линтер сам по себе запрещает коммит.
+  id: python.engineering.eng-precommit.t4
+- type: code
+  title: Функция хука
+  difficulty: 2
+  context: development
+  prompt: Функция gate(lint, test) возвращает коммит или стоп. Прочитайте два статуса и напечатайте
+    результат.
+  starter_code: ''
+  tests:
+  - stdin: 'ok
+
+      fail
+
+      '
+    expected_stdout: 'стоп
+
+      '
+  - stdin: 'ok
+
+      ok
+
+      '
+    expected_stdout: 'коммит
+
+      '
+  hints:
+  - Оба аргумента приходят из input.
+  - return отдаёт слово, print его показывает.
+  - Два ok дают коммит.
+  solution: "def gate(lint, test):\n    if lint == 'ok' and test == 'ok':\n        return\
+    \ 'коммит'\n    return 'стоп'\nprint(gate(input(), input()))\n"
+  explanation: Правило хука собрано в функции, программа только передаёт статусы.
+  id: python.engineering.eng-precommit.t5
+introduces:
+- id: eng-hook
+  title: Хук перед коммитом
+  summary: 'Проверка, которая должна пройти до коммита. Здесь это два статуса: lint и test.'

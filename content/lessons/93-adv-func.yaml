@@ -1,0 +1,180 @@
+id: python.advanced.adv-func
+slug: adv-func
+section: advanced
+title: Функции как объекты
+order: 3
+weight: 1
+prerequisites:
+- python.advanced.adv-gen
+goal: Хранить функцию в переменной и выбирать её по ключу.
+tags:
+- функция
+- словарь
+theory:
+- Функция — объект. Имя после def можно записать в переменную, передать аргументом и положить
+  в словарь. Скобки по-прежнему означают вызов.
+- table["ель"] достаёт функцию, а table["ель"](2) сразу вызывает её. Без вторых скобок в переменной
+  лежит сама функция, расчёта ещё нет.
+- Общий код только вызывает то, что достал. Правило для ели и правило для сосны описаны отдельно
+  и выбираются ключом.
+examples:
+- title: Вызов через переменную
+  code: "def double(n):\n    return n * 2\ndef apply(fn, n):\n    return fn(n)\nprint(apply(double,\
+    \ 4))\n"
+  explanation: В apply передана сама double, без скобок. Внутри fn(n) вызывает её и получает
+    8.
+- title: Словарь правил
+  code: "def spruce(qty):\n    return 100 * qty\ndef pine(qty):\n    return 80 * qty\ntable\
+    \ = {'ель': spruce, 'сосна': pine}\nprint(table['ель'](2))\n"
+  explanation: По ключу ель лежит функция spruce. Вызов с 2 возвращает 200.
+outcomes:
+- передавать функцию аргументом
+- хранить функции в словаре
+- отличать функцию от её вызова
+- выбирать правило по ключу
+resources:
+- kind: docs
+  title: Functional Programming HOWTO
+  url: https://docs.python.org/3/howto/functional.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда функция вызывается
+  difficulty: 1
+  context: neutral
+  prompt: Чем table['ель'] отличается от table['ель'](2)?
+  options:
+  - id: a
+    text: Первое — сама функция, второе — её результат
+  - id: b
+    text: Оба уже числа
+  - id: c
+    text: Первое печатает текст, второе открывает файл
+  answer: a
+  hints:
+  - Скобки запускают вызов.
+  - Без скобок объект функции просто достаётся из словаря.
+  - Число появляется только после вызова.
+  solution: a
+  explanation: Ключ выбирает функцию. Скобки с аргументом её выполняют.
+  id: python.advanced.adv-func.t1
+- type: predict_output
+  title: Результат apply
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: double
+  - id: b
+    text: '4'
+  - id: c
+    text: '8'
+  answer: c
+  hints:
+  - В apply передают double.
+  - Аргумент равен 4.
+  - double умножает его на 2.
+  solution: c
+  explanation: Вызов возвращает 8.
+  code: "def double(n):\n    return n * 2\ndef apply(fn, n):\n    return fn(n)\nprint(apply(double,\
+    \ 4))\n"
+  id: python.advanced.adv-func.t2
+- type: code
+  title: Цена породы
+  difficulty: 2
+  context: business
+  prompt: Прочитайте породу ель или сосна и количество. Возьмите функцию из словаря и выведите
+    стоимость.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      2
+
+      '
+    expected_stdout: '200
+
+      '
+  - stdin: 'сосна
+
+      3
+
+      '
+    expected_stdout: '240
+
+      '
+  hints:
+  - В словаре лежат функции, не числа.
+  - Сначала достаньте функцию по названию.
+  - Сразу вызовите её с количеством.
+  solution: "def spruce(qty):\n    return 100 * qty\ndef pine(qty):\n    return 80 * qty\n\
+    table = {'ель': spruce, 'сосна': pine}\nprint(table[input()](int(input())))\n"
+  explanation: Две ели стоят 200. Три сосны стоят 240.
+  id: python.advanced.adv-func.t3
+- type: code
+  title: Применить дважды
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число. Передайте функцию double в apply и выведите результат.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: '8
+
+      '
+  - stdin: '7
+
+      '
+    expected_stdout: '14
+
+      '
+  hints:
+  - В apply передайте double без скобок.
+  - Скобки стоят у apply.
+  - double умножает на 2.
+  solution: "def double(n):\n    return n * 2\ndef apply(fn, n):\n    return fn(n)\nprint(apply(double,\
+    \ int(input())))\n"
+  explanation: 4 становится 8. 7 становится 14.
+  id: python.advanced.adv-func.t4
+- type: code
+  title: Выбранное действие
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте слово удвоить или прибавить и число. Словарь даёт функцию, выведите её
+    результат.
+  starter_code: ''
+  tests:
+  - stdin: 'удвоить
+
+      5
+
+      '
+    expected_stdout: '10
+
+      '
+  - stdin: 'прибавить
+
+      5
+
+      '
+    expected_stdout: '15
+
+      '
+  hints:
+  - Ключ — введённое слово.
+  - Функцию вызовите с числом.
+  - Два правила не смешивайте в одной функции.
+  solution: "def twice(n):\n    return n * 2\ndef plus_ten(n):\n    return n + 10\ntable =\
+    \ {'удвоить': twice, 'прибавить': plus_ten}\nprint(table[input()](int(input())))\n"
+  explanation: Удвоение 5 даёт 10. Прибавление десяти даёт 15.
+  id: python.advanced.adv-func.t5
+introduces:
+- id: adv-func.first-class
+  title: Функция как объект
+  summary: Функцию передают и хранят без вызова. Скобки запускают её отдельно.

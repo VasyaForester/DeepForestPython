@@ -1,0 +1,252 @@
+id: python.data.data-eda
+slug: data-eda
+section: data
+title: Разведочный анализ
+order: 2
+weight: 1
+prerequisites:
+- python.data.data-notebook
+goal: Смотреть размер, минимум и максимум столбца до любых выводов.
+tags:
+- eda
+- минимум
+- максимум
+theory:
+- 'Разведочный анализ начинается с простых чисел: сколько значений в столбце, какое меньшее
+  и какое большее. Для высот деревьев это уже показывает размах.'
+- В pandas столбец — Series, и у него есть count, min и max. Эти три числа не заменяют график,
+  но ловят пустой столбец и странный край.
+- Упражнение считает то же самое по списку чисел, потому что pandas нет в среде браузера.
+examples:
+- title: Высоты в таблице
+  code: 'rows = [{"порода": "ель", "высота": 12}, {"порода": "сосна", "высота": 9}, {"порода":
+    "берёза", "высота": 15}]
+
+    heights = [row["высота"] for row in rows]
+
+    print(len(heights))
+
+    print(min(heights))
+
+    print(max(heights))
+
+    '
+  explanation: Три дерева, высота от 9 до 15.
+- title: Цены саженцев
+  code: 'prices = [120, 80, 120, 200]
+
+    print(len(prices))
+
+    print(min(prices))
+
+    print(max(prices))
+
+    '
+  explanation: Четыре цены, крайние 80 и 200.
+outcomes:
+- считать размер столбца
+- находить минимум и максимум
+- считать размах как разность краёв
+- не делать вывод по одному крайнему числу
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем min и max
+  difficulty: 1
+  context: neutral
+  prompt: Что дают count, min и max в начале разбора столбца?
+  options:
+  - id: a
+    text: Размер столбца и его края до графиков и средних
+  - id: b
+    text: Готовый прогноз на следующий год
+  - id: c
+    text: Список всех дубликатов строк
+  answer: a
+  hints:
+  - Это первые числа, не модель.
+  - Прогноз требует другой постановки.
+  - Края столбца — минимум и максимум.
+  solution: a
+  explanation: Сначала видно, сколько данных и где они начинаются и кончаются.
+  id: python.data.data-eda.t1
+- type: predict_output
+  title: Край цен
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '80'
+  - id: b
+    text: '120'
+  - id: c
+    text: '200'
+  answer: b
+  hints:
+  - Вычитаются крайние цены.
+  - 200 минус 80.
+  - Середина списка в формулу не входит.
+  solution: b
+  explanation: Размах цен равен 120.
+  code: 'prices = [120, 80, 200]
+
+    print(max(prices) - min(prices))
+
+    '
+  id: python.data.data-eda.t2
+- type: code
+  title: Три числа столбца
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n высот. Выведите количество, минимум и максимум на трёх строках.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '3
+
+      9
+
+      15
+
+      '
+  - stdin: '4
+
+      5
+
+      5
+
+      8
+
+      1
+
+      '
+    expected_stdout: '4
+
+      1
+
+      8
+
+      '
+  hints:
+  - Соберите список.
+  - len, min и max уже есть.
+  - 'Порядок строк: количество, минимум, максимум.'
+  solution: 'n = int(input())
+
+    heights = [int(input()) for _ in range(n)]
+
+    print(len(heights))
+
+    print(min(heights))
+
+    print(max(heights))
+
+    '
+  explanation: Это базовый осмотр одного столбца.
+  id: python.data.data-eda.t3
+- type: code
+  title: Размах цен
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. Выведите разность максимума и минимума.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      120
+
+      80
+
+      200
+
+      '
+    expected_stdout: '120
+
+      '
+  - stdin: '2
+
+      40
+
+      40
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Найдите оба края.
+  - Вычтите минимум из максимума.
+  - При равных ценах размах 0.
+  solution: 'n = int(input())
+
+    prices = [int(input()) for _ in range(n)]
+
+    print(max(prices) - min(prices))
+
+    '
+  explanation: Размах показывает, насколько далеко разъехались цены.
+  id: python.data.data-eda.t4
+- type: code
+  title: Сколько минимальных
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n суточных посадок. Выведите, сколько дней равны минимуму.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      3
+
+      8
+
+      3
+
+      5
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      6
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Сначала найдите минимум.
+  - count считает совпадения.
+  - Один день тоже считается.
+  solution: 'n = int(input())
+
+    counts = [int(input()) for _ in range(n)]
+
+    low = min(counts)
+
+    print(counts.count(low))
+
+    '
+  explanation: Повтор минимума виден ещё до графика.
+  id: python.data.data-eda.t5
+introduces:
+- id: data-eda-summary
+  title: Осмотр столбца
+  summary: Количество, минимум и максимум значений до графиков и моделей.

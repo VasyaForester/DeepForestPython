@@ -1,0 +1,242 @@
+id: python.files.file-datetime
+slug: file-datetime
+section: files
+title: Дата и время
+order: 6
+weight: 1
+prerequisites:
+- python.files.file-json
+goal: Считать дату и сдвигать её на несколько дней.
+tags:
+- дата
+- timedelta
+theory:
+- 'date(год, месяц, день) создаёт дату. Её удобно задать явно, например date(2024, 3, 1):
+  результат не зависит от часов компьютера.'
+- timedelta(days=2) — промежуток в два дня. Сложение даты и timedelta даёт новую дату. Разность
+  двух дат — тоже промежуток, у него есть .days.
+- print даты показывает её как 2024-03-01. Месяц и день в таком виде всегда из двух цифр.
+  Сдвиг через конец месяца переходит на следующий месяц сам.
+examples:
+- title: Плюс два дня
+  code: 'from datetime import date, timedelta
+
+    start = date(2024, 3, 1)
+
+    print(start)
+
+    print(start + timedelta(days=2))
+
+    '
+  explanation: 1 марта плюс два дня — 3 марта. Исходная дата не меняется, сложение даёт новую.
+- title: Разница
+  code: 'from datetime import date
+
+    start = date(2024, 3, 1)
+
+    end = date(2024, 3, 11)
+
+    print((end - start).days)
+
+    '
+  explanation: Между 1 и 11 марта десять дней. .days достаёт число из промежутка.
+outcomes:
+- создавать дату через date
+- сдвигать дату на timedelta
+- считать разность в днях
+- передавать дату явно, а не с часов компьютера
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Откуда берётся дата
+  difficulty: 1
+  context: neutral
+  prompt: Как в этой задаче получить конкретную дату?
+  options:
+  - id: a
+    text: Передать год, месяц и день в date
+  - id: b
+    text: Сложить две строки
+  - id: c
+    text: Взять длину имени файла
+  answer: a
+  hints:
+  - date ждёт три числа.
+  - Строка 2024-03-01 сама по себе не дата, пока её не собрали.
+  - Имя файла к календарю не относится.
+  solution: a
+  explanation: date(2024, 3, 1) — первое марта 2024 года.
+  id: python.files.file-datetime.t1
+- type: predict_output
+  title: Какая дата
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '2024-03-01'
+  - id: b
+    text: '2024-03-03'
+  - id: c
+    text: '2'
+  answer: b
+  hints:
+  - Старт — 1 марта.
+  - Прибавляются два дня.
+  - Печатается новая дата, не число дней.
+  solution: b
+  explanation: 1 марта плюс 2 дня даёт 3 марта.
+  code: 'from datetime import date, timedelta
+
+    print(date(2024, 3, 1) + timedelta(days=2))
+
+    '
+  id: python.files.file-datetime.t2
+- type: code
+  title: Сдвинуть дату
+  difficulty: 2
+  context: business
+  prompt: Прочитайте год, месяц, день и сдвиг в днях, каждое число со своей строки. Выведите
+    дату после сдвига.
+  starter_code: ''
+  tests:
+  - stdin: '2024
+
+      3
+
+      1
+
+      2
+
+      '
+    expected_stdout: '2024-03-03
+
+      '
+  - stdin: '2024
+
+      12
+
+      31
+
+      1
+
+      '
+    expected_stdout: '2025-01-01
+
+      '
+  hints:
+  - Соберите date из трёх чисел.
+  - Четвёртое число — days.
+  - Печатайте результат сложения.
+  solution: 'from datetime import date, timedelta
+
+    start = date(int(input()), int(input()), int(input()))
+
+    print(start + timedelta(days=int(input())))
+
+    '
+  explanation: Сдвиг на 2 дня от 1 марта даёт 2024-03-03, один день после 31 декабря — уже
+    следующий год.
+  id: python.files.file-datetime.t3
+- type: code
+  title: Сколько дней
+  difficulty: 2
+  context: analytics
+  prompt: 'Прочитайте две даты: год, месяц и день первой, затем год, месяц и день второй.
+    Выведите, на сколько дней вторая позже первой.'
+  starter_code: ''
+  tests:
+  - stdin: '2024
+
+      3
+
+      1
+
+      2024
+
+      3
+
+      11
+
+      '
+    expected_stdout: '10
+
+      '
+  - stdin: '2024
+
+      1
+
+      1
+
+      2024
+
+      1
+
+      1
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Нужны две даты.
+  - Вычитайте из второй первую.
+  - У разности возьмите .days.
+  solution: 'from datetime import date
+
+    start = date(int(input()), int(input()), int(input()))
+
+    end = date(int(input()), int(input()), int(input()))
+
+    print((end - start).days)
+
+    '
+  explanation: С 1 по 11 марта проходит 10 дней. Одинаковые даты дают 0.
+  id: python.files.file-datetime.t4
+- type: code
+  title: Конец месяца
+  difficulty: 2
+  context: development
+  prompt: Прочитайте день марта 2024 года и прибавьте к date(2024, 3, этот день) ещё 5 дней.
+    Выведите новую дату.
+  starter_code: ''
+  tests:
+  - stdin: '28
+
+      '
+    expected_stdout: '2024-04-02
+
+      '
+  - stdin: '30
+
+      '
+    expected_stdout: '2024-04-04
+
+      '
+  hints:
+  - Год и месяц уже заданы.
+  - День берётся из ввода.
+  - Пять дней прибавляет timedelta.
+  solution: 'from datetime import date, timedelta
+
+    start = date(2024, 3, int(input()))
+
+    print(start + timedelta(days=5))
+
+    '
+  explanation: 28 марта плюс 5 дней — 2 апреля. 30 марта плюс 5 дней — 4 апреля.
+  id: python.files.file-datetime.t5
+introduces:
+- id: file-datetime.date
+  title: date
+  summary: Дата из года, месяца и дня. Печатается как ГГГГ-ММ-ДД.
+- id: file-datetime.timedelta
+  title: timedelta
+  summary: Промежуток. timedelta(days=n) прибавляют к дате или получают из разности дат.

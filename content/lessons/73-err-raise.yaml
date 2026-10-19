@@ -1,0 +1,180 @@
+id: python.errors.err-raise
+slug: err-raise
+section: errors
+title: raise и свои исключения
+order: 4
+weight: 1
+prerequisites:
+- python.errors.err-finally
+goal: Поднять своё исключение AppError и поймать его по типу.
+tags:
+- raise
+- Exception
+theory:
+- raise выражение поднимает исключение. raise ValueError("пусто") останавливает обычный ход
+  и ищет except. Сообщение пишут в скобках.
+- 'Свой тип делают классом от Exception: class AppError(Exception). Такой except AppError
+  не ловит чужой ValueError и наоборот.'
+- Функция load поднимает AppError на слове пусто и возвращает обычный текст в остальных случаях.
+  Снаружи try печатает результат или имя пойманного типа.
+examples:
+- title: Свой тип
+  code: "class AppError(Exception):\n    pass\ndef load(text):\n    if text == 'пусто':\n\
+    \        raise AppError('пусто')\n    return text\ntry:\n    load('пусто')\nexcept AppError\
+    \ as err:\n    print(type(err).__name__)\n    print(err)\n"
+  explanation: load поднимает AppError. except печатает имя типа и сообщение пусто.
+- title: Обычный текст
+  code: "class AppError(Exception):\n    pass\ndef load(text):\n    if text == 'пусто':\n\
+    \        raise AppError('пусто')\n    return text\nprint(load('ель'))\n"
+  explanation: Слово ель проверку проходит, raise не выполняется, функция возвращает ель.
+outcomes:
+- поднимать исключение через raise
+- описывать свой тип от Exception
+- ловить AppError отдельно от ValueError
+- передавать сообщение в свой класс ошибки
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Зачем свой класс
+  difficulty: 1
+  context: neutral
+  prompt: Зачем поднимать AppError, а не ValueError?
+  options:
+  - id: a
+    text: Чтобы снаружи ловить именно эту ошибку программы
+  - id: b
+    text: Чтобы except перестал быть нужен
+  - id: c
+    text: Чтобы стереть сообщение
+  answer: a
+  hints:
+  - Свой тип отделяет ошибку приложения.
+  - Ловить его всё равно нужно.
+  - Сообщение передают в скобках raise.
+  solution: a
+  explanation: except AppError не спутает эту ошибку с чужим ValueError.
+  id: python.errors.err-raise.t1
+- type: predict_output
+  title: Имя своего типа
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ValueError
+  - id: b
+    text: AppError
+  - id: c
+    text: пусто
+  answer: b
+  hints:
+  - Поднимается AppError.
+  - except ловит тот же тип.
+  - Печатается имя, не сообщение.
+  solution: b
+  explanation: type(err).__name__ равен AppError.
+  code: "class AppError(Exception):\n    pass\ntry:\n    raise AppError('пусто')\nexcept AppError\
+    \ as err:\n    print(type(err).__name__)\n"
+  id: python.errors.err-raise.t2
+- type: code
+  title: Пусто или текст
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку. Функция load возвращает её, а для слова пусто поднимает AppError.
+    Выведите строку или имя типа.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'пусто
+
+      '
+    expected_stdout: 'AppError
+
+      '
+  hints:
+  - Класс наследуйте от Exception.
+  - raise только для слова пусто.
+  - В except печатайте имя типа.
+  solution: "class AppError(Exception):\n    pass\ndef load(text):\n    if text == 'пусто':\n\
+    \        raise AppError('пусто')\n    return text\ntry:\n    print(load(input()))\nexcept\
+    \ AppError as err:\n    print(type(err).__name__)\n"
+  explanation: ель возвращается как текст. пусто становится AppError.
+  id: python.errors.err-raise.t3
+- type: code
+  title: Нулевая цена
+  difficulty: 2
+  context: business
+  prompt: Прочитайте целое число. Если оно равно 0, поднимите AppError. Иначе выведите число.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: 'AppError
+
+      ноль
+
+      '
+  hints:
+  - 0 проверяйте отдельно от остальных чисел.
+  - Сообщение ноль передайте в AppError.
+  - При ошибке выведите тип и текст.
+  solution: "class AppError(Exception):\n    pass\ndef price(n):\n    if n == 0:\n       \
+    \ raise AppError('ноль')\n    return n\ntry:\n    print(price(int(input())))\nexcept AppError\
+    \ as err:\n    print(type(err).__name__)\n    print(err)\n"
+  explanation: '12 печатается одним числом. 0 даёт две строки: AppError и ноль.'
+  id: python.errors.err-raise.t4
+- type: code
+  title: Короткое имя
+  difficulty: 2
+  context: security
+  prompt: Прочитайте название. Если в нём меньше двух букв, поднимите AppError с текстом коротко.
+    Иначе выведите название.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: 'я
+
+      '
+    expected_stdout: 'коротко
+
+      '
+  hints:
+  - Длину считайте через len.
+  - raise AppError внутри функции.
+  - При ошибке печатайте сообщение, не имя.
+  solution: "class AppError(Exception):\n    pass\ndef load(name):\n    if len(name) < 2:\n\
+    \        raise AppError('коротко')\n    return name\ntry:\n    print(load(input()))\n\
+    except AppError as err:\n    print(err)\n"
+  explanation: ель проходит. Одна буква даёт текст коротко.
+  id: python.errors.err-raise.t5
+introduces:
+- id: err-raise.raise
+  title: raise
+  summary: Поднимает исключение и переводит выполнение в except.
+- id: err-raise.app-error
+  title: Своё исключение
+  summary: Класс AppError(Exception). Его ловят отдельной веткой except AppError.

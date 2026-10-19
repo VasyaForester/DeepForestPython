@@ -1,0 +1,203 @@
+id: python.oop.oop-dataclass
+slug: oop-dataclass
+section: oop
+title: dataclasses
+order: 9
+weight: 1
+prerequisites:
+- python.oop.oop-dunder
+goal: Собрать объект с полями вручную и понять, что пишет @dataclass.
+tags:
+- dataclass
+- __init__
+theory:
+- Декоратор @dataclass строит класс по списку полей. Он сам пишет __init__, который кладёт
+  аргументы в self, и добавляет сравнение и текстовый вид.
+- 'Тот же класс записывают руками. __init__(self, name, height) сохраняет оба значения. После
+  Tree("ель", 12) поля читаются так же: tree.name и tree.height.'
+- Датакласс экономит шаблон, когда объект — набор полей. Явный __init__ нужен, когда при создании
+  есть проверка или дополнительное действие. Здесь инициализация записана явно, без импорта
+  dataclasses.
+examples:
+- title: Два поля
+  code: "class Tree:\n    def __init__(self, name, height):\n        self.name = name\n  \
+    \      self.height = height\ntree = Tree('ель', 12)\nprint(tree.name)\nprint(tree.height)\n"
+  explanation: Ручной __init__ делает то, что @dataclass сгенерировал бы для полей name и
+    height.
+- title: Заказ
+  code: "class Order:\n    def __init__(self, name, price):\n        self.name = name\n  \
+    \      self.price = price\norder = Order('сосна', 80)\nprint(order.name)\nprint(order.price)\n"
+  explanation: Два аргумента становятся двумя полями. Печатаются сосна и 80.
+outcomes:
+- писать __init__ для набора полей
+- понимать, что @dataclass генерирует такой __init__
+- проверять значение до записи в поле
+- читать поля после ручной инициализации
+resources:
+- kind: docs
+  title: Classes
+  url: https://docs.python.org/3/tutorial/classes.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что генерирует dataclass
+  difficulty: 1
+  context: neutral
+  prompt: Что создаёт @dataclass у класса с полями name и height?
+  options:
+  - id: a
+    text: Метод __init__, который записывает эти поля в self
+  - id: b
+    text: Случайный порядок полей при каждом запуске
+  - id: c
+    text: Обязательного родителя list
+  answer: a
+  hints:
+  - Поля перечислены в классе.
+  - Датакласс пишет инициализатор сам.
+  - Родителем list он класс не делает.
+  solution: a
+  explanation: Сгенерированный __init__ принимает name и height и сохраняет их. Ниже тот же
+    метод записан вручную.
+  id: python.oop.oop-dataclass.t1
+- type: predict_output
+  title: Какая высота
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '12'
+  - id: b
+    text: ель
+  - id: c
+    text: Tree
+  answer: a
+  hints:
+  - Второй аргумент — height.
+  - Поле читают по имени height.
+  - Имя ель лежит в другом поле.
+  solution: a
+  explanation: В height записано 12.
+  code: "class Tree:\n    def __init__(self, name, height):\n        self.name = name\n  \
+    \      self.height = height\nprint(Tree('ель', 12).height)\n"
+  id: python.oop.oop-dataclass.t2
+- type: code
+  title: Дерево вручную
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название и высоту. Запишите __init__ руками и выведите оба поля.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      12
+
+      '
+    expected_stdout: 'ель
+
+      12
+
+      '
+  - stdin: 'сосна
+
+      8
+
+      '
+    expected_stdout: 'сосна
+
+      8
+
+      '
+  hints:
+  - Оба параметра после self сохраните.
+  - Высоту превратите в int.
+  - Печатайте поля по отдельности.
+  solution: "class Tree:\n    def __init__(self, name, height):\n        self.name = name\n\
+    \        self.height = height\ntree = Tree(input(), int(input()))\nprint(tree.name)\n\
+    print(tree.height)\n"
+  explanation: Ручной инициализатор заполняет те же поля, что сгенерировал бы dataclass.
+  id: python.oop.oop-dataclass.t3
+- type: code
+  title: Проверка высоты
+  difficulty: 2
+  context: business
+  prompt: Прочитайте название и высоту. Если высота отрицательная, сохраните 0. Выведите сохранённую
+    высоту.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      12
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: 'сосна
+
+      -3
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Проверку сделайте внутри __init__.
+  - Отрицательное число замените нулём.
+  - Печатайте уже поле height.
+  solution: "class Tree:\n    def __init__(self, name, height):\n        self.name = name\n\
+    \        if height < 0:\n            height = 0\n        self.height = height\nprint(Tree(input(),\
+    \ int(input())).height)\n"
+  explanation: 12 сохраняется. -3 заменяется на 0 до записи в поле.
+  id: python.oop.oop-dataclass.t4
+- type: code
+  title: Равенство полей
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте название и цену первого заказа, затем название и цену второго. Выведите
+    True, если поля совпали, иначе False.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      120
+
+      ель
+
+      120
+
+      '
+    expected_stdout: 'True
+
+      '
+  - stdin: 'ель
+
+      120
+
+      сосна
+
+      120
+
+      '
+    expected_stdout: 'False
+
+      '
+  hints:
+  - __init__ записывает оба поля.
+  - same сравнивает name и price.
+  - Разное название даёт False.
+  solution: "class Order:\n    def __init__(self, name, price):\n        self.name = name\n\
+    \        self.price = price\n    def same(self, other):\n        return self.name == other.name\
+    \ and self.price == other.price\nfirst = Order(input(), int(input()))\nsecond = Order(input(),\
+    \ int(input()))\nprint(first.same(second))\n"
+  explanation: Одинаковые заказы дают True. ель и сосна при одной цене дают False.
+  id: python.oop.oop-dataclass.t5
+introduces:
+- id: oop-dataclass.dataclass
+  title: '@dataclass'
+  summary: По списку полей сам пишет __init__ и сравнение. Тот же __init__ можно записать
+    вручную.

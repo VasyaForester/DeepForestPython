@@ -1,0 +1,235 @@
+id: python.github.git-branch
+slug: git-branch
+section: github
+title: Ветки
+order: 3
+weight: 1
+prerequisites:
+- python.github.git-log
+goal: Хранить коммиты веток в словаре и доставать вершину по имени.
+tags:
+- ветка
+- git switch
+- git branch
+theory:
+- Команда git branch показывает имена веток. Команда git switch -c скидка создаёт ветку скидка
+  и переключается на неё. Ветка — имя, которое указывает на свою цепочку коммитов, а не отдельная
+  копия всей папки.
+- 'Песочница не вызывает git. Модель — словарь: ключ это имя ветки, значение это список сообщений
+  от старых к новым.'
+- Вершина ветки — последнее сообщение в её списке. Чужую ветку читают по имени, не по позиции
+  в словаре.
+examples:
+- title: Вершина скидки
+  code: 'branches = {''main'': [''старт склада''], ''скидка'': [''старт склада'', ''минус
+    10'']}
+
+    print(branches[''скидка''][-1])
+
+    '
+  explanation: У ветки скидка два сообщения, вершина — минус 10.
+- title: Новая ветка
+  code: 'branches = {''main'': [''старт склада'']}
+
+    branches[''отчёт''] = [''старт склада'', ''добавлен отчёт'']
+
+    print(''отчёт'' in branches)
+
+    '
+  explanation: Новый ключ появляется в словаре, как ветка после git switch -c.
+outcomes:
+- объяснять ветку как имя цепочки коммитов
+- хранить ветки в словаре
+- доставать вершину по имени
+- не путать ветку с копией папки
+resources:
+- kind: docs
+  title: Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что такое ветка
+  difficulty: 1
+  context: neutral
+  prompt: Что создаёт команда git switch -c скидка?
+  options:
+  - id: a
+    text: Имя ветки скидка, которое указывает на свои коммиты
+  - id: b
+    text: Вторую копию диска
+  - id: c
+    text: Файл с паролем
+  answer: a
+  hints:
+  - -c создаёт ветку и переключается на неё.
+  - git branch показывает имена, а не копирует папку.
+  - История ветки — цепочка коммитов.
+  solution: a
+  explanation: Ветка — имя цепочки коммитов.
+  id: python.github.git-branch.t1
+- type: predict_output
+  title: Чужая вершина
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: минус 10
+  - id: b
+    text: старт склада
+  - id: c
+    text: main
+  answer: a
+  hints:
+  - Ключ скидка выбирает нужный список.
+  - Последний элемент — вершина.
+  - Имя ветки self не печатается.
+  solution: a
+  explanation: Вершина ветки скидка — минус 10.
+  code: 'branches = {''main'': [''старт склада''], ''скидка'': [''старт склада'', ''минус
+    10'']}
+
+    print(branches[''скидка''][-1])
+
+    '
+  id: python.github.git-branch.t2
+- type: code
+  title: Одна ветка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя ветки и сообщение. Выведите это сообщение как вершину ветки.
+  starter_code: ''
+  tests:
+  - stdin: 'скидка
+
+      минус 10
+
+      '
+    expected_stdout: 'минус 10
+
+      '
+  - stdin: 'отчёт
+
+      добавлен отчёт
+
+      '
+    expected_stdout: 'добавлен отчёт
+
+      '
+  hints:
+  - Ключ словаря — имя.
+  - Список из одного сообщения уже имеет вершину.
+  - Печатайте сообщение, не имя.
+  solution: 'name = input().strip()
+
+    message = input().strip()
+
+    branches = {name: [message]}
+
+    print(branches[name][-1])
+
+    '
+  explanation: Даже короткая ветка хранит вершину в конце списка.
+  id: python.github.git-branch.t3
+- type: code
+  title: Выбрать ветку
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте две ветки: имя, сообщение, имя, сообщение. Затем прочитайте, какую вершину
+    показать.'
+  starter_code: ''
+  tests:
+  - stdin: 'main
+
+      старт склада
+
+      скидка
+
+      минус 10
+
+      скидка
+
+      '
+    expected_stdout: 'минус 10
+
+      '
+  - stdin: 'main
+
+      старт склада
+
+      отчёт
+
+      таблицы цен
+
+      main
+
+      '
+    expected_stdout: 'старт склада
+
+      '
+  hints:
+  - Каждая ветка — ключ и список из одного сообщения.
+  - Последняя строка — имя, которое нужно открыть.
+  - Берите последний элемент этого списка.
+  solution: 'branches = {}
+
+    first = input().strip()
+
+    branches[first] = [input().strip()]
+
+    second = input().strip()
+
+    branches[second] = [input().strip()]
+
+    want = input().strip()
+
+    print(branches[want][-1])
+
+    '
+  explanation: Имя выбирает список, вершина лежит в его конце.
+  id: python.github.git-branch.t4
+- type: code
+  title: Подпись ветки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя ветки и новое сообщение. Выведите их через двоеточие и пробел.
+  starter_code: ''
+  tests:
+  - stdin: 'main
+
+      цены поставки
+
+      '
+    expected_stdout: 'main: цены поставки
+
+      '
+  - stdin: 'скидка
+
+      минус 10
+
+      '
+    expected_stdout: 'скидка: минус 10
+
+      '
+  hints:
+  - Сначала имя.
+  - Потом двоеточие и пробел.
+  - Сообщение не переворачивайте.
+  solution: 'branch = input().strip()
+
+    message = input().strip()
+
+    print(branch + '': '' + message)
+
+    '
+  explanation: Строка связывает имя ветки с её новым коммитом.
+  id: python.github.git-branch.t5
+introduces:
+- id: github-branch
+  title: Ветка
+  summary: Имя цепочки коммитов. git switch -c скидка создаёт ветку скидка и переключается
+    на неё.

@@ -1,0 +1,165 @@
+id: python.functions.fn-defaults
+slug: fn-defaults
+section: functions
+title: Значения по умолчанию
+order: 3
+weight: 1
+prerequisites:
+- python.functions.fn-params
+goal: Делать часть аргументов необязательной.
+tags:
+- значение по умолчанию
+theory:
+- 'Параметру можно задать значение по умолчанию: def power(n, exp=2). Если аргумент не передали,
+  используется оно.'
+- Параметры со значением по умолчанию пишут после обычных. Иначе вызов становится неоднозначным.
+- Значение по умолчанию вычисляется один раз, в момент описания функции. Для чисел и строк
+  это безопасно. Список в значении по умолчанию лучше не использовать.
+examples:
+- title: Квадрат по умолчанию
+  code: "def power(n, exp=2):\n    return n ** exp\nprint(power(5))\nprint(power(2, 3))\n"
+  explanation: Первый вызов берёт exp 2. Второй передаёт 3 явно.
+- title: Подпись
+  code: "def label(name, mark='ок'):\n    print(name + ': ' + mark)\nlabel('ель')\nlabel('сосна',\
+    \ 'мало')\n"
+  explanation: Второй аргумент необязателен.
+outcomes:
+- задавать значение по умолчанию
+- вызывать функцию без необязательного аргумента
+- ставить такие параметры в конце
+- не класть изменяемый объект в значение по умолчанию
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда подставляется значение
+  difficulty: 1
+  context: neutral
+  prompt: Когда используется значение по умолчанию?
+  options:
+  - id: a
+    text: Когда аргумент для этого параметра не передали
+  - id: b
+    text: Всегда, даже если аргумент передали
+  - id: c
+    text: Только если аргумент равен нулю
+  answer: a
+  hints:
+  - Смотрите на число аргументов.
+  - Явный аргумент важнее.
+  - Ноль — обычное переданное значение.
+  solution: a
+  explanation: Пропущенный аргумент заменяется значением из описания.
+  id: python.functions.fn-defaults.t1
+- type: predict_output
+  title: Какой exp
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '16'
+  - id: b
+    text: '8'
+  - id: c
+    text: '4'
+  answer: a
+  hints:
+  - exp не передали.
+  - По умолчанию степень 2.
+  - 4 в квадрате равно 16.
+  solution: a
+  explanation: Сработала степень по умолчанию.
+  code: "def power(n, exp=2):\n    return n ** exp\nprint(power(4))\n"
+  id: python.functions.fn-defaults.t2
+- type: code
+  title: Квадрат или степень
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число. Если второй строки нет, не читайте её. Всегда читайте одну строку
+    с числом и выведите его квадрат функцией power с exp по умолчанию.
+  starter_code: ''
+  tests:
+  - stdin: '6
+
+      '
+    expected_stdout: '36
+
+      '
+  - stdin: '1
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Опишите exp=2.
+  - Вызовите функцию с одним аргументом.
+  - Печатайте return.
+  solution: "def power(n, exp=2):\n    return n ** exp\nprint(power(int(input())))\n"
+  explanation: Второй параметр не обязателен, квадрат получается сам.
+  id: python.functions.fn-defaults.t3
+- type: code
+  title: Подпись склада
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте название. Функция label(name, mark=''ок'') возвращает строку название:
+    mark. Выведите результат с меткой по умолчанию.'
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель: ок
+
+      '
+  - stdin: 'сосна
+
+      '
+    expected_stdout: 'сосна: ок
+
+      '
+  hints:
+  - mark имеет значение по умолчанию.
+  - Передавайте только имя.
+  - Двоеточие и пробел входят в текст.
+  solution: "def label(name, mark='ок'):\n    return name + ': ' + mark\nprint(label(input()))\n"
+  explanation: Метка ок подставляется, потому что второй аргумент не передали.
+  id: python.functions.fn-defaults.t4
+- type: code
+  title: Цена одной штуки
+  difficulty: 2
+  context: development
+  prompt: Прочитайте цену. Функция cost(price, count=1) возвращает произведение. Выведите
+    стоимость одной штуки.
+  starter_code: ''
+  tests:
+  - stdin: '12
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '0
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - count по умолчанию 1.
+  - Вызов с одним аргументом.
+  - return отдаёт число.
+  solution: "def cost(price, count=1):\n    return price * count\nprint(cost(int(input())))\n"
+  explanation: Количество 1 подставляется само, цена умножается на него.
+  id: python.functions.fn-defaults.t5
+introduces:
+- id: default-arg
+  title: Значение по умолчанию
+  summary: Значение параметра, которое используется, если аргумент не передали.

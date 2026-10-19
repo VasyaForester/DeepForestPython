@@ -1,0 +1,229 @@
+id: python.performance.perf-thread
+slug: perf-thread
+section: performance
+title: Потоки и GIL
+order: 6
+weight: 1
+prerequisites:
+- python.performance.perf-bound
+goal: Показать чередование двух рядов и не запускать потоки.
+tags:
+- потоки
+- GIL
+theory:
+- 'Поток — отдельный ход исполнения внутри процесса. Два потока могут чередовать шаги: метка
+  одного, метка другого. На ожидании диска один поток ждёт, другой может работать.'
+- GIL в CPython не даёт двум потокам одновременно выполнять байткод Python. Поэтому потоки
+  не ускоряют счёт, который занимает процессор. Они полезны, когда работа упирается в ожидание.
+- Упражнение только сливает две очереди меток шаг за шагом и печатает порядок. Потоки не создаются.
+examples:
+- title: Чередование
+  code: "left = [\"ель\", \"сосна\"]\nright = [\"север\", \"юг\"]\nfor a, b in zip(left, right):\n\
+    \    print(a)\n    print(b)\n"
+  explanation: 'Метки идут по одной из каждого ряда: ель, север, сосна, юг.'
+- title: По одному шагу
+  code: 'left = ["ель"]
+
+    right = ["север"]
+
+    print(left[0])
+
+    print(right[0])
+
+    '
+  explanation: По одному шагу с каждой стороны. Настоящий поток здесь не стартовал.
+outcomes:
+- изображать чередование двух рядов
+- не запускать потоки без нужды
+- помнить, что GIL мешает ускорить счёт потоками
+- оставлять потоки для ожидания устройства
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что ограничивает GIL
+  difficulty: 1
+  context: neutral
+  prompt: Что GIL ограничивает у потоков Python?
+  options:
+  - id: a
+    text: 'Одновременный счёт на процессоре: потоки не ускоряют такую работу'
+  - id: b
+    text: Любое ожидание диска
+  - id: c
+    text: Вызов функций вообще
+  answer: a
+  hints:
+  - Ждать устройство потоки могут.
+  - Байткод Python в один момент выполняет один поток.
+  - Функции сами по себе не запрещены.
+  solution: a
+  explanation: GIL бьёт по CPU-bound потокам, а не по ожиданию.
+  id: python.performance.perf-thread.t1
+- type: predict_output
+  title: Первая метка
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: север
+  - id: c
+    text: сосна
+  answer: a
+  hints:
+  - Сначала берётся левый ряд.
+  - Индекс 0 — первая метка.
+  - Север лежит в другом ряду.
+  solution: a
+  explanation: Первой печатается левая метка ель.
+  code: 'left = ["ель", "сосна"]
+
+    right = ["север", "юг"]
+
+    print(left[0])
+
+    '
+  id: python.performance.perf-thread.t2
+- type: code
+  title: Слить два ряда
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте n, затем n меток левого ряда и n меток правого. Печатайте по шагу: левая,
+    правая, снова левая, правая.'
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель
+
+      сосна
+
+      север
+
+      юг
+
+      '
+    expected_stdout: 'ель
+
+      север
+
+      сосна
+
+      юг
+
+      '
+  - stdin: '1
+
+      дуб
+
+      восток
+
+      '
+    expected_stdout: 'дуб
+
+      восток
+
+      '
+  hints:
+  - Сначала соберите оба ряда.
+  - zip даёт пары по порядку.
+  - Потоки не создавайте.
+  solution: "n = int(input())\nleft = [input().strip() for _ in range(n)]\nright = [input().strip()\
+    \ for _ in range(n)]\nfor a, b in zip(left, right):\n    print(a)\n    print(b)\n"
+  explanation: Порядок печати изображает чередование, а не запуск потоков.
+  id: python.performance.perf-thread.t3
+- type: code
+  title: Только левые
+  difficulty: 2
+  context: development
+  prompt: Прочитайте два ряда одинаковой длины. Выведите только левые метки.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель
+
+      сосна
+
+      север
+
+      юг
+
+      '
+    expected_stdout: 'ель
+
+      сосна
+
+      '
+  - stdin: '1
+
+      дуб
+
+      восток
+
+      '
+    expected_stdout: 'дуб
+
+      '
+  hints:
+  - Правый ряд тоже прочитайте.
+  - Печатайте левый в исходном порядке.
+  - Чередование здесь специально не нужно.
+  solution: "n = int(input())\nleft = [input().strip() for _ in range(n)]\nfor _ in range(n):\n\
+    \    input()\nfor name in left:\n    print(name)\n"
+  explanation: Отдельный ряд остаётся целым, если его не мешать с другим.
+  id: python.performance.perf-thread.t4
+- type: code
+  title: Сколько меток
+  difficulty: 2
+  context: development
+  prompt: Прочитайте два ряда длины n. Выведите, сколько меток будет напечатано при чередовании,
+    то есть 2 * n.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель
+
+      сосна
+
+      север
+
+      юг
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      дуб
+
+      восток
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Каждая сторона даёт n меток.
+  - Сумма равна 2 * n.
+  - Сами слова можно не печатать.
+  solution: "n = int(input())\nfor _ in range(n):\n    input()\nfor _ in range(n):\n    input()\n\
+    print(n + n)\n"
+  explanation: Чередование не теряет и не копирует метки.
+  id: python.performance.perf-thread.t5
+introduces:
+- id: perf-gil
+  title: GIL
+  summary: 'Ограничение CPython: в один момент байткод Python выполняет один поток. Счёт на
+    процессоре потоки не ускоряют.'

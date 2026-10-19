@@ -1,0 +1,254 @@
+id: python.data.data-merge
+slug: data-merge
+section: data
+title: Соединение таблиц
+order: 14
+weight: 1
+prerequisites:
+- python.data.data-group
+goal: Соединять две таблицы по общему имени.
+tags:
+- merge
+theory:
+- 'merge в pandas соединяет две таблицы по ключу: pd.merge(trees, prices, on=''порода'').
+  К высоте дерева приписывается цена той же породы.'
+- 'Если ключ есть только слева, внутреннее соединение такую строку не берёт. Внешнее может
+  оставить её с пустой ценой. Здесь упражнения используют внутреннее: печатаем только пары,
+  где ключ нашёлся.'
+- Упражнение соединяет списки словарей по ключу, потому что pandas нет в среде браузера.
+examples:
+- title: Цена породы
+  code: 'trees = [{"порода": "ель", "высота": 12}, {"порода": "сосна", "высота": 9}]
+
+    prices = [{"порода": "ель", "цена": 400}, {"порода": "сосна", "цена": 250}]
+
+    by_name = {row["порода"]: row["цена"] for row in prices}
+
+    print(trees[0]["высота"], by_name[trees[0]["порода"]])
+
+    print(trees[1]["высота"], by_name[trees[1]["порода"]])
+
+    '
+  explanation: 'Ключ порода подставляет цену: 12 и 400, затем 9 и 250.'
+- title: Только общий ключ
+  code: 'left = ["ель", "сосна", "дуб"]
+
+    right = {"ель": 400, "дуб": 90}
+
+    matched = [name for name in left if name in right]
+
+    print(len(matched))
+
+    print(matched[0])
+
+    '
+  explanation: Сосна не нашлась справа. Остались две породы, первая — ель.
+outcomes:
+- соединять таблицы по общему ключу
+- читать pd.merge и аргумент on
+- отличать найденный ключ от пропущенного
+- сохранять порядок левой таблицы
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: merge по ключу
+  difficulty: 1
+  context: neutral
+  prompt: Что делает pd.merge(left, right, on='порода')?
+  options:
+  - id: a
+    text: Соединяет строки двух таблиц с одинаковой породой
+  - id: b
+    text: Складывает все числа в один столбец
+  - id: c
+    text: Удаляет повторяющиеся породы внутри одной таблицы
+  answer: a
+  hints:
+  - on называет общий ключ.
+  - Строки без пары во внутреннем merge пропадают.
+  - Сложение чисел — это не соединение.
+  solution: a
+  explanation: Ключ склеивает поля из двух таблиц в одну строку.
+  id: python.data.data-merge.t1
+- type: predict_output
+  title: Найденная цена
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ель
+  - id: b
+    text: '250'
+  - id: c
+    text: '400'
+  answer: b
+  hints:
+  - Ключ — сосна.
+  - В словаре у неё 250.
+  - 400 относится к ели.
+  solution: b
+  explanation: Соединение по ключу сосна даёт цену 250.
+  code: 'prices = {"ель": 400, "сосна": 250}
+
+    print(prices["сосна"])
+
+    '
+  id: python.data.data-merge.t2
+- type: code
+  title: Высота и цена
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n строк порода высота, затем m и m строк порода цена. У каждой породы
+    слева есть цена. Выведите породу, высоту и цену в порядке левой таблицы.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 12
+
+      сосна 9
+
+      2
+
+      ель 400
+
+      сосна 250
+
+      '
+    expected_stdout: 'ель 12 400
+
+      сосна 9 250
+
+      '
+  - stdin: '1
+
+      дуб 8
+
+      1
+
+      дуб 90
+
+      '
+    expected_stdout: 'дуб 8 90
+
+      '
+  hints:
+  - Сначала прочитайте обе таблицы.
+  - Цену ищите по имени.
+  - Порядок ответа — порядок деревьев.
+  solution: "n = int(input())\ntrees = []\nfor _ in range(n):\n    name, height = input().split()\n\
+    \    trees.append((name, int(height)))\nm = int(input())\nprices = {}\nfor _ in range(m):\n\
+    \    name, price = input().split()\n    prices[name] = int(price)\nfor name, height in\
+    \ trees:\n    print(name, height, prices[name])\n"
+  explanation: Правая таблица становится словарём цен, левая задаёт порядок.
+  id: python.data.data-merge.t3
+- type: code
+  title: Сколько пар
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте две таблицы, как в соединении: деревья и цены. Выведите, сколько деревьев
+    нашли свою цену.'
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 12
+
+      сосна 9
+
+      дуб 8
+
+      2
+
+      ель 400
+
+      дуб 90
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      клён 4
+
+      1
+
+      дуб 10
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Сравнивайте имена, не высоты.
+  - Чужая порода не считается.
+  - Одно число в ответе.
+  solution: "n = int(input())\ntrees = []\nfor _ in range(n):\n    name, height = input().split()\n\
+    \    trees.append(name)\nm = int(input())\nprices = set()\nfor _ in range(m):\n    name,\
+    \ price = input().split()\n    prices.add(name)\nprint(sum(1 for name in trees if name\
+    \ in prices))\n"
+  explanation: Внутреннее соединение считает только общие ключи.
+  id: python.data.data-merge.t4
+- type: code
+  title: Сумма найденных цен
+  difficulty: 2
+  context: development
+  prompt: Прочитайте деревья и цены. Выведите сумму цен тех деревьев, чья порода есть в правой
+    таблице. Дерево без цены даёт 0 в эту сумму.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 12
+
+      сосна 9
+
+      дуб 8
+
+      2
+
+      ель 400
+
+      дуб 90
+
+      '
+    expected_stdout: '490
+
+      '
+  - stdin: '2
+
+      ель 1
+
+      ель 1
+
+      1
+
+      ель 10
+
+      '
+    expected_stdout: '20
+
+      '
+  hints:
+  - get с нулём пропускает отсутствующий ключ.
+  - Две одинаковые породы берут цену дважды.
+  - Складывайте цены, не высоты.
+  solution: "n = int(input())\ntrees = []\nfor _ in range(n):\n    name, height = input().split()\n\
+    \    trees.append(name)\nm = int(input())\nprices = {}\nfor _ in range(m):\n    name,\
+    \ price = input().split()\n    prices[name] = int(price)\nprint(sum(prices.get(name, 0)\
+    \ for name in trees))\n"
+  explanation: Каждая левая строка приносит свою цену, если ключ нашёлся.
+  id: python.data.data-merge.t5
+introduces:
+- id: data-merge-key
+  title: Соединение по ключу
+  summary: Склейка двух таблиц по общему полю. В pandas это merge.

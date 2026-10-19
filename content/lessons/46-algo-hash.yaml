@@ -1,0 +1,233 @@
+id: python.algorithms.algo-hash
+slug: algo-hash
+section: algorithms
+title: Хеш-таблица
+order: 3
+weight: 1
+prerequisites:
+- python.algorithms.algo-arrays
+goal: Доставать остаток по названию породы без просмотра всего журнала.
+tags:
+- словарь
+- поиск
+theory:
+- Словарь устроен как хеш-таблица. По ключу, например по названию породы, остаток находится
+  без просмотра всех записей. В среднем это постоянное время, его записывают как O(1).
+- Список пар приходится читать с начала, пока не встретится нужное имя. В худшем случае просмотр
+  займёт всю длину журнала, это O(n). Когда запросов много, словарь обходит такой перебор.
+- 'Ключом служит неизменяемое значение: строка или число. Список ключом быть не может. Для
+  остатков на складе пара из породы и количества ложится в словарь естественным образом.'
+examples:
+- title: Остаток сосны
+  code: 'stock = {''ель'': 12, ''сосна'': 7, ''пихта'': 3}
+
+    print(stock[''сосна''])
+
+    '
+  explanation: По ключу сосна значение находится сразу, печатается 7.
+- title: Перебор пар
+  code: "pairs = [('ель', 12), ('сосна', 7), ('пихта', 3)]\nsteps = 0\nfound = None\nfor name,\
+    \ qty in pairs:\n    steps = steps + 1\n    if name == 'пихта':\n        found = qty\n\
+    \        break\nprint(steps)\n"
+  explanation: До пихты пришлось посмотреть три пары, счётчик равен 3.
+outcomes:
+- искать значение по ключу словаря
+- сравнивать это с перебором списка пар
+- помнить среднюю оценку O(1)
+- возвращать запасное значение, если ключа нет
+resources:
+- kind: docs
+  title: Sorting HOW TO
+  url: https://docs.python.org/3/howto/sorting.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Цена поиска по ключу
+  difficulty: 1
+  context: neutral
+  prompt: Какова средняя стоимость поиска по ключу в словаре?
+  options:
+  - id: a
+    text: Постоянная, не зависит от числа ключей в среднем
+  - id: b
+    text: Всегда равна числу ключей
+  - id: c
+    text: Равна квадрату числа ключей
+  answer: a
+  hints:
+  - Словарь не начинает с первой пары.
+  - Ключ ведёт к месту значения.
+  - Линейный рост остаётся у списка пар.
+  solution: a
+  explanation: В среднем доступ по ключу занимает постоянное время.
+  id: python.algorithms.algo-hash.t1
+- type: predict_output
+  title: Шаги до пихты
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: '1'
+  - id: c
+    text: '7'
+  answer: a
+  hints:
+  - Пихта стоит третьей.
+  - Счётчик растёт на каждой паре.
+  - После совпадения цикл останавливают.
+  solution: a
+  explanation: До совпадения с пихтой тело выполняется три раза.
+  code: "pairs = [('ель', 12), ('сосна', 7), ('пихта', 3)]\nsteps = 0\nfor name, qty in pairs:\n\
+    \    steps = steps + 1\n    if name == 'пихта':\n        break\nprint(steps)\n"
+  id: python.algorithms.algo-hash.t2
+- type: code
+  title: Остаток по имени
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n. Затем n раз прочитайте имя и остаток. Затем прочитайте имя запроса.
+    Выведите остаток из словаря.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель
+
+      12
+
+      сосна
+
+      7
+
+      сосна
+
+      '
+    expected_stdout: '7
+
+      '
+  - stdin: '1
+
+      пихта
+
+      3
+
+      пихта
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Ключ — имя, значение — остаток.
+  - Запрос читайте после всех пар.
+  - Печатайте stock[query].
+  solution: "n = int(input())\nstock = {}\nfor _ in range(n):\n    name = input()\n    qty\
+    \ = int(input())\n    stock[name] = qty\nquery = input()\nprint(stock[query])\n"
+  explanation: Словарь отдаёт остаток по имени без перебора пар в коде.
+  id: python.algorithms.algo-hash.t3
+- type: code
+  title: Шаги перебора
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n пар имя и остаток, затем искомое имя. Идите по списку пар
+    с начала и выведите, на каком шаге имя совпало. Счёт шагов с единицы.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель
+
+      12
+
+      сосна
+
+      7
+
+      пихта
+
+      3
+
+      пихта
+
+      '
+    expected_stdout: '3
+
+      '
+  - stdin: '2
+
+      ель
+
+      1
+
+      сосна
+
+      2
+
+      ель
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Храните пары списком.
+  - Увеличивайте шаги до проверки.
+  - Остановитесь на первом совпадении.
+  solution: "n = int(input())\npairs = []\nfor _ in range(n):\n    name = input()\n    qty\
+    \ = int(input())\n    pairs.append((name, qty))\nquery = input()\nsteps = 0\nfor name,\
+    \ qty in pairs:\n    steps = steps + 1\n    if name == query:\n        break\nprint(steps)\n"
+  explanation: Число шагов равно позиции найденного имени, если считать с единицы.
+  id: python.algorithms.algo-hash.t4
+- type: code
+  title: Нет такого ключа
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n пар имя и остаток, затем имя. Если ключ есть, выведите остаток,
+    иначе -1.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель
+
+      12
+
+      сосна
+
+      7
+
+      дуб
+
+      '
+    expected_stdout: '-1
+
+      '
+  - stdin: '1
+
+      ель
+
+      4
+
+      ель
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Соберите словарь.
+  - Метод get принимает запасное значение.
+  - Запасное значение здесь -1.
+  solution: "n = int(input())\nstock = {}\nfor _ in range(n):\n    name = input()\n    qty\
+    \ = int(input())\n    stock[name] = qty\nquery = input()\nprint(stock.get(query, -1))\n"
+  explanation: get возвращает остаток или -1, если породы нет.
+  id: python.algorithms.algo-hash.t5
+introduces:
+- id: algo-hash
+  title: Хеш-таблица
+  summary: 'Устройство словаря: по ключу значение находится в среднем за постоянное время.'

@@ -1,0 +1,230 @@
+id: python.data.data-load
+slug: data-load
+section: data
+title: Загрузка CSV
+order: 8
+weight: 1
+prerequisites:
+- python.data.data-frame
+goal: Разбирать строки имя,значение и понимать, что делает read_csv.
+tags:
+- csv
+- read_csv
+theory:
+- 'CSV хранит таблицу текстом: запятая делит поля, перевод строки делит записи. pandas читает
+  файл вызовом pd.read_csv.'
+- 'Модуль csv в стандартной библиотеке делает то же чтение без pandas: DictReader отдаёт каждую
+  строку словарём. Заголовок становится ключами.'
+- Упражнение разбирает строки вида имя,значение из ввода, потому что pandas нет в среде браузера
+  и отдельный файл не нужен.
+examples:
+- title: Текст таблицы
+  code: 'import csv
+
+    import io
+
+    text = "порода,высота\nель,12\nсосна,9\n"
+
+    table = list(csv.DictReader(io.StringIO(text)))
+
+    print(table[0]["порода"])
+
+    print(int(table[1]["высота"]))
+
+    '
+  explanation: DictReader берёт заголовок из первой строки. Высота приходит текстом и превращается
+    в int.
+- title: Сумма из текста
+  code: 'import csv
+
+    import io
+
+    text = "товар,цена\nель,400\nсосна,250\n"
+
+    table = list(csv.DictReader(io.StringIO(text)))
+
+    print(int(table[0]["цена"]) + int(table[1]["цена"]))
+
+    '
+  explanation: Две цены из CSV-текста складываются в 650.
+outcomes:
+- делить CSV-строку по запятой
+- понимать, что делает pd.read_csv
+- читать таблицу модулем csv из текста
+- не требовать внешний файл для разбора строк
+resources:
+- kind: docs
+  title: csv
+  url: https://docs.python.org/3/library/csv.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что делает read_csv
+  difficulty: 1
+  context: neutral
+  prompt: 'Фрагмент pandas: df = pd.read_csv(''trees.csv''). Что делает этот вызов?'
+  options:
+  - id: a
+    text: Читает CSV-файл в таблицу
+  - id: b
+    text: Рисует столбцы высот
+  - id: c
+    text: Удаляет повторы строк
+  answer: a
+  hints:
+  - Имя метода говорит о чтении.
+  - График здесь не строится.
+  - Файл превращается в таблицу.
+  solution: a
+  explanation: read_csv загружает таблицу из текста с разделителями.
+  id: python.data.data-load.t1
+- type: predict_output
+  title: Вторая цена
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: сосна
+  - id: b
+    text: '250'
+  - id: c
+    text: '0'
+  answer: b
+  hints:
+  - split режет по запятой.
+  - Второе поле — цена.
+  - int убирает текстовый вид числа.
+  solution: b
+  explanation: Цена в строке равна 250.
+  code: 'line = "сосна,250"
+
+    name, price = line.split(",")
+
+    print(int(price))
+
+    '
+  id: python.data.data-load.t2
+- type: code
+  title: Сумма значений
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, затем n строк вида имя,значение. Выведите сумму значений.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель,12
+
+      сосна,9
+
+      берёза,15
+
+      '
+    expected_stdout: '36
+
+      '
+  - stdin: '1
+
+      дуб,8
+
+      '
+    expected_stdout: '8
+
+      '
+  hints:
+  - Режьте строку по запятой.
+  - Имя можно не печатать.
+  - Складывайте целые значения.
+  solution: "n = int(input())\ntotal = 0\nfor _ in range(n):\n    name, value = input().split(\"\
+    ,\")\n    total += int(value)\nprint(total)\n"
+  explanation: Каждая строка ввода — одна запись без отдельного файла.
+  id: python.data.data-load.t3
+- type: code
+  title: Имя максимума
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n строк имя,значение. Выведите имя с наибольшим значением. При равенстве
+    оставьте первое.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель,12
+
+      сосна,9
+
+      берёза,15
+
+      '
+    expected_stdout: 'берёза
+
+      '
+  - stdin: '2
+
+      дуб,8
+
+      клён,8
+
+      '
+    expected_stdout: 'дуб
+
+      '
+  hints:
+  - Храните имя вместе со значением.
+  - Строгое сравнение сохраняет первое равенство.
+  - Печатайте имя, не число.
+  solution: "n = int(input())\nbest_name = \"\"\nbest_value = -1\nfor _ in range(n):\n   \
+    \ name, value = input().split(\",\")\n    value = int(value)\n    if value > best_value:\n\
+    \        best_name = name\n        best_value = value\nprint(best_name)\n"
+  explanation: Разбор запятой даёт оба поля записи.
+  id: python.data.data-load.t4
+- type: code
+  title: Сколько выше порога
+  difficulty: 2
+  context: development
+  prompt: Первая строка — порог, вторая — n, дальше строки имя,значение. Выведите, сколько
+    значений строго больше порога.
+  starter_code: ''
+  tests:
+  - stdin: '10
+
+      3
+
+      ель,12
+
+      сосна,9
+
+      берёза,15
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '20
+
+      2
+
+      дуб,20
+
+      клён,21
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - Порог читается до записей.
+  - Сравнивайте только значение.
+  - Равенство порогу не считается.
+  solution: "limit = int(input())\nn = int(input())\ncount = 0\nfor _ in range(n):\n    name,\
+    \ value = input().split(\",\")\n    if int(value) > limit:\n        count += 1\nprint(count)\n"
+  explanation: Фильтр идёт уже по разобранным числам.
+  id: python.data.data-load.t5
+introduces:
+- id: data-read-csv
+  title: Чтение CSV
+  summary: Загрузка таблицы из текста с запятыми. В pandas это pd.read_csv.

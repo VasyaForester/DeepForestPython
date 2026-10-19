@@ -1,0 +1,212 @@
+id: python.engineering.eng-structure
+slug: eng-structure
+section: engineering
+title: Структура и слои
+order: 1
+weight: 1
+prerequisites:
+- python.backend.be-review
+goal: Вызвать parse, затем rule, затем report.
+tags:
+- слой
+- parse
+- отчёт
+theory:
+- Программу делят на слои с разными задачами. parse разбирает строку в пару имени и числа,
+  rule решает, оставлять ли запись, report печатает итог.
+- В слой печати не кладут SQL и разбор текста. report получает уже готовые строки и только
+  показывает сумму или список.
+- 'main вызывает функции по порядку: сначала parse для каждой строки, потом rule, и только
+  затем report. Так причину ошибки видно по слою.'
+examples:
+- title: Сумма отобранных
+  code: "def parse(text):\n    name, raw = text.split()\n    return name, int(raw)\ndef rule(row):\n\
+    \    return row[1] > 0\ndef report(rows):\n    print(sum(row[1] for row in rows))\nrows\
+    \ = []\nfor text in ['ель 2', 'сосна 0']:\n    row = parse(text)\n    if rule(row):\n\
+    \        rows.append(row)\nreport(rows)\n"
+  explanation: Ноль не проходит rule, в report попадает только 2.
+- title: Две положительные
+  code: "def parse(text):\n    name, raw = text.split()\n    return name, int(raw)\ndef rule(row):\n\
+    \    return row[1] > 0\ndef report(rows):\n    print(sum(row[1] for row in rows))\nrows\
+    \ = []\nfor text in ['ель 2', 'пихта 5']:\n    row = parse(text)\n    if rule(row):\n\
+    \        rows.append(row)\nreport(rows)\n"
+  explanation: Обе записи проходят правило, сумма равна 7.
+outcomes:
+- разбирать строку в parse
+- решать отбор в rule
+- печатать итог в report
+- не смешивать разбор и печать
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где печатать
+  difficulty: 1
+  context: neutral
+  prompt: Где должен оказаться вывод отчёта?
+  options:
+  - id: a
+    text: В report, без SQL и без разбора сырой строки
+  - id: b
+    text: Внутри parse вместе с split
+  - id: c
+    text: В правиле, которое только отвечает да или нет
+  answer: a
+  hints:
+  - parse только режет строку.
+  - rule возвращает решение, а не текст отчёта.
+  - Печать собрана в report.
+  solution: a
+  explanation: Печать живёт в report, разбор и правило остаются отдельными функциями.
+  id: python.engineering.eng-structure.t1
+- type: predict_output
+  title: Какая сумма
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '0'
+  - id: c
+    text: ель
+  answer: a
+  hints:
+  - Ноль правило отбрасывает.
+  - В сумме остаётся двойка.
+  - Имя на экран не выводится.
+  solution: a
+  explanation: report печатает сумму оставшихся значений.
+  code: "def parse(text):\n    name, raw = text.split()\n    return name, int(raw)\ndef rule(row):\n\
+    \    return row[1] > 0\ndef report(rows):\n    print(sum(row[1] for row in rows))\nrows\
+    \ = [row for row in [parse('ель 2'), parse('сосна 0')] if rule(row)]\nreport(rows)\n"
+  id: python.engineering.eng-structure.t2
+- type: code
+  title: Сумма положительных
+  difficulty: 2
+  context: development
+  prompt: Первая строка — количество записей, дальше строки имя и значение. parse, rule и
+    report идут по порядку. rule оставляет значение больше нуля. report печатает сумму.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 2
+
+      сосна 0
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      ель 2
+
+      пихта 5
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - parse возвращает имя и int.
+  - rule проверяет знак числа.
+  - report только печатает сумму.
+  solution: "def parse(text):\n    name, raw = text.split()\n    return name, int(raw)\ndef\
+    \ rule(row):\n    return row[1] > 0\ndef report(rows):\n    print(sum(row[1] for row in\
+    \ rows))\ndef main():\n    count = int(input())\n    rows = []\n    for _ in range(count):\n\
+    \        row = parse(input())\n        if rule(row):\n            rows.append(row)\n \
+    \   report(rows)\nmain()\n"
+  explanation: 'Слои не смешиваются: разбор, отбор, печать.'
+  id: python.engineering.eng-structure.t3
+- type: code
+  title: Сколько прошло
+  difficulty: 2
+  context: development
+  prompt: Тот же ввод. rule оставляет значение больше нуля. report печатает число оставшихся
+    записей, не сумму.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      ель 1
+
+      сосна -2
+
+      пихта 4
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      ель 0
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - len считает уже отобранные строки.
+  - Ноль и минус отбрасываются.
+  - report не вызывает split.
+  solution: "def parse(text):\n    name, raw = text.split()\n    return name, int(raw)\ndef\
+    \ rule(row):\n    return row[1] > 0\ndef report(rows):\n    print(len(rows))\ndef main():\n\
+    \    count = int(input())\n    rows = []\n    for _ in range(count):\n        row = parse(input())\n\
+    \        if rule(row):\n            rows.append(row)\n    report(rows)\nmain()\n"
+  explanation: Отчёт меняется, а parse и rule остаются на своих местах.
+  id: python.engineering.eng-structure.t4
+- type: code
+  title: Имена в отчёте
+  difficulty: 2
+  context: development
+  prompt: Тот же ввод. Оставьте значения больше нуля и в report напечатайте имена через пробел
+    в исходном порядке.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 2
+
+      сосна 3
+
+      '
+    expected_stdout: 'ель сосна
+
+      '
+  - stdin: '3
+
+      ель 1
+
+      сосна 0
+
+      пихта 4
+
+      '
+    expected_stdout: 'ель пихта
+
+      '
+  hints:
+  - В отчёт берётся имя, это первый элемент пары.
+  - Порядок append сохраняет порядок ввода.
+  - join ставит пробел между именами.
+  solution: "def parse(text):\n    name, raw = text.split()\n    return name, int(raw)\ndef\
+    \ rule(row):\n    return row[1] > 0\ndef report(rows):\n    print(' '.join(row[0] for\
+    \ row in rows))\ndef main():\n    count = int(input())\n    rows = []\n    for _ in range(count):\n\
+    \        row = parse(input())\n        if rule(row):\n            rows.append(row)\n \
+    \   report(rows)\nmain()\n"
+  explanation: report собирает текст из готовых пар и сам строки не разбирает.
+  id: python.engineering.eng-structure.t5
+introduces:
+- id: eng-layer
+  title: Слой
+  summary: 'Отдельная функция со своей задачей: разбор, правило или печать.'

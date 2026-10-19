@@ -1,0 +1,190 @@
+id: python.http.http-client
+slug: http-client
+section: http
+title: Клиент
+order: 5
+weight: 1
+prerequisites:
+- python.http.http-status
+goal: Ответить кодом по таблице маршрутов, не выходя в сеть.
+tags:
+- httpx
+- маршрут
+- клиент
+theory:
+- 'Клиент httpx запрашивает адрес методом и путём: httpx.get("https://sklad.example/health")
+  ждёт ответ со статусом. httpx.post("https://sklad.example/orders") создаёт заказ и может
+  получить 201.'
+- Песочница не имеет сети и пакета httpx. Функция request(method, path) смотрит в словарь
+  маршрутов и возвращает код. Неизвестный маршрут даёт 404.
+- 'Таблица в задачах фиксирована: GET /health и GET /orders отвечают 200, POST /orders отвечает
+  201. Другие пары метода и пути — 404.'
+examples:
+- title: Проверка живости
+  code: "routes = {('GET', '/health'): 200, ('GET', '/orders'): 200, ('POST', '/orders'):\
+    \ 201}\n\ndef request(method, path):\n    return routes.get((method, path), 404)\n\nprint(request('GET',\
+    \ '/health'))\n"
+  explanation: Пара GET и /health есть в таблице, поэтому код 200.
+- title: Нет маршрута
+  code: "routes = {('GET', '/health'): 200}\n\ndef request(method, path):\n    return routes.get((method,\
+    \ path), 404)\n\nprint(request('GET', '/missing'))\n"
+  explanation: Такой пары в словаре нет, get возвращает запасной код 404.
+outcomes:
+- сопоставлять httpx.get с парой метод и путь
+- возвращать код из словаря маршрутов
+- отдавать 404 для неизвестного маршрута
+- не выполнять сетевой запрос
+resources:
+- kind: docs
+  title: urllib
+  url: https://docs.python.org/3/library/urllib.parse.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что вызывает клиент
+  difficulty: 1
+  context: neutral
+  prompt: Что описывает вызов httpx.get("https://sklad.example/health")?
+  options:
+  - id: a
+    text: Запрос GET к пути /health и ответ со статусом
+  - id: b
+    text: Создание таблицы в базе
+  - id: c
+    text: Команду git push
+  answer: a
+  hints:
+  - get выбирает метод GET.
+  - Путь /health — часть адреса.
+  - Статус приходит в ответе, даже если здесь его заменяет словарь.
+  solution: a
+  explanation: httpx.get отправляет GET и получает ответ.
+  id: python.http.http-client.t1
+- type: predict_output
+  title: Неизвестный путь
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '404'
+  - id: b
+    text: '200'
+  - id: c
+    text: '500'
+  answer: a
+  hints:
+  - Ключ — пара метода и пути.
+  - Этой пары нет.
+  - Запасное значение get — 404.
+  solution: a
+  explanation: Неизвестный маршрут отвечает 404.
+  code: "routes = {('GET', '/health'): 200}\n\ndef request(method, path):\n    return routes.get((method,\
+    \ path), 404)\n\nprint(request('GET', '/missing'))\n"
+  id: python.http.http-client.t2
+- type: code
+  title: Код маршрута
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте метод и путь. Верните код функции request: 200 для GET /health и GET
+    /orders, 201 для POST /orders, иначе 404.'
+  starter_code: ''
+  tests:
+  - stdin: 'GET
+
+      /health
+
+      '
+    expected_stdout: '200
+
+      '
+  - stdin: 'GET
+
+      /missing
+
+      '
+    expected_stdout: '404
+
+      '
+  hints:
+  - Ключ словаря — кортеж из двух строк.
+  - Неизвестный ключ даёт 404.
+  - Печатайте число, которое вернула функция.
+  solution: "routes = {('GET', '/health'): 200, ('GET', '/orders'): 200, ('POST', '/orders'):\
+    \ 201}\n\ndef request(method, path):\n    return routes.get((method, path), 404)\n\nprint(request(input().strip(),\
+    \ input().strip()))\n"
+  explanation: request подменяет сетевой вызов таблицей маршрутов.
+  id: python.http.http-client.t3
+- type: code
+  title: Создание заказа
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте метод и путь и выведите код той же таблицы: POST /orders это 201, чужая
+    пара — 404.'
+  starter_code: ''
+  tests:
+  - stdin: 'POST
+
+      /orders
+
+      '
+    expected_stdout: '201
+
+      '
+  - stdin: 'PUT
+
+      /orders
+
+      '
+    expected_stdout: '404
+
+      '
+  hints:
+  - PUT в таблице нет.
+  - POST /orders записан как 201.
+  - Метод и путь читаются двумя строками.
+  solution: "routes = {('GET', '/health'): 200, ('GET', '/orders'): 200, ('POST', '/orders'):\
+    \ 201}\n\ndef request(method, path):\n    return routes.get((method, path), 404)\n\nprint(request(input().strip(),\
+    \ input().strip()))\n"
+  explanation: Создание заказа отличается от чтения и от несуществующего метода.
+  id: python.http.http-client.t4
+- type: code
+  title: Ок или ошибка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте метод и путь. Если код таблицы меньше 400, выведите ок, иначе ошибка.
+  starter_code: ''
+  tests:
+  - stdin: 'GET
+
+      /health
+
+      '
+    expected_stdout: 'ок
+
+      '
+  - stdin: 'GET
+
+      /missing
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  hints:
+  - Сначала получите код из request.
+  - Порог — 400.
+  - 404 уже ошибка.
+  solution: "routes = {('GET', '/health'): 200, ('GET', '/orders'): 200, ('POST', '/orders'):\
+    \ 201}\n\ndef request(method, path):\n    return routes.get((method, path), 404)\n\ncode\
+    \ = request(input().strip(), input().strip())\nprint('ок' if code < 400 else 'ошибка')\n"
+  explanation: Успешные коды таблицы меньше 400, 404 — нет.
+  id: python.http.http-client.t5
+introduces:
+- id: http-client
+  title: HTTP-клиент
+  summary: Вызов вроде httpx.get("https://sklad.example/health"). В песочнице его заменяет
+    функция request по словарю маршрутов.

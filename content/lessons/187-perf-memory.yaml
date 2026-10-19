@@ -1,0 +1,260 @@
+id: python.performance.perf-memory
+slug: perf-memory
+section: performance
+title: Память
+order: 3
+weight: 1
+prerequisites:
+- python.performance.perf-bigo
+goal: Видеть, что копия хранит числа второй раз, а второе имя — нет.
+tags:
+- память
+theory:
+- 'Память занимает каждое сохранённое значение. Срез heights[:] копирует список: те же числа
+  лежат ещё раз. Длины исходного списка и копии равны, а хранимых чисел становится вдвое больше.'
+- Присваивание backup = heights второго списка не создаёт. Оба имени смотрят на один объект.
+  append через одно имя виден через другое.
+- 'Упражнение печатает две длины. Отдельный замер байтов не нужен: здесь виден сам факт второй
+  копии.'
+examples:
+- title: Копия той же длины
+  code: 'heights = [12, 9, 15]
+
+    backup = heights[:]
+
+    print(len(heights))
+
+    print(len(backup))
+
+    '
+  explanation: Оба списка длины 3. Копия хранит три числа ещё раз.
+- title: Второе имя
+  code: 'heights = [12, 9, 15]
+
+    alias = heights
+
+    backup = heights[:]
+
+    alias.append(7)
+
+    print(len(heights))
+
+    print(len(backup))
+
+    '
+  explanation: append попал в исходный список, длина 4. Копия осталась длины 3.
+outcomes:
+- отличать срез-копию от второго имени
+- печатать длины оригинала и копии
+- понимать, что копия хранит числа ещё раз
+- не ждать, что append в оригинал изменит срез
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Копия или имя
+  difficulty: 1
+  context: neutral
+  prompt: Что делает backup = heights[:]?
+  options:
+  - id: a
+    text: Создаёт новый список с теми же числами
+  - id: b
+    text: Даёт второе имя тому же списку
+  - id: c
+    text: Удаляет исходные высоты
+  answer: a
+  hints:
+  - Срез копирует элементы.
+  - Простое присваивание имени копии не делает.
+  - Исходный список остаётся.
+  solution: a
+  explanation: После среза изменения одного списка не меняют другой.
+  id: python.performance.perf-memory.t1
+- type: predict_output
+  title: Длины после append
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 4 3
+  - id: b
+    text: 3 3
+  - id: c
+    text: 4 4
+  answer: a
+  hints:
+  - alias и heights — один список.
+  - append увеличивает его.
+  - Срез к этому моменту уже отдельный.
+  solution: a
+  explanation: Исходный список стал длины 4, копия осталась 3.
+  code: 'heights = [12, 9, 15]
+
+    alias = heights
+
+    backup = heights[:]
+
+    alias.append(7)
+
+    print(len(heights), len(backup))
+
+    '
+  id: python.performance.perf-memory.t2
+- type: code
+  title: Две длины
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n высот. Сделайте срез-копию и выведите длину исходного списка и
+    длину копии.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '3
+
+      3
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '1
+
+      1
+
+      '
+  hints:
+  - Срез пишется как heights[:].
+  - Обе длины равны n.
+  - Печатайте две строки.
+  solution: 'n = int(input())
+
+    heights = [int(input()) for _ in range(n)]
+
+    backup = heights[:]
+
+    print(len(heights))
+
+    print(len(backup))
+
+    '
+  explanation: Копия хранит столько же чисел, сколько оригинал.
+  id: python.performance.perf-memory.t3
+- type: code
+  title: Копия не растёт
+  difficulty: 2
+  context: development
+  prompt: Прочитайте высоты, скопируйте список срезом и добавьте в исходный число 1. Выведите
+    обе длины.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '4
+
+      3
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '2
+
+      1
+
+      '
+  hints:
+  - append после среза.
+  - Копия остаётся прежней длины.
+  - Исходный список длиннее на 1.
+  solution: 'n = int(input())
+
+    heights = [int(input()) for _ in range(n)]
+
+    backup = heights[:]
+
+    heights.append(1)
+
+    print(len(heights))
+
+    print(len(backup))
+
+    '
+  explanation: Отдельная копия не видит новое число.
+  id: python.performance.perf-memory.t4
+- type: code
+  title: Сколько хранится
+  difficulty: 2
+  context: development
+  prompt: Прочитайте высоты и сделайте срез-копию. Выведите сумму двух длин — сколько чисел
+    хранят оба списка вместе.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      9
+
+      15
+
+      '
+    expected_stdout: '6
+
+      '
+  - stdin: '2
+
+      4
+
+      5
+
+      '
+    expected_stdout: '4
+
+      '
+  hints:
+  - Сложите две длины.
+  - Для n элементов сумма равна 2 * n.
+  - Одно число в ответе.
+  solution: 'n = int(input())
+
+    heights = [int(input()) for _ in range(n)]
+
+    backup = heights[:]
+
+    print(len(heights) + len(backup))
+
+    '
+  explanation: Вторая копия удваивает число хранимых значений.
+  id: python.performance.perf-memory.t5
+introduces:
+- id: perf-copy
+  title: Копия списка
+  summary: Новый список с теми же элементами, например срез heights[:]. Второе имя без среза
+    копией не является.

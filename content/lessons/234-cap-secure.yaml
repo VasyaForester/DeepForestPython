@@ -1,0 +1,182 @@
+id: python.capstone.cap-secure
+slug: cap-secure
+section: capstone
+title: Границы
+order: 8
+weight: 1
+prerequisites:
+- python.capstone.cap-tests
+goal: Не записывать имя с точкой с запятой и не принимать путь с двумя точками.
+tags:
+- граница
+- sqlite3
+- путь
+theory:
+- 'Имя записи не должно содержать точку с запятой: такая строка похожа на кусок команды, а
+  не на имя склада. Её не вставляют в таблицу.'
+- Если имя годится, вставка в sqlite3 идёт через ?. Значение не приклеивают к тексту запроса.
+- Отдельная проверка смотрит путь. Строка с .. печатает нельзя. Обычный путь печатает можно.
+  Файл при этом не открывают.
+examples:
+- title: Имя с точкой с запятой
+  code: "name = 'ель;drop'\nif ';' in name:\n    print('ошибка')\nelse:\n    print('ок')\n"
+  explanation: В имени есть точка с запятой, программа печатает ошибка.
+- title: Параметризованная вставка
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table journal(name text, value integer)'')
+
+    con.execute(''insert into journal(name, value) values (?, ?)'', (''ель'', 4))
+
+    print(con.execute(''select count(*) from journal'').fetchone()[0])
+
+    '
+  explanation: Годное имя записано через ?, в таблице одна строка.
+outcomes:
+- отклонять имя с точкой с запятой
+- вставлять годное имя через ?
+- отклонять путь с ..
+- не открывать файл и не исполнять текст
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какое имя не писать
+  difficulty: 1
+  context: neutral
+  prompt: Какое имя нельзя вставлять в журнал?
+  options:
+  - id: a
+    text: Имя, в котором есть точка с запятой
+  - id: b
+    text: Любое имя длиннее трёх букв
+  - id: c
+    text: Имя с пробелом между двумя словами статуса
+  answer: a
+  hints:
+  - Точка с запятой — граница этого шага.
+  - Длина имени сама по себе не запрещена.
+  - Вставка годного имени идёт через ?.
+  solution: a
+  explanation: Точка с запятой в имени останавливает запись.
+  id: python.capstone.cap-secure.t1
+- type: predict_output
+  title: Плохое имя
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ошибка
+  - id: b
+    text: ок
+  - id: c
+    text: ель
+  answer: a
+  hints:
+  - В строке есть ;.
+  - Условие истинно.
+  - Имя целиком не печатается.
+  solution: a
+  explanation: Такое имя даёт ошибка.
+  code: "name = 'ель;drop'\nif ';' in name:\n    print('ошибка')\nelse:\n    print('ок')\n"
+  id: python.capstone.cap-secure.t2
+- type: code
+  title: Вставка или отказ
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя и целое значение. Если в имени есть ;, выведите ошибка. Иначе вставьте
+    строку в journal через ? и выведите 1.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      4
+
+      '
+    expected_stdout: '1
+
+      '
+  - stdin: 'ель;drop
+
+      4
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  hints:
+  - Проверяйте имя до insert.
+  - В тексте запроса оставьте ?.
+  - При отказе базу можно не открывать.
+  solution: "import sqlite3\nname = input()\nvalue = int(input())\nif ';' in name:\n    print('ошибка')\n\
+    else:\n    con = sqlite3.connect(':memory:')\n    con.execute('create table journal(name\
+    \ text, value integer)')\n    con.execute('insert into journal(name, value) values (?,\
+    \ ?)', (name, value))\n    print(con.execute('select count(*) from journal').fetchone()[0])\n"
+  explanation: Плохое имя не доходит до таблицы, годное записывается параметром.
+  id: python.capstone.cap-secure.t3
+- type: code
+  title: Путь
+  difficulty: 2
+  context: development
+  prompt: Прочитайте путь. Если в нём есть .., выведите нельзя, иначе можно.
+  starter_code: ''
+  tests:
+  - stdin: 'warehouse/ель
+
+      '
+    expected_stdout: 'можно
+
+      '
+  - stdin: 'warehouse/../../secret
+
+      '
+    expected_stdout: 'нельзя
+
+      '
+  hints:
+  - Ищите две точки подряд.
+  - Обычная папка проходит.
+  - Файл не открывайте.
+  solution: "path = input()\nif '..' in path:\n    print('нельзя')\nelse:\n    print('можно')\n"
+  explanation: Путь с выходом наверх отклоняется как строка.
+  id: python.capstone.cap-secure.t4
+- type: code
+  title: Оба запрета в имени пути
+  difficulty: 2
+  context: development
+  prompt: Прочитайте одну строку. Если в ней есть ; или .., выведите нельзя, иначе можно.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'можно
+
+      '
+  - stdin: 'notes/../ель
+
+      '
+    expected_stdout: 'нельзя
+
+      '
+  hints:
+  - Достаточно одного запретного куска.
+  - Чистое имя печатает можно.
+  - Не пытайтесь выполнить текст как команду.
+  solution: "text = input()\nif ';' in text or '..' in text:\n    print('нельзя')\nelse:\n\
+    \    print('можно')\n"
+  explanation: И точка с запятой, и две точки останавливают строку до записи.
+  id: python.capstone.cap-secure.t5
+introduces:
+- id: cap-bound-input
+  title: Граница ввода
+  summary: Имя с ; и путь с .. не проходят в журнал. Годную пару пишут через ?.

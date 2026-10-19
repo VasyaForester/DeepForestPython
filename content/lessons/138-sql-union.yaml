@@ -1,0 +1,246 @@
+id: python.sql.sql-union
+slug: sql-union
+section: sql
+title: UNION
+order: 8
+weight: 1
+prerequisites:
+- python.sql.sql-join
+goal: Сложить имена из двух таблиц и решить, убирать ли повторы.
+tags:
+- UNION
+- UNION ALL
+theory:
+- UNION соединяет результаты двух SELECT и убирает повторы. UNION ALL сохраняет каждую строку,
+  даже если ель есть и среди деревьев, и среди кустов.
+- В деревьях ель и сосна, в кустах ель и сирень. Запрос SELECT name FROM trees UNION SELECT
+  name FROM shrubs даёт три имени, а UNION ALL — четыре строки.
+- ORDER BY name в конце сортирует уже объединённый результат. Проверка «есть ли имя хотя бы
+  в одной таблице» тоже делается через UNION внутри подзапроса.
+examples:
+- title: Без повтора ели
+  code: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table trees(name\
+    \ text)')\ncon.execute('create table shrubs(name text)')\ncon.executemany('insert into\
+    \ trees values (?)', [('ель',), ('сосна',)])\ncon.executemany('insert into shrubs values\
+    \ (?)', [('ель',), ('сирень',)])\nfor row in con.execute('select name from trees union\
+    \ select name from shrubs order by name'):\n    print(row[0])\n"
+  explanation: UNION оставляет одну ель. По алфавиту идут ель, сирень, сосна.
+- title: С повтором
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text)'')
+
+    con.execute(''create table shrubs(name text)'')
+
+    con.execute("insert into trees values (''ель'')")
+
+    con.execute("insert into shrubs values (''ель'')")
+
+    row = con.execute(''select count(*) from (select name from trees union all select name
+    from shrubs)'').fetchone()
+
+    print(row[0])
+
+    '
+  explanation: UNION ALL не схлопывает две ели, поэтому строк две.
+outcomes:
+- склеивать два SELECT через UNION
+- сохранять повторы через UNION ALL
+- сортировать объединённый результат
+- искать имя сразу в двух таблицах
+resources:
+- kind: docs
+  title: sqlite3
+  url: https://docs.python.org/3/library/sqlite3.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чем ALL отличается
+  difficulty: 1
+  context: neutral
+  prompt: Чем SELECT name FROM trees UNION ALL SELECT name FROM shrubs отличается от UNION
+    без ALL?
+  options:
+  - id: a
+    text: ALL сохраняет повторяющиеся имена
+  - id: b
+    text: ALL удаляет все строки
+  - id: c
+    text: ALL сортирует по высоте
+  answer: a
+  hints:
+  - Обычный UNION убирает дубликаты.
+  - ALL нужен, когда каждая строка важна.
+  - Высоты в этих таблицах нет.
+  solution: a
+  explanation: UNION ALL не выбрасывает повтор ели.
+  id: python.sql.sql-union.t1
+- type: predict_output
+  title: Сколько уникальных
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: '4'
+  - id: c
+    text: '2'
+  answer: a
+  hints:
+  - Всего четыре вставки.
+  - Ель повторяется и схлопывается.
+  - Остаются ель, сосна и сирень.
+  solution: a
+  explanation: После UNION различных имён три.
+  code: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text)'')
+
+    con.execute(''create table shrubs(name text)'')
+
+    con.executemany(''insert into trees values (?)'', [(''ель'',), (''сосна'',)])
+
+    con.executemany(''insert into shrubs values (?)'', [(''ель'',), (''сирень'',)])
+
+    rows = list(con.execute(''select name from trees union select name from shrubs''))
+
+    print(len(rows))
+
+    '
+  id: python.sql.sql-union.t2
+- type: code
+  title: ALL или без повторов
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте ALL или DISTINCT. Выведите имена деревьев и кустов: для ALL с повтором
+    ели, иначе без повтора. Сортируйте по имени.'
+  starter_code: ''
+  tests:
+  - stdin: 'ALL
+
+      '
+    expected_stdout: 'ель
+
+      ель
+
+      сирень
+
+      сосна
+
+      '
+  - stdin: 'DISTINCT
+
+      '
+    expected_stdout: 'ель
+
+      сирень
+
+      сосна
+
+      '
+  hints:
+  - Держите два запроса.
+  - ORDER BY относится ко всему объединению.
+  - DISTINCT здесь означает обычный UNION.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text)')\ncon.execute('create table shrubs(name text)')\ncon.executemany('insert\
+    \ into trees values (?)', [('ель',), ('сосна',)])\ncon.executemany('insert into shrubs\
+    \ values (?)', [('ель',), ('сирень',)])\nmode = input().strip()\nif mode == 'ALL':\n \
+    \   query = 'select name from trees union all select name from shrubs order by name'\n\
+    else:\n    query = 'select name from trees union select name from shrubs order by name'\n\
+    for row in con.execute(query):\n    print(row[0])\n"
+  explanation: 'Разница видна по второй ели: ALL её сохраняет.'
+  id: python.sql.sql-union.t3
+- type: code
+  title: Сколько строк
+  difficulty: 2
+  context: development
+  prompt: Прочитайте ALL или DISTINCT и выведите число строк такого объединения.
+  starter_code: ''
+  tests:
+  - stdin: 'ALL
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: 'DISTINCT
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - Считайте уже объединённый набор.
+  - Для ALL ель входит дважды.
+  - Для обычного UNION она одна.
+  solution: "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table\
+    \ trees(name text)')\ncon.execute('create table shrubs(name text)')\ncon.executemany('insert\
+    \ into trees values (?)', [('ель',), ('сосна',)])\ncon.executemany('insert into shrubs\
+    \ values (?)', [('ель',), ('сирень',)])\nmode = input().strip()\nif mode == 'ALL':\n \
+    \   query = 'select count(*) from (select name from trees union all select name from shrubs)'\n\
+    else:\n    query = 'select count(*) from (select name from trees union select name from\
+    \ shrubs)'\nrow = con.execute(query).fetchone()\nprint(row[0])\n"
+  explanation: Четыре строки с повтором и три без него.
+  id: python.sql.sql-union.t4
+- type: code
+  title: Есть ли имя
+  difficulty: 2
+  context: development
+  prompt: Прочитайте имя. Выведите есть, если оно встречается в деревьях или кустах, иначе
+    нет.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'есть
+
+      '
+  - stdin: 'берёза
+
+      '
+    expected_stdout: 'нет
+
+      '
+  hints:
+  - UNION собирает оба списка.
+  - Внешний WHERE ищет имя через ?.
+  - Ноль означает нет.
+  solution: 'import sqlite3
+
+    con = sqlite3.connect('':memory:'')
+
+    con.execute(''create table trees(name text)'')
+
+    con.execute(''create table shrubs(name text)'')
+
+    con.executemany(''insert into trees values (?)'', [(''ель'',), (''сосна'',)])
+
+    con.executemany(''insert into shrubs values (?)'', [(''ель'',), (''сирень'',)])
+
+    name = input().strip()
+
+    query = ''select count(*) from (select name from trees union select name from shrubs)
+    where name = ?''
+
+    row = con.execute(query, (name,)).fetchone()
+
+    print(''есть'' if row[0] else ''нет'')
+
+    '
+  explanation: Имя считается найденным, если оно есть хотя бы в одной таблице.
+  id: python.sql.sql-union.t5
+introduces:
+- id: sql-union
+  title: UNION
+  summary: Склейка двух SELECT. Без ALL повторы исчезают, UNION ALL их сохраняет.

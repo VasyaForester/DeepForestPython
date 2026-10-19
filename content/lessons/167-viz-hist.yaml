@@ -1,0 +1,217 @@
+id: python.viz.viz-hist
+slug: viz-hist
+section: viz
+title: Распределение
+order: 5
+weight: 1
+prerequisites:
+- python.viz.viz-many
+goal: Раскладывать числа по корзинам низ, середина и верх.
+tags:
+- гистограмма
+theory:
+- Гистограмма показывает, как часто величина попадает в корзины. В matplotlib её рисует plt.hist(heights).
+- Границы корзин надо назвать заранее. Здесь низ — меньше 10, середина — от 10 до 19 включительно,
+  верх — от 20. Иначе один и тот же ряд даст разные картинки.
+- Упражнение печатает три счётчика корзин, потому что matplotlib нет в среде браузера.
+examples:
+- title: Три корзины
+  code: "heights = [4, 12, 18, 25, 9]\nlow = mid = high = 0\nfor height in heights:\n    if\
+    \ height < 10:\n        low += 1\n    elif height < 20:\n        mid += 1\n    else:\n\
+    \        high += 1\nprint(low, mid, high)\n"
+  explanation: 'Две низкие, две средние, одна высокая: 2 2 1.'
+- title: Только верх
+  code: 'prices = [5, 20, 30]
+
+    print(sum(1 for price in prices if price >= 20))
+
+    '
+  explanation: В верхнюю корзину попали две цены.
+outcomes:
+- раскладывать числа по названным корзинам
+- выбирать гистограмму для распределения
+- держать границы корзин явными
+- находить самую полную корзину
+resources:
+- kind: docs
+  title: The Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что рисует hist
+  difficulty: 1
+  context: neutral
+  prompt: Что показывает plt.hist(heights)?
+  options:
+  - id: a
+    text: Сколько значений попало в каждую корзину
+  - id: b
+    text: Ход высот по дням
+  - id: c
+    text: Связь двух разных столбцов
+  answer: a
+  hints:
+  - hist раскладывает одну величину.
+  - Порядок дней для гистограммы не важен.
+  - Два столбца были бы точками, не корзинами.
+  solution: a
+  explanation: Гистограмма отвечает на вопрос о распределении, не о времени.
+  id: python.viz.viz-hist.t1
+- type: predict_output
+  title: Счёт корзин
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 1 1 1
+  - id: b
+    text: 3 0 0
+  - id: c
+    text: 0 1 2
+  answer: a
+  hints:
+  - 4 ниже 10.
+  - 12 в середине.
+  - 25 в верхней корзине.
+  solution: a
+  explanation: В каждой корзине по одному значению.
+  code: "heights = [4, 12, 25]\nlow = mid = high = 0\nfor height in heights:\n    if height\
+    \ < 10:\n        low += 1\n    elif height < 20:\n        mid += 1\n    else:\n      \
+    \  high += 1\nprint(low, mid, high)\n"
+  id: python.viz.viz-hist.t2
+- type: code
+  title: Три счётчика
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте n и n высот. Низ: меньше 10. Середина: от 10 до 19. Верх: от 20. Выведите
+    три счётчика.'
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      4
+
+      12
+
+      18
+
+      25
+
+      9
+
+      '
+    expected_stdout: '2
+
+      2
+
+      1
+
+      '
+  - stdin: '1
+
+      20
+
+      '
+    expected_stdout: '0
+
+      0
+
+      1
+
+      '
+  hints:
+  - Границы включите так, как сказано.
+  - 19 ещё середина, 20 уже верх.
+  - Печатайте три строки.
+  solution: "n = int(input())\nlow = mid = high = 0\nfor _ in range(n):\n    height = int(input())\n\
+    \    if height < 10:\n        low += 1\n    elif height < 20:\n        mid += 1\n    else:\n\
+    \        high += 1\nprint(low)\nprint(mid)\nprint(high)\n"
+  explanation: Три числа — текстовая гистограмма с заданными корзинами.
+  id: python.viz.viz-hist.t3
+- type: code
+  title: Самая полная корзина
+  difficulty: 2
+  context: development
+  prompt: Прочитайте высоты и разложите их теми же границами. Выведите низ, середина или верх.
+    При равенстве берите более раннее имя в этом списке.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      4
+
+      12
+
+      25
+
+      '
+    expected_stdout: 'низ
+
+      '
+  - stdin: '2
+
+      3
+
+      4
+
+      '
+    expected_stdout: 'низ
+
+      '
+  hints:
+  - Сначала три счётчика.
+  - Равенство решается порядком имён.
+  - Печатайте одно слово.
+  solution: "n = int(input())\nlow = mid = high = 0\nfor _ in range(n):\n    height = int(input())\n\
+    \    if height < 10:\n        low += 1\n    elif height < 20:\n        mid += 1\n    else:\n\
+    \        high += 1\nif low >= mid and low >= high:\n    print(\"низ\")\nelif mid >= high:\n\
+    \    print(\"середина\")\nelse:\n    print(\"верх\")\n"
+  explanation: Полная корзина — пик распределения.
+  id: python.viz.viz-hist.t4
+- type: code
+  title: Только верх
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. Выведите, сколько из них не меньше 20.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      5
+
+      20
+
+      30
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      19
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Порог верхнего края — 20.
+  - Меньшие не считайте.
+  - Одно число в ответе.
+  solution: 'n = int(input())
+
+    print(sum(1 for _ in range(n) if int(input()) >= 20))
+
+    '
+  explanation: Одна корзина гистограммы считается отдельно.
+  id: python.viz.viz-hist.t5
+introduces:
+- id: viz-histogram
+  title: Гистограмма
+  summary: Частоты по корзинам одной величины. В matplotlib это plt.hist.

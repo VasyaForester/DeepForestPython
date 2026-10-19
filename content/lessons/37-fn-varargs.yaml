@@ -1,0 +1,199 @@
+id: python.functions.fn-varargs
+slug: fn-varargs
+section: functions
+title: Произвольное число аргументов
+order: 5
+weight: 1
+prerequisites:
+- python.functions.fn-keywords
+goal: Принять сколько угодно цен в кортеж и именованные поля в словарь.
+tags:
+- args
+- kwargs
+theory:
+- Звёздочка перед параметром собирает лишние позиционные аргументы в кортеж. Вызов total(12,
+  40, 7) при описании total(*prices) кладёт в prices три цены. Если аргументов нет, кортеж
+  пустой, и сумма по нему равна нулю.
+- Две звёздочки собирают лишние именованные аргументы в словарь. Вызов note(place='склад',
+  item='ель') при описании note(**fields) даёт словарь с этими ключами. Обычные параметры
+  пишут первыми, затем кортеж со звёздочкой, и только потом словарь с двумя звёздочками.
+- Кортеж цен обходят циклом и складывают. Словарь удобен для журнала, где набор полей заранее
+  не зафиксирован. Функция по-прежнему возвращает одно готовое значение, а печать остаётся
+  снаружи.
+examples:
+- title: Сумма партии
+  code: "def total(*prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\nprint(total(12, 40, 7))\n"
+  explanation: Три цены собрались в кортеж, функция вернула 59.
+- title: Поля журнала
+  code: "def note(**fields):\n    print(fields['place'])\n    print(fields['item'])\nnote(place='склад',\
+    \ item='ель')\n"
+  explanation: Именованные аргументы легли в словарь, печать достаёт их по ключам.
+outcomes:
+- собирать позиционные аргументы в кортеж
+- собирать именованные аргументы в словарь
+- раскрывать список звёздочкой в вызове
+- возвращать сумму или подпись, не печатая внутри
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Куда деваются лишние аргументы
+  difficulty: 1
+  context: neutral
+  prompt: Куда попадают лишние позиционные аргументы?
+  options:
+  - id: a
+    text: В кортеж у параметра с одной звёздочкой
+  - id: b
+    text: В словарь у параметра с двумя звёздочками
+  - id: c
+    text: Они сразу печатаются и исчезают
+  answer: a
+  hints:
+  - Смотрите на число звёздочек перед именем.
+  - Одна звёздочка собирает позиции.
+  - Две звёздочки собирают имена.
+  solution: a
+  explanation: Одна звёздочка пакует позиционные аргументы в кортеж.
+  id: python.functions.fn-varargs.t1
+- type: predict_output
+  title: Сколько цен пришло
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '3'
+  - id: b
+    text: '59'
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - В вызове три числа.
+  - Параметр со звёздочкой — кортеж.
+  - Печатают длину кортежа.
+  solution: a
+  explanation: В prices лежит кортеж из трёх цен, длина равна 3.
+  code: "def total(*prices):\n    print(len(prices))\ntotal(12, 40, 7)\n"
+  id: python.functions.fn-varargs.t2
+- type: code
+  title: Сумма неизвестной партии
+  difficulty: 2
+  context: development
+  prompt: Прочитайте количество цен, затем сами цены. Функция total(*prices) возвращает сумму.
+    Выведите её.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      12
+
+      40
+
+      7
+
+      '
+    expected_stdout: '59
+
+      '
+  - stdin: '1
+
+      5
+
+      '
+    expected_stdout: '5
+
+      '
+  hints:
+  - Соберите цены в список.
+  - В вызов поставьте звёздочку перед списком.
+  - Печатайте то, что вернула функция.
+  solution: "def total(*prices):\n    s = 0\n    for price in prices:\n        s = s + price\n\
+    \    return s\nn = int(input())\nnums = []\nfor _ in range(n):\n    nums.append(int(input()))\n\
+    print(total(*nums))\n"
+  explanation: Звёздочка у списка раскрывает его в отдельные аргументы, total их складывает.
+  id: python.functions.fn-varargs.t3
+- type: code
+  title: Подпись по именам
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте место и предмет. Функция note(**fields) возвращает строку место: предмет.
+    Передайте оба значения по именам и выведите результат.'
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      ель
+
+      '
+    expected_stdout: 'склад: ель
+
+      '
+  - stdin: 'лес
+
+      сосна
+
+      '
+    expected_stdout: 'лес: сосна
+
+      '
+  hints:
+  - Две звёздочки собирают словарь.
+  - В вызове подпишите place и item.
+  - Между частями стоят двоеточие и пробел.
+  solution: "def note(**fields):\n    return fields['place'] + ': ' + fields['item']\nplace\
+    \ = input()\nitem = input()\nprint(note(place=place, item=item))\n"
+  explanation: Именованные аргументы попадают в словарь fields.
+  id: python.functions.fn-varargs.t4
+- type: code
+  title: Название и две цены
+  difficulty: 2
+  context: development
+  prompt: Прочитайте название и две цены. Функция row(name, *prices) возвращает строку название
+    и сумма через пробел. Выведите её.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      10
+
+      15
+
+      '
+    expected_stdout: 'ель 25
+
+      '
+  - stdin: 'сосна
+
+      3
+
+      0
+
+      '
+    expected_stdout: 'сосна 3
+
+      '
+  hints:
+  - У функции есть обычное имя и кортеж цен.
+  - Сложите цены циклом.
+  - Склейте название и сумму через пробел.
+  solution: "def row(name, *prices):\n    s = 0\n    for price in prices:\n        s = s +\
+    \ price\n    return name + ' ' + str(s)\nname = input()\na = int(input())\nb = int(input())\n\
+    print(row(name, a, b))\n"
+  explanation: Две цены попадают в кортеж prices, название остаётся отдельным параметром.
+  id: python.functions.fn-varargs.t5
+introduces:
+- id: fn-star-args
+  title: '*args'
+  summary: Параметр с одной звёздочкой. Собирает лишние позиционные аргументы в кортеж.
+- id: fn-star-kwargs
+  title: '**kwargs'
+  summary: Параметр с двумя звёздочками. Собирает лишние именованные аргументы в словарь.

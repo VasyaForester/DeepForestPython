@@ -1,0 +1,185 @@
+id: python.files.file-review
+slug: file-review
+section: files
+title: 'Итог: разобрать строку журнала'
+order: 11
+weight: 2
+prerequisites:
+- python.files.file-secrets
+goal: Посчитать количества из строк журнала и сохранить словарь в JSON.
+tags:
+- журнал
+- json
+- словарь
+theory:
+- 'Строка журнала выглядит как «ель 2»: название и количество через пробел. split делит её
+  на два поля, int превращает второе в число.'
+- Словарь копит суммы. Для каждой строки counts[name] увеличивается на количество. Если названия
+  ещё не было, за начало берут 0.
+- Готовый словарь записывают в journal.json через json.dumps. Чтение файла и json.loads возвращают
+  те же суммы. Так текст журнала становится проверяемым файлом.
+examples:
+- title: Две строки ели
+  code: "import json\ntext = 'ель 2\\nсосна 1\\nель 3'\ncounts = {}\nfor row in text.splitlines():\n\
+    \    name, qty = row.split()\n    counts[name] = counts.get(name, 0) + int(qty)\nwith\
+    \ open('journal.json', 'w', encoding='utf-8') as handle:\n    handle.write(json.dumps(counts,\
+    \ ensure_ascii=False, sort_keys=True))\nwith open('journal.json', encoding='utf-8') as\
+    \ handle:\n    data = json.loads(handle.read())\nprint(data['ель'])\n"
+  explanation: 2 и 3 складываются в 5. Файл хранит JSON, чтение подтверждает сумму ели.
+- title: Одна строка
+  code: "import json\nname, qty = 'сосна 4'.split()\ncounts = {name: int(qty)}\ntext = json.dumps(counts,\
+    \ ensure_ascii=False)\nwith open('journal.json', 'w', encoding='utf-8') as handle:\n \
+    \   handle.write(text)\nprint(json.loads(text)['сосна'])\n"
+  explanation: Одна пара сразу становится словарём. В JSON у сосны количество 4.
+outcomes:
+- разбирать строку журнала через split
+- копить суммы в словаре
+- записывать словарь в JSON-файл
+- читать сумму обратно из файла
+resources:
+- kind: docs
+  title: Reading and Writing Files
+  url: https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Как копится сумма
+  difficulty: 1
+  context: neutral
+  prompt: 'В журнале две строки: ель 2 и ель 3. Чему равно counts[''ель''] после обеих?'
+  options:
+  - id: a
+    text: '5'
+  - id: b
+    text: '2'
+  - id: c
+    text: ель 3
+  answer: a
+  hints:
+  - Одинаковые названия складывают.
+  - Вторая строка не заменяет первую.
+  - Значение — число, не текст строки.
+  solution: a
+  explanation: 2 + 3 = 5.
+  id: python.files.file-review.t1
+- type: predict_output
+  title: Сумма ели
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '3'
+  - id: c
+    text: '5'
+  answer: c
+  hints:
+  - Первая строка кладёт 2.
+  - Вторая прибавляет 3.
+  - get подставляет 0 только в первый раз.
+  solution: c
+  explanation: Счётчик ели становится равен 5.
+  code: "counts = {}\nfor row in ['ель 2', 'ель 3']:\n    name, qty = row.split()\n    counts[name]\
+    \ = counts.get(name, 0) + int(qty)\nprint(counts['ель'])\n"
+  id: python.files.file-review.t2
+- type: code
+  title: Сумма по строкам
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте число строк, затем строки вида «название количество». Посчитайте суммы,
+    запишите JSON в journal.json и выведите сумму для ели. Если ели не было, выведите 0.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 2
+
+      сосна 1
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '1
+
+      сосна 4
+
+      '
+    expected_stdout: '0
+
+      '
+  hints:
+  - Первое число — сколько строк журнала.
+  - Одинаковые названия складывайте.
+  - Сумму читайте уже из файла.
+  solution: "import json\ncounts = {}\nfor _ in range(int(input())):\n    name, qty = input().split()\n\
+    \    counts[name] = counts.get(name, 0) + int(qty)\nwith open('journal.json', 'w', encoding='utf-8')\
+    \ as handle:\n    handle.write(json.dumps(counts, ensure_ascii=False, sort_keys=True))\n\
+    with open('journal.json', encoding='utf-8') as handle:\n    data = json.loads(handle.read())\n\
+    print(data.get('ель', 0))\n"
+  explanation: В первом наборе у ели 2. Во втором ели нет, поэтому 0.
+  id: python.files.file-review.t3
+- type: code
+  title: Журнал через точку с запятой
+  difficulty: 2
+  context: business
+  prompt: Прочитайте строку названий через точку с запятой. Посчитайте, сколько раз встретилась
+    ель, запишите словарь в journal.json и выведите это число.
+  starter_code: ''
+  tests:
+  - stdin: 'ель;сосна;ель
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: 'ель;ель;ель
+
+      '
+    expected_stdout: '3
+
+      '
+  hints:
+  - split по точке с запятой.
+  - Каждое имя добавляет 1.
+  - Печатайте значение из прочитанного JSON.
+  solution: "import json\ncounts = {}\nfor name in input().split(';'):\n    counts[name] =\
+    \ counts.get(name, 0) + 1\nwith open('journal.json', 'w', encoding='utf-8') as handle:\n\
+    \    handle.write(json.dumps(counts, ensure_ascii=False, sort_keys=True))\nwith open('journal.json',\
+    \ encoding='utf-8') as handle:\n    data = json.loads(handle.read())\nprint(data['ель'])\n"
+  explanation: В первой строке ель дважды, во второй трижды.
+  id: python.files.file-review.t4
+- type: code
+  title: Одна запись
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку «название количество», запишите словарь в journal.json и выведите
+    текст, прочитанный из файла.
+  starter_code: ''
+  tests:
+  - stdin: 'ель 4
+
+      '
+    expected_stdout: '{"ель": 4}
+
+      '
+  - stdin: 'сосна 1
+
+      '
+    expected_stdout: '{"сосна": 1}
+
+      '
+  hints:
+  - split даёт имя и число.
+  - dumps с ensure_ascii=False.
+  - Печатайте содержимое файла как есть.
+  solution: "import json\nname, qty = input().split()\ntext = json.dumps({name: int(qty)},\
+    \ ensure_ascii=False)\nwith open('journal.json', 'w', encoding='utf-8') as handle:\n \
+    \   handle.write(text)\nwith open('journal.json', encoding='utf-8') as handle:\n    print(handle.read())\n"
+  explanation: Файл содержит JSON с одним ключом и введённым количеством.
+  id: python.files.file-review.t5

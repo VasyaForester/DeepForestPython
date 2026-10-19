@@ -1,0 +1,177 @@
+id: python.backend.be-errors
+slug: be-errors
+section: backend
+title: Ошибки API
+order: 10
+weight: 1
+prerequisites:
+- python.backend.be-authz
+goal: Поймать исключение и напечатать код 404 или 400.
+tags:
+- ошибка
+- '404'
+- '400'
+theory:
+- Обработчик не печатает длинный текст исключения. Неизвестная позиция поднимает KeyError
+  и превращается в 404.
+- Плохое поле поднимает ValueError и превращается в 400. Успешный путь печатает 200.
+- На экран выходит только код. По нему видно, это отсутствие записи или ошибка разбора, без
+  внутреннего текста Python.
+examples:
+- title: Нет позиции
+  code: "catalog = {'ель': 120}\ntry:\n    name = 'пихта'\n    if name not in catalog:\n \
+    \       raise KeyError(name)\n    print(200)\nexcept KeyError:\n    print(404)\nexcept\
+    \ ValueError:\n    print(400)\n"
+  explanation: Ключа пихта нет, KeyError становится кодом 404.
+- title: Пустое поле
+  code: "try:\n    name = ''\n    if name == '':\n        raise ValueError(name)\n    print(200)\n\
+    except KeyError:\n    print(404)\nexcept ValueError:\n    print(400)\n"
+  explanation: Пустая строка — ValueError, программа печатает 400.
+outcomes:
+- отображать KeyError в 404
+- отображать ValueError в 400
+- печатать 200 на успешном пути
+- не показывать текст исключения
+resources:
+- kind: docs
+  title: json
+  url: https://docs.python.org/3/library/json.html
+- kind: youtube
+  title: CS50P — Lecture 8
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какой код
+  difficulty: 1
+  context: neutral
+  prompt: Какой код печатают для неизвестной позиции?
+  options:
+  - id: a
+    text: '404'
+  - id: b
+    text: '400'
+  - id: c
+    text: '200'
+  answer: a
+  hints:
+  - Неизвестная позиция — это KeyError.
+  - 400 оставлен для плохого поля.
+  - 200 печатается, только если исключений не было.
+  solution: a
+  explanation: KeyError отображается в 404.
+  id: python.backend.be-errors.t1
+- type: predict_output
+  title: Код KeyError
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '404'
+  - id: b
+    text: '400'
+  - id: c
+    text: нет
+  answer: a
+  hints:
+  - Поднимается KeyError.
+  - Первая подходящая ветка — 404.
+  - Текст исключения не печатается.
+  solution: a
+  explanation: KeyError даёт 404.
+  code: "try:\n    raise KeyError('нет')\nexcept KeyError:\n    print(404)\nexcept ValueError:\n\
+    \    print(400)\n"
+  id: python.backend.be-errors.t2
+- type: code
+  title: Каталог
+  difficulty: 2
+  context: development
+  prompt: 'Каталог: ель и сосна. Прочитайте имя. Пустая строка — 400, неизвестное имя — 404,
+    известное — 200.'
+  starter_code: ''
+  tests:
+  - stdin: 'пихта
+
+      '
+    expected_stdout: '404
+
+      '
+  - stdin: '
+
+      '
+    expected_stdout: '400
+
+      '
+  hints:
+  - Пустую строку проверьте раньше каталога.
+  - KeyError и ValueError ловите отдельно.
+  - Печатайте только число.
+  solution: "catalog = {'ель': 120, 'сосна': 80}\ntry:\n    name = input()\n    if name ==\
+    \ '':\n        raise ValueError(name)\n    if name not in catalog:\n        raise KeyError(name)\n\
+    \    print(200)\nexcept KeyError:\n    print(404)\nexcept ValueError:\n    print(400)\n"
+  explanation: Тип исключения выбирает код ответа.
+  id: python.backend.be-errors.t3
+- type: code
+  title: Число или ноль
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку. Если в ней не только цифры, печатайте 400. Если строка равна
+    0, печатайте 404. Иначе 200.
+  starter_code: ''
+  tests:
+  - stdin: '0
+
+      '
+    expected_stdout: '404
+
+      '
+  - stdin: 'x
+
+      '
+    expected_stdout: '400
+
+      '
+  hints:
+  - isdigit проверяет, что строка из цифр.
+  - Ноль — отдельный KeyError.
+  - Буква даёт ValueError.
+  solution: "try:\n    code = input()\n    if not code.isdigit():\n        raise ValueError(code)\n\
+    \    if code == '0':\n        raise KeyError(code)\n    print(200)\nexcept KeyError:\n\
+    \    print(404)\nexcept ValueError:\n    print(400)\n"
+  explanation: Плохой текст и отсутствующий код — разные коды ответа.
+  id: python.backend.be-errors.t4
+- type: code
+  title: Функция разбора
+  difficulty: 2
+  context: development
+  prompt: Функция load поднимает ValueError для пустой строки и KeyError, если имени нет в
+    каталоге ель/сосна. Прочитайте имя и напечатайте 200, 404 или 400.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: '200
+
+      '
+  - stdin: 'пихта
+
+      '
+    expected_stdout: '404
+
+      '
+  hints:
+  - load либо возвращает число, либо поднимает исключение.
+  - Успех печатает 200.
+  - KeyError снаружи становится 404.
+  solution: "def load(name):\n    catalog = {'ель': 1, 'сосна': 2}\n    if name == '':\n \
+    \       raise ValueError(name)\n    if name not in catalog:\n        raise KeyError(name)\n\
+    \    return catalog[name]\ntry:\n    load(input())\n    print(200)\nexcept KeyError:\n\
+    \    print(404)\nexcept ValueError:\n    print(400)\n"
+  explanation: Исключение внутри функции превращается в код уже у вызывающего кода.
+  id: python.backend.be-errors.t5
+introduces:
+- id: be-http-error
+  title: Код ошибки
+  summary: Исключение внутри обработчика превращается в число 400 или 404.

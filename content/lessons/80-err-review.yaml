@@ -1,0 +1,171 @@
+id: python.errors.err-review
+slug: err-review
+section: errors
+title: 'Итог: проверить ввод'
+order: 11
+weight: 2
+prerequisites:
+- python.errors.err-mocks
+goal: Принять число, отвергнуть пустой и нечисловой ввод и записать результат.
+tags:
+- проверка
+- ввод
+theory:
+- Проверка ввода собирает уже знакомые приёмы. int внутри try ловит текст, который не является
+  числом, и печатает ошибка вместо остановки.
+- 'Своя ситуация описывается AppError: пустая строка — это не сбой int, а отдельное правило.
+  except AppError печатает ошибка и оставляет программу живой.'
+- Итог проверки удобно записать строкой журнала. Положительное число даёт INFO ok, текст и
+  слишком малое число дают ERROR и короткую причину.
+examples:
+- title: Число или текст
+  code: "def check(text):\n    try:\n        int(text)\n    except ValueError:\n        return\
+    \ 'ошибка'\n    return 'ok'\nprint(check('4'))\nprint(check('нет'))\n"
+  explanation: 4 проходит int и даёт ok. нет поднимает ValueError, функция возвращает ошибка.
+- title: Журнал проверки
+  code: "def log(level, text):\n    print(level.upper() + ' ' + text)\ndef check(text):\n\
+    \    try:\n        n = int(text)\n    except ValueError:\n        log('error', 'не число')\n\
+    \        return\n    if n < 1:\n        log('error', 'мало')\n    else:\n        log('info',\
+    \ 'ok')\ncheck('4')\ncheck('0')\n"
+  explanation: 4 записывается как INFO ok. 0 меньше единицы и даёт ERROR мало.
+outcomes:
+- отвергать нечисловой ввод через try
+- отделять пустую строку своим исключением
+- записывать исход проверки уровнем и текстом
+- принимать только подходящее целое число
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Какая ветка для текста
+  difficulty: 1
+  context: neutral
+  prompt: Что должно произойти со строкой нет при проверке целого числа?
+  options:
+  - id: a
+    text: except ValueError печатает ошибка
+  - id: b
+    text: Строка становится числом 0
+  - id: c
+    text: assert превращает её в 1
+  answer: a
+  hints:
+  - int не читает слово нет.
+  - ValueError ловят в except.
+  - Ноль здесь не подставляется.
+  solution: a
+  explanation: Нечисловой текст — это ValueError, его показывают как ошибка.
+  id: python.errors.err-review.t1
+- type: predict_output
+  title: Пустое слово
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ok
+  - id: b
+    text: нет
+  - id: c
+    text: ошибка
+  answer: c
+  hints:
+  - В check передана не числовая строка.
+  - int поднимает ValueError.
+  - Функция возвращает ошибка.
+  solution: c
+  explanation: Слово нет не проходит проверку.
+  code: "def check(text):\n    try:\n        int(text)\n    except ValueError:\n        return\
+    \ 'ошибка'\n    return 'ok'\nprint(check('нет'))\n"
+  id: python.errors.err-review.t2
+- type: code
+  title: ok или ошибка
+  difficulty: 2
+  context: security
+  prompt: Прочитайте строку. Выведите ok, если это целое число, и ошибка, если int её не понял.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: 'ok
+
+      '
+  - stdin: 'нет
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  hints:
+  - int стоит в try.
+  - except возвращает ошибка.
+  - Успех возвращает ok.
+  solution: "def check(text):\n    try:\n        int(text)\n    except ValueError:\n     \
+    \   return 'ошибка'\n    return 'ok'\nprint(check(input()))\n"
+  explanation: 4 даёт ok. нет даёт ошибка.
+  id: python.errors.err-review.t3
+- type: code
+  title: Пустая строка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку. Пустая строка поднимает AppError, и программа печатает ошибка.
+    Непустую строку выведите как есть.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      '
+    expected_stdout: 'ель
+
+      '
+  - stdin: '
+
+      '
+    expected_stdout: 'ошибка
+
+      '
+  hints:
+  - Пустоту проверяйте до возврата.
+  - raise AppError внутри check.
+  - except печатает ошибка.
+  solution: "class AppError(Exception):\n    pass\ndef check(text):\n    if text == '':\n\
+    \        raise AppError('пусто')\n    return text\ntry:\n    print(check(input()))\nexcept\
+    \ AppError:\n    print('ошибка')\n"
+  explanation: ель печатается. Пустой ввод даёт ошибка.
+  id: python.errors.err-review.t4
+- type: code
+  title: Журнал ввода
+  difficulty: 2
+  context: business
+  prompt: Прочитайте строку. Если это целое число не меньше 1, выведите INFO ok. Если число
+    меньше 1, выведите ERROR мало. Если это не число, выведите ERROR не число.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: 'INFO ok
+
+      '
+  - stdin: 'нет
+
+      '
+    expected_stdout: 'ERROR не число
+
+      '
+  hints:
+  - Сначала попробуйте int.
+  - else у try выполняется, когда ошибки не было.
+  - Уровень печатайте в верхнем регистре.
+  solution: "def log(level, text):\n    print(level.upper() + ' ' + text)\ntry:\n    n = int(input())\n\
+    except ValueError:\n    log('error', 'не число')\nelse:\n    if n < 1:\n        log('error',\
+    \ 'мало')\n    else:\n        log('info', 'ok')\n"
+  explanation: 4 даёт INFO ok. нет даёт ERROR не число.
+  id: python.errors.err-review.t5

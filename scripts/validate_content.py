@@ -48,7 +48,83 @@ SHARED_CALLS = {
     "enumerate",
     "zip",
     "reversed",
+    "any",
+    "all",
+    "isinstance",
+    "issubclass",
+    "next",
+    "iter",
+    "repr",
+    "hash",
+    "divmod",
+    "pow",
+    "chr",
+    "ord",
+    "format",
+    "map",
+    "filter",
+    "super",
+    "property",
+    "staticmethod",
+    "classmethod",
+    "getattr",
+    "setattr",
+    "hasattr",
+    "callable",
+    "open",
+    "ascii",
+    "bin",
+    "hex",
+    "oct",
 }
+EXCEPTIONS = {
+    "Exception",
+    "BaseException",
+    "ValueError",
+    "TypeError",
+    "KeyError",
+    "IndexError",
+    "ZeroDivisionError",
+    "StopIteration",
+    "RuntimeError",
+    "NotImplementedError",
+    "AssertionError",
+    "AttributeError",
+    "NameError",
+    "UnboundLocalError",
+    "RecursionError",
+    "OverflowError",
+    "FileNotFoundError",
+    "OSError",
+    "UnicodeError",
+    "UnicodeDecodeError",
+    "SyntaxError",
+}
+STDLIB_IMPORTS = {
+    "json",
+    "math",
+    "re",
+    "datetime",
+    "collections",
+    "functools",
+    "itertools",
+    "copy",
+    "heapq",
+    "textwrap",
+    "io",
+    "csv",
+    "string",
+    "enum",
+    "abc",
+    "contextlib",
+    "operator",
+    "decimal",
+    "bisect",
+    "sqlite3",
+}
+
+
+BLOCKED_CALLS = {"eval", "exec", "compile", "__import__", "breakpoint", "globals", "locals", "vars", "memoryview"}
 
 
 def shared_with_student_runtime(code: str, label: str, errors: list[str]) -> None:
@@ -58,16 +134,21 @@ def shared_with_student_runtime(code: str, label: str, errors: list[str]) -> Non
         errors.append(f"{label} syntax: {exc}")
         return
     for node in ast.walk(tree):
-        if isinstance(node, (ast.Import, ast.ImportFrom)):
-            errors.append(f"{label}: импорт вне общего набора с {STUDENT_RUNTIME}")
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                root = alias.name.split(".")[0]
+                if root not in STDLIB_IMPORTS:
+                    errors.append(f"{label}: импорт {root} вне общего набора с {STUDENT_RUNTIME}")
+        elif isinstance(node, ast.ImportFrom):
+            root = (node.module or "").split(".")[0]
+            if root not in STDLIB_IMPORTS:
+                errors.append(f"{label}: импорт {root} вне общего набора с {STUDENT_RUNTIME}")
         elif isinstance(node, ast.Call):
             func = node.func
-            if isinstance(func, ast.Name) and func.id in SHARED_CALLS:
+            if not isinstance(func, ast.Name):
                 continue
-            if isinstance(func, ast.Attribute):
-                continue
-            name = func.id if isinstance(func, ast.Name) else "вызов"
-            errors.append(f"{label}: {name} вне общего набора с {STUDENT_RUNTIME}")
+            if func.id in BLOCKED_CALLS:
+                errors.append(f"{label}: {func.id} вне общего набора с {STUDENT_RUNTIME}")
 
 
 def load(path: Path) -> dict:
@@ -118,6 +199,8 @@ def check_choice(task: dict, errors: list[str]) -> None:
 
 
 def run_code(code: str, stdin: str) -> str:
+    sandbox = ROOT / "backend" / "data" / "sandbox"
+    sandbox.mkdir(parents=True, exist_ok=True)
     completed = subprocess.run(
         [sys.executable, "-I", "-c", code],
         input=stdin,
@@ -125,6 +208,7 @@ def run_code(code: str, stdin: str) -> str:
         capture_output=True,
         timeout=5,
         check=False,
+        cwd=sandbox,
     )
     if completed.returncode != 0:
         raise AssertionError(completed.stderr or completed.stdout)

@@ -1,0 +1,180 @@
+id: python.errors.err-finally
+slug: err-finally
+section: errors
+title: finally
+order: 3
+weight: 1
+prerequisites:
+- python.errors.err-try
+goal: Выполнить завершающее действие и при успехе, и при ошибке.
+tags:
+- finally
+theory:
+- finally стоит после try. Его блок выполняется, когда try закончился удачно и когда исключение
+  уже поймал except.
+- 'Туда кладут действие, которое нельзя пропустить: печать маркера закрыто, закрытие ресурса,
+  последняя запись. Маркер виден в обоих исходах.'
+- Сначала выполняется тело try или except, потом finally. Если напечатать число, а в finally
+  напечатать закрыто, закрыто будет последней строкой.
+examples:
+- title: Успех
+  code: "try:\n    print(8)\nfinally:\n    print('закрыто')\n"
+  explanation: Число печатается в try. finally всё равно печатает закрыто следом.
+- title: После ошибки
+  code: "try:\n    print(int('нет'))\nexcept ValueError:\n    print('ошибка')\nfinally:\n\
+    \    print('закрыто')\n"
+  explanation: except печатает ошибка, затем finally печатает закрыто. Маркер не зависит от
+    успеха.
+outcomes:
+- дописывать finally после try
+- выполнять маркер и при успехе, и при ошибке
+- понимать, что finally идёт после except
+- не пропускать завершающее действие
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда выполняется finally
+  difficulty: 1
+  context: neutral
+  prompt: Когда выполняется блок finally?
+  options:
+  - id: a
+    text: И после успеха try, и после except
+  - id: b
+    text: Только если исключения не было
+  - id: c
+    text: Только если программа ещё не дошла до try
+  answer: a
+  hints:
+  - finally не выбирает удачный путь.
+  - except его не отменяет.
+  - До входа в try он не выполняется.
+  solution: a
+  explanation: finally — завершение. Оно выполняется в обоих исходах.
+  id: python.errors.err-finally.t1
+- type: predict_output
+  title: Что останется
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: открыто
+  - id: b
+    text: работа
+  - id: c
+    text: закрыто
+  answer: c
+  hints:
+  - try меняет состояние на работа.
+  - finally выполняется следом.
+  - Печать стоит после всего блока.
+  solution: c
+  explanation: Последнее присваивание в finally оставляет закрыто.
+  code: "state = 'открыто'\ntry:\n    state = 'работа'\nfinally:\n    state = 'закрыто'\n\
+    print(state)\n"
+  id: python.errors.err-finally.t2
+- type: code
+  title: Маркер после числа
+  difficulty: 2
+  context: development
+  prompt: Прочитайте строку. Если это целое, выведите его, иначе выведите ошибка. В finally
+    всегда выведите закрыто.
+  starter_code: ''
+  tests:
+  - stdin: '8
+
+      '
+    expected_stdout: '8
+
+      закрыто
+
+      '
+  - stdin: 'нет
+
+      '
+    expected_stdout: 'ошибка
+
+      закрыто
+
+      '
+  hints:
+  - int внутри try.
+  - ошибка печатается в except.
+  - закрыто пишите в finally.
+  solution: "try:\n    print(int(input()))\nexcept ValueError:\n    print('ошибка')\nfinally:\n\
+    \    print('закрыто')\n"
+  explanation: При 8 строки будут 8 и закрыто. При нет — ошибка и закрыто.
+  id: python.errors.err-finally.t3
+- type: code
+  title: Цена и маркер
+  difficulty: 2
+  context: business
+  prompt: Прочитайте число. Отрицательное замените выводом ошибка. В любом случае последней
+    строкой выведите закрыто.
+  starter_code: ''
+  tests:
+  - stdin: '5
+
+      '
+    expected_stdout: '5
+
+      закрыто
+
+      '
+  - stdin: '-2
+
+      '
+    expected_stdout: 'ошибка
+
+      закрыто
+
+      '
+  hints:
+  - raise для отрицательного числа.
+  - except печатает ошибка.
+  - finally не пропускайте.
+  solution: "def price(n):\n    if n < 0:\n        raise ValueError('цена')\n    return n\n\
+    try:\n    print(price(int(input())))\nexcept ValueError:\n    print('ошибка')\nfinally:\n\
+    \    print('закрыто')\n"
+  explanation: 5 печатается и закрывается. -2 даёт ошибка и тоже закрыто.
+  id: python.errors.err-finally.t4
+- type: code
+  title: Маркер в переменной
+  difficulty: 2
+  context: analytics
+  prompt: Прочитайте строку. В try запишите в state слово ок, если строка — целое число, иначе
+    except запишет ошибка. finally ставит закрыто и это слово печатается.
+  starter_code: ''
+  tests:
+  - stdin: '4
+
+      '
+    expected_stdout: 'закрыто
+
+      '
+  - stdin: 'нет
+
+      '
+    expected_stdout: 'закрыто
+
+      '
+  hints:
+  - finally выполняется после обеих веток.
+  - Присваивание в finally затирает ок и ошибка.
+  - Печатайте state один раз.
+  solution: "state = 'нет'\ntry:\n    int(input())\n    state = 'ок'\nexcept ValueError:\n\
+    \    state = 'ошибка'\nfinally:\n    state = 'закрыто'\nprint(state)\n"
+  explanation: Какой бы ни была строка, печать показывает закрыто.
+  id: python.errors.err-finally.t5
+introduces:
+- id: err-finally.finally
+  title: finally
+  summary: Блок после try, который выполняется и при успехе, и после except.

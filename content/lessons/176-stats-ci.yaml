@@ -1,0 +1,228 @@
+id: python.stats.stats-ci
+slug: stats-ci
+section: stats
+title: Доверительный интервал
+order: 5
+weight: 1
+prerequisites:
+- python.stats.stats-spread
+goal: Строить упрощённый интервал среднее плюс-минус заданное k.
+tags:
+- интервал
+theory:
+- Настоящий доверительный интервал опирается на модель разброса и на то, какую долю повторов
+  эксперимента он должен накрывать. Без этой оговорки пара чисел — ещё не доверие.
+- 'В этом уроке интервал упрощён: берётся среднее и заранее названное целое k. Границы равны
+  среднее - k и среднее + k. Это учебная линейка, не таблица нормального закона.'
+- Среднее в заданиях целое, поэтому обе границы целые. Модуль statistics не используется.
+examples:
+- title: Плюс-минус два
+  code: 'heights = [10, 14, 18]
+
+    mean = sum(heights) // len(heights)
+
+    k = 2
+
+    print(mean - k)
+
+    print(mean + k)
+
+    '
+  explanation: Среднее 14. При k = 2 границы 12 и 16.
+- title: Ширина
+  code: 'k = 3
+
+    print(k + k)
+
+    '
+  explanation: Ширина упрощённого интервала равна двум k, здесь 6.
+outcomes:
+- отличать учебное среднее ± k от настоящего интервала
+- называть модель, которой пока нет
+- печатать две целые границы
+- считать ширину как два k
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Чего не хватает линейке
+  difficulty: 1
+  context: neutral
+  prompt: Почему среднее ± k в этом уроке ещё не настоящий доверительный интервал?
+  options:
+  - id: a
+    text: Не названы модель разброса и доля накрытия
+  - id: b
+    text: Потому что k всегда равно нулю
+  - id: c
+    text: Потому что среднее нельзя вычитать
+  answer: a
+  hints:
+  - Настоящий интервал опирается на распределение.
+  - k здесь задано явно и не обязано быть нулём.
+  - Границы как раз считают через среднее.
+  solution: a
+  explanation: Пара границ без модели — учебное правило, не доверие.
+  id: python.stats.stats-ci.t1
+- type: predict_output
+  title: Границы
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: 12 16
+  - id: b
+    text: 14 2
+  - id: c
+    text: 16 12
+  answer: a
+  hints:
+  - Слева вычитание.
+  - Справа сложение.
+  - 'Порядок: нижняя, затем верхняя.'
+  solution: a
+  explanation: Границы равны 12 и 16.
+  code: 'mean = 14
+
+    k = 2
+
+    print(mean - k, mean + k)
+
+    '
+  id: python.stats.stats-ci.t2
+- type: code
+  title: Две границы
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n, n высот и k. Среднее целое. Выведите среднее - k и среднее + k.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      14
+
+      18
+
+      2
+
+      '
+    expected_stdout: '12
+
+      16
+
+      '
+  - stdin: '3
+
+      5
+
+      5
+
+      5
+
+      1
+
+      '
+    expected_stdout: '4
+
+      6
+
+      '
+  hints:
+  - Сначала среднее.
+  - k читается последним.
+  - Печатайте нижнюю границу, затем верхнюю.
+  solution: 'n = int(input())
+
+    mean = sum(int(input()) for _ in range(n)) // n
+
+    k = int(input())
+
+    print(mean - k)
+
+    print(mean + k)
+
+    '
+  explanation: Интервал симметричен вокруг среднего на величину k.
+  id: python.stats.stats-ci.t3
+- type: code
+  title: Центр
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n цен. Сумма делится на n. Выведите среднее — центр интервала.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      14
+
+      18
+
+      '
+    expected_stdout: '14
+
+      '
+  - stdin: '1
+
+      7
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - Центр не зависит от k.
+  - Деление нацело.
+  - Одно число.
+  solution: 'n = int(input())
+
+    print(sum(int(input()) for _ in range(n)) // n)
+
+    '
+  explanation: Интервал строится вокруг среднего.
+  id: python.stats.stats-ci.t4
+- type: code
+  title: Ширина
+  difficulty: 2
+  context: development
+  prompt: Прочитайте k. Выведите ширину интервала среднее ± k, то есть 2 * k.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '5
+
+      '
+    expected_stdout: '10
+
+      '
+  hints:
+  - Ширина равна двум шагам k.
+  - Среднее для ширины не нужно.
+  - Одно целое.
+  solution: 'k = int(input())
+
+    print(k + k)
+
+    '
+  explanation: 'При k = 2 ширина равна 4: от среднего минус 2 до среднего плюс 2.'
+  id: python.stats.stats-ci.t5
+introduces:
+- id: stats-interval
+  title: Упрощённый интервал
+  summary: Границы среднее - k и среднее + k при заранее названном k. Это не доверительный
+    интервал с моделью распределения.

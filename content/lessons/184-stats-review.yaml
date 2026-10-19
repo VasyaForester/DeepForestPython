@@ -1,0 +1,243 @@
+id: python.stats.stats-review
+slug: stats-review
+section: stats
+title: 'Итог: простая регрессия'
+order: 13
+weight: 2
+prerequisites:
+- python.stats.stats-ab
+goal: Провести прямую через две точки и не назвать её причиной.
+tags:
+- регрессия
+theory:
+- 'Простая регрессия ищет прямую: как y меняется вместе с x. По двум точкам наклон равен (y2
+  - y1) / (x2 - x1), если шаг x не ноль. В заданиях деление целое.'
+- Наклон описывает эти точки. Он не доказывает, что x причина y. Цена могла вырасти вместе
+  с высотой из-за третьей причины, например возраста дерева.
+- Одна прямая также не заменяет проверку разброса. Урок печатает целый наклон и останавливается
+  на описании. Модуль statistics не используется.
+examples:
+- title: Наклон два
+  code: 'x1, y1 = 1, 3
+
+    x2, y2 = 2, 5
+
+    print((y2 - y1) // (x2 - x1))
+
+    '
+  explanation: При шаге x на 1 высота y вырастает на 2. Это описание двух точек.
+- title: Отрицательный наклон
+  code: 'x1, y1 = 0, 10
+
+    x2, y2 = 5, 0
+
+    print((y2 - y1) // (x2 - x1))
+
+    '
+  explanation: Остаток падает на 10 за 5 дней. Наклон -2 и не говорит, почему падает.
+outcomes:
+- считать целый наклон по двум точкам
+- читать наклон как изменение y на шаг x
+- не принимать прямую за причину
+- не подменять регрессию одним p-value
+resources:
+- kind: docs
+  title: statistics
+  url: https://docs.python.org/3/library/statistics.html
+- kind: youtube
+  title: CS50P — Lecture 6
+  url: https://www.youtube.com/watch?v=z9cz-sS9a1A
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Прямая и причина
+  difficulty: 1
+  context: neutral
+  prompt: Две точки высот и цен легли на прямую с положительным наклоном. Что можно сказать?
+  options:
+  - id: a
+    text: Прямая описывает эти две точки и не доказывает причину
+  - id: b
+    text: Цена вызвана высотой
+  - id: c
+    text: Наклон равен p-value
+  answer: a
+  hints:
+  - Двух точек хватает только на прямую.
+  - Третья причина не исключена.
+  - p прямая не считает.
+  solution: a
+  explanation: Наклон — описание совместного хода, не причинность.
+  id: python.stats.stats-review.t1
+- type: predict_output
+  title: Целый наклон
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '2'
+  - id: b
+    text: '1'
+  - id: c
+    text: '5'
+  answer: a
+  hints:
+  - Числитель 2.
+  - Знаменатель 1.
+  - Деление целое.
+  solution: a
+  explanation: Наклон равен 2.
+  code: 'print((5 - 3) // (2 - 1))
+
+    '
+  id: python.stats.stats-review.t2
+- type: code
+  title: Наклон двух точек
+  difficulty: 2
+  context: development
+  prompt: Прочитайте x1, y1, x2, y2. Шаг x не ноль, деление целое, x2 больше x1. Выведите
+    наклон.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      3
+
+      2
+
+      5
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '0
+
+      10
+
+      5
+
+      0
+
+      '
+    expected_stdout: '-2
+
+      '
+  hints:
+  - Вычтите y и x отдельно.
+  - Делите изменение y на изменение x.
+  - Знак сохраняйте.
+  solution: 'x1 = int(input())
+
+    y1 = int(input())
+
+    x2 = int(input())
+
+    y2 = int(input())
+
+    print((y2 - y1) // (x2 - x1))
+
+    '
+  explanation: Две точки задают одну прямую с целым наклоном.
+  id: python.stats.stats-review.t3
+- type: code
+  title: Шаг по x
+  difficulty: 2
+  context: development
+  prompt: Прочитайте те же четыре числа. Выведите только x2 - x1.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      1
+
+      6
+
+      9
+
+      '
+    expected_stdout: '4
+
+      '
+  - stdin: '1
+
+      3
+
+      2
+
+      5
+
+      '
+    expected_stdout: '1
+
+      '
+  hints:
+  - y прочитайте, даже если не печатаете.
+  - Шаг x положительный в этих данных.
+  - Одно число.
+  solution: 'x1 = int(input())
+
+    y1 = int(input())
+
+    x2 = int(input())
+
+    y2 = int(input())
+
+    print(x2 - x1)
+
+    '
+  explanation: Знаменатель наклона — шаг по x.
+  id: python.stats.stats-review.t4
+- type: code
+  title: Падение остатка
+  difficulty: 2
+  context: development
+  prompt: Прочитайте две точки дня и остатка. Выведите целый наклон.
+  starter_code: ''
+  tests:
+  - stdin: '0
+
+      10
+
+      5
+
+      0
+
+      '
+    expected_stdout: '-2
+
+      '
+  - stdin: '1
+
+      8
+
+      3
+
+      4
+
+      '
+    expected_stdout: '-2
+
+      '
+  hints:
+  - Падение даёт отрицательный наклон.
+  - Деление обещано целым.
+  - Причину в ответ не дописывайте.
+  solution: 'x1 = int(input())
+
+    y1 = int(input())
+
+    x2 = int(input())
+
+    y2 = int(input())
+
+    print((y2 - y1) // (x2 - x1))
+
+    '
+  explanation: Отрицательный наклон описывает спад и не называет его виновника.
+  id: python.stats.stats-review.t5
+introduces:
+- id: stats-regression
+  title: Простая регрессия
+  summary: Прямая по точкам. Наклон показывает шаг y при шаге x. Прямая не доказывает причину.

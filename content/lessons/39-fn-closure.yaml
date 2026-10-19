@@ -1,0 +1,194 @@
+id: python.functions.fn-closure
+slug: fn-closure
+section: functions
+title: 'Замыкание: первое знакомство'
+order: 7
+weight: 1
+prerequisites:
+- python.functions.fn-scope
+goal: Вернуть внутреннюю функцию, которая помнит число из внешней.
+tags:
+- замыкание
+theory:
+- Функцию можно описать внутри другой функции. Внутренняя видит параметры внешней и помнит
+  их после возврата. Такое замыкание хранит наценку, которую передали в make, и применяет
+  её позже.
+- 'Запись make(2)(10) делает два вызова сразу и читается тяжело. Удобнее сохранить результат
+  make в переменную. Следующая строка вызывает её отдельно: plus = make(2), затем print(plus(10))
+  печатает 12.'
+- Каждый вызов make создаёт своё замыкание. Одно помнит прибавку 2, другое помнит 5, и они
+  не мешают друг другу. На складе так фиксируют наценку один раз и применяют её к разным ценам.
+examples:
+- title: Наценка два
+  code: "def make(n):\n    def plus(x):\n        return x + n\n    return plus\nplus = make(2)\n\
+    print(plus(10))\n"
+  explanation: make вернула функцию, которая помнит 2. Вызов plus(10) даёт 12.
+- title: Две наценки
+  code: "def make(n):\n    def plus(x):\n        return x + n\n    return plus\nlow = make(2)\n\
+    high = make(5)\nprint(low(10))\nprint(high(10))\n"
+  explanation: 'Два замыкания помнят разные прибавки: 12 и 15.'
+outcomes:
+- описывать функцию внутри функции
+- возвращать внутреннюю функцию
+- вызывать сохранённое замыкание отдельной строкой
+- держать несколько замыканий с разными числами
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Что помнит замыкание
+  difficulty: 1
+  context: neutral
+  prompt: Что сохраняет внутренняя функция после выхода из make?
+  options:
+  - id: a
+    text: Значение параметра внешней функции
+  - id: b
+    text: Только последнее число, которое ей потом передадут
+  - id: c
+    text: Все имена программы сразу
+  answer: a
+  hints:
+  - Смотрите, что make получила аргументом.
+  - Внутренняя функция этот аргумент читает.
+  - Новый вызов make создаёт другое замыкание.
+  solution: a
+  explanation: Замыкание помнит n из того вызова make, который его вернул.
+  id: python.functions.fn-closure.t1
+- type: predict_output
+  title: Плюс два
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: '12'
+  - id: b
+    text: '2'
+  - id: c
+    text: '10'
+  answer: a
+  hints:
+  - make(2) запоминает прибавку 2.
+  - Результат кладут в plus.
+  - plus(10) прибавляет 2 к 10.
+  solution: a
+  explanation: Замыкание прибавляет сохранённую двойку, получается 12.
+  code: "def make(n):\n    def plus(x):\n        return x + n\n    return plus\nplus = make(2)\n\
+    print(plus(10))\n"
+  id: python.functions.fn-closure.t2
+- type: code
+  title: Применить наценку
+  difficulty: 2
+  context: development
+  prompt: Прочитайте наценку и базовую цену. Функция make возвращает замыкание, которое прибавляет
+    наценку. Сохраните его в переменную и выведите результат вызова на следующей строке.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      10
+
+      '
+    expected_stdout: '12
+
+      '
+  - stdin: '5
+
+      1
+
+      '
+    expected_stdout: '6
+
+      '
+  hints:
+  - Внутренняя функция читает n.
+  - Сначала сохраните результат make.
+  - Потом вызовите сохранённую функцию с ценой.
+  solution: "def make(n):\n    def plus(x):\n        return x + n\n    return plus\nn = int(input())\n\
+    x = int(input())\nplus = make(n)\nprint(plus(x))\n"
+  explanation: Замыкание помнит наценку и прибавляет её к базовой цене.
+  id: python.functions.fn-closure.t3
+- type: code
+  title: Одна наценка, две цены
+  difficulty: 2
+  context: development
+  prompt: Прочитайте наценку и две базовые цены. Одно замыкание примените к обеим. Выведите
+    две новые цены, каждую с новой строки.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      10
+
+      20
+
+      '
+    expected_stdout: '13
+
+      23
+
+      '
+  - stdin: '0
+
+      5
+
+      7
+
+      '
+    expected_stdout: '5
+
+      7
+
+      '
+  hints:
+  - Создайте замыкание один раз.
+  - Вызовите его дважды.
+  - Наценка одна и та же.
+  solution: "def make_markup(extra):\n    def price(base):\n        return base + extra\n\
+    \    return price\nextra = int(input())\na = int(input())\nb = int(input())\nprice = make_markup(extra)\n\
+    print(price(a))\nprint(price(b))\n"
+  explanation: Оба вызова пользуются одной сохранённой наценкой.
+  id: python.functions.fn-closure.t4
+- type: code
+  title: Подпись места
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте место и предмет. Замыкание помнит место и возвращает строку место: предмет.
+    Выведите её.'
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      ель
+
+      '
+    expected_stdout: 'склад: ель
+
+      '
+  - stdin: 'лес
+
+      сосна
+
+      '
+    expected_stdout: 'лес: сосна
+
+      '
+  hints:
+  - Внешняя функция получает место.
+  - Внутренняя получает предмет.
+  - Между ними двоеточие и пробел.
+  solution: "def make_label(place):\n    def label(item):\n        return place + ': ' + item\n\
+    \    return label\nplace = input()\nitem = input()\nlabel = make_label(place)\nprint(label(item))\n"
+  explanation: Место сохранилось в замыкании, предмет пришёл в следующий вызов.
+  id: python.functions.fn-closure.t5
+introduces:
+- id: fn-closure
+  title: Замыкание
+  summary: Внутренняя функция, которая помнит значения внешней функции после её завершения.

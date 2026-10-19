@@ -1,0 +1,200 @@
+id: python.performance.perf-bound
+slug: perf-bound
+section: performance
+title: I/O и CPU
+order: 5
+weight: 1
+prerequisites:
+- python.performance.perf-profile
+goal: Различать ожидание устройства и счёт в процессоре.
+tags:
+- ввод-вывод
+- процессор
+theory:
+- Программа, связанная вводом-выводом, большую часть времени ждёт диск, сеть или экран. Процессор
+  в это время свободен. Ускорение арифметики почти ничего не даст.
+- 'Программа, связанная процессором, как раз считает: вложенные циклы по таблице, разбор каждой
+  строки без ожидания. Более быстрый диск такой счёт не сократит.'
+- Упражнение получает слово io или cpu и печатает «ждать устройство» или «считать». Это называет
+  узкое место, а не измеряет его секундомером.
+examples:
+- title: Диск
+  code: 'kind = "io"
+
+    print("ждать устройство" if kind == "io" else "считать")
+
+    '
+  explanation: Слово io означает ожидание устройства.
+- title: Счёт
+  code: 'kind = "cpu"
+
+    print("ждать устройство" if kind == "io" else "считать")
+
+    '
+  explanation: cpu означает работу процессора.
+outcomes:
+- отличать ожидание устройства от счёта
+- не ускорять арифметику, когда программа ждёт диск
+- не менять диск, когда узкое место в циклах
+- называть узкое место до выбора потоков или процессов
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где ждёт диск
+  difficulty: 1
+  context: neutral
+  prompt: Программа почти всё время ждёт запись файла. Где узкое место?
+  options:
+  - id: a
+    text: На устройстве ввода-вывода
+  - id: b
+    text: На арифметике в процессоре
+  - id: c
+    text: На выборе цвета графика
+  answer: a
+  hints:
+  - Ожидание диска — это I/O.
+  - Процессор в это время простаивает.
+  - Цвет графика здесь ни при чём.
+  solution: a
+  explanation: Пока файл не записан, ускорять формулы бесполезно.
+  id: python.performance.perf-bound.t1
+- type: predict_output
+  title: Слово cpu
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: ждать устройство
+  - id: b
+    text: считать
+  - id: c
+    text: cpu
+  answer: b
+  hints:
+  - kind не равен io.
+  - Срабатывает вторая фраза.
+  - Исходное слово не печатается.
+  solution: b
+  explanation: Для cpu печатается «считать».
+  code: 'kind = "cpu"
+
+    print("ждать устройство" if kind == "io" else "считать")
+
+    '
+  id: python.performance.perf-bound.t2
+- type: code
+  title: Одно слово
+  difficulty: 2
+  context: development
+  prompt: Прочитайте io или cpu. Для io выведите ждать устройство, для cpu выведите считать.
+  starter_code: ''
+  tests:
+  - stdin: 'io
+
+      '
+    expected_stdout: 'ждать устройство
+
+      '
+  - stdin: 'cpu
+
+      '
+    expected_stdout: 'считать
+
+      '
+  hints:
+  - Сравнивайте со строкой io.
+  - Вторая ветка — cpu.
+  - Фразы не сокращайте.
+  solution: 'kind = input().strip()
+
+    print("ждать устройство" if kind == "io" else "считать")
+
+    '
+  explanation: Слово входа только выбирает имя узкого места.
+  id: python.performance.perf-bound.t3
+- type: code
+  title: Несколько меток
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n слов io или cpu. Для каждого выведите соответствующую фразу.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      io
+
+      cpu
+
+      '
+    expected_stdout: 'ждать устройство
+
+      считать
+
+      '
+  - stdin: '1
+
+      io
+
+      '
+    expected_stdout: 'ждать устройство
+
+      '
+  hints:
+  - Каждое слово на отдельной строке ответа.
+  - Порядок сохраняйте.
+  - Фразы те же.
+  solution: "n = int(input())\nfor _ in range(n):\n    kind = input().strip()\n    print(\"\
+    ждать устройство\" if kind == \"io\" else \"считать\")\n"
+  explanation: Смешанный журнал всё равно разбирается по одной метке.
+  id: python.performance.perf-bound.t4
+- type: code
+  title: Метка и размер
+  difficulty: 2
+  context: development
+  prompt: Прочитайте io или cpu и целое число строк. Число прочитайте и не печатайте. Выведите
+    фразу узкого места.
+  starter_code: ''
+  tests:
+  - stdin: 'io
+
+      1000
+
+      '
+    expected_stdout: 'ждать устройство
+
+      '
+  - stdin: 'cpu
+
+      4
+
+      '
+    expected_stdout: 'считать
+
+      '
+  hints:
+  - Второе число не меняет фразу.
+  - io остаётся ожиданием даже при маленьком числе.
+  - cpu остаётся счётом.
+  solution: 'kind = input().strip()
+
+    int(input())
+
+    print("ждать устройство" if kind == "io" else "считать")
+
+    '
+  explanation: Размер таблицы не переименовывает узкое место, если его уже назвали.
+  id: python.performance.perf-bound.t5
+introduces:
+- id: perf-io-cpu
+  title: Узкое место
+  summary: Либо ожидание устройства, либо счёт в процессоре. От этого зависит, что имеет смысл
+    ускорять.

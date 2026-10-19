@@ -1,0 +1,199 @@
+id: python.performance.perf-loop
+slug: perf-loop
+section: performance
+title: Цикл событий
+order: 10
+weight: 1
+prerequisites:
+- python.performance.perf-async
+goal: Выполнять готовые задачи, пока список не опустеет.
+tags:
+- цикл событий
+theory:
+- 'Цикл событий хранит готовые задачи и забирает их, пока список не пуст. Задача может поставить
+  следующую. Так устроены интерфейсы и сетевые серверы: ждать, потом продолжить.'
+- Пока задача ждёт, цикл берёт другую готовую. Если готовых нет, цикл ждёт события. Это не
+  набор потоков на каждую задачу.
+- Упражнение крутит список строк. Метка «старт» после печати ставит в конец «финиш». Другие
+  метки только печатаются. asyncio не импортируется.
+examples:
+- title: Старт и финиш
+  code: "ready = [\"старт\"]\nwhile ready:\n    item = ready.pop(0)\n    print(item)\n   \
+    \ if item == \"старт\":\n        ready.append(\"финиш\")\n"
+  explanation: Сначала печатается старт, затем поставленный им финиш. Список пустеет.
+- title: Две готовые
+  code: "ready = [\"чтение\", \"запись\"]\nwhile ready:\n    print(ready.pop(0))\n"
+  explanation: Обе задачи уже готовы и выходят по порядку.
+outcomes:
+- крутить список готовых задач до пустоты
+- позволять задаче поставить следующую
+- не создавать поток на каждую метку
+- отличать цикл событий от одного прохода, если задачи добавляются
+resources:
+- kind: docs
+  title: time
+  url: https://docs.python.org/3/library/time.html
+- kind: youtube
+  title: CS50P — Lecture 3
+  url: https://www.youtube.com/watch?v=nLRL_NcnK-4
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Когда цикл берёт другую задачу
+  difficulty: 1
+  context: neutral
+  prompt: Когда цикл событий переходит к другой задаче?
+  options:
+  - id: a
+    text: Когда текущая ждёт события, а другая уже готова
+  - id: b
+    text: В каждый момент он обязан создать процесс
+  - id: c
+    text: Только если список пуст
+  answer: a
+  hints:
+  - Пустой список означал бы конец или ожидание снаружи.
+  - Готовая задача лежит в списке.
+  - Процесс на задачу не нужен.
+  solution: a
+  explanation: Цикл занимается тем, что уже можно делать.
+  id: python.performance.perf-loop.t1
+- type: predict_output
+  title: Первая готовая
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: чтение
+  - id: b
+    text: запись
+  - id: c
+    text: финиш
+  answer: a
+  hints:
+  - pop(0) берёт начало.
+  - Первой лежит чтение.
+  - Запись остаётся в списке.
+  solution: a
+  explanation: Первой выполняется чтение.
+  code: 'ready = ["чтение", "запись"]
+
+    print(ready.pop(0))
+
+    '
+  id: python.performance.perf-loop.t2
+- type: code
+  title: Пока не пусто
+  difficulty: 2
+  context: development
+  prompt: Прочитайте n и n готовых меток. Печатайте их, пока список не опустеет. Метка старт
+    добавляет в конец финиш.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      старт
+
+      '
+    expected_stdout: 'старт
+
+      финиш
+
+      '
+  - stdin: '2
+
+      чтение
+
+      запись
+
+      '
+    expected_stdout: 'чтение
+
+      запись
+
+      '
+  hints:
+  - Цикл продолжается, пока список не пуст.
+  - финиш сам старт не добавляет.
+  - Обычные метки только печатаются.
+  solution: "n = int(input())\nready = [input().strip() for _ in range(n)]\nguard = 0\nwhile\
+    \ ready:\n    guard += 1\n    if guard > 30:\n        break\n    item = ready.pop(0)\n\
+    \    print(item)\n    if item == \"старт\":\n        ready.append(\"финиш\")\n"
+  explanation: Список готовых задач исчерпывается, включая поставленный финиш.
+  id: python.performance.perf-loop.t3
+- type: code
+  title: Без старта
+  difficulty: 2
+  context: development
+  prompt: Прочитайте готовые метки без слова старт. Выведите их по порядку.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      чтение
+
+      запись
+
+      '
+    expected_stdout: 'чтение
+
+      запись
+
+      '
+  - stdin: '1
+
+      архив
+
+      '
+    expected_stdout: 'архив
+
+      '
+  hints:
+  - Новых меток не добавляйте.
+  - Порядок входа сохраняется.
+  - Пустой список заканчивает цикл.
+  solution: "n = int(input())\nready = [input().strip() for _ in range(n)]\nwhile ready:\n\
+    \    print(ready.pop(0))\n"
+  explanation: Если никто не ставит продолжение, цикл печатает ровно вход.
+  id: python.performance.perf-loop.t4
+- type: code
+  title: Сколько задач прошло
+  difficulty: 2
+  context: development
+  prompt: Прочитайте метки и примените правило старт, которое добавляет финиш. Выведите, сколько
+    меток цикл выполнил.
+  starter_code: ''
+  tests:
+  - stdin: '1
+
+      старт
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      чтение
+
+      запись
+
+      '
+    expected_stdout: '2
+
+      '
+  hints:
+  - Финиш тоже считается выполненным.
+  - Без старта счёт равен n.
+  - Печатайте одно число.
+  solution: "n = int(input())\nready = [input().strip() for _ in range(n)]\ndone = 0\nguard\
+    \ = 0\nwhile ready:\n    guard += 1\n    if guard > 30:\n        break\n    item = ready.pop(0)\n\
+    \    done += 1\n    if item == \"старт\":\n        ready.append(\"финиш\")\nprint(done)\n"
+  explanation: Длина работы цикла включает задачи, поставленные уже в ходе работы.
+  id: python.performance.perf-loop.t5
+introduces:
+- id: perf-event-loop
+  title: Цикл событий
+  summary: Пока список готовых задач не пуст, цикл забирает очередную. Задача может поставить
+    следующую.

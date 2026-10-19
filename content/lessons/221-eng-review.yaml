@@ -1,0 +1,180 @@
+id: python.engineering.eng-review
+slug: eng-review
+section: engineering
+title: 'Итог: слой, проверка, секрет'
+order: 13
+weight: 2
+prerequisites:
+- python.engineering.eng-secure
+goal: Собрать разбор, проверку настройки и маску строки.
+tags:
+- итог
+- слой
+- секрет
+theory:
+- 'Новых приёмов нет. Снова три слоя: parse разбирает строку, rule оставляет положительное
+  значение, report печатает сумму.'
+- Настройка читается из словаря. Нет ключа — печатается нет настройки, без запасного числа,
+  спрятанного в коде.
+- Секрет по-прежнему не печатают целиком. mask показывает два последних символа той строки,
+  которую передали.
+examples:
+- title: Сумма слоя
+  code: "def parse(text):\n    name, raw = text.split()\n    return name, int(raw)\ndef rule(row):\n\
+    \    return row[1] > 0\ndef report(rows):\n    print(sum(row[1] for row in rows))\nrows\
+    \ = []\nfor text in ['ель 2', 'сосна -1']:\n    row = parse(text)\n    if rule(row):\n\
+    \        rows.append(row)\nreport(rows)\n"
+  explanation: Отрицательное значение отброшено, report печатает 2.
+- title: Маска слова
+  code: "def mask(secret):\n    if len(secret) < 2:\n        return secret\n    return '*'\
+    \ * (len(secret) - 2) + secret[-2:]\nprint(mask('token'))\n"
+  explanation: 'Из пяти символов видны последние два: en.'
+outcomes:
+- собирать отчёт отдельным слоем
+- читать настройку из словаря
+- сообщать о пропавшем ключе
+- маскировать строку перед печатью
+resources:
+- kind: docs
+  title: Errors and Exceptions
+  url: https://docs.python.org/3/tutorial/errors.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где сумма
+  difficulty: 1
+  context: neutral
+  prompt: Какой слой печатает итог и не разбирает сырую строку?
+  options:
+  - id: a
+    text: report
+  - id: b
+    text: parse
+  - id: c
+    text: mask
+  answer: a
+  hints:
+  - parse только режет текст.
+  - mask закрывает секрет, это другая задача.
+  - Сумма собирается в report.
+  solution: a
+  explanation: Печать итога остаётся в report.
+  id: python.engineering.eng-review.t1
+- type: predict_output
+  title: Хвост строки
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатает программа?
+  options:
+  - id: a
+    text: '***en'
+  - id: b
+    text: token
+  - id: c
+    text: '**en'
+  answer: a
+  hints:
+  - В слове пять букв.
+  - Хвост — en.
+  - Звёзд три.
+  solution: a
+  explanation: Видна только пара последних символов.
+  code: "def mask(secret):\n    if len(secret) < 2:\n        return secret\n    return '*'\
+    \ * (len(secret) - 2) + secret[-2:]\nprint(mask('token'))\n"
+  id: python.engineering.eng-review.t2
+- type: code
+  title: Сумма записей
+  difficulty: 2
+  context: development
+  prompt: Первая строка — количество, дальше имя и значение. parse, rule и report по порядку.
+    Оставьте значения больше нуля и напечатайте сумму.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      ель 2
+
+      сосна -1
+
+      '
+    expected_stdout: '2
+
+      '
+  - stdin: '2
+
+      ель 2
+
+      пихта 5
+
+      '
+    expected_stdout: '7
+
+      '
+  hints:
+  - rule отсекает ноль и минус.
+  - report не вызывает split.
+  - Сумма может состоять из нескольких чисел.
+  solution: "def parse(text):\n    name, raw = text.split()\n    return name, int(raw)\ndef\
+    \ rule(row):\n    return row[1] > 0\ndef report(rows):\n    print(sum(row[1] for row in\
+    \ rows))\ndef main():\n    rows = []\n    count = int(input())\n    for _ in range(count):\n\
+    \        row = parse(input())\n        if rule(row):\n            rows.append(row)\n \
+    \   report(rows)\nmain()\n"
+  explanation: Три функции снова идут по своим слоям.
+  id: python.engineering.eng-review.t3
+- type: code
+  title: Ключ настройки
+  difficulty: 2
+  context: development
+  prompt: 'Словарь: port равен 8000. Прочитайте ключ и выведите значение или нет настройки.'
+  starter_code: ''
+  tests:
+  - stdin: 'port
+
+      '
+    expected_stdout: '8000
+
+      '
+  - stdin: 'host
+
+      '
+    expected_stdout: 'нет настройки
+
+      '
+  hints:
+  - Чужого ключа в словаре нет.
+  - Не подставляйте 8000 для любого ключа.
+  - Печатайте одну строку.
+  solution: "settings = {'port': '8000'}\nkey = input()\nif key not in settings:\n    print('нет\
+    \ настройки')\nelse:\n    print(settings[key])\n"
+  explanation: Отсутствие ключа видно сразу, без запасного значения в коде.
+  id: python.engineering.eng-review.t4
+- type: code
+  title: Закрыть строку
+  difficulty: 2
+  context: development
+  prompt: 'Прочитайте строку и напечатайте mask: видны только последние два символа.'
+  starter_code: ''
+  tests:
+  - stdin: 'ab12
+
+      '
+    expected_stdout: '**12
+
+      '
+  - stdin: 'token
+
+      '
+    expected_stdout: '***en
+
+      '
+  hints:
+  - Срез [-2:] берёт хвост.
+  - Звёзды закрывают начало.
+  - Короткую строку из двух символов можно показать целиком.
+  solution: "def mask(secret):\n    if len(secret) < 2:\n        return secret\n    return\
+    \ '*' * (len(secret) - 2) + secret[-2:]\nprint(mask(input()))\n"
+  explanation: В вывод не попадает вся исходная строка, если она длиннее двух символов.
+  id: python.engineering.eng-review.t5

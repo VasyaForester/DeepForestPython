@@ -1,0 +1,199 @@
+id: python.functions.fn-docstring
+slug: fn-docstring
+section: functions
+title: Строка документации
+order: 8
+weight: 1
+prerequisites:
+- python.functions.fn-closure
+goal: Положить краткое описание в функцию и прочитать его через __doc__.
+tags:
+- документация
+theory:
+- Если первая строка тела функции — строковый литерал, это строка документации. Её не выполняют
+  как команду, но хранят у самой функции. Текст достают атрибутом __doc__.
+- Хватает одной фразы о том, что считают и что возвращают. Для суммы цен подойдёт «Возвращает
+  сумму цен». Тройные кавычки позволяют занять несколько строк, хотя для одной фразы они тоже
+  годятся.
+- Печать total.__doc__ показывает эту фразу. Если литерала в начале тела нет, атрибут равен
+  None. Документация не заменяет возврат значения и не проверяет аргументы.
+examples:
+- title: Фраза у суммы
+  code: "def total(prices):\n    \"\"\"Возвращает сумму цен.\"\"\"\n    s = 0\n    for price\
+    \ in prices:\n        s = s + price\n    return s\nprint(total.__doc__)\n"
+  explanation: Атрибут __doc__ хранит первую строку тела и печатает её как текст.
+- title: Без описания
+  code: "def empty(name):\n    return name\nprint(empty.__doc__)\n"
+  explanation: Литерала в начале нет, поэтому печатается None.
+outcomes:
+- писать строку документации первой в теле
+- читать её через __doc__
+- отличать отсутствие документации от пустой строки
+- не путать описание функции с возвращаемым значением
+resources:
+- kind: docs
+  title: Defining Functions
+  url: https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+- kind: youtube
+  title: CS50P — Lecture 4
+  url: https://www.youtube.com/watch?v=0IQxpZHW1qQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Где лежит описание
+  difficulty: 1
+  context: neutral
+  prompt: Куда попадает строка документации после запуска?
+  options:
+  - id: a
+    text: В атрибут __doc__ у функции
+  - id: b
+    text: Она удаляется и больше не доступна
+  - id: c
+    text: В значение, которое вернул return
+  answer: a
+  hints:
+  - Это не комментарий, а строка в теле.
+  - У функции есть атрибут __doc__.
+  - Возврат значения здесь ни при чём.
+  solution: a
+  explanation: Строка документации остаётся у функции и читается через __doc__.
+  id: python.functions.fn-docstring.t1
+- type: predict_output
+  title: Текст суммы
+  difficulty: 1
+  context: neutral
+  prompt: Что будет напечатано?
+  options:
+  - id: a
+    text: Возвращает сумму цен.
+  - id: b
+    text: None
+  - id: c
+    text: '0'
+  answer: a
+  hints:
+  - Первая строка тела — литерал.
+  - Его кладут в __doc__.
+  - Печатают атрибут, а не вызов.
+  solution: a
+  explanation: В атрибуте лежит фраза из тройных кавычек, вместе с точкой.
+  code: "def total(prices):\n    \"\"\"Возвращает сумму цен.\"\"\"\n    return 0\nprint(total.__doc__)\n"
+  id: python.functions.fn-docstring.t2
+- type: code
+  title: Сумма и её фраза
+  difficulty: 2
+  context: development
+  prompt: Функция total документирована фразой «Возвращает сумму цен.» и возвращает сумму
+    списка. Прочитайте количество и сами числа. Выведите сумму, затем эту фразу.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      10
+
+      5
+
+      '
+    expected_stdout: '15
+
+      Возвращает сумму цен.
+
+      '
+  - stdin: '1
+
+      0
+
+      '
+    expected_stdout: '0
+
+      Возвращает сумму цен.
+
+      '
+  hints:
+  - Литерал стоит первой строкой тела.
+  - Сумму посчитайте циклом.
+  - Вторая печать — атрибут __doc__.
+  solution: "def total(prices):\n    \"\"\"Возвращает сумму цен.\"\"\"\n    s = 0\n    for\
+    \ price in prices:\n        s = s + price\n    return s\nn = int(input())\nprices = []\n\
+    for _ in range(n):\n    prices.append(int(input()))\nprint(total(prices))\nprint(total.__doc__)\n"
+  explanation: Сначала печатается число, затем текст документации без кавычек.
+  id: python.functions.fn-docstring.t3
+- type: code
+  title: Подпись журнала
+  difficulty: 2
+  context: development
+  prompt: 'Функция label документирована фразой «Подпись журнала.» и возвращает строку место:
+    предмет. Прочитайте место и предмет. Выведите результат, затем документацию.'
+  starter_code: ''
+  tests:
+  - stdin: 'склад
+
+      ель
+
+      '
+    expected_stdout: 'склад: ель
+
+      Подпись журнала.
+
+      '
+  - stdin: 'лес
+
+      сосна
+
+      '
+    expected_stdout: 'лес: сосна
+
+      Подпись журнала.
+
+      '
+  hints:
+  - Документация — первая строка функции.
+  - Склейте место и предмет.
+  - Потом напечатайте label.__doc__.
+  solution: "def label(place, item):\n    \"\"\"Подпись журнала.\"\"\"\n    return place +\
+    \ ': ' + item\nplace = input()\nitem = input()\nprint(label(place, item))\nprint(label.__doc__)\n"
+  explanation: Вызов возвращает подпись, атрибут возвращает фразу о функции.
+  id: python.functions.fn-docstring.t4
+- type: code
+  title: Цена партии
+  difficulty: 2
+  context: development
+  prompt: Функция price_line документирована фразой «Цена партии.» и возвращает строку название
+    и число через пробел. Прочитайте название и цену. Выведите сначала документацию, затем
+    строку.
+  starter_code: ''
+  tests:
+  - stdin: 'ель
+
+      12
+
+      '
+    expected_stdout: 'Цена партии.
+
+      ель 12
+
+      '
+  - stdin: 'сосна
+
+      0
+
+      '
+    expected_stdout: 'Цена партии.
+
+      сосна 0
+
+      '
+  hints:
+  - Сначала печатайте __doc__.
+  - Потом результат вызова.
+  - Цена в строке — через str.
+  solution: "def price_line(name, price):\n    \"\"\"Цена партии.\"\"\"\n    return name +\
+    \ ' ' + str(price)\nname = input()\nprice = int(input())\nprint(price_line.__doc__)\n\
+    print(price_line(name, price))\n"
+  explanation: Документация не зависит от аргументов и печатается как есть.
+  id: python.functions.fn-docstring.t5
+introduces:
+- id: fn-doc
+  title: Строка документации
+  summary: Строковый литерал первой строкой тела функции. Доступен как атрибут __doc__.

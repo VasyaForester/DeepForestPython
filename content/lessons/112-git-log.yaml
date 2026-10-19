@@ -1,0 +1,215 @@
+id: python.github.git-log
+slug: git-log
+section: github
+title: История
+order: 2
+weight: 1
+prerequisites:
+- python.github.git-commit
+goal: Показать сообщения коммитов от новых к старым и наоборот.
+tags:
+- git log
+- история
+theory:
+- Команда git log печатает историю от нового коммита к старому. Команда git log --reverse
+  идёт от старого к новому. git log -1 показывает только вершину.
+- 'Песочница не вызывает git. Тот же порядок получают из списка, который хранится от старого
+  к новому: последний элемент — самый свежий.'
+- Печатать нужно сами сообщения, по одному на строку, без номеров и дат. Так проверка остаётся
+  однозначной.
+examples:
+- title: Сначала свежие
+  code: "commits = ['начало склада', 'цены поставки', 'скидка']\nfor message in reversed(commits):\n\
+    \    print(message)\n"
+  explanation: 'reversed переворачивает список: первым выходит последнее сообщение скидка.'
+- title: Только вершина
+  code: 'commits = [''начало склада'', ''цены поставки'']
+
+    print(commits[-1])
+
+    '
+  explanation: Индекс -1 — самый новый коммит, как у git log -1.
+outcomes:
+- показывать историю от новой к старой
+- показывать историю от старой к новой
+- доставать только вершину
+- держать в списке порядок от старого коммита к новому
+resources:
+- kind: docs
+  title: Python Tutorial
+  url: https://docs.python.org/3/tutorial/index.html
+- kind: youtube
+  title: CS50P — Lecture 9
+  url: https://www.youtube.com/watch?v=5qz5pSO1YTQ
+  author: Harvard CS50
+tasks:
+- type: choice
+  title: Порядок git log
+  difficulty: 1
+  context: neutral
+  prompt: В каком порядке команда git log показывает коммиты?
+  options:
+  - id: a
+    text: От нового к старому
+  - id: b
+    text: Всегда по алфавиту сообщений
+  - id: c
+    text: Только первый коммит репозитория
+  answer: a
+  hints:
+  - Вершина истории печатается сверху.
+  - --reverse меняет направление отдельно.
+  - Алфавит сообщений git log не использует.
+  solution: a
+  explanation: Обычный git log начинается с самого нового коммита.
+  id: python.github.git-log.t1
+- type: predict_output
+  title: Вершина
+  difficulty: 1
+  context: neutral
+  prompt: Что напечатается?
+  options:
+  - id: a
+    text: скидка
+  - id: b
+    text: начало склада
+  - id: c
+    text: '3'
+  answer: a
+  hints:
+  - Список хранится от старого к новому.
+  - Последний элемент самый свежий.
+  - Длина списка не печатается.
+  solution: a
+  explanation: Вершина этой истории — скидка.
+  code: 'commits = [''начало склада'', ''цены поставки'', ''скидка'']
+
+    print(commits[-1])
+
+    '
+  id: python.github.git-log.t2
+- type: code
+  title: Как git log
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число и сообщения от старых к новым. Выведите их от новых к старым.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      начало склада
+
+      цены поставки
+
+      скидка
+
+      '
+    expected_stdout: 'скидка
+
+      цены поставки
+
+      начало склада
+
+      '
+  - stdin: '1
+
+      старт склада
+
+      '
+    expected_stdout: 'старт склада
+
+      '
+  hints:
+  - Сохраните порядок ввода.
+  - Печатайте reversed.
+  - Одно сообщение так и остаётся одним.
+  solution: "count = int(input())\ncommits = [input().strip() for _ in range(count)]\nfor\
+    \ message in reversed(commits):\n    print(message)\n"
+  explanation: Свежий коммит оказывается первой строкой вывода.
+  id: python.github.git-log.t3
+- type: code
+  title: Как git log --reverse
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число и сообщения от старых к новым. Выведите их в том же порядке.
+  starter_code: ''
+  tests:
+  - stdin: '2
+
+      начало склада
+
+      цены поставки
+
+      '
+    expected_stdout: 'начало склада
+
+      цены поставки
+
+      '
+  - stdin: '2
+
+      отчёт
+
+      правка цены
+
+      '
+    expected_stdout: 'отчёт
+
+      правка цены
+
+      '
+  hints:
+  - Не переворачивайте список.
+  - Печатайте с начала.
+  - Каждое сообщение — отдельная строка.
+  solution: "count = int(input())\ncommits = [input().strip() for _ in range(count)]\nfor\
+    \ message in commits:\n    print(message)\n"
+  explanation: Флаг --reverse в этой модели означает прямой порядок хранения.
+  id: python.github.git-log.t4
+- type: code
+  title: Как git log -1
+  difficulty: 2
+  context: development
+  prompt: Прочитайте число и сообщения от старых к новым. Выведите только самое новое.
+  starter_code: ''
+  tests:
+  - stdin: '3
+
+      начало склада
+
+      цены поставки
+
+      скидка
+
+      '
+    expected_stdout: 'скидка
+
+      '
+  - stdin: '2
+
+      отчёт
+
+      правка цены
+
+      '
+    expected_stdout: 'правка цены
+
+      '
+  hints:
+  - Вершина — последний элемент.
+  - Остальные строки не печатайте.
+  - Список не пустой.
+  solution: 'count = int(input())
+
+    commits = [input().strip() for _ in range(count)]
+
+    print(commits[-1])
+
+    '
+  explanation: Один самый новый коммит соответствует git log -1.
+  id: python.github.git-log.t5
+introduces:
+- id: github-log
+  title: git log
+  summary: Просмотр сообщений. Без флага порядок от нового к старому, --reverse — наоборот,
+    -1 — только вершина.
